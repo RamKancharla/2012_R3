@@ -1,0 +1,47 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser"
+     xmlns:osns="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:fixns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" location="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+         location="EAI.MSG.CS.OM.163_UserStatus.xsd"/>
+    <message name="FLUserStatus">
+        <part name="parameter" element="fixns:EBCDICMessage"/>
+    </message>
+    <message name="UserStatus">
+        <part name="parameter" element="osns:CSuserStatus"/>
+    </message>
+    <portType name="ParseCSUserStatus">
+        <operation name="parseUserStatus">
+            <input message="tns:FLUserStatus"/>
+            <output message="tns:UserStatus"/>
+        </operation>
+    </portType>
+    <binding name="ParseCSUserStatusSOAP" type="tns:ParseCSUserStatus">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="parseUserStatus">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ParseCSUserStatus">
+        <port name="parseUserStatus" binding="tns:ParseCSUserStatusSOAP">
+            <soap:address location="http://10.2.137.209:8888/ParseUserService-ParseUserStatus-context-root/parseUserStatus"/>
+        </port>
+    </service>
+</definitions>

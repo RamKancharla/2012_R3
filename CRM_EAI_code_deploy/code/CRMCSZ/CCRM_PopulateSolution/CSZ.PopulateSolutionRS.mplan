@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CSZ.PopulateSolutionRS" wsdlTargetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="assignSolutionToSR">
+      <switch>
+         <case name="Case_1_CSZ.PopulateSolutionRS.assignSolutionToSR" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TransEAIReqToCCRMReq.xsl,$in.EAICSZPopulateSolution)" name="$out.RCRM_spcKNOVA_spcActivity_Input"/>
+               </transform>
+               <assign/>
+               <invoke reference="CSZ.CCRM_KNOVAActivitySOAPAdp" operation="RCRM_spcKNOVA_spcActivity">
+                  <onReply/>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

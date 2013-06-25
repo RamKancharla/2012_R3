@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TOM_ValidateQuoteStatus.wsdl" name="anchorToValidateQuoteStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus#wsdl.interface(TOM_ValidateQuoteStatus)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOM_ValidateQuoteStatusStub/TOM_ValidateQuoteStatusStub.wsdl" name="TOM_ValidateQuoteStatusStub">
+        <interface.wsdl interface="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub#wsdl.interface(TOM_ValidateQuoteStatusStub)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ProcessQuoteStatus/TF_ProcessQuoteStatus.wsdl" name="TF_ProcessQuoteStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.interface(TF_ProcessQuoteStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.interface(TF_ProcessQuoteStatusCallback)"/>
+    </reference>
+</componentType>

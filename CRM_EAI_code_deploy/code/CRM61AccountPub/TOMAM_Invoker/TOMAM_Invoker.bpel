@@ -1,0 +1,483 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Sep 24 17:55:13 GMT+05:30 2009
+  Author:  dk54958
+  Purpose: Empty BPEL Process
+   * 
+    *
+    * Change History
+    * Version           Date      Author             Description Of Change
+    *
+    * 0.1               16/02/10  Damodar              Mapping of masterAccountClass,legalEntityFlag and customerReferenceNumber fields for PBI-422
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TOMAM_Invoker" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/TOMAM_Invoker" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/InterfaceManager" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns16="http://servicecenter.peregrine.com/PWS" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/TOMAM_POLLING_VIEW/" xmlns:ns2="http://schemas.hp.com/SM/7" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns15="http://www.w3.org/2005/05/xmlmime" xmlns:ns10="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://schemas.hp.com/SM/7/Common" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/TOMAM_Invoker" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateInterfaceBuffer" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns14="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Interface_Buffer/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/db/top/TOMAMPOLLINGVIEW" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink name="TOM" partnerRole="TOM_Role" partnerLinkType="ns2:TOM_PL"/>
+    <partnerLink name="InterfaceManager" partnerRole="InterfaceManagerProvider" partnerLinkType="ns4:InterfaceManager"/>
+    <partnerLink name="SequenceReleaser" partnerLinkType="ns6:SequenceReleaser" myRole="SequenceReleaserRequester" partnerRole="SequenceReleaserProvider"/>
+    <partnerLink myRole="TOMAM_POLLING_VIEW_role" name="TOMAM_POLLING_VIEW" partnerLinkType="ns1:TOMAM_POLLING_VIEW_plt"/>
+    <partnerLink name="Update_Interface_Buffer" partnerRole="Update_Interface_Buffer_role" partnerLinkType="ns3:Update_Interface_Buffer_plt"/>
+  </partnerLinks>
+  <variables>
+    <variable name="id" type="xsd:string"/>
+    <variable name="created" type="xsd:string"/>
+    <variable name="interfaceId" type="xsd:string"/>
+    <variable name="referenceId" type="xsd:string"/>
+    <variable name="nReceived" type="xsd:int"/>
+    <variable name="nProcessed" type="xsd:int"/>
+    <variable name="state" type="xsd:string"/>
+    <variable name="nSent" type="xsd:int"/>
+    <variable name="nError" type="xsd:int"/>
+    <variable name="errorMsg" type="xsd:string"/>
+    <variable name="nFailure" type="xsd:int"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="deleteAccountActionCode" type="xsd:string"/>
+    <variable name="createAccountActionCode" type="xsd:string"/>
+    <variable name="updateAccountActionCode" type="xsd:string"/>
+    <variable name="tomResponseCode" type="xsd:int"/>
+    <variable name="releaseSequence" type="xsd:boolean"/>
+    <variable name="rawMessage" type="xsd:string"/>
+    <variable name="javaException" type="xsd:string"/>
+    <variable name="parsedRawMessage" type="xsd:string"/>
+    <variable name="accountPubRequest" element="ns5:accountPubRequest"/>
+    <variable name="RequestHealthCheckIV" messageType="ns4:InterfaceManagerRequestMessage"/>
+    <variable name="RequestHealthCheckOV" messageType="ns4:InterfaceManagerResponseMessage"/>
+    <variable name="InvDeleteAccount_DeleteAccount_InputVariable" messageType="ns2:DeleteAccountRequest"/>
+    <variable name="InvDeleteAccount_DeleteAccount_OutputVariable" messageType="ns2:DeleteAccountResponse"/>
+    <variable name="InvCreateAccount_CreateAccount_InputVariable" messageType="ns2:CreateAccountRequest"/>
+    <variable name="InvCreateAccount_CreateAccount_OutputVariable" messageType="ns2:CreateAccountResponse"/>
+    <variable name="InvSequenceReleaser_releaseSequence_InputVariable" messageType="ns6:SequenceReleaserRequestMessage"/>
+    <variable name="ReceiveAccounts_receive_InputVariable" messageType="ns1:TomamPollingVCollection_msg"/>
+    <variable name="InvokeUpdateDBIV" messageType="ns3:InterfaceBufferCollection_msg"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <receive name="ReceiveAccounts" portType="ns1:TOMAM_POLLING_VIEW_ptt" createInstance="yes" variable="ReceiveAccounts_receive_InputVariable" partnerLink="TOMAM_POLLING_VIEW" operation="receive"/>
+    <assign name="AsgInitialVariables">
+      <copy>
+        <from expression="count(bpws:getVariableData('ReceiveAccounts_receive_InputVariable','TomamPollingVCollection','/ns8:TomamPollingVCollection/ns8:TomamPollingV'))"/>
+        <to variable="nReceived"/>
+      </copy>
+      <copy>
+        <from expression="'0'"/>
+        <to variable="nProcessed"/>
+      </copy>
+      <copy>
+        <from expression="'0'"/>
+        <to variable="nSent"/>
+      </copy>
+      <copy>
+        <from expression="'0'"/>
+        <to variable="nError"/>
+      </copy>
+      <copy>
+        <from expression="'0'"/>
+        <to variable="nFailure"/>
+      </copy>
+      <copy>
+        <from expression="'false'"/>
+        <to variable="releaseSequence"/>
+      </copy>
+      <copy>
+        <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/AccountReference.dvm','Reference','DeleteActionCode','EAIValue','')"/>
+        <to variable="deleteAccountActionCode"/>
+      </copy>
+      <copy>
+        <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/AccountReference.dvm','Reference','CreateActionCode','EAIValue','')"/>
+        <to variable="createAccountActionCode"/>
+      </copy>
+      <copy>
+        <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/AccountReference.dvm','Reference','UpdateActionCode','EAIValue','')"/>
+        <to variable="updateAccountActionCode"/>
+      </copy>
+      <copy>
+        <from expression="''"/>
+        <to variable="javaException"/>
+      </copy>
+      <copy>
+        <from expression="''"/>
+        <to variable="errorMsg"/>
+      </copy>
+    </assign>
+    <bpelx:exec name="SetInitialTitle" language="java" version="1.3">
+      <![CDATA[// Set the title  
+setCompositeInstanceTitle("Processing " + getVariableData("nReceived") + " messages");]]>
+    </bpelx:exec>
+    <while name="While_1" condition="bpws:getVariableData('nProcessed') &lt; bpws:getVariableData('nReceived')">
+      <sequence name="ProcessEachAccount">
+        <scope name="SendToTOM">
+          <faultHandlers>
+            <catchAll>
+              <sequence name="Sequence_6">
+                <assign name="IncrementFailed">
+                  <copy>
+                    <from expression="bpws:getVariableData('nFailure') + 1"/>
+                    <to variable="nFailure"/>
+                  </copy>
+                </assign>
+                <assign name="AsgState-RETRYABLE-DoNotRelease">
+                  <copy>
+                    <from expression="'false'"/>
+                    <to variable="releaseSequence"/>
+                  </copy>
+                  <copy>
+                    <from expression="'R'"/>
+                    <to variable="state"/>
+                  </copy>
+                  <copy>
+                    <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                    <to variable="errorMsg"/>
+                  </copy>
+                </assign>
+                <!--   <assign name="TransBlankUpdateMessage">
+                  <bpelx:annotation>
+                    <bpelx:pattern>transformation</bpelx:pattern>
+                  </bpelx:annotation>
+                  <copy>
+                    <from expression="ora:processXSLT('TransBlankUpdateMessage.xsl',bpws:getVariableData('InvokeUpdateDBIV','InterfaceBufferCollection'))"/>
+                    <to variable="InvokeUpdateDBIV"
+                        part="InterfaceBufferCollection"/>
+                  </copy>
+                </assign>
+                <assign name="AsgAccountMessageToDbWriteBack">
+                  <copy>
+                    <from variable="id"/>
+                    <to variable="InvokeUpdateDBIV"
+                        part="InterfaceBufferCollection"
+                        query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:id"/>
+                  </copy>
+                  <copy>
+                    <from variable="created"/>
+                    <to variable="InvokeUpdateDBIV"
+                        part="InterfaceBufferCollection"
+                        query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:created"/>
+                  </copy>
+                  <copy>
+                    <from variable="rawMessage"/>
+                    <to variable="InvokeUpdateDBIV"
+                        part="InterfaceBufferCollection"
+                        query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:payload"/>
+                  </copy>
+                  <copy>
+                    <from variable="interfaceId"/>
+                    <to variable="InvokeUpdateDBIV"
+                        part="InterfaceBufferCollection"
+                        query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:interfaceId"/>
+                  </copy>
+                  <copy>
+                    <from variable="referenceId"/>
+                    <to variable="InvokeUpdateDBIV"
+                        part="InterfaceBufferCollection"
+                        query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:referenceId"/>
+                  </copy>
+                  <copy>
+                    <from variable="state"/>
+                    <to variable="InvokeUpdateDBIV"
+                        part="InterfaceBufferCollection"
+                        query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:state"/>
+                  </copy>
+                  <copy>
+                    <from expression="ora:getCompositeInstanceId()"/>
+                    <to variable="InvokeUpdateDBIV"
+                        part="InterfaceBufferCollection"
+                        query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:updatedBy"/>
+                  </copy>
+                  <bpelx:remove>
+                    <bpelx:target variable="InvokeUpdateDBIV"
+                                  part="InterfaceBufferCollection"
+                                  query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:lastUpdated"/>
+                  </bpelx:remove>
+                </assign>
+                <invoke name="InvokeUpdateDB"
+                        partnerLink="Update_Interface_Buffer"
+                        portType="ns3:Update_Interface_Buffer_ptt"
+                        operation="update" inputVariable="InvokeUpdateDBIV"/>  -->
+              </sequence>
+            </catchAll>
+          </faultHandlers>
+          <sequence name="Sequence_1">
+            <assign name="AsgAccountToString">
+              <copy>
+                <from part="TomamPollingVCollection" query="/ns8:TomamPollingVCollection/ns8:TomamPollingV[bpws:getVariableData('nProcessed') + 1]/ns8:payload" variable="ReceiveAccounts_receive_InputVariable"/>
+                <to variable="rawMessage"/>
+              </copy>
+              <copy>
+                <from part="TomamPollingVCollection" query="/ns8:TomamPollingVCollection/ns8:TomamPollingV[bpws:getVariableData('nProcessed') + 1]/ns8:id" variable="ReceiveAccounts_receive_InputVariable"/>
+                <to variable="id"/>
+              </copy>
+              <copy>
+                <from part="TomamPollingVCollection" query="/ns8:TomamPollingVCollection/ns8:TomamPollingV[bpws:getVariableData('nProcessed') + 1]/ns8:interfaceId" variable="ReceiveAccounts_receive_InputVariable"/>
+                <to variable="interfaceId"/>
+              </copy>
+              <copy>
+                <from part="TomamPollingVCollection" query="/ns8:TomamPollingVCollection/ns8:TomamPollingV[bpws:getVariableData('nProcessed') + 1]/ns8:referenceId" variable="ReceiveAccounts_receive_InputVariable"/>
+                <to variable="referenceId"/>
+              </copy>
+              <copy>
+                <from part="TomamPollingVCollection" query="/ns8:TomamPollingVCollection/ns8:TomamPollingV[bpws:getVariableData('nProcessed') + 1]/ns8:created" variable="ReceiveAccounts_receive_InputVariable"/>
+                <to variable="created"/>
+              </copy>
+            </assign>
+            <bpelx:exec name="ReplaceUnsafeCharactersInRawMessage" language="java" version="1.3">
+              <![CDATA[try {                             
+    setVariableData("parsedRawMessage", ((String)getVariableData("rawMessage")).replaceAll("&", "&amp;") );       
+    } catch (Exception e) {                          
+        setVariableData("javaException", e.getMessage() );                   
+    }]]>
+            </bpelx:exec>
+            <switch name="SwitchJavaException">
+              <case condition="bpws:getVariableData('javaException')  != ''">
+                <bpelx:annotation>
+                  <bpelx:pattern>Java Exception</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_8">
+                  <assign name="AsgFaultAttributes">
+                    <copy>
+                      <from variable="javaException"/>
+                      <to variable="runtimeFault" part="summary"/>
+                    </copy>
+                    <copy>
+                      <from variable="rawMessage"/>
+                      <to variable="runtimeFault" part="detail"/>
+                    </copy>
+                  </assign>
+                  <throw name="ThrowRuntimeFault" faultName="bpelx:runtimeFault" faultVariable="runtimeFault"/>
+                </sequence>
+              </case>
+              <otherwise>
+                <empty name="DoNothing"/>
+              </otherwise>
+            </switch>
+            <assign name="AssignAccountToSend">
+              <copy>
+                <from expression="ora:parseEscapedXML(bpws:getVariableData('parsedRawMessage'))"/>
+                <to variable="accountPubRequest"/>
+              </copy>
+            </assign>
+            <switch name="SwitchActionCode">
+              <case condition=" bpws:getVariableData('accountPubRequest','/ns5:accountPubRequest/ns5:actionCode')= bpws:getVariableData('deleteAccountActionCode')">
+                <bpelx:annotation>
+                  <bpelx:pattern>Delete Action Code</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_5">
+                  <assign name="TransAccountReqToDeleteAccount">
+                    <bpelx:annotation>
+                      <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                      <from expression="ora:processXSLT('TransToTOMAccountEvent.xsl',bpws:getVariableData('accountPubRequest'))"/>
+                      <to variable="InvDeleteAccount_DeleteAccount_InputVariable" part="DeleteAccountRequest"/>
+                    </copy>
+                  </assign>
+                  <invoke name="InvDeleteAccount" partnerLink="TOM" portType="ns2:TOM" operation="DeleteAccount" inputVariable="InvDeleteAccount_DeleteAccount_InputVariable" outputVariable="InvDeleteAccount_DeleteAccount_OutputVariable"/>
+                  <assign name="AsgResponseCode">
+                    <copy>
+                      <from variable="InvDeleteAccount_DeleteAccount_OutputVariable" part="DeleteAccountResponse" query="/ns2:DeleteAccountResponse/@returnCode"/>
+                      <to variable="tomResponseCode"/>
+                    </copy>
+                  </assign>
+                </sequence>
+              </case>
+              <otherwise>
+                <sequence name="Sequence_4">
+                  <assign name="TransAccountReqToCreateAccount">
+                    <bpelx:annotation>
+                      <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                      <from expression="ora:processXSLT('TransToTOMAccountEvent.xsl',bpws:getVariableData('accountPubRequest'))"/>
+                      <to variable="InvCreateAccount_CreateAccount_InputVariable" part="CreateAccountRequest"/>
+                    </copy>
+                  </assign>
+                  <invoke name="InvCreateAccount" partnerLink="TOM" portType="ns2:TOM" operation="CreateAccount" inputVariable="InvCreateAccount_CreateAccount_InputVariable" outputVariable="InvCreateAccount_CreateAccount_OutputVariable"/>
+                  <assign name="AsgResponseCode">
+                    <copy>
+                      <from variable="InvCreateAccount_CreateAccount_OutputVariable" part="CreateAccountResponse" query="/ns2:CreateAccountResponse/@returnCode"/>
+                      <to variable="tomResponseCode"/>
+                    </copy>
+                  </assign>
+                </sequence>
+              </otherwise>
+            </switch>
+            <switch name="SwitchSuccessFail">
+              <case condition="bpws:getVariableData('tomResponseCode') = '0'">
+                <bpelx:annotation>
+                  <bpelx:pattern>TOM Success</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_11">
+                  <assign name="IncrementSent">
+                    <copy>
+                      <from expression="bpws:getVariableData('nSent') + 1"/>
+                      <to variable="nSent"/>
+                    </copy>
+                  </assign>
+                  <assign name="AsgState-COMPLETE-Release">
+                    <copy>
+                      <from expression="'C'"/>
+                      <to variable="state"/>
+                    </copy>
+                    <copy>
+                      <from expression="'true'"/>
+                      <to variable="releaseSequence"/>
+                    </copy>
+                  </assign>
+                </sequence>
+              </case>
+              <otherwise>
+                <sequence name="Sequence_12">
+                  <assign name="IncrementError">
+                    <copy>
+                      <from expression="bpws:getVariableData('nError') + 1"/>
+                      <to variable="nError"/>
+                    </copy>
+                  </assign>
+                  <assign name="AsgState-WARNING-Release">
+                    <copy>
+                      <from expression="'W'"/>
+                      <to variable="state"/>
+                    </copy>
+                    <copy>
+                      <from expression="'true'"/>
+                      <to variable="releaseSequence"/>
+                    </copy>
+                  </assign>
+                </sequence>
+              </otherwise>
+            </switch>
+          </sequence>
+        </scope>
+        <switch name="SwitchSequenceRelease">
+          <case condition="bpws:getVariableData('releaseSequence') = 'true'">
+            <bpelx:annotation>
+              <bpelx:pattern>Release Sequence</bpelx:pattern>
+            </bpelx:annotation>
+            <sequence name="Sequence_2">
+              <assign name="AsgCorrelationId">
+                <copy>
+                  <from variable="accountPubRequest" query="/ns5:accountPubRequest/ns5:eaiHeader/ns13:tracingId"/>
+                  <to variable="InvSequenceReleaser_releaseSequence_InputVariable" part="payload" query="/ns14:releaseSequenceRequest/ns14:correlationID"/>
+                </copy>
+                <copy>
+                  <from variable="accountPubRequest" query="/ns5:accountPubRequest/ns5:eaiHeader"/>
+                  <to variable="InvSequenceReleaser_releaseSequence_InputVariable" part="payload" query="/ns14:releaseSequenceRequest/ns14:eaiHeader"/>
+                </copy>
+              </assign>
+              <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns6:SequenceReleaser" operation="releaseSequence" inputVariable="InvSequenceReleaser_releaseSequence_InputVariable"/>
+            </sequence>
+          </case>
+          <otherwise>
+            <empty name="DoNothing"/>
+          </otherwise>
+        </switch>
+        <sequence name="Sequence_10">
+          <assign name="TransBlankUpdateSuccessMessage">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:processXSLT('TransBlankUpdateMessage.xsl',bpws:getVariableData('InvokeUpdateDBIV','InterfaceBufferCollection'))"/>
+              <to part="InterfaceBufferCollection" variable="InvokeUpdateDBIV"/>
+            </copy>
+          </assign>
+          <assign name="AsgSuccessMessageToDbWriteBack">
+            <copy>
+              <from variable="id"/>
+              <to part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:id" variable="InvokeUpdateDBIV"/>
+            </copy>
+            <copy>
+              <from variable="created"/>
+              <to part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:created" variable="InvokeUpdateDBIV"/>
+            </copy>
+            <copy>
+              <from variable="rawMessage"/>
+              <to part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:payload" variable="InvokeUpdateDBIV"/>
+            </copy>
+            <copy>
+              <from variable="interfaceId"/>
+              <to part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:interfaceId" variable="InvokeUpdateDBIV"/>
+            </copy>
+            <copy>
+              <from variable="referenceId"/>
+              <to part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:referenceId" variable="InvokeUpdateDBIV"/>
+            </copy>
+            <copy>
+              <from variable="state"/>
+              <to part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:state" variable="InvokeUpdateDBIV"/>
+            </copy>
+            <copy>
+              <from expression="ora:getCompositeInstanceId()"/>
+              <to part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:updatedBy" variable="InvokeUpdateDBIV"/>
+            </copy>
+            <bpelx:remove>
+              <bpelx:target part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:lastUpdated" variable="InvokeUpdateDBIV"/>
+            </bpelx:remove>
+            <copy>
+              <from variable="errorMsg"/>
+              <to part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:errorMessage" variable="InvokeUpdateDBIV"/>
+            </copy>
+          </assign>
+          <invoke name="InvokeUpdateDB" partnerLink="Update_Interface_Buffer" portType="ns3:Update_Interface_Buffer_ptt" operation="update" inputVariable="InvokeUpdateDBIV"/>
+        </sequence>
+        <assign name="IncrementProcessed">
+          <copy>
+            <from expression="bpws:getVariableData('nProcessed') + 1 "/>
+            <to variable="nProcessed"/>
+          </copy>
+          <copy>
+            <from expression="''"/>
+            <to variable="errorMsg"/>
+          </copy>
+        </assign>
+      </sequence>
+    </while>
+    <bpelx:exec name="SetCompletedTitle" language="java" version="1.3">
+      <![CDATA[setCompositeInstanceTitle("Completed R:P:E:F=" + getVariableData("nReceived") + ":" + getVariableData("nProcessed") + ":" + getVariableData("nError") + ":" + getVariableData("nFailure"));]]>
+    </bpelx:exec>
+    <switch name="SwitchFailureRate">
+      <case condition="bpws:getVariableData('nProcessed') = bpws:getVariableData('nFailure')">
+        <bpelx:annotation>
+          <bpelx:pattern>All Accounts Failed</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_7">
+          <assign name="AsgHealthCheckParams">
+            <copy>
+              <from expression="'doHealthCheck'"/>
+              <to variable="RequestHealthCheckIV" part="payload" query="/ns4:InterfaceManagerProcessRequest/ns4:operation"/>
+            </copy>
+            <copy>
+              <from expression="'TOMAM'"/>
+              <to variable="RequestHealthCheckIV" part="payload" query="/ns4:InterfaceManagerProcessRequest/ns4:interfaceConfig/ns7:id"/>
+            </copy>
+          </assign>
+          <invoke name="RequestHealthCheck" partnerLink="InterfaceManager" portType="ns4:InterfaceManager" operation="process" inputVariable="RequestHealthCheckIV" outputVariable="RequestHealthCheckOV"/>
+          <terminate name="Terminate"/>
+        </sequence>
+      </case>
+      <otherwise>
+        <empty name="DoNothing"/>
+      </otherwise>
+    </switch>
+  </sequence>
+</process>

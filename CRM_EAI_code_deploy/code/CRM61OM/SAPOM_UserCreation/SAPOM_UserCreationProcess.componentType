@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="SAPOM_UserCreation.wsdl" name="SAPOM_UserCreation">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.interface(SAPOM_UserCreation)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.interface(SAPOM_UserCreationCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="EAI.SRV.CM.SAP.72_UpdateUserContactRef.wsdl" name="SI_CreateContacts_OB_Async">
+        <interface.wsdl interface="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation#wsdl.interface(SI_CreateContacts_OB_Async)"/>
+    </reference>
+</componentType>

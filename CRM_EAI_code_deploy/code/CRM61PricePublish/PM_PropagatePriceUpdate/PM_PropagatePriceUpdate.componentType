@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="PM_PropagatePriceUpdate.wsdl" name="anchorToPropagatePriceUpdate">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.interface(PM_PropagatePriceUpdate)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.interface(PM_PropagatePriceUpdateCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdatesToCRM/CCRMPM_PropagatePriceUpdatesToCRM.wsdl" name="CCRMPM_PropagatePriceUpdatesToCRM">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM#wsdl.interface(CCRMPM_PropagatePriceUpdatesToCRM)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM#wsdl.interface(CCRMPM_PropagatePriceUpdatesToCRMCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSPM_PropagatePriceUpdatesToCS/CSPM_PropagatePriceUpdatesToCS.wsdl" name="CSPM_PropagatePriceUpdatesToCS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.interface(CSPM_PropagatePriceUpdatesToCS)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.interface(CSPM_PropagatePriceUpdatesToCSCallback)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,47 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser"
+     xmlns:osns="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:fixns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" location="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+         location="EAI.MSG.CS.OM.170_OrderStatus.xsd"/>
+    <message name="FLOrderStatus">
+        <part name="parameter" element="fixns:EBCDICMessage"/>
+    </message>
+    <message name="OrderStatus">
+        <part name="parameter" element="osns:CSorderStatus"/>
+    </message>
+    <portType name="ParseCSOrderStatus">
+        <operation name="parseOrderStatus">
+            <input message="tns:FLOrderStatus"/>
+            <output message="tns:OrderStatus"/>
+        </operation>
+    </portType>
+    <binding name="ParseCSOrderStatusSOAP" type="tns:ParseCSOrderStatus">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="parseOrderStatus">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ParseCSOrderStatus">
+        <port name="parseOrderStatus" binding="tns:ParseCSOrderStatusSOAP">
+            <soap:address location="http://10.2.136.166:8888/CCRMOP-ParseOrderStatus-context-root/parseOrderStatus"/>
+        </port>
+    </service>
+</definitions>

@@ -1,0 +1,94 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" elementFormDefault="qualified"
+     attributeFormDefault="unqualified" version="1.00">
+      <xsd:include schemaLocation="EAI.MSG.CS.UOM_CommonTypes.xsd"/>
+    <xsd:element name="fixedLengthUserOrderRequest" type="xsdLocal:CSFixedLengthUserOrderRequest"/>
+    <xsd:complexType name="CSFixedLengthUserOrderRequest">
+        <xsd:sequence>
+            <xsd:element name="eaiHeader" type="xsdLocal:_CSEaiHeader"/>
+            <xsd:element name="basicResponse" type="xsdLocal:_CSBasicResponse"/>
+            <xsd:element name="logicalCountry" type="xsdLocal:_CSCountryCode"/>
+            <xsd:element name="message" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+   
+    <xsd:simpleType name="_CSCountryCode">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>FR</content>
+                    <comment>Country code for France</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="_CSBasicResponse">
+        <xsd:sequence>
+            <xsd:element name="response" type="xsdLocal:_CSResponse"/>
+            <xsd:element name="responseCode" type="xsdLocal:_CSResponseCode"/>
+            <xsd:element name="responseMessage" type="xsdLocal:_CSMessage"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="_CSResponseCode">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>00203-EAI-INVALID ACTION CODE</content>
+                    <comment>In valid action code</comment>
+                </gcap-sa:Example>
+                <gcap-sa:Example>
+                    <content>00202-EAI-INVALID MESSAGE CONTENT</content>
+                    <comment>Invalid message content provided by service client</comment>
+                </gcap-sa:Example>
+                <gcap-sa:Example>
+                    <content>00401-EAI-TIMEOUT ERROR</content>
+                    <comment>Timeout error returned if the service cannot respond within a
+              specified time.</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="250"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="_CSResponse">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>non-zero</content>
+                    <comment>Failure</comment>
+                </gcap-sa:Example>
+                <gcap-sa:Example>
+                    <content>0</content>
+                    <comment>Success</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:token">
+            <xsd:enumeration value="0"/>
+            <xsd:enumeration value="1"/>
+            <xsd:enumeration value=""/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="_CSMessage">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content/>
+                    <comment/>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="4000"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+   </xsd:schema>

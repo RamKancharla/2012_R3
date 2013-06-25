@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ATHOM_POLLING_VW.wsdl" name="ATHOM_POLLING_VW">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/ATHOM_POLLING_VW/#wsdl.interface(ATHOM_POLLING_VW_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl" name="OM_ManageOrderLineStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatusCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="UpdateInterfaceBuffer.wsdl" name="UpdateInterfaceBuffer">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateInterfaceBuffer/#wsdl.interface(UpdateInterfaceBuffer_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="AdpOrderCacheServ.wsdl" name="AdpOrderCacheServ">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheServ/#wsdl.interface(AdpOrderCacheServ_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="SEASIBELUserManagementImpRef.wsdl" name="SEASiebelIntegrationWSService">
+        <interface.wsdl interface="http://impl.services.ail.athena.thomsonreuters.com/#wsdl.interface(SEASiebelIntegrationWS)"/>
+    </reference>
+</componentType>

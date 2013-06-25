@@ -1,0 +1,32 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGOM_OrderManager" revision="1.0" state="on">
+    <import location="CPFGOM_OrderManager.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager.wsdl" importType="wsdl"/>
+    <service name="anchorToCPFGOMOrderManager" ui:wsdlLocation="CPFGOM_OrderManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager#wsdl.interface(CPFGOM_OrderManager)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager#wsdl.endpoint(anchorToCPFGOMOrderManager/CPFGOM_OrderManager_pt)">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">NEVER</property>
+        </binding.ws>
+    </service>
+    <component name="CPFGOM_OrderManager">
+        <implementation.bpel src="CPFGOM_OrderManager.bpel"/>
+        
+        
+    </component>
+    <reference name="CPFGOM_UserOrderManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager#wsdl.interface(CPFGOM_UserOrderManager)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager#wsdl.endpoint(CPFGOM_UserOrderManager/CPFGOM_UserOrderManager)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>CPFGOM_OrderManager/CPFGOM_UserOrderManager</source.uri>
+        <target.uri>CPFGOM_UserOrderManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>anchorToCPFGOMOrderManager</source.uri>
+        <target.uri>CPFGOM_OrderManager/anchorToCPFGOMOrderManager1</target.uri>
+    </wire>
+</composite>

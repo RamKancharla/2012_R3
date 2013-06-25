@@ -1,0 +1,19 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="CCRMOM_SubmitUserOrderRequestProcessRequest">
+		<complexType>
+			<sequence>
+				<element name="input" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="CCRMOM_SubmitUserOrderRequestProcessResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

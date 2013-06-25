@@ -1,0 +1,45 @@
+<definitions
+     name="CCRMOM_RouteToDispatcher"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <!--schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" schemaLocation="CCRMOM_RouteToDispatcher.xsd"/>
+        </schema-->
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CCRM.OM.138_OrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMOM_RouteToDispatcherRequestMessage">
+        <part name="payload" element="ns1:orderRequest"/>
+    </message>
+    <message name="CCRMOM_RouteToDispatcherResponseMessage">
+        <part name="payload" element="ns1:orderRequest"/>
+    </message>
+    <portType name="CCRMOM_RouteToDispatcher">
+        <operation name="initiate">
+            <input message="client:CCRMOM_RouteToDispatcherRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMOM_RouteToDispatcherCallback">
+        <operation name="onResult">
+            <input message="client:CCRMOM_RouteToDispatcherResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOM_RouteToDispatcher">
+        <plnk:role name="CCRMOM_RouteToDispatcherProvider">
+            <plnk:portType name="client:CCRMOM_RouteToDispatcher"/>
+        </plnk:role>
+        <plnk:role name="CCRMOM_RouteToDispatcherRequester">
+            <plnk:portType name="client:CCRMOM_RouteToDispatcherCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

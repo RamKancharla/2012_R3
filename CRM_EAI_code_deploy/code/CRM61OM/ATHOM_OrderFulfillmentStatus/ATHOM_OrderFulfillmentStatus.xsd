@@ -1,0 +1,19 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="ATHOM_OrderFulfillmentStatusProcessRequest">
+		<complexType>
+			<sequence>
+				<element name="input" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="ATHOM_OrderFulfillmentStatusProcessResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

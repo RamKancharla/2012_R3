@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.XSD.007_NillableProductTypes.xsd
+	* Type:       	XSD Schema
+	* Description: The schema used for Nillable Product Types
+	*
+	* Change History
+	* Version     Date       Author             Description Of Change
+	*
+	* 0.1         19/12/07   Rob Billington     Initial version
+	**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/NillableProductTypes"
+	xmlns:gcap-cpt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonProductTypes"
+	xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableProductTypes"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.1">
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonProductTypes"
+		schemaLocation="./EAI.XSD.007_CommonProductTypes.xsd" />
+	<xsd:simpleType name="ProductID">
+		<xsd:union
+			memberTypes="gcap-cpt:ProductID local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AttributeID">
+		<xsd:union
+			memberTypes="gcap-cpt:AttributeID local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ValueID">
+		<xsd:union
+			memberTypes="gcap-cpt:ValueID local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ValueName">
+		<xsd:union
+			memberTypes="gcap-cpt:ValueName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="GlobalPLI">
+		<xsd:union
+			memberTypes="gcap-cpt:GlobalPLI local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductName">
+		<xsd:union
+			memberTypes="gcap-cpt:ProductName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductDescription">
+		<xsd:union
+			memberTypes="gcap-cpt:ProductDescription local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductStatus">
+		<xsd:union
+			memberTypes="gcap-cpt:ProductStatus local:EmptyString ">
+		</xsd:union>
+        </xsd:simpleType>
+	<xsd:simpleType name="AttributeName">
+		<xsd:union
+			memberTypes="gcap-cpt:AttributeName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductType">
+		<xsd:union
+			memberTypes="gcap-cpt:ProductType local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ConfigurationDescription">
+		<xsd:union
+			memberTypes="gcap-cpt:ConfigurationDescription local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="PermissioningSystem">
+		<xsd:union
+			memberTypes="gcap-cpt:PermissioningSystem local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+        
+        <xsd:simpleType name="EmptyString">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="0" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

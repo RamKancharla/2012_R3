@@ -1,0 +1,37 @@
+<definitions
+     name="TOMOM_UpdateOrderRequestValidatorStub"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub"
+    >
+    <types>
+        
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.TOM.OM.239_UpdateOrderResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub"
+                 schemaLocation="TOMOM_UpdateOrderRequestValidatorStub.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TOMOM_UpdateOrderRequestValidatorStubRequestMessage">
+        <part name="payload" element="ns1:orderResponseStatus"/>
+    </message>
+
+    <portType name="TOMOM_UpdateOrderRequestValidatorStub">
+        <operation name="initiate">
+            <input message="client:TOMOM_UpdateOrderRequestValidatorStubRequestMessage"/>
+        </operation>
+    </portType>
+
+    <plnk:partnerLinkType name="TOMOM_UpdateOrderRequestValidatorStub">
+        <plnk:role name="TOMOM_UpdateOrderRequestValidatorStubProvider">
+            <plnk:portType name="client:TOMOM_UpdateOrderRequestValidatorStub"/>
+        </plnk:role>
+
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSCM_ContactManager.wsdl" name="CSCM_ContactManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.interface(CSCM_ContactManager)" callbackInterface="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.interface(CSCM_ContactManagerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="XREF_DATA.wsdl" name="XREF_DATA">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/XREF_DATA/#wsdl.interface(XREF_DATA_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="TransformToCSFormatAccountContactPublish.wsdl" name="TransformToCSFormatAccountContactPublish">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter#wsdl.interface(TransformAccountContactRequest)"/>
+    </reference>
+    <reference ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSRef.wsdl" name="SubmitOrderToCOMPASS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+    </reference>
+</componentType>

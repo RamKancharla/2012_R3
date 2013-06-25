@@ -1,0 +1,14 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="QuoteReference" xmlns="http://xmlns.oracle.com/dvm">
+<description>Quote reference data
+
+Used by:
+CCRMQM_SubmitQuoteInRs
+TOM_SubmitQuoteToTOM
+</description><columns><column name="EAIValue"/><column name="TOMPhase"/><column name="SiebelValue"/><column name="TOMInterfacePhase"/><column name="TOMCategory"/></columns>
+<rows><row><cell>1</cell><cell>1</cell><cell>Error</cell><cell>1</cell><cell>1</cell></row>
+<row><cell>0</cell><cell>0</cell><cell>Submitted</cell><cell>0</cell><cell>0</cell></row>
+<!--row><cell>New</cell><cell>QUOTE</cell><cell>In Progress</cell><cell>QUOTE</cell><cell>Quote</cell></row-->
+<row><cell>ORDER</cell><cell>QUOTE</cell><cell>Approved</cell><cell>ORDER</cell><cell>Quote</cell></row>
+<row><cell>New</cell><cell>QUOTE</cell><cell>Awaiting Approval</cell><cell>QUOTE</cell><cell>Quote</cell></row>
+</rows></dvm>

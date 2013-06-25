@@ -1,0 +1,138 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Oct 11 15:19:33 GMT+05:30 2011
+  Author:  phani.kumar
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ELMOM_EventManager" targetNamespace="http://xmlns.oracle.com/ELMOM_EventManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://xmlns.oracle.com/ELMOM_EventManager" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/top/InsertELMOMBuffer" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/InsertELMOMBuffer/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61OM/ELMOM_EventManager/InsertIntoInterfaceBuffer"
+         xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/top/InsertIntoInterfaceBuffer"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:ELMOM_EventManager" myRole="ELMOM_EventManagerProvider" partnerRole="ELMOM_EventManagerRequester"/>
+        <partnerLink name="InsertIntoInterfaceBuffer"
+                     partnerRole="InsertIntoInterfaceBuffer_role"
+                     partnerLinkType="ns4:InsertIntoInterfaceBuffer_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="inputVariable" messageType="client:ELMOM_EventManagerRequestMessage"/>
+        <variable name="outputVariable" messageType="client:ELMOM_EventManagerResponseMessage"/>
+        <variable name="ContextId" type="xsd:string"/>
+        <variable name="ELMTransFormat" messageType="client:ELMOMMessageType"/>
+        <variable name="InsertBuffer_insert_InputVariable"
+                  messageType="ns4:InterfaceBufferCollection_msg"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="SetErrorContext" language="java" version="1.3">
+                <![CDATA[setCompositeInstanceTitle("ErrorInProcessingOrder " + getVariableData("ContextId"));]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ELMOM_EventManager.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:ELMOM_EventManager" operation="initiate" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="GetContextId">
+            <copy>
+                <from variable="inputVariable" part="payload"
+                      query="/ns1:elmOrderRequest/ns1:orderHeader/ns1:OrderNumber"/>
+                <to variable="ContextId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="SetContext" language="java" version="1.3">
+            <![CDATA[setCompositeInstanceTitle("Order: " + getVariableData("ContextId"));]]>
+        </bpelx:exec>
+        <assign name="TransELMFormat">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('ELMOM_Trans.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="ELMTransFormat" part="ELMOMMessageType"/>
+            </copy>
+        </assign>
+        <switch name="SwitchChkOLICount">
+            <case condition="count(bpws:getVariableData('ELMTransFormat','ELMOMMessageType','/ELMOMMessageType/ns1:orderLineItem'))>0">
+                <sequence name="SeqInsertIntoBufferTable">
+                    <assign name="AssignVariables">
+                        <copy>
+                            <from expression='"ELMOM"'/>
+                            <to part="InterfaceBufferCollection"
+                                query="/ns5:InterfaceBufferCollection/ns5:InterfaceBuffer/ns5:interfaceId"
+                                variable="InsertBuffer_insert_InputVariable"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getContentAsString(bpws:getVariableData('ELMTransFormat','ELMOMMessageType','/ELMOMMessageType'))"/>
+                            <to part="InterfaceBufferCollection"
+                                query="/ns5:InterfaceBufferCollection/ns5:InterfaceBuffer/ns5:payload"
+                                variable="InsertBuffer_insert_InputVariable"/>
+                        </copy>
+                        <copy>
+                            <from variable="ELMTransFormat"
+                                  part="ELMOMMessageType"
+                                  query="/ELMOMMessageType/ns1:orderHeader/ns1:OrderNumber"/>
+                            <to part="InterfaceBufferCollection"
+                                query="/ns5:InterfaceBufferCollection/ns5:InterfaceBuffer/ns5:referenceId"
+                                variable="InsertBuffer_insert_InputVariable"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCompositeInstanceId()"/>
+                            <to part="InterfaceBufferCollection"
+                                query="/ns5:InterfaceBufferCollection/ns5:InterfaceBuffer/ns5:createdBy"
+                                variable="InsertBuffer_insert_InputVariable"/>
+                        </copy>
+                        <copy>
+                            <from expression='"N"'/>
+                            <to part="InterfaceBufferCollection"
+                                query="/ns5:InterfaceBufferCollection/ns5:InterfaceBuffer/ns5:state"
+                                variable="InsertBuffer_insert_InputVariable"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InsertBuffer"
+                            portType="ns4:InsertIntoInterfaceBuffer_ptt"
+                            inputVariable="InsertBuffer_insert_InputVariable"
+                            partnerLink="InsertIntoInterfaceBuffer"
+                            operation="insert"/>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

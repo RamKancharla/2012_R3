@@ -1,0 +1,44 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMTF_QuoteRequestValidator" revision="1.0" state="on">
+    <import location="CCRMTF_QuoteRequestValidator.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageQuote/TF_ManageQuote.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CCRMTF_ValidateQuoteRequestStub" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMTF_ValidateQuoteRequestStub/CCRMTF_ValidateQuoteRequestStub.wsdl" importType="wsdl"/>
+    <service name="anchorToQuoteRequestValidator" ui:wsdlLocation="CCRMTF_QuoteRequestValidator.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF#wsdl.interface(CCRMTF_QuoteRequestValidator)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF#wsdl.endpoint(CCRMTF_QuoteRequestValidator/CCRMTF_QuoteRequestValidator)"/>
+    </service>
+    <component name="CCRMTF_QuoteRequestValidator">
+        <implementation.bpel src="CCRMTF_QuoteRequestValidator.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMTF_ValidateQuoteRequestStub" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMTF_ValidateQuoteRequestStub/CCRMTF_ValidateQuoteRequestStub.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMTF_ValidateQuoteRequestStub#wsdl.interface(CCRMTF_ValidateQuoteRequestStub)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMTF_ValidateQuoteRequestStub#wsdl.endpoint(CCRMTF_ValidateQuoteRequestStub/CCRMTF_ValidateQuoteRequestStub)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMTF_ValidateQuoteRequestStub/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="TF_ManageQuote" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageQuote/TF_ManageQuote.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote#wsdl.interface(TF_ManageQuote)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote#wsdl.interface(TF_ManageQuoteCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote#wsdl.endpoint(TF_ManageQuote/TF_ManageQuote)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageQuote/ManageQuoteAnchor?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote#wsdl.endpoint(TF_ManageQuote/TF_ManageQuoteCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToQuoteRequestValidator</source.uri>
+        <target.uri>CCRMTF_QuoteRequestValidator/anchorToQuoteRequestValidator</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMTF_QuoteRequestValidator/TF_ManageQuote</source.uri>
+        <target.uri>TF_ManageQuote</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMTF_QuoteRequestValidator/CCRMTF_ValidateQuoteRequestStub</source.uri>
+        <target.uri>CCRMTF_ValidateQuoteRequestStub</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

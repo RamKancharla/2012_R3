@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.ATH.OM.301_OrderRequest.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:	Canonical Order Schema document for athena permissioning.
+*
+*
+* Change History
+* Version	Date		Author			Description Of Change
+* =======	========	==================	===============================
+*  0.01		29/07/10	Sreeja			Initial Version
+***************************************************************************************************************************************************************************/
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement" xmlns:cot="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.1">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+        <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:element name="ATHOrdRequest" type="xsdLocal:AthOrderRequest"/>
+	<xsd:complexType name="AthOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="orderHeader" type="cot:ATHOrderRequest"/>
+			<xsd:element name="OrderLine" type="cot:ATHUserLineItem" maxOccurs="unbounded"/>			
+		</xsd:sequence>
+	</xsd:complexType>	
+</xsd:schema>
+	

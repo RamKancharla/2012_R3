@@ -1,0 +1,24 @@
+<adapter-config name="UpdateOrderCache" adapter="Database Adapter" wsdlLocation="UpdateOrderCache.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/OM" UIConnectionName="ukcqeai05_EAIOWNER" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//eaidev2:1521/EAIDB05"/>
+      <property name="UserName" value="EAIOWNER"/>
+      <property name="Password" value="96DBEA4CD4A3695EF14090D8DBD10ADC9A31B0C43B52175A"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="UpdateOrderCache_ptt" operation="update">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="UpdateOrderCache.OrderCache"/>
+      <property name="DmlType" value="update"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="UpdateOrderCache-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

@@ -1,0 +1,91 @@
+
+<messages><dsIn><part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="payload"><assertExecuteWatchStateless xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/OrderLineStatusWebDAVDecisionService" name="OrderLineStatusWebDAVDecisionService" xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/OrderLineStatusWebDAVDecisionService">
+   <tns:configURL>http://crm20:7778/orabpel/ccrmasync/OM_ManageOrderLineStatus/6.6.2/decisionservices.decs</tns:configURL>
+   <tns:bpelInstance>
+      <bpelpm:processId xmlns:bpelpm="http://xmlns.oracle.com/bpel">OM_ManageOrderLineStatus</bpelpm:processId>
+      <bpelpm:processVersion xmlns:bpelpm="http://xmlns.oracle.com/bpel">6.6.2</bpelpm:processVersion>
+      <bpelpm:domainId xmlns:bpelpm="http://xmlns.oracle.com/bpel">ccrmasync</bpelpm:domainId>
+      <bpelpm:processURL xmlns:bpelpm="http://xmlns.oracle.com/bpel">http://crm20:7778/orabpel/ccrmasync/OM_ManageOrderLineStatus/6.6.2</bpelpm:processURL>
+      <bpelpm:instanceId xmlns:bpelpm="http://xmlns.oracle.com/bpel">230142</bpelpm:instanceId>
+      <bpelpm:conversationId xmlns:bpelpm="http://xmlns.oracle.com/bpel"/>
+   </tns:bpelInstance>
+   <tns:assertList>
+      <xsdLocal:orderLineRepository xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules">
+         <xsdLocal:OrderLineStatusFacts>
+            <xsdLocal:messageHeaderActionCode>Billing</xsdLocal:messageHeaderActionCode>
+            <xsdLocal:CRMOLIId>1-5K8SDP</xsdLocal:CRMOLIId>
+            <xsdLocal:businessCase>New</xsdLocal:businessCase>
+            <xsdLocal:actionCode>Add</xsdLocal:actionCode>
+            <xsdLocal:rootItemId>1-5K8SDP</xsdLocal:rootItemId>
+            <xsdLocal:itemNumber>000230</xsdLocal:itemNumber>
+            <xsdLocal:ILA/>
+            <xsdLocal:userNumber/>
+            <xsdLocal:userId/>
+            <xsdLocal:QUID/>
+            <xsdLocal:orderLinestatus>Billed</xsdLocal:orderLinestatus>
+            <xsdLocal:orderPermissionStatus>Complete</xsdLocal:orderPermissionStatus>
+            <xsdLocal:requestStatus/>
+            <xsdLocal:assetIntegrationId>1-5K8SDI</xsdLocal:assetIntegrationId>
+            <xsdLocal:billingIntegrationFlag>Y</xsdLocal:billingIntegrationFlag>
+            <xsdLocal:permissioningIntegrationFlag>Y</xsdLocal:permissioningIntegrationFlag>
+            <xsdLocal:permissioningSystem>NONE</xsdLocal:permissioningSystem>
+            <xsdLocal:manualPermissioningRequired>N</xsdLocal:manualPermissioningRequired>
+            <xsdLocal:STB>N</xsdLocal:STB>
+            <xsdLocal:freeTrailFlag>N</xsdLocal:freeTrailFlag>
+            <xsdLocal:manualPermissioningComplete>Y</xsdLocal:manualPermissioningComplete>
+            <xsdLocal:autoPermissioningComplete>Y</xsdLocal:autoPermissioningComplete>
+            <xsdLocal:nextAction1/>
+            <xsdLocal:nextAction2/>
+            <xsdLocal:billingStatusToBeSent/>
+            <xsdLocal:orderPermissionStatusToBeSent/>
+            <xsdLocal:SID/>
+            <xsdLocal:userIdType>Xtra Id</xsdLocal:userIdType>
+            <xsdLocal:billingPlatform>SAP</xsdLocal:billingPlatform>
+            <xsdLocal:field1/>
+            <xsdLocal:field2/>
+            <xsdLocal:field3/>
+         </xsdLocal:OrderLineStatusFacts>
+      </xsdLocal:orderLineRepository>
+   </tns:assertList>
+</assertExecuteWatchStateless>
+</part></dsIn><dsOut><part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="payload"><ns0:assertExecuteWatchStatelessDecision xmlns:ns0="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/OrderLineStatusWebDAVDecisionService">
+   <ns0:resultList>
+      <xsdLocal:orderLineRepository xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules">
+         <xsdLocal:OrderLineStatusFacts>
+            <xsdLocal:messageHeaderActionCode>Billing</xsdLocal:messageHeaderActionCode>
+            <xsdLocal:CRMOLIId>1-5K8SDP</xsdLocal:CRMOLIId>
+            <xsdLocal:businessCase>New</xsdLocal:businessCase>
+            <xsdLocal:actionCode>Add</xsdLocal:actionCode>
+            <xsdLocal:rootItemId>1-5K8SDP</xsdLocal:rootItemId>
+            <xsdLocal:itemNumber>000230</xsdLocal:itemNumber>
+            <xsdLocal:ILA/>
+            <xsdLocal:userNumber/>
+            <xsdLocal:userId/>
+            <xsdLocal:QUID/>
+            <xsdLocal:orderLinestatus>Billed</xsdLocal:orderLinestatus>
+            <xsdLocal:orderPermissionStatus>Complete</xsdLocal:orderPermissionStatus>
+            <xsdLocal:requestStatus/>
+            <xsdLocal:assetIntegrationId>1-5K8SDI</xsdLocal:assetIntegrationId>
+            <xsdLocal:billingIntegrationFlag>Y</xsdLocal:billingIntegrationFlag>
+            <xsdLocal:permissioningIntegrationFlag>Y</xsdLocal:permissioningIntegrationFlag>
+            <xsdLocal:permissioningSystem>NONE</xsdLocal:permissioningSystem>
+            <xsdLocal:manualPermissioningRequired>N</xsdLocal:manualPermissioningRequired>
+            <xsdLocal:STB>N</xsdLocal:STB>
+            <xsdLocal:freeTrailFlag>N</xsdLocal:freeTrailFlag>
+            <xsdLocal:manualPermissioningComplete>Y</xsdLocal:manualPermissioningComplete>
+            <xsdLocal:autoPermissioningComplete>Y</xsdLocal:autoPermissioningComplete>
+            <xsdLocal:nextAction1/>
+            <xsdLocal:nextAction2>Reply to Siebel</xsdLocal:nextAction2>
+            <xsdLocal:billingStatusToBeSent>Complete</xsdLocal:billingStatusToBeSent>
+            <xsdLocal:orderPermissionStatusToBeSent/>
+            <xsdLocal:SID/>
+            <xsdLocal:userIdType>Xtra Id</xsdLocal:userIdType>
+            <xsdLocal:billingPlatform>SAP</xsdLocal:billingPlatform>
+            <xsdLocal:field1>BilledRule2</xsdLocal:field1>
+            <xsdLocal:field2/>
+            <xsdLocal:field3/>
+         </xsdLocal:OrderLineStatusFacts>
+      </xsdLocal:orderLineRepository>
+   </ns0:resultList>
+</ns0:assertExecuteWatchStatelessDecision>
+</part></dsOut></messages>

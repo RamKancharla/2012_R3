@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="WebServices" default="deployWebService">
+
+  <property environment="env"/>
+  <property file="build.properties" />
+  <loadproperties srcFile="build.properties"/>
+  <path id="common.tasks.class.path">
+		 <pathelement location="../classes"/>
+  </path>
+  <path id="class.path">
+    <fileset dir="${ws.dir}/WEB-INF/lib">
+      <include name="**/*.jar"/>
+    </fileset>
+	 <fileset dir="${env.MWHOME}/wlserver_10.3/server/lib">
+      <include name="ojdbc6.jar"/>
+    </fileset>
+    <pathelement path="${base.webinf.classes.dir}"/>
+  </path>
+  <property environment="env"/>
+  <property name="common.tasks.class.path" refid="common.tasks.class.path"/>
+   <taskdef name="wldeploy" classname="weblogic.ant.taskdefs.management.WLDeploy">
+    <classpath> 
+      <pathelement location="${env.WLSHOME}/server/lib/weblogic.jar"/> 
+    </classpath>
+   </taskdef>
+	
+  	<target name="compile">
+    		<javac srcdir="${base.webinf.src.dir}" destdir="${base.webinf.classes.dir}" classpathref="class.path"/>
+		<copy todir="${base.webinf.classes.dir}">
+	        <fileset dir="${base.webinf.src.dir}">
+       	  <!--include name="${public.html.webinf.dir}/application.xml"/-->
+	         <include name="**/*.properties"/>
+	        </fileset>
+	       </copy>
+ 	</target>
+
+  	<target name="package-web" depends="compile">
+        <war destfile="${base.deploy.dir}/${web.name}.war" webxml="${base.public.html.webinf.dir}/web.xml" >
+		    <!--lib dir="${base.webinf.lib.dir}">
+			    <include name="classes12.jar"/>
+			</lib-->
+		  <classes dir="${base.webinf.classes.dir}">
+			<exclude name="**/*.xml"/>
+			<exclude name="**/*.wsdl"/>
+			<exclude name="**/*.cdi"/>
+		  </classes> 
+  	    	  <zipfileset dir="${base.public.html.webinf.dir}" prefix="WEB-INF">
+			<exclude name="application.xml"/>
+			<!--exclude name="orion-application.xml"/-->
+		  </zipfileset>
+        </war>
+	</target>
+
+	<target name="package-app" depends="package-web">
+      		<ear destfile="${base.deploy.dir}/${app.name}.ear" appxml="${base.public.html.webinf.dir}/application.xml">
+	        <metainf dir="${base.public.html.webinf.dir}" includes="orion-application.xml"/>
+	        <metainf dir="${base.public.html.webinf.dir}" includes="data-sources.xml"/>
+               <fileset dir="${base.deploy.dir}" includes="**/*.war"/>
+      		</ear>
+      		<copy file="${base.deploy.dir}/${app.name}.ear" todir="${base.deploy.dir}"/>
+	</target>
+
+	<target name="deployWebService">
+  		<property name="base.public.html.dir" value="${ws.dir}\public_html"/>
+  		<property name="base.public.html.webinf.dir" value="${base.public.html.dir}\WEB-INF"/>
+  		<property name="base.webinf.dir" value="${ws.dir}\WEB-INF"/>
+  		<property name="base.webinf.src.dir" value="${base.webinf.dir}\src"/>
+ 		<property name="base.webinf.classes.dir" value="${base.webinf.dir}\classes"/>
+  		<property name="base.webinf.lib.dir" value="${base.webinf.dir}\lib"/>
+  		<property name="base.deploy.dir" value="${ws.dir}/deploy"/>
+  		<property name="app.name" value="${app.name}"/>
+  		<property name="web.name" value="${web.name}"/>
+  		<!--property name="wls.host" value="${wls.host}"/>
+  		<property name="wls.port" value="${wls.port}"/>
+  		<property name="wls.adminservername" value="${wls.adminservername}"/-->
+    		<mkdir dir="${base.deploy.dir}"/>
+			<mkdir dir="${base.webinf.classes.dir}"/>
+    		<delete quiet="true">
+      			<fileset dir="lib" includes="**/*.jar" excludes="**/ivy-1.1.jar"/>
+      			<fileset dir="${base.webinf.classes.dir}" includes="**/*"/>
+      			<fileset dir="deploy" includes="*"/>
+   		</delete>
+		<antcall target="package-app" inheritall="true"/>
+		<!--wldeploy action="undeploy"
+          		name="${app.name}"
+          		user="${admin.user}"
+          		password="${admin.password}"
+          		verbose="true"
+          		adminurl="t3://${admin.host}:${admin.port}" targets="${wls.cluster}" /-->
+    		<wldeploy action="redeploy"
+	  		upload="true"
+          		name="${app.name}"
+          		source="${base.deploy.dir}/${app.name}.war"
+          		user="${admin.user}"
+          		password="${admin.password}"
+          		verbose="true"
+				usenonexclusivelock="true"
+          		adminurl="t3://${admin.host}:${admin.port}" targets="${wls.cluster}" />
+		<!--wldeploy action="start"
+          		name="${app.name}"
+          		user="${admin.user}"
+          		password="${admin.password}"
+          		verbose="true"
+          		adminurl="t3://${admin.host}:${admin.port}" targets="${wls.cluster}" /-->
+	</target>
+
+</project>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      EAI.MSG.SAP.PPL.290_ProductPricingRequest.xsd 
+* Type:        XSD 
+* Description: 
+* Change History
+* Version      Date         Author                      Description Of Change 
+*  1.0         23/06/10     Sadeep		        Initial Version 
+*  1.1         23/08/10     Damodar                     Added the ProductCategory,PDPDescription,ProductSubType,DADFlag,DatafeedFlag,EikonGroup,TrainingType,PriorityClassification for CR 298
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/ProductPricing"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/ProductPricing">
+    <xsd:element name="ProductPricing_Request" type="ProductPricing_Request"/>
+  <xsd:complexType name="ProductPricing_Request">
+    <xsd:sequence>
+      <xsd:element name="Header_Details">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="PPLID" type="xsd:string"></xsd:element>
+            <xsd:element name="PLICode" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ProdMaterialCode" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdName" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdLevel" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdStatus" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMAdmQuoteType" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMRevenueType" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdTYPE" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdDESC" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMSC3Report" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdGADiscountable" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMTRGA" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdLineReport" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdFRTRL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMManualPermReq" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMCall" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMClientTraining" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMSRVProd" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMCommercialAPRVL" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMConsumablePartNo" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMSLACAT" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdLoginTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdUserTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdSPLPRC" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMDevice" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMAUTOPrmsn" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMAssignmentCAT" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMEMAIL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMGuaranteeHrs" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMSTB" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMPermsnKey" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMPrimManualPermSystem" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMBLNPLTFRM" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMToAsset" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMTechApproval" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMTechFulfilment" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMMarginCat" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMProdAPPRQ" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMGLBPRCProd" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMELPRIC" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMAGRTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMORDBL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMVisible" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMSrvcTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMLocalPLI" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMRIN" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMDiscountGRP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMSenrVolDisc" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMMinorVolDisc" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMContCategry" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMLicTyp" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRM3PRoyaltyGrp" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMEMBSWProd" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMMnfctrPNum" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMManfctrNAME" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMSolutnAPP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMEmergencyPort" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMMaintProd" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMOperatingSYS" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMSolutnMaintProd" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMInvBank" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMBusClass" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMBill" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMTPRSHolder" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMBandedQTY" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMOprtntyProd" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMSLATime" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMMaintenancePer" type="xsd:string"
+                         minOccurs="0"></xsd:element>
+            <xsd:element name="CRMAdherencePer" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="CRMGuaranteePer" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="MaterialDesc" type="xsd:string" minOccurs="0"></xsd:element>
+	    <!-- CR 298-->
+	    <xsd:element name="ProductCategory" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+	   <xsd:element name="PDPDescription" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+	   <xsd:element name="ProductSubType" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+	   <xsd:element name="DADFlag" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+	   <xsd:element name="DatafeedFlag" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+	   <xsd:element name="EikonGroup" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+	   <xsd:element name="TrainingType" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+	  <xsd:element name="PriorityClassification" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+	  <!-- end CR 298 -->
+
+            <xsd:element name="PLI_Details" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="PriceCID" type="xsd:string"></xsd:element>
+                  <xsd:element name="PriceListName" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                  <xsd:element name="CRMValidToDate" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                  <xsd:element name="CRMValidFrmDate" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                  <xsd:element name="Rate" type="xsd:string" minOccurs="0"></xsd:element>
+                  <xsd:element name="CurrencyKey" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                  <xsd:element name="CRMInactiveFlag" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                  <xsd:element name="CRMPLIPercent" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                  <xsd:element name="CRMLocalStatus" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                  <xsd:element name="CRMLocalPLI" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                  <xsd:element name="CRMIgnoreUpdate" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                  <xsd:element name="CRMLocalLangName" type="xsd:string"
+                               minOccurs="0"></xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*********************************************************************************
+* Module        EAI.MSG.CCRM.OP.232_PublishOpportunity
+* Type          XML Schema Document
+*
+* Description    Opportunity Mapping Schema
+*
+*
+* Change History
+* Version	Date		Author			Description Of Change
+* =======	======		=================	================================
+*  0.1		16/05/08	Sudhir tumu		Initial Version
+*  0.2		20/05/08	Rob Billington		Restructured
+*  0.3		22/05/08	Rob Billington		Added salesTeamEmailAddress, accountManagerEmailAddress and productName
+*                                                       Changed Name to name 
+*  0.4		29/05/08	Rob Billington		Added currencyCode to opportunityLineItem and masterAccountId to opportunity
+*  0.5		31/05/08	Rob Billington		Changed actionCode type 
+*  0.6          05/03/08        Shanker Reddy           Changed Schema for SFDC-003&004      
+*  0.7          24/09/09        Sreeja Prasad		Added OpportunityDescription for CRM_PBI_244 
+*  0.8          06/10/09        Sreeja Prasad		Added UtahBlockedOpportunities for CRM_UTAH_PBI_22 
+*  0.9          01/04/10        Sreeja		        Added IsPoRequired & PurchaseOrderNumber for CRM_PBI_0478
+*  0.10         09/07/10        Sreeja		        Added InstalledToId  in OpportunityLineItem for CR 5552
+*  0.11         15/07/10        Rijoy		        Added revenueMasterflag  in OpportunityLineItem for CR 6008
+*************************************************************************************/
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" 
+	xmlns:gcap-message="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+	xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" 
+	xmlns:gcap-account="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" 
+	xmlns:gcap-opportunity="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOpportunityTypes" 
+      	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.10">
+        
+        <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOpportunityTypes"
+                    schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.017_CommonOpportunityTypes.xsd"/>
+        <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+                    schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+        <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+                    schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.003_CommonAccountTypes.xsd"/>
+       	
+        <xsd:element name="opportunityEvent" type="xsdLocal:OpportunityEvent"/>
+        
+	<xsd:complexType name="OpportunityEvent">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-message:EaiHeader" />
+			<xsd:element name="actionCode" type="xsd:string" />
+			<xsd:element name="opportunity" type="xsdLocal:Opportunity" />
+			<xsd:element name="opportunityProduct" type="xsdLocal:OpportunityLineItem" maxOccurs="unbounded"/>
+		</xsd:sequence>
+        </xsd:complexType>
+        
+        <xsd:complexType name="Opportunity">        
+		<xsd:sequence>
+			<xsd:element name="siebelOptyID" type="gcap-opportunity:OpportunityID"/>
+			<xsd:element name="SFDCOptyID" type="gcap-opportunity:SalesforceOpportunityID"/>
+			<xsd:element name="optyNumber" type="gcap-opportunity:ShortSFDCId"/>
+			<xsd:element name="optyname" type="gcap-opportunity:Name"/>
+			<xsd:element name="SFDCAccountID" type="gcap-account:SFDCID"/>
+	 		<xsd:element name="siebelAccountID" type="gcap-account:AccountID"/>
+                        <xsd:element name="accountName" type="gcap-account:AccountName"/>
+			<xsd:element name="optyType" type="gcap-opportunity:Type"/>
+			<xsd:element name="expectedRevenue" type="gcap-opportunity:ExpectedRevenue"/>
+			<xsd:element name="closeDate" type="gcap-opportunity:CloseDate"/>
+			<xsd:element name="monthlyRecurring" type="gcap-opportunity:PrimaryRecurringRevenue"/>
+                        <xsd:element name="OnceOffRevenue" type="gcap-opportunity:PrimaryOnceOffRevenue"/>
+			<xsd:element name="probability" type="gcap-opportunity:Probability"/>
+			<xsd:element name="salesStage" type="gcap-opportunity:SalesStage"/>
+			<xsd:element name="currencyCode" type="gcap-opportunity:CurrencyCode"/>
+			<xsd:element name="winLossReason" type="gcap-opportunity:WinLossReason"/>
+			<xsd:element name="expectedRevenueDate" type="gcap-opportunity:ExpectedRevenueDate"/>
+			<xsd:element name="ownerEmail" type="gcap-opportunity:Email"/>
+			<xsd:element name="ftOnceOffRevenue" type="gcap-opportunity:FTOnceOffRevenue"/>
+			<xsd:element name="ftRecurringRevenue" type="gcap-opportunity:FTRecurringRevenue"/>
+			<xsd:element name="activeQuote" type="gcap-opportunity:ActiveQuote"/>
+			<xsd:element name="lastUpdatedBy" type="gcap-opportunity:LastUpdatedBy"/> 
+			<xsd:element name="lastUpdated" type="gcap-opportunity:LastUpdated"/> 
+			<xsd:element name="opportunityDescription" type="gcap-opportunity:Description"/>
+			<xsd:element name="utahBlockedOpportunities" type="gcap-opportunity:BlockedOpportunities"/>
+			<xsd:element name="campaignSourceCode" type="xsdLocal:CampaignSourceCode" maxOccurs="unbounded"/>
+			<xsd:element name="opportunityTeam" type="xsdLocal:OpportunityTeam" maxOccurs="unbounded"/>
+			<xsd:element name="IsPoRequired" type="gcap-opportunity:IsPoRequired"/>
+			<xsd:element name="PurchaseOrderNumber" type="gcap-opportunity:PurchaseOrderNumber"/>
+
+                </xsd:sequence>
+	</xsd:complexType>
+
+      <xsd:complexType name="CampaignSourceCode">
+		<xsd:sequence>
+			 <xsd:element name="sourceCode" type="gcap-opportunity:CampaignSourceCode"/>
+	         </xsd:sequence>
+                </xsd:complexType>
+                <xsd:complexType name="OpportunityTeam">
+		<xsd:sequence>
+			 <xsd:element name="siebelOptyID" type="gcap-opportunity:OpportunityID"/>
+                         <xsd:element name="SFDCOptyID" type="gcap-opportunity:SalesforceOpportunityID"/>
+			 <xsd:element name="employeeEmailAddress" type="gcap-opportunity:Email"/>
+		</xsd:sequence>
+               </xsd:complexType>
+               <xsd:complexType name="OpportunityLineItem">
+		<xsd:sequence>
+			<xsd:element name="siebelID" type="gcap-opportunity:OpportunityID"/>
+			<xsd:element name="siebelOptyID" type="gcap-opportunity:OpportunityID"/>
+			<xsd:element name="productFamily" type="gcap-opportunity:ProductFamily"/>
+			<xsd:element name="quantity" type="gcap-opportunity:Quantity"/>
+                        <xsd:element name="revenueType" type="gcap-opportunity:RevenueType"/>
+			<xsd:element name="oneTime" type="gcap-opportunity:PrimaryOnceOffRevenue"/>
+			<xsd:element name="monthlyReccuring" type="gcap-opportunity:PrimaryRecurringRevenue"/>
+			<xsd:element name="productComments" type="gcap-opportunity:Description"/>
+			<xsd:element name="freeTrialFlag" type="gcap-opportunity:FreeTrialFlag"/>
+     		        <xsd:element name="InstalledToId" type="gcap-opportunity:OpportunityID" />
+                        <xsd:element name="revenueMasterflag" type="gcap-opportunity:RevenueMasterflag"/>
+                     </xsd:sequence>
+              </xsd:complexType>
+ </xsd:schema>
+                       
+ 

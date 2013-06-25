@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+	* Module:      EAI.SRV.EXT.005_EletronicFulfilmentService.wsdl
+	* Type:        WSDL
+	*
+	* Change History
+	* Version		Date		Author			Description Of Change
+	*
+	*  0.1    06/03/07    R. Sivarajan          Initial Version
+	*  0.02   23/03/07    Kevin Wood            Filenames changed
+	*  0.03   17/04/07    Kevin Wood            Import schemas changed, 
+	*                                           filename altered slightly, 
+	*                                           interface changed to asynchronous
+	*  0.04   24/04/07    Mark Flynn            Changed to ElectronicFulfilment
+	*                                           Interface
+	*  0.05   03/05/07    Mark Flynn            Changed operation to fulfill
+	*  0.06   15/08/07    Rob Billington        Added service definition
+	*  0.07   15/08/07    Rob Billington        Removed callback operation and added output message to fulfil operation and removed redundant namespaces
+	*  0.08   02/05/08    Andrew Humphreys      Change XSD Imports to import from same directory as WSDL
+	*  1.0    16/05/08    Andrew Humphreys      Change namespaces to be AAA owned
+	**********************************************************************************
+-->
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+	xmlns:ns1="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/Common"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:tns="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices">
+	<wsdl:import
+		location="EAI.MSG.EXT.119_ElectronicFulfilmentRequest.xsd"
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices" />
+	<wsdl:import location="EAI.MSG.EXT.111_BasicResponse.xsd"
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/Common" />
+	<wsdl:types>
+		<xs:schema elementFormDefault="qualified"
+			targetNamespace="hhttp://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices" />
+	</wsdl:types>
+	<wsdl:message name="ElectronicFulfilmentRequest">
+		<wsdl:part element="tns:electronicFulfilmentRequest"
+			name="parameter" />
+	</wsdl:message>
+	<wsdl:message name="BasicResponse">
+		<wsdl:part element="ns1:basicResponse" name="parameter" />
+	</wsdl:message>
+	<wsdl:portType name="ElectronicFulfilmentInterface">
+		<wsdl:operation name="fulfill">
+			<wsdl:input message="tns:ElectronicFulfilmentRequest" />
+			<wsdl:output message="tns:BasicResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ElectronicFulfilmentSOAP"
+		type="tns:ElectronicFulfilmentInterface">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="fulfill">
+			<soap:operation soapAction="urn:NewOperation" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ElectronicFulfilmentService">
+		<wsdl:port binding="tns:ElectronicFulfilmentSOAP"
+			name="ElectronicFulfilmentPort">
+			<soap:address location="http://localhost:9080" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

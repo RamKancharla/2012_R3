@@ -1,0 +1,55 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPM_DequeueNValidatePriceRequest" revision="1.0" state="on">
+    <import location="DequeuePriceRequest.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeuePriceRequest/"/>
+    <import location="EnqueueValidateStatus.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueueValidateStatus/"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/PM_PropagatePriceUpdate/PM_PropagatePriceUpdate.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PriceRequestValidatorStub/CCRMPM_PriceRequestValidatorStub.wsdl" importType="wsdl"/>
+    <service name="DequeuePriceRequest" ui:wsdlLocation="DequeuePriceRequest.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeuePriceRequest/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeuePriceRequest_mq.jca"/>
+    </service>
+    <component name="CCRMPM_DequeueNValidatePriceRequest">
+        <implementation.bpel src="CCRMPM_DequeueNValidatePriceRequest.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMPM_PriceRequestValidatorStub" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PriceRequestValidatorStub/CCRMPM_PriceRequestValidatorStub.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub#wsdl.interface(CCRMPM_PriceRequestValidatorStub)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub#wsdl.endpoint(CCRMPM_PriceRequestValidatorStub/CCRMPM_PriceRequestValidatorStub)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PriceRequestValidatorStub/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="EnqueueValidateStatus" ui:wsdlLocation="EnqueueValidateStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueueValidateStatus/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="EnqueueValidateStatus_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="PM_PropagatePriceUpdate" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/PM_PropagatePriceUpdate/PM_PropagatePriceUpdate.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.interface(PM_PropagatePriceUpdate)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.interface(PM_PropagatePriceUpdateCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.endpoint(PM_PropagatePriceUpdate/PM_PropagatePriceUpdate)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/PM_PropagatePriceUpdate/anchorToPropagatePriceUpdate?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.endpoint(PM_PropagatePriceUpdate/PM_PropagatePriceUpdateCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>DequeuePriceRequest</source.uri>
+        <target.uri>CCRMPM_DequeueNValidatePriceRequest/DequeuePriceRequest</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_DequeueNValidatePriceRequest/EnqueueValidateStatus</source.uri>
+        <target.uri>EnqueueValidateStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_DequeueNValidatePriceRequest/PM_PropagatePriceUpdate</source.uri>
+        <target.uri>PM_PropagatePriceUpdate</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_DequeueNValidatePriceRequest/CCRMPM_PriceRequestValidatorStub</source.uri>
+        <target.uri>CCRMPM_PriceRequestValidatorStub</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

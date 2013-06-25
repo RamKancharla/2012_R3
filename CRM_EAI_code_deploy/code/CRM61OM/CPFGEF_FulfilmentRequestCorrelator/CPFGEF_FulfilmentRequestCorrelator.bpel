@@ -1,0 +1,259 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Apr 21 17:51:55 GMT+05:30 2010
+  Author:  sp56467
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFGEF_FulfilmentRequestCorrelator" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator/correlationset" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:ns11="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="rcvFulfilmentRequestCorrelator" partnerLinkType="client:CPFGEF_FulfilmentRequestCorrelator" myRole="CPFGEF_FulfilmentRequestCorrelatorProvider" partnerRole="CPFGEF_FulfilmentRequestCorrelatorRequester"/>
+        <partnerLink name="INTERFACE_BUFFER" partnerRole="INTERFACE_BUFFER_role" partnerLinkType="ns3:INTERFACE_BUFFER_plt"/>
+        <partnerLink name="CrossRefService" partnerRole="CrossRefServicePortType_Role" partnerLinkType="ns2:CrossRefServicePortType_PL"/>
+        <partnerLink name="CCRMOM_PropagateOrderStatus"
+                     partnerLinkType="ns11:CCRMOM_PropagateOrderStatus"
+                     myRole="CCRMOM_PropagateOrderStatusRequester"
+                     partnerRole="CCRMOM_PropagateOrderStatusProvider"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CPFGEF_FulfilmentRequestCorrelatorResponseMessage"/>
+        <variable name="WriteToINTERFACE_BUFFER_insert_InputVariable" messageType="ns3:InterfaceBufferCollection_msg"/>
+        <variable name="index" type="xsd:nonNegativeInteger"/>
+        <variable name="responsefulfilmentRequestOrderLineIndex" type="xsd:int"/>
+        <variable name="orderLineStatus" element="ns7:orderStatusUpdate"/>
+        <variable name="InvCrossRefServiceInputVar" messageType="ns2:CrossRefGetOrderDetailsRequest"/>
+        <variable name="InvCrossRefServiceOutputVar" messageType="ns2:CrossRefGetOrderDetailsResponse"/>
+        <variable name="callbackClient_onResult_InputVariable" messageType="client:CPFGEF_OrderStatusUpdateMessage"/>
+        <variable name="RcvOrderFulfilmentRequestINV" messageType="client:CPFGEF_FulfilmentRequestCorrelatorRequestMessage"/>
+        <variable name="ExtendedEFRequest" messageType="client:CPFG_ExtendedMessage"/>
+        <variable name="OnMessageFulfilmentStatusUpdate" messageType="client:CPFGEF_FulfilmentStatusUpdate"/>
+        <variable name="CRMOrderNumber" type="xsd:string"/>
+        <variable name="FulfilmentRequestId" type="xsd:string"/>
+        <variable name="businesscase" type="xsd:string"/>
+        <variable name="getOrderDetailsIV"
+                  messageType="ns2:CrossRefGetOrderDetailsRequest"/>
+        <variable name="getOrderDetailsOV"
+                  messageType="ns2:CrossRefGetOrderDetailsResponse"/>
+        <variable name="sendOrderStatusIV"
+                  messageType="ns11:CCRMOM_PropagateOrderStatusRequestMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="ElectronicFulfilmentRequestCorrelationSet" properties="ns9:fulfilmentRequestId"/>
+    </correlationSets>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CPFGEF_FulfilmentRequestCorrelator.wsdl) -->
+        <sequence name="Sequence_3">
+            <receive name="RcvOrderFulfilmentRequest" partnerLink="rcvFulfilmentRequestCorrelator" portType="client:CPFGEF_FulfilmentRequestCorrelator" operation="fulfilOrderCorrelator" variable="RcvOrderFulfilmentRequestINV" createInstance="yes"/>
+            <assign name="AsgInstanceId">
+                <copy>
+                    <from expression="ora:getCompositeInstanceId()"/>
+                    <to variable="RcvOrderFulfilmentRequestINV" query="/ns1:standaloneElectronicFulfilmentRequest/ns1:standaloneEaiHeader/ns1:instanceId" part="extElectronicFulfilmentRequest"/>
+                </copy>
+                <copy>
+                    <from variable="RcvOrderFulfilmentRequestINV" part="extElectronicFulfilmentRequest" query="/ns1:standaloneElectronicFulfilmentRequest/ns1:electronicFulfilmentRequestId"/>
+                    <to variable="FulfilmentRequestId"/>
+                </copy>
+                <copy>
+                    <from expression="orcl:lookup-table('orderfulfilment','electronicfulfil_req_id',bpws:getVariableData('FulfilmentRequestId'),'order_id','eai/ds/EAIReference')"/>
+                    <to variable="CRMOrderNumber"/>
+                </copy>
+            </assign>
+            <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+                <![CDATA[String orderNumber =(String)getVariableData("CRMOrderNumber");                                   
+                       
+                                               
+String Title=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+            <assign name="TransEFRToWriteToBuffer">
+                <bpelx:annotation>
+                    <bpelx:pattern>transformation</bpelx:pattern>
+                </bpelx:annotation>
+                <copy>
+                    <from expression="ora:processXSLT('TransEFRToWriteToBuffer.xsl',bpws:getVariableData('RcvOrderFulfilmentRequestINV','extElectronicFulfilmentRequest'))"/>
+                    <to variable="WriteToINTERFACE_BUFFER_insert_InputVariable" part="InterfaceBufferCollection"/>
+                </copy>
+            </assign>
+            <invoke name="WriteToINTERFACE_BUFFER" partnerLink="INTERFACE_BUFFER" portType="ns3:INTERFACE_BUFFER_ptt" operation="insert" inputVariable="WriteToINTERFACE_BUFFER_insert_InputVariable">
+                <correlations>
+                    <correlation initiate="yes" set="ElectronicFulfilmentRequestCorrelationSet" pattern="out"/>
+                </correlations>
+            </invoke>
+            <scope name="ScpBusinesscase">
+                <faultHandlers>
+                    <catchAll>
+                        <empty name="DoNothingForNonUserSwap"/>
+                    </catchAll>
+                </faultHandlers>
+                <assign name="AsgBusinesscase">
+                    <copy>
+                        <from expression="orcl:lookup-table('orderfulfilment','electronicfulfil_req_id',bpws:getVariableData('FulfilmentRequestId'),'businesscase','eai/ds/EAIReference')"/>
+                        <to variable="businesscase"/>
+                    </copy>
+                </assign>
+            </scope>
+            <switch name="Switch_1">
+                <case condition="bpws:getVariableData('businesscase')='User Swap'">
+                    <sequence name="Sequence_5">
+                        <pick name="Pick_1">
+                            <onMessage portType="client:CPFGEF_FulfilmentRequestCorrelator" operation="receiveFulfilmentStatusUpdate" variable="OnMessageFulfilmentStatusUpdate" partnerLink="rcvFulfilmentRequestCorrelator">
+                                <correlations>
+                                    <correlation initiate="no" set="ElectronicFulfilmentRequestCorrelationSet"/>
+                                </correlations>
+                                <sequence name="Sequence_1">
+                                    <assign name="AsgCrossRefLookup">
+                                        <copy>
+                                            <from part="statusUpdate" query="/ns6:PropagateCPFGStatusUpdateRequest/ns6:electronicFulfilmentRequestId" variable="OnMessageFulfilmentStatusUpdate"/>
+                                            <to variable="InvCrossRefServiceInputVar" part="parameters" query="/ns2:getOrderDetailsRequest/ns2:electronicFulfilmentRequestId"/>
+                                        </copy>
+                                        <copy>
+                                            <from part="statusUpdate" query="/ns6:PropagateCPFGStatusUpdateRequest/ns6:eaiHeader" variable="OnMessageFulfilmentStatusUpdate"/>
+                                            <to variable="InvCrossRefServiceInputVar" part="parameters" query="/ns2:getOrderDetailsRequest/ns2:eaiHeader"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="OnMessageFulfilmentStatusUpdate" part="statusUpdate" query="/ns6:PropagateCPFGStatusUpdateRequest/ns6:status"/>
+                                            <to variable="InvCrossRefServiceInputVar" part="parameters" query="/ns2:getOrderDetailsRequest/ns2:permissioningStatus"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="1"/>
+                                            <to variable="responsefulfilmentRequestOrderLineIndex"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvCrossRefService" partnerLink="CrossRefService" portType="ns2:CrossRefServicePortType" operation="getOrderDetails" inputVariable="InvCrossRefServiceInputVar" outputVariable="InvCrossRefServiceOutputVar"/>
+                                    <assign name="AsgEaiHeader">
+                                        <copy>
+                                            <from part="statusUpdate" query="/ns6:PropagateCPFGStatusUpdateRequest/ns6:eaiHeader" variable="OnMessageFulfilmentStatusUpdate"/>
+                                            <to variable="callbackClient_onResult_InputVariable" part="statusUpdate" query="/ns7:orderStatusUpdate/ns7:eaiHeader"/>
+                                        </copy>
+                                    </assign>
+                                    <assign name="AsgRemoveFirstOLIStatus">
+                                        <bpelx:remove>
+                                            <bpelx:target variable="callbackClient_onResult_InputVariable" part="statusUpdate" query="/ns7:orderStatusUpdate/ns7:orderLineItem"/>
+                                        </bpelx:remove>
+                                    </assign>
+                                    <while name="While_1" condition="bpws:getVariableData('responsefulfilmentRequestOrderLineIndex') &lt;= count(bpws:getVariableData('InvCrossRefServiceOutputVar','parameters','/ns2:getOrderDetailsResponse/ns2:crmOrder/ns2:orderLineItem/ns2:CRMOLIId'))">
+                                        <sequence name="Sequence_4">
+                                            <assign name="AsgPermStatusAndReasonCodeToAllOLIs">
+                                                <copy>
+                                                    <from expression="''"/>
+                                                    <to variable="orderLineStatus" query="/ns7:orderStatusUpdate/ns7:orderLineItem/ns7:CRMOLIId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="''"/>
+                                                    <to variable="orderLineStatus" query="/ns7:orderStatusUpdate/ns7:orderLineItem/ns7:permissioningStatus"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="''"/>
+                                                    <to variable="orderLineStatus" query="/ns7:orderStatusUpdate/ns7:orderLineItem/ns7:permissioningStatusReasonCode"/>
+                                                </copy>
+                                                <copy>
+                                                    <from part="statusUpdate" query="/ns6:PropagateCPFGStatusUpdateRequest/ns6:status" variable="OnMessageFulfilmentStatusUpdate"/>
+                                                    <to variable="orderLineStatus" query="/ns7:orderStatusUpdate/ns7:orderLineItem/ns7:permissioningStatus"/>
+                                                </copy>
+                                                <copy>
+                                                    <from part="statusUpdate" query="/ns6:PropagateCPFGStatusUpdateRequest/ns6:statusReasonCode" variable="OnMessageFulfilmentStatusUpdate"/>
+                                                    <to variable="orderLineStatus" query="/ns7:orderStatusUpdate/ns7:orderLineItem/ns7:permissioningStatusReasonCode"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="InvCrossRefServiceOutputVar" part="parameters" query="/ns2:getOrderDetailsResponse/ns2:crmOrder/ns2:orderLineItem[bpws:getVariableData('responsefulfilmentRequestOrderLineIndex')]/ns2:CRMOLIId"/>
+                                                    <to variable="orderLineStatus" query="/ns7:orderStatusUpdate/ns7:orderLineItem/ns7:CRMOLIId"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AppendOLIStatusToCallbackResponse">
+                                                <bpelx:append>
+                                                    <bpelx:from variable="orderLineStatus" query="/ns7:orderStatusUpdate/ns7:orderLineItem"/>
+                                                    <bpelx:to variable="callbackClient_onResult_InputVariable" part="statusUpdate" query="/ns7:orderStatusUpdate"/>
+                                                </bpelx:append>
+                                            </assign>
+                                            <assign name="IncrementIndex">
+                                                <copy>
+                                                    <from expression="bpws:getVariableData('responsefulfilmentRequestOrderLineIndex') + 1"/>
+                                                    <to variable="responsefulfilmentRequestOrderLineIndex"/>
+                                                </copy>
+                                            </assign>
+                                        </sequence>
+                                    </while>
+                                </sequence>
+                            </onMessage>
+                            <onAlarm for="ora:getPreference('maxWaitForElectronicFulfilmentStatus')">
+                                <sequence name="Sequence_2">
+                                    <assign name="TransCrossRefErrorRequestVariables">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:doXSLTransformForDoc('TransformCrossRefErrorRequestVariables.xsl', $RcvOrderFulfilmentRequestINV.extElectronicFulfilmentRequest)"/>
+                                            <to variable="getOrderDetailsIV"
+                                                part="parameters"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvCrossRefServiceTRogetOrderDetails"
+                                            inputVariable="getOrderDetailsIV"
+                                            outputVariable="getOrderDetailsOV"
+                                            partnerLink="CrossRefService"
+                                            portType="ns2:CrossRefServicePortType"
+                                            operation="getOrderDetails"
+                                            bpelx:invokeAsDetail="no"/>
+                                    <assign name="TransCrossRefVariablesToPropagateStatus">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:doXSLTransformForDoc('TransCrossRefVariablesToPropagateStatus.xsl', $getOrderDetailsOV.parameters)"/>
+                                            <to variable="sendOrderStatusIV"
+                                                part="payload"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvPropagateOrderStatusforError"
+                                            inputVariable="sendOrderStatusIV"
+                                            partnerLink="CCRMOM_PropagateOrderStatus"
+                                            portType="ns11:CCRMOM_PropagateOrderStatus"
+                                            operation="sendOrderStatus"
+                                            bpelx:invokeAsDetail="no"/>
+                                    <empty name="DoNothing"/>
+                                 </sequence>
+                            </onAlarm>
+                        </pick>
+                        <invoke name="callbackClient" partnerLink="rcvFulfilmentRequestCorrelator" portType="client:CPFGEF_FulfilmentRequestCorrelatorCallback" operation="onResult" inputVariable="callbackClient_onResult_InputVariable"/>
+                    </sequence>
+                </case>
+                <otherwise>
+                    <empty name="DoNothing"/>
+                </otherwise>
+            </switch>
+        </sequence>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+    </sequence>
+</process>

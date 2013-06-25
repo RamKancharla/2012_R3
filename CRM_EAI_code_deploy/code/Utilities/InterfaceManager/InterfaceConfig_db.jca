@@ -1,0 +1,34 @@
+<adapter-config name="InterfaceConfig" adapter="Database Adapter" wsdlLocation="InterfaceConfig.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="eaidev2_EAIOWNER" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//eaidev2:1521/EAIDEV2"/>
+      <property name="UserName" value="eaiowner"/>
+      <property name="Password" value="E8D26CEB17C942CF78415AE2B31C2AA9"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="InterfaceConfig_ptt" operation="update">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="InterfaceConfig.InterfaceConfig"/>
+      <property name="DmlType" value="update"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="InterfaceConfig-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+  <endpoint-interaction portType="InterfaceConfig_ptt" operation="InterfaceConfigSelect_InterfaceID">
+    <interaction-spec className="oracle.tip.adapter.db.DBReadInteractionSpec">
+      <property name="DescriptorName" value="InterfaceConfig.InterfaceConfig"/>
+      <property name="QueryName" value="InterfaceConfigSelect"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+      <property name="MappingsMetaDataURL" value="InterfaceConfig-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

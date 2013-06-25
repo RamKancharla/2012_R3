@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOM_DequeueCSOrderUpdateStatus" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="DequeueCSOrderUpdates.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueCSOrderUpdates/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus.wsdl"
+            importType="wsdl"/>
+    <service name="DequeueCSOrderUpdates" ui:wsdlLocation="DequeueCSOrderUpdates.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueCSOrderUpdates/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeueCSOrderUpdates_mq.jca"/>
+    </service>
+    <component name="CCRMOM_DequeueCSOrderUpdateStatus">
+        <implementation.bpel src="CCRMOM_DequeueCSOrderUpdateStatus.bpel"/>
+    </component>
+    <reference name="CCRMOM_PropagateOrderStatus"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.endpoint(CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/anchorToPropagateOrderStatus?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.endpoint(CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>DequeueCSOrderUpdates</source.uri>
+        <target.uri>CCRMOM_DequeueCSOrderUpdateStatus/DequeueCSOrderUpdates</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_DequeueCSOrderUpdateStatus/CCRMOM_PropagateOrderStatus</source.uri>
+        <target.uri>CCRMOM_PropagateOrderStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

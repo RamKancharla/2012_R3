@@ -1,0 +1,204 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+
+* Module:     {Name of the file CSOM_TransformUserStatus.bpel}   
+* Type:        {BPEL FILE} 
+* Description: {Asynchronous BPEL Process that gets User Status  from CS Adapter ESB service parses the User Status message and Submits the Canonical format to OM_OrderDispatcher BPEL Process} 
+* IDD Reference: -
+  Created: Sat Oct 27 16:40:11 GMT+05:30 2007
+* Change History 
+* Version      Date         Author                           Description Of Change 
+*  1.0         27/10/07     Suryanarayana Gannavarapu      Initial Version 
+*  1.1         02/01/07     Satish Patel                   Modified Custom Title and Sensors
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CSOM_TransformUserStatus" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus" xmlns:ns6="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/Exception" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:ns3="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CSOM_TransformUserStatus" myRole="CSOM_TransformUserStatusProvider" partnerRole="CSOM_TransformUserStatusRequester"/>
+        <partnerLink name="ParseUserStatus" partnerRole="ParseCSUserStatus_Role" partnerLinkType="ns2:ParseCSUserStatus_PL"/>
+        <partnerLink myRole="CSOM_OrderSplitterRequester" name="CSOM_OrderSplitter" partnerRole="CSOM_OrderSplitterProvider" partnerLinkType="ns10:CSOM_OrderSplitter"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="TransformUserStatusIV" messageType="client:CSOM_TransformUserStatusRequestMessage"/>
+        <variable name="ParseUserStatusIV" messageType="ns2:FLUserStatus"/>
+        <variable name="ParseUserStatusOV" messageType="ns2:UserStatus"/>
+        <variable name="Success_Response" type="xsd:string"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="UnknownError" type="xsd:string"/>
+        <variable name="Sensor_Message" type="xsd:string"/>
+        <variable name="CRMOrderNumber" type="xsd:string"/>
+        <variable name="FirstUserLineStatus" type="xsd:string"/>
+        <variable name="UpdateUserStatusToOrderSplitter" messageType="ns10:CSUserStatusMessage"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleSelectionFailure" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                 
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");        
+     
+String firstUserLineStatus = (String)getVariableData("FirstUserLineStatus");            
+firstUserLineStatus = (firstUserLineStatus!=null ? ("ST: "+firstUserLineStatus) : ".;");            
+String title = orderNumber+";"+firstUserLineStatus+":Fault";     
+setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForRemoteFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                 
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");        
+     
+String firstUserLineStatus = (String)getVariableData("FirstUserLineStatus");            
+firstUserLineStatus = (firstUserLineStatus!=null ? ("ST: "+firstUserLineStatus) : ".;");            
+String title = orderNumber+";"+firstUserLineStatus+":Fault";     
+setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForBindingFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                 
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");        
+     
+String firstUserLineStatus = (String)getVariableData("FirstUserLineStatus");            
+firstUserLineStatus = (firstUserLineStatus!=null ? ("ST: "+firstUserLineStatus) : ".;");            
+String title = orderNumber+";"+firstUserLineStatus+":Fault";     
+  
+setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleForGenericFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                 
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");        
+     
+String firstUserLineStatus = (String)getVariableData("FirstUserLineStatus");            
+firstUserLineStatus = (firstUserLineStatus!=null ? ("ST: "+firstUserLineStatus) : ".;");            
+String title = orderNumber+";"+firstUserLineStatus+":Fault";     
+  
+setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+            <assign name="AsgUnknownError">
+                <copy>
+                    <from expression="'Unknown Error Message'"/>
+                    <to variable="UnknownError"/>
+                </copy>
+            </assign>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CSOM_TransformUserStatus.wsdl) -->
+        <receive name="RcvUserStatus" partnerLink="client" portType="client:CSOM_TransformUserStatus" operation="processUser" variable="TransformUserStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="Success_Response"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformUserStatusIV','fixedLengthUserStatus','/ns1:EBCDICMessage/ns1:message'),1,2000)"/>
+                <to variable="Sensor_Message"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformUserStatusIV','fixedLengthUserStatus','/ns1:EBCDICMessage/ns1:message'),356,30)"/>
+                <to variable="CRMOrderNumber"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformUserStatusIV','fixedLengthUserStatus','/ns1:EBCDICMessage/ns1:message'),404,4)"/>
+                <to variable="FirstUserLineStatus"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                   
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                   
+             
+String firstUserLineStatus = (String)getVariableData("FirstUserLineStatus");             
+firstUserLineStatus = (firstUserLineStatus!=null ? ("ST: "+firstUserLineStatus) : ".;");             
+String Title = orderNumber+";"+firstUserLineStatus;   
+  
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <scope name="ParseUserStatus">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                    <throw name="ThrParseUserStatusRemoteFault" faultName="ns9:ParseUserStatusRemoteFault" faultVariable="runTimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqParseUserStatus">
+                <assign name="TransformUserStatusIVToParseUserStatusIV">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransformUserStatusIVToParseUserStatusIV.xsl',bpws:getVariableData('TransformUserStatusIV','fixedLengthUserStatus'))"/>
+                        <to variable="ParseUserStatusIV" part="parameter"/>
+                    </copy>
+                </assign>
+                <invoke name="InvParseUserStatus" partnerLink="ParseUserStatus" portType="ns2:ParseCSUserStatus" operation="parseUserStatus" inputVariable="ParseUserStatusIV" outputVariable="ParseUserStatusOV"/>
+            </sequence>
+        </scope>
+        <switch name="CheckParseUserStatusResponses">
+            <case condition="bpws:getVariableData('ParseUserStatusOV','parameter','/ns6:CSuserStatus/ns6:parsingStatus/ns6:response')=bpws:getVariableData('Success_Response')">
+                <scope name="ScpUserStatusToOrderDispatcher">
+                    <faultHandlers>
+                        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                            <throw name="ThrOrderDispatcherRemoteFault" faultName="ns9:OrderDispatcherRemoteFault" faultVariable="runTimeFault"/>
+                        </catch>
+                    </faultHandlers>
+                    <sequence name="SeqUserStatusToOrderDispatcher">
+                        <assign name="ParseUserStatusOVToOrderDispatcher">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransParseUserStatusOVToOrderDispatcher.xsl',bpws:getVariableData('ParseUserStatusOV','parameter'))"/>
+                                <to part="userStatus" variable="UpdateUserStatusToOrderSplitter"/>
+                            </copy>
+                        </assign>
+                        <assign name="AsgInstanceIdToOrderDispatcher">
+                            <copy>
+                                <from expression="ora:getCompositeInstanceId()"/>
+                                <to part="userStatus" query="/ns6:CSuserStatus/ns6:eaiHeader/ns6:instanceId" variable="UpdateUserStatusToOrderSplitter"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCurrentDateTime()"/>
+                                <to part="userStatus" query="/ns6:CSuserStatus/ns6:eaiHeader/ns6:timeStamp" variable="UpdateUserStatusToOrderSplitter"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvOrderSplitterToPropagateUserStatus" partnerLink="CSOM_OrderSplitter" portType="ns10:CSOM_OrderSplitter" operation="updateUserStatus" inputVariable="UpdateUserStatusToOrderSplitter"/>
+                    </sequence>
+                </scope>
+            </case>
+            <otherwise>
+                <empty name="ParseUserStatusFailureEmptyActivity"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

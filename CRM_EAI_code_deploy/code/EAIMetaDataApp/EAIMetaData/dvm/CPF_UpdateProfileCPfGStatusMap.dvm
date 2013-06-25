@@ -1,0 +1,11 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="CPF_UpdateProfileCPfGStatusMap" xmlns="http://xmlns.oracle.com/dvm">
+<description>Maps CPfG user status values from those use in EAI to those expected by Siebel.
+
+Used by:
+- CPF_UpdateProfile</description><columns><column name="EAI"/><column name="SIEBEL"/></columns>
+<rows><row><cell>CPFG_USER_PROMOTED</cell><cell>CPFG_USER_PROMOTED</cell></row>
+<row><cell>CPFG_PROMOTION_FAILED</cell><cell>CPFG_PROMOTION_FAILED</cell></row>
+<row><cell>CPFG_DEMOTION_FAILED</cell><cell>CPFG_DEMOTION_FAILED</cell></row>
+<row><cell>CPFG_USERID_UPDATE_FAILED</cell><cell>CPFG_USERID_UPDATE_FAILED</cell></row>
+</rows></dvm>

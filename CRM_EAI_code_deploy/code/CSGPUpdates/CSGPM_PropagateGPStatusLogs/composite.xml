@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0"
+           xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active"
+           name="CSGPM_PropagateGPStatusLogs" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+           
+    <import location="oramds:/soa/shared/workflow/NotificationService.wsdl"
+            namespace="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/>
+            
+    <import location="CSGPM_PropagateGPStatusLogs.wsdl"
+            namespace="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs"/>
+            
+    <import location="oramds:/soa/shared/workflow/NotificationService.wsdl"
+            namespace="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/>
+            
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog"
+            location="GlobalPriceUpdateLogFTP.wsdl" importType="wsdl"/>
+            
+    <service name="client" ui:wsdlLocation="CSGPM_PropagateGPStatusLogs.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0"
+                        callbackInterface="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs#wsdl.interface(CSGPM_PropagateGPStatusLogsCallback)"
+                        interface="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs#wsdl.interface(CSGPM_PropagateGPStatusLogs)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0"
+                    port="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs#wsdl.endpoint(CSGPM_PropagateGPStatusLogs/CSGPM_PropagateGPStatusLogs)"/>
+    </service>
+    
+    <component name="CSGPM_PropagateGPStatusLogs">
+        <implementation.bpel src="CSGPM_PropagateGPStatusLogs.bpel"/>
+    </component>
+    
+    <reference name="GlobalPriceUpdateLogFTP"
+               ui:wsdlLocation="GlobalPriceUpdateLogFTP.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog#wsdl.interface(FTPPLLogRequest)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog#wsdl.endpoint(FTPPLLogRequest/FTPLogRequest)"
+                    location="GlobalPriceUpdateLogFTP.wsdl" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    
+    <reference name="NotificationService"
+               ui:wsdlLocation="oramds:/soa/shared/workflow/NotificationService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0"
+                        interface="http://xmlns.oracle.com/ias/pcbpel/NotificationService#wsdl.interface(NotificationService)"/>
+        <binding.wsif location="oramds:/soa/shared/workflow/NotificationService.wsdl"
+                      port="http://xmlns.oracle.com/ias/pcbpel/NotificationService#wsdl.endpoint(NotificationService/JavaPort)"/>
+    </reference>
+    
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CSGPM_PropagateGPStatusLogs/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSGPM_PropagateGPStatusLogs/NotificationService</source.uri>
+        <target.uri>NotificationService</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSGPM_PropagateGPStatusLogs/GlobalPriceUpdateLogFTP</source.uri>
+        <target.uri>GlobalPriceUpdateLogFTP</target.uri>
+    </wire>
+    
+    <!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property> -->
+</composite>

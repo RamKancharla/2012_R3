@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.OM.141_OrderStatus.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:  	Canonical Order Status Schema document including message header
+*
+*
+* Change History
+* Version		Date				Author									Description Of Change
+* =======	========	==================		===============================
+*  0.01			10/08/07		G PATCHIPULUSU				Initial Version
+*  0.02			14/08/07		G PATCHIPULUSU				Added canonical complex types
+*  0.03			17/09/07		GPATCHIPULUSU				Changed the common schema location
+*  0.04                 21/01/08                S Vuppala                               Added orderPermissionStatus
+*  0.05                 18/08/08                Sreeja                                  Added SID in CanonicalResponseOLI
+*  0.06			20/08/08		Surya Gananvarapu			Modified SID type to string.
+*  0.07                 16/02/10		Sreeja Prasad			        Added PermBillFlag in CanonicalResponseOLI for PBI -421.
+*  0.08			20/07/10		Venkatakrishna A			Added SAPOrderNumber and SAPItemNumber as part of B2CC
+*  0.09			27/09/10		Ramanjana               		Added actionCode as part of CR 5862
+*  0.10			06/10/10		Ramanjana               		Added serverId as part of CR 5862
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.06">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="orderStatus" type="xsdLocal:OrderStatus"/>
+	<xsd:complexType name="OrderStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="messageHeader" type="xsdLocal:CanonicalMessageHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:CanonicalResponseOrderHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:CanonicalResponseOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+			<xsd:element name="rootItemId" type="xsd:string"/>
+			<xsd:element name="itemNumber" type="xsd:string"/>
+                        <xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="ILA" type="xsd:string"/>
+			<xsd:element name="userNumber" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+			<xsd:element name="QUID" type="xsd:string"/>			
+			<xsd:element name="orderLinestatus" type="xsd:string"/>
+			<xsd:element name="orderPermissionStatus" type="xsd:string"/>
+			<xsd:element name="requestStatus" type="xsd:string"/>
+			<xsd:element name="assetIntegrationId" type="xsd:string"/>
+			<xsd:element name="SID" type="xsd:string"/>
+                        <xsd:element name="PermBillFlag" type="xsd:string"/>
+                        <xsd:element name="SAPOrderNumber" type="xsd:string"/>
+			<xsd:element name="SAPItemNumber" type="xsd:string"/>
+                        <xsd:element name="serverId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalResponseOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="response" type="xsd:string"/>
+			<xsd:element name="requestStatus" type="xsd:string"/>
+			<xsd:element name="CRMOrderNumber" type="xsd:string"/>
+			<xsd:element name="orderNumber" type="xsd:string"/>
+			<xsd:element name="entrepriseCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

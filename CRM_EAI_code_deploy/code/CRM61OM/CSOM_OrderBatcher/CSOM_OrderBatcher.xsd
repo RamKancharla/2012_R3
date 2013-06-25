@@ -1,0 +1,19 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="CSOM_OrderBatcherProcessRequest">
+		<complexType>
+			<sequence>
+				<element name="input" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="CSOM_OrderBatcherProcessResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

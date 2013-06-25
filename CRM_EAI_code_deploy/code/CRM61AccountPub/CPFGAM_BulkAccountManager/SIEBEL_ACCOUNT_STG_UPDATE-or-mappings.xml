@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toplink:object-persistence version="Oracle TopLink - 11g Release 1 (11.1.1.4.0) (Build 101210)" xmlns:opm="http://xmlns.oracle.com/ias/xsds/opm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:toplink="http://xmlns.oracle.com/ias/xsds/toplink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <opm:name>SIEBEL_ACCOUNT_STG_UPDATE</opm:name>
+   <opm:class-mapping-descriptors>
+      <opm:class-mapping-descriptor xsi:type="toplink:relational-class-mapping-descriptor">
+         <opm:class>SIEBELACCOUNTSTGUPDATE.SiebelAccountStg</opm:class>
+         <opm:alias>SiebelAccountStg</opm:alias>
+         <opm:primary-key>
+            <opm:field table="SIEBEL_ACCOUNT_STG" name="ACCOUNT_ROW_ID" xsi:type="opm:column"/>
+         </opm:primary-key>
+         <opm:events xsi:type="toplink:event-policy"/>
+         <opm:querying xsi:type="toplink:query-policy">
+            <opm:queries>
+               <opm:query name="findAllSiebelAccountStg" xsi:type="toplink:read-all-query">
+                  <toplink:timeout>0</toplink:timeout>
+                  <toplink:reference-class>SIEBELACCOUNTSTGUPDATE.SiebelAccountStg</toplink:reference-class>
+                  <toplink:cache-usage>primary-key</toplink:cache-usage>
+                  <toplink:lock-mode>none</toplink:lock-mode>
+                  <toplink:container xsi:type="toplink:list-container-policy">
+                     <toplink:collection-type>java.util.Vector</toplink:collection-type>
+                  </toplink:container>
+               </opm:query>
+            </opm:queries>
+            <toplink:does-exist-query xsi:type="toplink:does-exist-query">
+               <toplink:existence-check>check-database</toplink:existence-check>
+            </toplink:does-exist-query>
+         </opm:querying>
+         <opm:attribute-mappings>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>accountRowId</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ACCOUNT_ROW_ID" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>accountLastUpd</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ACCOUNT_LAST_UPD" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.sql.Timestamp</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>accountLastUpdBy</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ACCOUNT_LAST_UPD_BY" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>accountName</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ACCOUNT_NAME" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>accountLoc</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ACCOUNT_LOC" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>accountParOuId</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ACCOUNT_PAR_OU_ID" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>accountXAccClass</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ACCOUNT_X_ACC_CLASS" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>accountCustStatCd</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ACCOUNT_CUST_STAT_CD" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressAddrName</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ADDRESS_ADDR_NAME" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressAddr</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ADDRESS_ADDR" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressXFloor</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ADDRESS_X_FLOOR" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressCity</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ADDRESS_CITY" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressCountry</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ADDRESS_COUNTRY" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressLastUpd</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ADDRESS_LAST_UPD" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.sql.Timestamp</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressLastUpdBy</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="ADDRESS_LAST_UPD_BY" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>eaiState</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="EAI_STATE" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>eaiLastUpdated</opm:attribute-name>
+               <opm:field table="SIEBEL_ACCOUNT_STG" name="EAI_LAST_UPDATED" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.sql.Timestamp</toplink:attribute-classification>
+            </opm:attribute-mapping>
+         </opm:attribute-mappings>
+         <toplink:descriptor-type>independent</toplink:descriptor-type>
+         <toplink:caching>
+            <toplink:cache-type>weak-reference</toplink:cache-type>
+            <toplink:always-refresh>true</toplink:always-refresh>
+            <toplink:unitofwork-isolation-level>isolate-new-data-after-transaction</toplink:unitofwork-isolation-level>
+         </toplink:caching>
+         <toplink:remote-caching>
+            <toplink:cache-type>weak-reference</toplink:cache-type>
+         </toplink:remote-caching>
+         <toplink:instantiation/>
+         <toplink:copying xsi:type="toplink:instantiation-copy-policy"/>
+         <toplink:change-policy xsi:type="toplink:deferred-detection-change-policy"/>
+         <toplink:tables>
+            <toplink:table name="SIEBEL_ACCOUNT_STG"/>
+         </toplink:tables>
+      </opm:class-mapping-descriptor>
+   </opm:class-mapping-descriptors>
+</toplink:object-persistence>

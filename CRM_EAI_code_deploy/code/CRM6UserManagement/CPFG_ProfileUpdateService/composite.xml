@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFG_ProfileUpdateService" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import importType="wsdl" location="EAI.SRV.EXT.010_UpdateProfile.wsdl" namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementServices"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator"
+            location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_ProfileUpdateServiceValidator/CPFG_ProfileUpdateServiceValidator.wsdl"
+            importType="wsdl"/>
+    <service name="CPFGUM.ProfileUpdateService_ep" ui:wsdlLocation="EAI.SRV.EXT.010_UpdateProfile.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementServices#wsdl.interface(UpdateProfileInterface)"/>
+        <binding.ws location="EAI.SRV.EXT.010_UpdateProfile.wsdl" port="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementServices#wsdl.endpoint(UpdateProfileService/NewPort)"/>
+    </service>
+    <component name="CPFGUM.ProfileUpdateService">
+        <implementation.mediator src="CPFGUM.ProfileUpdateService.mplan"/>
+    </component>
+    <reference name="CPFGUM.ProfileUpdateServiceValidator"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_ProfileUpdateServiceValidator/CPFG_ProfileUpdateServiceValidator.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator#wsdl.interface(CPFG_ProfileUpdateServiceValidator)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator#wsdl.endpoint(CPFG_ProfileUpdateServiceValidator/CPFG_ProfileUpdateServiceValidator)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_ProfileUpdateServiceValidator/CPFG_ProfileUpdateService?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CPFGUM.ProfileUpdateService_ep</source.uri>
+        <target.uri>CPFGUM.ProfileUpdateService/CPFGUM.ProfileUpdateService</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGUM.ProfileUpdateService/CPFGUM.ProfileUpdateServiceValidator</source.uri>
+        <target.uri>CPFGUM.ProfileUpdateServiceValidator</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

@@ -1,0 +1,43 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TOMAM_AccountManager" revision="1.0" state="on">
+    <import location="TOMAM_AccountManager.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager"/>
+    <import location="WriteTOMAccount.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteTOMAccount/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" importType="wsdl"/>
+    <service name="TOMAM_AccountManager" ui:wsdlLocation="TOMAM_AccountManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager#wsdl.interface(TOMAM_AccountManagerCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager#wsdl.interface(TOMAM_AccountManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager#wsdl.endpoint(TOMAM_AccountManager/TOMAM_AccountManager)"/>
+    </service>
+    <component name="TOMAM_AccountManagerProcess">
+        <implementation.bpel src="TOMAM_AccountManagerProcess.bpel"/>
+    </component>
+    <reference name="AsyncSequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL" soapVersion="1.1"/>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="WriteTOMAccount" ui:wsdlLocation="WriteTOMAccount.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteTOMAccount/#wsdl.interface(WriteTOMAccount_ptt)"/>
+        <binding.jca config="WriteTOMAccount_db.jca">
+            <property name="jca.retry.interval" type="xs:string" many="false">60</property>
+        </binding.jca>
+        <property name="jca.retry.count" type="xs:int" many="false" override="may">4</property>
+        <property name="jca.retry.interval" type="xs:string" many="false">60</property>
+        <property name="jca.retry.backoff" type="xs:int" many="false" override="may">1</property>
+    </reference>
+    <wire>
+        <source.uri>TOMAM_AccountManager</source.uri>
+        <target.uri>TOMAM_AccountManagerProcess/TOMAM_AccountManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMAM_AccountManagerProcess/WriteTOMAccount</source.uri>
+        <target.uri>WriteTOMAccount</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMAM_AccountManagerProcess/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

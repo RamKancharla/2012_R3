@@ -1,0 +1,48 @@
+<definitions
+     name="CCRMCM_ContactDispatcher"
+     targetNamespace="http://xmlns.oracle.com/CCRMCM_ContactDispatcher"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"    
+     xmlns:ns2="http://xmlns.oracle.com/CSCM_ContactManager"
+     xmlns:client="http://xmlns.oracle.com/CCRMCM_ContactDispatcher"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" 
+             xmlns:ns2="http://xmlns.oracle.com/CSCM_ContactManager" xmlns:client="http://xmlns.oracle.com/CCRMCM_ContactDispatcher">
+            <import namespace="http://xmlns.oracle.com/CCRMCM_ContactDispatcher" schemaLocation="CCRMCM_ContactDispatcher.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" 
+             xmlns:ns2="http://xmlns.oracle.com/CSCM_ContactManager" xmlns:client="http://xmlns.oracle.com/CCRMCM_ContactDispatcher">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.CM.197_ContactEvent.xsd"/>
+        </schema>
+    </types>
+    <message name="CCRMCM_ContactDispatcherRequestMessage">
+        <part name="payload" element="ns1:contactEvent"/>
+    </message>
+    <message name="CCRMCM_ContactDispatcherResponseMessage">
+        <part name="payload" element="client:CCRMCM_ContactDispatcherProcessResponse"/>
+    </message>
+    
+    <portType name="CCRMCM_ContactDispatcher">
+        <operation name="dispatchContact">
+            <input message="client:CCRMCM_ContactDispatcherRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMCM_ContactDispatcherCallback">
+        <operation name="onResult">
+            <input message="client:CCRMCM_ContactDispatcherResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMCM_ContactDispatcher">
+        <plnk:role name="CCRMCM_ContactDispatcherProvider">
+            <plnk:portType name="client:CCRMCM_ContactDispatcher"/>
+        </plnk:role>
+        <plnk:role name="CCRMCM_ContactDispatcherRequester">
+            <plnk:portType name="client:CCRMCM_ContactDispatcherCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

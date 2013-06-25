@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ELM_AMPOLLING.wsdl" name="ELM_AMPOLLING">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/ELM_AMPOLLING/#wsdl.interface(ELM_AMPOLLING_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="UpodateBuffer.wsdl" name="UpdateBuffer">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpodateBuffer/#wsdl.interface(UpodateBuffer_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="AccountServiceRef.wsdl" name="AccountService">
+        <interface.wsdl interface="http://account.service.eai.trls.thomsonreuters.com/#wsdl.interface(Account)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,19 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="SAPOM_UserCreationProcessRequest">
+		<complexType>
+			<sequence>
+				<element name="input" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="SAPOM_UserCreationProcessResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

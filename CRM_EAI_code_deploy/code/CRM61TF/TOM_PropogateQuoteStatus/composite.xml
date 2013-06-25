@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TOM_PropogateQuoteStatus" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import importType="wsdl" location="EAI.SRV.EXT.TOM.024_PropogateQuoteStatusService.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/TechFul"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus"
+            location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOM_ValidateQuoteStatus/TOM_ValidateQuoteStatus.wsdl"
+            importType="wsdl"/>
+    <service name="TOM.PropagateQuoteStatusRSIn_ep" ui:wsdlLocation="EAI.SRV.EXT.TOM.024_PropogateQuoteStatusService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/TechFul#wsdl.interface(PropagateQuoteStatusSoap)"/>
+        <binding.ws location="EAI.SRV.EXT.TOM.024_PropogateQuoteStatusService.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/TechFul#wsdl.endpoint(PropagateQuoteStatus/PropagateQuoteStatusSoap)"/>
+    </service>
+    <component name="TOM.PropagateQuoteStatusRSIn">
+        <implementation.mediator src="TOM.PropagateQuoteStatusRSIn.mplan"/>
+    </component>
+    <reference name="TOM.ValidateQuoteStatusSOAPAdp"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOM_ValidateQuoteStatus/TOM_ValidateQuoteStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus#wsdl.interface(TOM_ValidateQuoteStatus)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus#wsdl.endpoint(TOM_ValidateQuoteStatus/TOM_ValidateQuoteStatus)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOM_ValidateQuoteStatus/anchorToValidateQuoteStatus?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>TOM.PropagateQuoteStatusRSIn_ep</source.uri>
+        <target.uri>TOM.PropagateQuoteStatusRSIn/TOM.PropagateQuoteStatusRSIn</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOM.PropagateQuoteStatusRSIn/TOM.ValidateQuoteStatusSOAPAdp</source.uri>
+        <target.uri>TOM.ValidateQuoteStatusSOAPAdp</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

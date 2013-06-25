@@ -1,0 +1,23 @@
+<adapter-config name="RegisterSequenceDBAdapter" adapter="Database Adapter" wsdlLocation="RegisterSequenceDBAdapter.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="EAIReference" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.internal.databaseaccess.Oracle9Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@eaidev2:1522:DOMCRM6"/>
+      <property name="UserName" value="SOA_EAIOWNER"/>
+      <property name="Password" value="E8D26CEB17C942CF78415AE2B31C2AA9"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="RegisterSequenceDBAdapter_ptt" operation="RegisterSequenceDBAdapter">
+    <interaction-spec className="oracle.tip.adapter.db.DBStoredProcedureInteractionSpec">
+      <property name="SchemaName" value="SOA_EAIOWNER"/>
+      <property name="PackageName" value="MESSAGE_SEQUENCER"/>
+      <property name="ProcedureName" value="REGISTER_SEQ"/>
+    </interaction-spec>
+    <input/>
+    <output/>
+  </endpoint-interaction>
+
+</adapter-config>

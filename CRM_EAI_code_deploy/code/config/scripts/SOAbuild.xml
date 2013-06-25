@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="BuildSOAComponents" default="Build.All">
+  <property file="../../release.properties"/>
+ 
+  <property environment="env"/>
+  <property name="build" location="output"/>
+  <property name="config.plan" location="EAI_cfgplan.xml"/>
+  <import file="./replace_hosts.xml"/>
+  
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement location="../lib/ant-contrib/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
+ 
+  
+  <target name="Build.All">
+
+       <subant antfile="generateProperties.xml" target="set.build.properties" buildpath="."></subant>
+       <subant antfile="prebuild.xml" target="set.build.properties" buildpath="."></subant>
+	<loadproperties srcFile="build.properties"/>
+
+    <echo message="Replacing MDS connection with following database connection details :-  User:${db.user}, password:${db.password}, host:${db.host}, port${db.port}, sid:${db.sid}"/>
+    <replace file=".adf/META-INF/adf-config.xml" propertyFile="build.properties">
+      <replacefilter token="@db.user@" value="${db.user}"/>
+      <replacefilter token="@db.password@" value="${db.password}"/>
+      <replacefilter token="@db.url@" value="${db.url}"/>
+      <!--replacefilter token="$(db.port)" value="${db.port}"/>
+      <replacefilter token="$(db.sid)" value="${db.sid}"/-->
+      <replacefilter token="@partition@" value="${soa.domain}"/>
+    </replace>
+
+	<trycatch property="errorStack" reference="FromRef">
+   <try>
+	<if>
+      <equals arg1="${mds.deploy}" arg2="true"/>
+      <then>
+        <echo message="Deploying MDS"/>
+        <subant antfile="CommonSCABuild.xml" target="undeployMDSApplication" buildpath="."></subant>
+        <subant antfile="CommonSCABuild.xml" target="deployMDSApplication" buildpath=".">
+          <property name="mds.reposistory" value="../../EAIMetaDataApp"/>
+        </subant>
+      </then>
+      <else>
+        <echo message="MDS deployment will be skipped since it is not specified in the release properties."/>
+      </else>
+    </if>
+	      </try>
+      <catch>
+        <echo>There was an error while deploying: ${errorStack}</echo>
+        <input message="Deployment has failed with an error. Request you to check with EAI SOA Admin before you can proceed with this step! Press y (yes) to continue with next component deployment in the queue or n (no) to stop here."
+               validargs="y,n" addproperty="deploynew.success"/>
+      </catch>
+      <finally>
+        <condition property="deploy.fail1">
+          <equals arg1="n" arg2="${deploynew.success}"/>
+        </condition>
+        <fail if="deploy.fail1">FAILED DEPLOYMENT - Build Aborted. You must
+                                manually run the command for undeploying and deploying MDS</fail>
+        <replaceregexp file="../../release.properties"
+                       match="mds.deploy=true" replace="mds.deploy=" byline="true"/>
+      </finally>
+    </trycatch>
+	  
+   <trycatch property="errorStack" reference="FromRef">
+   <try>
+	<if>
+      <equals arg1="${eaiapp.deploy}" arg2="true"/>
+      <then>
+        <echo message="Deploying EAIMonitor UI"/>
+        <subant antfile="EAIMonitorBuild.xml" target="deploy" buildpath=".">
+          <property name="basedir" value="../../Utilities/EAIMonitorUI"/>
+        </subant>
+      </then>
+      <else>
+        <echo message="EAIMonitorUI deployment will be skipped since it is not specified in the release properties."/>
+      </else>
+    </if>
+    </try>
+      <catch>
+        <echo>There was an error while deploying: ${errorStack}</echo>
+        <input message="Deployment has failed with an error. Request you to check with EAI SOA Admin before you can proceed with this step! Press y (yes) to continue with next component deployment in the queue or n (no) to stop here."
+               validargs="y,n" addproperty="deploynew.success"/>
+      </catch>
+      <finally>
+        <condition property="deploy.fail1">
+          <equals arg1="n" arg2="${deploynew.success}"/>
+        </condition>
+        <fail if="deploy.fail1">FAILED DEPLOYMENT - Build Aborted. You must
+                                manually run the command for deploying EAIMonitorUI</fail>
+        <replaceregexp file="../../release.properties"
+                       match="eaiapp.deploy=true" replace="eaiapp.deploy=" byline="true"/>
+      </finally>
+    </trycatch>
+
+
+	 
+      <echo message="Deploy all webservices mentioned in the release.properties file"/>
+		<echo message="Deploying ESO Auto Quote components" />
+		<foreach list="${ESO.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="ESO" />
+		</foreach>
+		<foreach list="${CRM61OM.ws.list}" delimiter="," inheritall="true" target="CheckWebService" param="pack.id">
+			<param name="group.dir.name" value="CRM61OM" />
+		</foreach>
+		<foreach list="${CRM61AccountPub.ws.list}" delimiter="," inheritall="true" target="CheckWebService" param="pack.id">
+			<param name="group.dir.name" value="CRM61AccountPub" />
+		</foreach>
+		<foreach list="${CRM61PricePublish.ws.list}" delimiter="," inheritall="true" target="CheckWebService" param="pack.id">
+			<param name="group.dir.name" value="CRM61PricePublish" />
+		</foreach>
+		<foreach list="${CSGPUpdates.ws.list}" delimiter="," inheritall="true" target="CheckWebService" param="pack.id">
+			<param name="group.dir.name" value="CSGPUpdates" />
+		</foreach>
+    
+		<echo message="Deploying all composites mentioned in the release.properties file"/>
+		<echo message="Deploying Rules" />
+		<foreach list="${EAIRules.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="EAIRules" />
+		</foreach>
+		
+		<echo message="Deploying Utility components" />
+		<foreach list="${Utilities.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="Utilities" />
+		</foreach>
+		<echo message="Deploying Sequencer related components" />
+		<foreach list="${Sequencer.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="Sequencer" />
+		</foreach>
+		
+		<echo message="Deploying Contact Publish components" />
+		<foreach list="${CRM61ContactPub.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRM61ContactPub" />
+		</foreach>
+		
+		<echo message="Deploying Account Publish components" />
+		<foreach list="${CRM61AccountPub.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRM61AccountPub" />
+		</foreach>		
+
+		<echo message="Deploying Price Publish components"/>
+		<foreach list="${CRM61PricePublish.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRM61PricePublish" />
+		</foreach>
+
+		<echo message="Deploying CSGP components" />
+		<foreach list="${CSGPUpdates.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CSGPUpdates" />
+		</foreach>
+						
+		<echo message="Deploying User Management components"/>
+		<foreach list="${CRM6UserManagement.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+		<param name="group.dir.name" value="CRM6UserManagement"/>
+		</foreach>	
+		
+		<echo message="Deploying Order Management components" />
+		<foreach list="${CRM61OM.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRM61OM" />
+		</foreach>
+
+        	<echo message="Deploying Opportunity Managementcomponents" />
+		<foreach list="${CRM6OpportunityManagement.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRM6OpportunityManagement" />
+		</foreach>
+
+		<echo message="Deploying B2CC Product Pricing components" />
+		<foreach list="${B2CCProductPricing.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="B2CCProductPricing" />
+		</foreach>
+
+		<echo message="Deploying Product Publish components" />
+		<foreach list="${CRM6ProductPublish.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRM6ProductPublish" />
+		</foreach>
+		
+		<echo message="Deploying TF components" />
+		<foreach list="${CRM61TF.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRM61TF" />
+		</foreach>
+		
+		<echo message="Deploying Quote Management components" />
+		<foreach list="${CRM61QuoteManagement.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRM61QuoteManagement" />
+		</foreach>
+
+
+
+		<echo message="Deploying Activity Management components" />
+		<foreach list="${CRMActivityMgmt.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRMActivityMgmt" />
+		</foreach>
+
+		<echo message="Deploying Customer Zone components" />
+		<foreach list="${CRMCSZ.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="CRMCSZ" />
+		</foreach>
+
+		<echo message="Deploying EDTK components" />
+		<foreach list="${EDTK.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="EDTK" />
+		</foreach>
+		<echo message="Deploying Accountgateway components" />
+		<foreach list="${AccountGateway.list}" delimiter="," inheritall="true" target="CheckComposite" param="pack.id">
+			<param name="group.dir.name" value="AccountGateway" />
+		</foreach>
+		
+  </target>
+  
+  <target name="deployComposite">
+    <property name="compositeName" value="${compName}"/>
+    <property name="compositeDir" value="${compDir}"/>
+    <mkdir dir="${compositeDir}/build"/>
+    <subant antfile="CommonSCABuild.xml" target="deploySCAProject"
+            buildpath=".">
+      <property name="scac.home" value="."/>
+      <property name="compositeName" value="${compositeName}"/>
+      <property name="compositeDir" value="${compositeDir}"/>
+      <property name="revision" value="${revision}"/>
+      <property name="enabled" value="true"/>
+      <property name="tmp.output.dir" value="${compositeDir}/build"/>
+      <property name="config.plan.file" value="${config.plan}"/>
+      <property name="partition" value="${domain}"/>
+    </subant>
+  </target>
+
+  <target name="deploySingleComposite">
+    
+	<property name="compositeName" value="${compName}"/>
+    <property name="compositeDir" value="${compDir}"/>
+    <mkdir dir="${compositeDir}/build"/>
+          <subant antfile="replace_hosts.xml" target="change.all"
+                buildpath=".">
+          <property name="basedir"
+                    value="${compositeDir}"/>
+          <property name="deploy.server" value="${soa.host}"/>
+          <property name="deploy.port" value="${soa.port}"/>
+        </subant>
+        <subant antfile="replaceWSEndpoints.xml" target="change.all"
+                buildpath=".">
+          <property name="basedir"
+                    value="${compositeDir}"/>
+        </subant>
+
+    <subant antfile="CommonSCABuild.xml" target="deploySCAProject"
+            buildpath=".">
+      <property name="scac.home" value="."/>
+      <property name="compositeName" value="${compositeName}"/>
+      <property name="compositeDir" value="${compositeDir}"/>
+      <property name="revision" value="${revision}"/>
+      <property name="enabled" value="true"/>
+      <property name="tmp.output.dir" value="${compositeDir}/build"/>
+      <property name="config.plan.file" value="${config.plan}"/>
+      <property name="partition" value="${domain}"/>
+    </subant>
+
+   </target>
+  
+  <!--target name="undeployComposite">
+          <loadfile srcfile="DeployedComposites.txt" property="deployedcomponentrevisions">
+              <filterchain>
+                  <filterreader classname="org.apache.tools.ant.filters.LineContainsRegExp">
+                      <param type="regexp" value="${pack.id}\["/>
+                  </filterreader>
+                  <headfilter lines="${undeploy.revisions.number}" skip="${keep.revisions.number}"/>
+              </filterchain>
+          </loadfile>
+          <if>
+              <isset property="deployedcomponentrevisions"/>
+              <then>
+                 <propertyregex property="trimspace" input="${deployedcomponentrevisions}" regexp="[\s]"
+                                 replace="" casesensitive="false"/>
+                  
+                  <propertyregex property="defaultcheck" input="${trimspace}"
+                                 regexp=".*(,isDefault=false,).*" replace="default revision"
+                                 casesensitive="false"/>
+                  <if>
+                      <isset property="defaultcheck"/>
+                      <then>
+                      	<echo message="SKIP UNDEPLOYMENT of ${pack.id} since the revision is marked as default. Perform the step manually if required."/>
+                      </then>
+                      <else>
+                          <propertyregex property="undeploy.revision" input="${trimspace}"
+                                         regexp="(.*\[)(.*)(\],).*" select="\2"
+                                         casesensitive="false"/>
+			     <subant antfile="CommonSCABuild.xml" target="undeploySCAProject" buildpath=".">
+      					<property name="compositeName" value="${pack.id}"/>
+      					<property name="revision" value="${undeploy.revision}"/>
+      					<property name="partition" value="${domain}"/>
+    			     </subant>
+                      </else>
+                  </if>
+              </then>
+                      <else>
+                      	<echo message="Undeployment will be skipped for ${pack.id} since no prior deployed revisions found which exceeds the limit of versions to be kept on server"/>
+                      </else>
+          </if>
+  </target-->
+
+  <target name="CheckWebService" depends="is-ws-a-release-comp"
+          if="cond-is-true">
+    <trycatch property="errorStack" reference="FromRef">
+      <try>
+        <subant antfile="WebServicesBuild.xml" target="deployWebService"
+                buildpath=".">
+          <property name="ws.dir"
+                    value="../../${group.dir.name}/${pack.id}"/>
+          <property name="app.name" value="${pack.id}"/>
+          <property name="web.name" value="${pack.id}"/>
+        </subant>
+      </try>
+      <catch>
+        <echo>There was an error while deploying: ${errorStack}</echo>
+        <input message="Deployment has failed with an error. Request you to check with EAI SOA Admin before you can proceed with this step! Press y (yes) to continue with next component deployment in the queue or n (no) to stop here."
+               validargs="y,n" addproperty="deploynew.success"/>
+      </catch>
+      <finally>
+        <condition property="deploy.fail1">
+          <equals arg1="n" arg2="${deploynew.success}"/>
+        </condition>
+        <fail if="deploy.fail1">FAILED DEPLOYMENT - Build Aborted. You must
+                                manually run the command for deploying the
+                                component ${pack.id}  
+                                 </fail>
+        <replaceregexp file="../../release.properties"
+                       match=",${pack.id}" replace="" byline="true"/>
+        <replaceregexp file="../../release.properties"
+                       match="=${pack.id}" replace="=" byline="true"/>
+      </finally>
+    </trycatch>
+  </target>
+  <target name="CheckComposite" depends="is-comp-a-release-comp"
+          if="cond-is-true">
+
+    <trycatch property="errorStack" reference="FromRef">
+      <try>
+        <subant antfile="replace_hosts.xml" target="change.all"
+                buildpath=".">
+          <property name="basedir"
+                    value="../../${group.dir.name}/${pack.id}"/>
+          <property name="deploy.server" value="${soa.host}"/>
+          <property name="deploy.port" value="${soa.port}"/>
+        </subant>
+        <subant antfile="replaceWSEndpoints.xml" target="change.all"
+                buildpath=".">
+          <property name="basedir"
+                    value="../../${group.dir.name}/${pack.id}"/>
+        </subant>
+
+        <!--antcall target="undeployComposite" inheritall="true"/-->
+        <antcall target="deployComposite" inheritall="true">
+          <param name="compName" value="${pack.id}"/>
+          <param name="compDir"
+                 value="${basedir}/../../${group.dir.name}/${pack.id}"/>
+        </antcall>
+      </try>
+      <catch>
+        <echo>There was an error while deploying: ${errorStack}</echo>
+        <input message="Deployment has failed with an error. Request you to check with EAI SOA Admin before you can proceed with this step! Press y (yes) to continue with next component deployment in the queue or n (no) to stop here."
+               validargs="y,n" addproperty="deploynew.success"/>
+      </catch>
+      <finally>
+        <condition property="deploy.fail1">
+          <equals arg1="n" arg2="${deploynew.success}"/>
+        </condition>
+        <fail if="deploy.fail1">FAILED DEPLOYMENT - Build Aborted. You must
+                                manually run the command for deploying the
+                                component ${pack.id}  
+                                 </fail>
+        <replaceregexp file="../../release.properties"
+                       match=",${pack.id}" replace="" byline="true"/>
+        <replaceregexp file="../../release.properties"
+                       match="=${pack.id}" replace="=" byline="true"/>
+      </finally>
+    </trycatch>
+  </target>
+  <target name="is-ws-a-release-comp">
+    <property name="release.pack.id.tmp" value="rel.${group.dir.name}.ws.list"/>
+    <if>
+      <isset property="${release.pack.id.tmp}"/>
+      <then>
+        <propertycopy name="release.pack.id.tmp1"
+                      from="${release.pack.id.tmp}"/>
+        <propertyregex property="pack.id" input="  ${pack.id}  "
+                       regexp="[(\s)|(\t)|(\r)|(\n)]" replace=""
+                       casesensitive="false"/>
+        <propertyregex property="release.pack.id"
+                       input="${release.pack.id.tmp1} "
+                       regexp="[(\s)|(\t)|(\r)|(\n)]" replace=""
+                       casesensitive="false"/>
+        <condition property="cond-is-true">
+          <contains string="${release.pack.id}," substring="${pack.id},"
+                    casesensitive="false"/>
+        </condition>
+        <if>
+          <equals arg1="cond-is-true" arg2="true"/>
+          <then>
+            <echo message="Webservice component ${pack.id} from ${group.dir.name} will now be deployed."/>
+          </then>
+          <else>
+            <echo message="${release.pack.id.tmp} in release.properties does not contain webservice ${pack.id} from ${group.dir.name}. This component will be skipped."/>
+          </else>
+        </if>
+      </then>
+      <else>
+        <echo message="${release.pack.id.tmp} is not included in the release list. So ${pack.id} from ${group.dir.name} will be skipped."/>
+        <condition property="cond-is-true" value="false">
+          <isset property="release.pack.id.tmp1"/>
+        </condition>
+      </else>
+    </if>
+  </target>
+  <target name="is-comp-a-release-comp">
+    <property name="release.pack.id.tmp" value="rel.${group.dir.name}.list"/>
+    <!--echo message="${release.pack.id.tmp} ${group.dir.name} ${pack.id}"/-->
+    <if>
+      <isset property="${release.pack.id.tmp}"/>
+      <then>
+        <propertycopy name="release.pack.id.tmp1"
+                      from="${release.pack.id.tmp}"/>
+        <propertyregex property="pack.id" input="  ${pack.id}  "
+                       regexp="[(\s)|(\t)|(\r)|(\n)]" replace=""
+                       casesensitive="false"/>
+        <propertyregex property="release.pack.id"
+                       input="${release.pack.id.tmp1} "
+                       regexp="[(\s)|(\t)|(\r)|(\n)]" replace=""
+                       casesensitive="false"/>
+        <condition property="cond-is-true">
+          <contains string="${release.pack.id}," substring="${pack.id},"
+                    casesensitive="false"/>
+        </condition>
+
+        <if>
+          <contains string="${domains.default}," substring=",${pack.id},"
+                    casesensitive="false"/>
+          <then>	    
+            <property name="domain" value="default"/>
+          </then>
+        </if>
+        <if>
+          <contains string="${domains.async}," substring=",${pack.id},"
+                    casesensitive="false"/>
+          <then>            
+            <property name="domain" value="CRMASYNC"/>
+          </then>
+        </if>
+        <if>
+          <contains string="${domains.mediator}," substring=",${pack.id},"
+                    casesensitive="false"/>
+          <then>	     
+            <property name="domain" value="MEDIATOR"/>
+          </then>
+        </if>
+		
+		 <if>
+          <contains string="${domains.sync}," substring=",${pack.id},"
+                    casesensitive="false"/>
+          <then>           
+            <property name="domain" value="CRMSYNC"/>
+          </then>
+        </if>
+		
+        <if>
+          <isset property="domain"/>
+          <then></then>
+          <else>
+            <fail message="ERROR:: No Domain specified for process ${pack.id}. Please specify domain to be deployed in build.properties file"/>
+          </else>
+        </if>
+      </then>
+      <else>
+	    <echo message="${release.pack.id.tmp} is not included in the release list. So ${pack.id} from ${group.dir.name} will be skipped."/>
+        <condition property="cond-is-true">
+          <isset property="release.pack.id.tmp1"/>
+        </condition>
+      </else>
+    </if>
+  </target>
+</project>

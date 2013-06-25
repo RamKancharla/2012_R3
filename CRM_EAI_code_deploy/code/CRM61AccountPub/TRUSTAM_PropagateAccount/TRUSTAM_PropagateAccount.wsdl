@@ -1,0 +1,47 @@
+<definitions
+     name="TRUSTAM_PropagateAccount"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount"
+                 schemaLocation="TRUSTAM_PropagateAccount.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" schemaLocation="EAI.MSG.TRUST.269_PublishAccount.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TRUSTAM_PropagateAccountResponseMessage">
+        <part name="payload" element="ns2:basicResponse"/>
+    </message>
+    <message name="TRUSTAM_PropagateAccountRequestMessage">
+        <part name="payload" element="ns1:publishTrustAccounts"/>
+    </message>
+    <portType name="TRUSTAM_PropagateAccount">
+        <operation name="publishTRUST">
+            <input message="client:TRUSTAM_PropagateAccountRequestMessage"/>
+            <output message="client:TRUSTAM_PropagateAccountResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TRUSTAM_PropagateAccount">
+        <plnk:role name="TRUSTAM_PropagateAccountProvider">
+            <plnk:portType name="client:TRUSTAM_PropagateAccount"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMTF_ValidateQuoteRequestStub" revision="1.0" state="on">
+    <import location="CCRMTF_ValidateQuoteRequestStub.wsdl" namespace="http://xmlns.oracle.com/CCRMTF_ValidateQuoteRequestStub"/>
+    <service name="client" ui:wsdlLocation="CCRMTF_ValidateQuoteRequestStub.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/CCRMTF_ValidateQuoteRequestStub#wsdl.interface(CCRMTF_ValidateQuoteRequestStub)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://xmlns.oracle.com/CCRMTF_ValidateQuoteRequestStub#wsdl.endpoint(CCRMTF_ValidateQuoteRequestStub/CCRMTF_ValidateQuoteRequestStub)"/>
+    </service>
+    <component name="CCRMTF_ValidateQuoteRequestStub">
+        <implementation.bpel src="CCRMTF_ValidateQuoteRequestStub.bpel"/>
+    </component>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMTF_ValidateQuoteRequestStub/client</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

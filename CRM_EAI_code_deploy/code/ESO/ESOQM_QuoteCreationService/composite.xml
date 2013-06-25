@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="ESOQM_QuoteCreationService" applicationName="ESO" mode="active" revision="1.0" state="on" xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="EAI.SRV.EXT.ESO.312_ReceiveESOQuotePublish.wsdl" namespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/ESO/QM/ESOQuotePublish" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMSYNC/CCRMQM_PropagateQuoteRequestMsg/CCRMQM_PropagateQuoteRequestMsg.wsdl"
+            importType="wsdl"/>
+    <service ui:wsdlLocation="EAI.SRV.EXT.ESO.312_ReceiveESOQuotePublish.wsdl" name="ESO.ESOQM_QuoteCreationServRS_ep">
+        <interface.wsdl interface="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/ESO/QM/ESOQuotePublish#wsdl.interface(publishQuoteService)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/ESO/QM/ESOQuotePublish#wsdl.endpoint(publishQuoteService/GenerateQuote)" location="EAI.SRV.EXT.ESO.312_ReceiveESOQuotePublish.wsdl"/>
+    </service>
+    <component name="ESO.ESOQM_QuoteCreationServRS">
+        <implementation.mediator src="ESO.ESOQM_QuoteCreationServRS.mplan"/>
+    </component>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMSYNC/CCRMQM_PropagateQuoteRequestMsg/CCRMQM_PropagateQuoteRequestMsg.wsdl" name="ESO.PropagateQuoteRequestSoapService">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg#wsdl.interface(CCRMQM_PropagateQuoteRequestMsg)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg#wsdl.endpoint(CCRMQM_PropagateQuoteRequestMsg/CCRMQM_PropagateQuoteRequestMsg)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMSYNC/CCRMQM_PropagateQuoteRequestMsg/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>ESO.ESOQM_QuoteCreationServRS_ep</source.uri>
+        <target.uri>ESO.ESOQM_QuoteCreationServRS/ESO.ESOQM_QuoteCreationServRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ESO.ESOQM_QuoteCreationServRS/ESO.PropagateQuoteRequestSoapService</source.uri>
+        <target.uri>ESO.PropagateQuoteRequestSoapService</target.uri>
+    </wire>
+</composite>

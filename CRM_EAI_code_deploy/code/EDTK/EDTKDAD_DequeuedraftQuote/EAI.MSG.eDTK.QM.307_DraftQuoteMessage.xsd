@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsdLocal="http://www.reuters.com/ns/2011/03/03/GCAP/EAI/eDTK/QM/DraftQuote"
+            targetNamespace="http://www.reuters.com/ns/2011/03/03/GCAP/EAI/eDTK/QM/DraftQuote"
+            elementFormDefault="qualified">
+  <xsd:element name="DAD">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="DADheader">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="DADId" type="xsd:integer"/>
+              <xsd:element name="BillingStartDate" type="xsd:date"/>
+              <xsd:element name="BillingStopDate" type="xsd:date"/>
+              <xsd:element name="eDTKUser" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="QuoteItem" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="Status" type="xsd:string"/>
+              <xsd:element name="LineStatus" type="xsd:string"/>
+              <xsd:element name="PDPCode" type="xsd:string"/>
+              <xsd:element name="DefaultPli" type="xsd:string"/>
+              <xsd:element name="PliCount" type="xsd:integer"/>
+              <xsd:element name="InstallQuantity" type="xsd:integer"/>
+              <xsd:element name="UserRequestedQuantity" type="xsd:integer"/>
+              <xsd:element name="DifferenceQuantity" type="xsd:integer"/>
+              <xsd:element name="BillingAccountNumber" type="xsd:string"/>
+              <xsd:element name="InstallToAccountNumber" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

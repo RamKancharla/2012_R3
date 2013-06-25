@@ -1,0 +1,65 @@
+<definitions
+     name="CCRMAM_PropagateTRUSTAccount"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://schemas.oracle.com/bpel/extension"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount/correlationset"
+     xmlns:ns2="http://www.siebel.com/xml/RCRM%20Account%20Publish"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount"
+    >
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount/correlationset"
+         location="CCRMAM_PropagateTRUSTAccount_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://schemas.oracle.com/bpel/extension"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:ns2="http://www.siebel.com/xml/RCRM%20Account%20Publish" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount/correlationset">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount"
+                 schemaLocation="CCRMAM_PropagateTRUSTAccount.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://schemas.oracle.com/bpel/extension"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.siebel.com/xml/RCRM%20Account%20Publish"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount/correlationset">
+            <xsd:import namespace="http://www.siebel.com/xml/RCRM%20Account%20Publish" schemaLocation="EAI.MSG.CCRM.172_PublishAccountRequestResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TRUSTAccountUpdateMsg">
+        <part name="TRUSTUpdateAccount" element="ns2:AccountContactPublish"/>
+    </message>
+    <message name="CCRMAM_PropagateTRUSTAccountResponseMessage">
+        <part name="payload" element="client:CCRMAM_PropagateTRUSTAccountProcessResponse"/>
+    </message>
+    <message name="CCRMAM_PropagateTRUSTAccountRequestMessage">
+        <part name="accountStatus" element="ns2:AccountContactPublish"/>
+    </message>
+    <portType name="CCRMAM_PropagateTRUSTAccount">
+        <operation name="sendAccount">
+            <input message="client:CCRMAM_PropagateTRUSTAccountRequestMessage"/>
+        </operation>
+        <operation name="updateAccount">
+            <input message="client:TRUSTAccountUpdateMsg"/>
+        </operation>
+    </portType>
+    <portType name="CCRMAM_PropagateTRUSTAccountCallback">
+        <operation name="onResult">
+            <input message="client:CCRMAM_PropagateTRUSTAccountResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMAM_PropagateTRUSTAccount">
+        <plnk:role name="CCRMAM_PropagateTRUSTAccountProvider">
+            <plnk:portType name="client:CCRMAM_PropagateTRUSTAccount"/>
+        </plnk:role>
+        <plnk:role name="CCRMAM_PropagateTRUSTAccountRequester">
+            <plnk:portType name="client:CCRMAM_PropagateTRUSTAccountCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:CorrProp" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/mq/headerenqueueAccountStatus/"
+         messageType="ns3:AccountContactPublish_msg" part="AccountContactPublish" query="/ns2:AccountContactPublish/@MessageId"/>
+    <bpws:propertyAlias propertyName="pns1:CorrProp" messageType="client:TRUSTAccountUpdateMsg" part="TRUSTUpdateAccount"
+         query="/ns2:AccountContactPublish/@MessageId"/>
+</definitions>

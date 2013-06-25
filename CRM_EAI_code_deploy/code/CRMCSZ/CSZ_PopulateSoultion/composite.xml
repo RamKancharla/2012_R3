@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSZ_PopulateSoultion" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import importType="wsdl" location="CSZ_PopulateActivityRS.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CSZ/PopulateActivity"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ"
+            location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CCRM_PopulateSolution/CSZ_PopulateSolutionRS.wsdl"
+            importType="wsdl"/>
+    <service name="CSZ.PopulateActivityRS_ep" ui:wsdlLocation="CSZ_PopulateActivityRS.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CSZ/PopulateActivity#wsdl.interface(assignSolutionToSR_ppt)"/>
+        <binding.ws location="CSZ_PopulateActivityRS.wsdl" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CSZ/PopulateActivity#wsdl.endpoint(assignSolutionToSR_ppt/assignSolutionToSR_ppt_pt)"/>
+    </service>
+    <component name="CSZ.PopulateActivityRS">
+        <implementation.mediator src="CSZ.PopulateActivityRS.mplan"/>
+    </component>
+    <reference name="CSZ.PopulateSoultionSOAPAdp"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/MEDIATOR/CCRM_PopulateSolution/CSZ_PopulateSolutionRS.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.interface(assignSolutionToSR_ppt)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.endpoint(assignSolutionToSR_ppt/assignSolutionToSR_ppt_pt)"
+                    location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CCRM_PopulateSolution/CSZ.PopulateSolutionRS_ep?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CSZ.PopulateActivityRS_ep</source.uri>
+        <target.uri>CSZ.PopulateActivityRS/CSZ.PopulateActivityRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSZ.PopulateActivityRS/CSZ.PopulateSoultionSOAPAdp</source.uri>
+        <target.uri>CSZ.PopulateSoultionSOAPAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

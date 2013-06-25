@@ -1,0 +1,67 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SequenceReleaser" revision="1.0" state="on">
+    <import location="SequenceReleaser.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"/>
+    <import location="ReleaseSequenceDBAdapter.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/ReleaseSequenceDBAdapter/"/>
+    <import location="DynPLTosequenceReleaser.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/DynPLToSequenceReleaser"/>
+    <service name="anchorToSeqReleaser" ui:wsdlLocation="SequenceReleaser.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)"/>
+    </service>
+    
+     <!--service name="anchorToSeqReleaserjava" ui:wsdlLocation="SequenceReleaser.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"/>
+        <binding.adf serviceName="{http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer}anchorToSeqReleaserjava"
+                 registryName=""/>
+    </service-->
+    
+    <component name="SequenceReleaser">
+        <implementation.bpel src="SequenceReleaser.bpel"/>
+        <property name="preference.TF_ManageOrderLineStatus">http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/anchorToTF_ManageOrderLineStatus</property>
+        <property name="preference.TRUSTAM_AccountManager">http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTAM_AccountManager/TRUSTAM_AccountManager</property>
+        <property name="preference.CSOM_TransformOrderStatus">http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformOrderStatus/CSOM_TransformOrderStatus</property>
+        <property name="preference.CCRMOM_ProxyPropagateOrderStatus">http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/anchorToProxyPropagateOrderStatus</property>
+        <property name="preference.CSOM_OrderBatcher">http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderBatcher/CSOM_OrderBatcher</property>
+        <property name="preference.CPFGOM_UserOrderManager">http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager</property>
+        <property name="preference.CCRMOP_PublishOpportunity">http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_PublishOpportunity/anchorToCCRMOP_PublishOpportunity</property>
+        <property name="preference.SFDCAM_AccountEventManager">http://eaidev2:8004/soa-infra/services/CRMASYNC/SFDCAM_AccountEventManager/SFDCAM_AccountEventManager</property>
+        <property name="preference.CCRMOM_SubmitUserOrderRequest">http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_SubmitUserOrderRequest/anchorToCCRMOM_SubmitUserOrderRequest</property>
+        <property name="preference.TOMCM_ContactManager">http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMCM_ContactManager/TOMCM_ContactManager</property>
+        <property name="preference.CPF_UpdateProfile">http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UserManagementService</property>
+        <property name="preference.PropagatePriceUpdateStatus">http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus</property>
+        <property name="preference.CPFGAM_AccountManager">http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGAM_AccountManager/CPFGAM_AccountManager</property>
+        <property name="preference.TRUSTOP_OpportunityManager">http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTOP_OpportunityManager/anchorToTRUSTOP_OpportunityManager</property>
+        <property name="preference.AsyncSequenceChecker">http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client</property>
+        <property name="preference.TF_OrderDispatcher">http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_OrderDispatcher/anchorToTFDispatcher</property>
+        <property name="preference.TOMAM_AccountManager">http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMAM_AccountManager/TOMAM_AccountManager</property>
+        
+        
+    </component>
+    <reference name="ReleaseSequenceDBAdapter" ui:wsdlLocation="ReleaseSequenceDBAdapter.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/ReleaseSequenceDBAdapter/#wsdl.interface(ReleaseSequenceDBAdapter_ptt)"/>
+        <binding.jca config="ReleaseSequenceDBAdapter_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="DynPLToSequenceReleaser" ui:wsdlLocation="DynPLTosequenceReleaser.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/DynPLToSequenceReleaser#wsdl.interface(DynPLToSequenceReleaser)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="DynPLTosequenceReleaser.wsdl" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/DynPLToSequenceReleaser#wsdl.endpoint(TRUSTAM_AccountManager/DynPLToSequenceReleaser)"/>
+    </reference>
+    <wire>
+        <source.uri>anchorToSeqReleaser</source.uri>
+        <target.uri>SequenceReleaser/anchorToSeqReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SequenceReleaser/DynPLToSequenceReleaser</source.uri>
+        <target.uri>DynPLToSequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SequenceReleaser/ReleaseSequenceDBAdapter</source.uri>
+        <target.uri>ReleaseSequenceDBAdapter</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <!--wire>
+        <source.uri>anchorToSeqReleaserjava</source.uri>
+        <target.uri>SequenceReleaser/anchorToSeqReleaser</target.uri>
+    </wire-->
+</composite>

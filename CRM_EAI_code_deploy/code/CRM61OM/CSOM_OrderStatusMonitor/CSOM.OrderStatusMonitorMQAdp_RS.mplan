@@ -1,0 +1,63 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CSOM.OrderStatusMonitorMQAdp_RS" wsdlTargetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerOrderStatusMonitorMQAdp/" xmlns="http://xmlns.oracle.com/sca/1.0/mediator"
+          xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+   <operation name="monitorOrderStatus">
+      <switch>
+         <case name="Case_1_CSOM.OrderStatusMonitorMQAdp_RS.monitorOrderStatus" executionType="direct">
+            <condition language="xpath" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+               <expression>(string-length($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message) > 217) and (substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4)='OM50' or substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4)='I890')</expression>
+            </condition>
+            <action>
+               <assign>
+                  <copy target="$out.fixedLengthUserStatus" expression="$in.EBCDICMessage"/>
+               </assign>
+               <invoke reference="CSOM.TransformUserStatus" operation="processUser"/>
+            </action>
+         </case>
+         <case name="Case_2_CSOM.OrderStatusMonitorMQAdp_RS.monitorOrderStatus" executionType="direct">
+            <condition language="xpath" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+               <expression>(string-length($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message) > 217) and (substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4)!='I890') and (substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4)!='OM50') and (substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4)!='SM05') and (substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4)!='SM15') and (substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4)!='PM05')</expression>
+            </condition>
+            <action>
+               <assign>
+                  <copy target="$out.orderStatus" expression="$in.EBCDICMessage"/>
+               </assign>
+               <invoke reference="CSOM.TransformOrderStatus" operation="processStatus"/>
+            </action>
+         </case>
+         <case name="Case_3_CSOM.OrderStatusMonitorMQAdp_RS.monitorOrderStatus" executionType="direct">
+            <condition language="xpath" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+               <expression>(string-length($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message) > 217) and (substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4) = 'SM15' or substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4) = 'SM05')</expression>
+            </condition>
+            <action>
+               <assign>
+                  <copy target="$out.payload" expression="$in.EBCDICMessage"/>
+               </assign>
+               <invoke reference="CSACM.TransformAccountContactPublishStatus" operation="transformAccountContactPublishStatus"/>
+            </action>
+         </case>
+         <case name="Case_4_CSOM.OrderStatusMonitorMQAdp_RS.monitorOrderStatus" executionType="direct">
+            <condition language="xpath" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+               <expression>(string-length($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message) > 217) and (substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,213,4) = 'PM05')</expression>
+            </condition>
+            <action>
+               <assign>
+                  <copy target="$out.payload" expression="$in.EBCDICMessage"/>
+               </assign>
+               <invoke reference="CSPM.TransformPriceUpdateStatus" operation="transformPriceUpdateStatus"/>
+            </action>
+         </case>
+         <case name="Case_5_CSOM.OrderStatusMonitorMQAdp_RS.monitorOrderStatus" executionType="direct">
+            <condition language="xpath" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+               <expression>substring($in.EBCDICMessage/imp1:EBCDICMessage/imp1:message,1,5) = 'GP001'</expression>
+            </condition>
+            <action>
+               <assign>
+                  <copy target="$out.payload" expression="$in.EBCDICMessage"/>
+               </assign>
+               <invoke reference="CSPM.PropagateGPStatusLogsSOAPAdp" operation="MailGPUpdateLog"/>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

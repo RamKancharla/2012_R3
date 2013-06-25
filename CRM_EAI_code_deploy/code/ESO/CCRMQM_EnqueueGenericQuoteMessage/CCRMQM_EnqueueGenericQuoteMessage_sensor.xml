@@ -1,0 +1,13 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<sensors targetNamespace="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage" xmlns="http://xmlns.oracle.com/bpel/sensor" xmlns:tns="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage" xmlns:pc="http://xmlns.oracle.com/bpel/sensor" xmlns:ns2="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/CRM/GenericQuoteMessage">
+   <sensor sensorName="ActivitySensor_QuoteEnqueue" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="Inv_EnqueueGenQuote">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema" target="$inputVariable/payload/ns2:ListOfGenQuoteInterface/ns2:Quote/ns2:TransactionId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActivitySensor_FaultTitle" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="setCustomTitleFault">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema" target="$inputVariable/payload/ns2:ListOfGenQuoteInterface/ns2:Quote/ns2:TransactionId"/>
+      </activityConfig>
+   </sensor>
+</sensors>

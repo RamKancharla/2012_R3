@@ -1,0 +1,50 @@
+<definitions
+     name="CPFGOM_OrderManager"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/CPFGOM_UserOrderManager"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager/correlationset"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager/correlationset"
+         location="CPFGOM_OrderManager_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager"
+             xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.OM.125_OrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager/correlationset"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.OM.250_DistinctUserIdRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFGOM_OrderManagerRequestMessage">
+        <part name="orderRequest" element="ns1:orderRequest"/>
+    </message>
+    <message name="ExtendedOrderRequest">
+        <part name="orderRequest" element="ns1:orderRequest"/>
+    </message>
+    <message name="CPfGDistinctUserMessage">
+        <part name="distinctUserRequest" element="ns1:distinctUserIdRequest"/>
+    </message>
+    <portType name="CPFGOM_OrderManager">
+        <operation name="initiate">
+            <input message="client:CPFGOM_OrderManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFGOM_OrderManager">
+        <plnk:role name="CPFGOM_OrderManagerProvider">
+            <plnk:portType name="client:CPFGOM_OrderManager"/>
+        </plnk:role>
+        <!--plnk:role name="CPFGOM_OrderManagerRequester">
+            <plnk:portType name="client:CPFGOM_OrderManagerCallback"/>
+        </plnk:role-->
+    </plnk:partnerLinkType>
+</definitions>

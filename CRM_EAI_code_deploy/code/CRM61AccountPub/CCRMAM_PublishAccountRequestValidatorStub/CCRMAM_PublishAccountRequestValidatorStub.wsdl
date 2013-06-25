@@ -1,0 +1,32 @@
+<definitions
+     name="CCRMAM_PublishAccountRequestValidatorStub"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CCRMAM_PublishAccountRequestValidatorStub"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CCRMAM_PublishAccountRequestValidatorStub"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CCRMAM_PublishAccountRequestValidatorStub"
+                 schemaLocation="CCRMAM_PublishAccountRequestValidatorStub.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+                 schemaLocation="EAI.MSG.CS.ACM.267_PublishAccountContactValidateRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMAM_PublishAccountRequestValidatorStubRequestMessage">
+        <part name="payload" element="ns1:CSPublishAccountValidateRequest"/>
+    </message>
+    <portType name="CCRMAM_PublishAccountRequestValidatorStub">
+        <operation name="initiate">
+            <input message="client:CCRMAM_PublishAccountRequestValidatorStubRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMAM_PublishAccountRequestValidatorStub">
+        <plnk:role name="CCRMAM_PublishAccountRequestValidatorStubProvider">
+            <plnk:portType name="client:CCRMAM_PublishAccountRequestValidatorStub"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

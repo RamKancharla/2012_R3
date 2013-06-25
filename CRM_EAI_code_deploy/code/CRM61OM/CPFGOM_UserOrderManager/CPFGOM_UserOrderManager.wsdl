@@ -1,0 +1,66 @@
+<definitions
+     name="CPFGOM_UserOrderManager"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/CPFGOM_UserOrderManager"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager/correlationset"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager/correlationset"
+         location="CPFGOM_UserOrderManager_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/CPFGOM_UserOrderManager"
+                 schemaLocation="EAI.MSG.CPFG.262_SingleUserOrder.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+                 schemaLocation="EAI.MSG.CCRM.124_UpdateProfileRequest.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFGOM_UserOrderManagerRequestMessage">
+        <part name="payload" element="ns1:orderRequest"/>
+    </message>
+    <message name="UpdateProfileRequestMessage">
+        <part name="payload" element="ns2:UpdateProfileRequest"/>
+    </message>
+    <message name="ReleaseSequenceMessage">
+        <part name="relSequencePart" element="ns4:basicResponse"/>
+    </message>
+    <portType name="CPFGOM_UserOrderManager">
+        <operation name="initiate">
+            <input message="client:CPFGOM_UserOrderManagerRequestMessage"/>
+        </operation>
+        <operation name="updateUserProfile">
+            <input message="client:UpdateProfileRequestMessage"/>
+        </operation>
+        <operation name="releaseSequence">
+            <input message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFGOM_UserOrderManager">
+        <plnk:role name="CPFGOM_UserOrderManagerProvider">
+            <plnk:portType name="client:CPFGOM_UserOrderManager"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:Corr_RelSeq_Prop" messageType="client:ReleaseSequenceMessage"
+         part="relSequencePart" query="/ns4:basicResponse/ns4:eaiHeader/ns5:tracingId" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+    <bpws:propertyAlias propertyName="pns1:Corr_RelSeq_Prop" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns7:SequenceCheckerRequestMessage" part="payload" query="/ns5:checkSequenceRequest/ns5:seqRequestDetails/ns5:correlationID"
+         xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"/>
+    <bpws:propertyAlias propertyName="pns1:Corr_CPfG_prop" messageType="client:UpdateProfileRequestMessage"
+         part="payload" query="/ns2:UpdateProfileRequest/ns2:UpdateProfileUserDetails/ns2:UUID"
+         xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+    <bpws:propertyAlias propertyName="pns1:Corr_CPfG_prop" xmlns:ns7="http://xmlns.oracle.com/CCRMCM_ContactDispatcher"
+         messageType="ns7:CCRMCM_ContactDispatcherRequestMessage" part="payload" query="/ns5:contactEvent/ns5:contactUserId/ns5:ContactUUID"
+         xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"/>
+</definitions>

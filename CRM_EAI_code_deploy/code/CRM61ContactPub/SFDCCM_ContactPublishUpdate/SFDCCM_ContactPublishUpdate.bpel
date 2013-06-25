@@ -1,0 +1,366 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Dec 19 11:43:42 GMT+05:30 2011
+  Author:  Tanmay.Saxena
+  Type: BPEL 1.1 Process
+  Purpose: One Way BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="SFDCCM_ContactPublishUpdate"
+               targetNamespace="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactPublishUpdate/SFDCCM_ContactPublishUpdate"
+               xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+               xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactPublishUpdate/SFDCCM_ContactPublishUpdate"
+               xmlns:ora="http://schemas.oracle.com/xpath/extension"
+               xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/CRM61ContactPub/SFDCCM_ContactPublishUpdate/SiebelInboundResponse"
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns2="http://www.siebel.com/xml/RCRMGenericContactInterface"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:ns6="urn:enterprise.soap.sforce.com"
+         xmlns:ns7="http://soap.sforce.com/schemas/class/ContactManagement">
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="SiebelInboundResponse" partnerLinkType="ns1:Dequeue_plt"
+                 myRole="Dequeue_role"/>
+    <partnerLink name="SequenceReleaser" partnerLinkType="ns3:SequenceReleaser"
+                 partnerRole="SequenceReleaserProvider"
+                 myRole="SequenceReleaserRequester"/>
+    <partnerLink name="SalesForceLogin" partnerLinkType="ns6:Soap_PL"
+                 partnerRole="Soap_Role"/>
+    <partnerLink name="SFDCEndpoint" partnerLinkType="ns7:SFDCEndpoint"
+                 partnerRole="ContactManagementPortType"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="ns1:Dequeue_msg"/>
+    <variable name="xrefReturnVar" type="xsd:string"/>
+    <variable name="InvokeSequenceRelease_releaseSequence_InputVariable"
+              messageType="ns3:SequenceReleaserRequestMessage"/>
+    <variable name="InvokeSalesForceLoginMethod_login_InputVariable"
+              messageType="ns6:loginRequest"/>
+    <variable name="InvokeSalesForceLoginMethod_login_OutputVariable"
+              messageType="ns6:loginResponse"/>
+    <variable name="headerVar" element="ns6:SessionHeader"/>
+    <variable name="loginDetails" type="xsd:string"/>
+    <variable name="InvokeSalesforce_CNumberUpdate_InputVariable"
+              messageType="ns7:CNumberUpdateRequest"/>
+    <variable name="InvokeSalesforce_CNumberUpdate_OutputVariable"
+              messageType="ns7:CNumberUpdateResponse"/>
+  </variables>
+  <faultHandlers>
+    <catchAll>
+      <bpelx:exec name="AssignFaultHeader" version="1.5" language="java">
+        <![CDATA[String CNumber = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable","body","/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMContactUniqueNumber")).getFirstChild().getNodeValue();   
+        String sfdcNO = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable","body","/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1")).getFirstChild().getNodeValue();            
+        setCompositeInstanceTitle("SFDC:"+sfdcNO+";C-Number : " + CNumber + "; Flt");]]>
+      </bpelx:exec>
+    </catchAll>
+  </faultHandlers>
+  <!-- <faultHandlers>
+    <catchAll>
+        <sequence name="SequenceForHeaderAssignmentOnFault">
+        <bpelx:exec name="AssignFaultHeader" version="1.5" language="java">
+        <![CDATA[String CNumber = ((oracle.xml.parser.v2.XMLElement)             
+                        getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMContactUniqueNumber')).getFirstChild().getNodeValue();;            
+setCompositeInstanceTitle("C-Number : " + CNumber + "; Flt");]]>
+      </bpelx:exec>
+      </sequence>
+    </catchAll>
+  </faultHandlers>-->
+  <!-- <faultHandlers>
+    <catchAll>
+        <assign name="DummyAssignAll">
+            <copy>
+              <from expression="string('DUMMY')"/>
+              <to variable="SessionVar"/>
+            </copy>
+          </assign>
+    </catchAll>
+  </faultHandlers>-->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in SFDCCM_ContactPublishUpdate.wsdl) -->
+    <receive name="receiveInput" variable="inputVariable" createInstance="yes"
+             partnerLink="SiebelInboundResponse" portType="ns1:Dequeue_ptt"
+             operation="Dequeue"/>
+    <scope name="ScopeForHeaderAssign" variableAccessSerializable="no">
+      <bpelx:exec name="AssignHeader" version="1.5" language="java">
+        <![CDATA[String CNumber = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable","body","/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMContactUniqueNumber")).getFirstChild().getNodeValue();            
+        String sfdcNO = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable","body","/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1")).getFirstChild().getNodeValue();            
+        setCompositeInstanceTitle("SFDC:"+sfdcNO+";C-Number : " + CNumber + "; Flt");]]>
+      </bpelx:exec>
+    </scope>
+    <scope name="ScopeToCheckIfThisIsCreateResponseCrefPopulation"
+           variableAccessSerializable="no">
+      <sequence name="SequenceToPopulateXrefOnCreateResponse">
+        <switch name="Switch2">
+          <case condition="string-length(bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1')) > 0 and string-length(bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMContactUniqueNumber')) > 0">
+            <bpelx:annotation>
+              <bpelx:general>
+                <bpelx:property name="userLabel">CheckIfCreateResponse</bpelx:property>
+              </bpelx:general>
+            </bpelx:annotation>
+            <assign name="AssignToPopulateXrefInCreateResponse">
+              <copy>
+                <from expression="xref:populateXRefRow(&quot;oramds:/apps/EAIMetaData/Xref/SFDC_CRM_CONTACTSXREF.xref&quot;,&quot;SFDCCONTACTID&quot;,bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1'),&quot;CONTACTUNIQUENUMBER&quot;,bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMContactUniqueNumber'),&quot;ADD&quot;)"/>
+                <to variable="xrefReturnVar"/>
+              </copy>
+            </assign>
+          </case>
+          <otherwise>
+            <empty name="DoNothing"/>
+          </otherwise>
+        </switch>
+      </sequence>
+    </scope>
+    <scope name="ScopeForSequenceRelease" variableAccessSerializable="no">
+
+      <sequence name="SequenceForSequenceReleaser">
+        <assign name="AssignInputForSequenceRecieve">
+          <copy>
+            <from expression="'EAI'"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:applicationId"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:transactionId"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:messageId"/>
+          </copy>
+          <copy>
+            <from expression="'EAI;'"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:messageHistory"/>
+          </copy>
+          <copy>
+            <from expression="xp20:current-dateTime()"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:timeStamp"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:instanceId"/>
+          </copy>
+          <copy>
+            <from expression="1"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:timeToLive"/>
+          </copy>
+          <copy>
+            <from expression="'V'"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:payloadVersion"/>
+          </copy>
+          <copy>
+            <from variable="inputVariable" part="body"
+                  query="/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:MessageId"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:tracingId"/>
+          </copy>
+          <copy>
+            <from variable="inputVariable" part="body"
+                  query="/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:MessageId"/>
+            <to variable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                part="payload"
+                query="/ns4:releaseSequenceRequest/ns4:correlationID"/>
+          </copy>
+        </assign>
+        <invoke name="InvokeSequenceRelease"
+                inputVariable="InvokeSequenceRelease_releaseSequence_InputVariable"
+                partnerLink="SequenceReleaser" portType="ns3:SequenceReleaser"
+                operation="releaseSequence" bpelx:invokeAsDetail="no"/>
+      </sequence>
+    </scope>
+    <scope name="ScopeForSalesForceLogin" variableAccessSerializable="no">
+     <faultHandlers>
+        <catchAll>
+          <sequence>
+            <assign name="populateDUMMYSessionId">
+              <copy>
+                <from expression="string('DUMMY')"/>
+                <to variable="headerVar"
+                    query="/ns6:SessionHeader/ns6:sessionId"/>
+              </copy>
+              <copy>
+                <from expression="string('INVALID_LOGIN_FAULT')"/>
+                <to variable="loginDetails"/>
+              </copy>
+            </assign>
+            <bpelx:exec name="AssignFaultSession" version="1.5"
+                        language="java">
+              <![CDATA[String CNumber = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable","body","/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMContactUniqueNumber")).getFirstChild().getNodeValue(); 
+        String sfdcNO = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable","body","/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1")).getFirstChild().getNodeValue();            
+        setCompositeInstanceTitle("SFDC:"+sfdcNO+";C-Number : " + CNumber + "; Flt");]]>
+            </bpelx:exec>
+          </sequence>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="SequenceForSalesForceLogin">
+        <switch name="Switch3">
+          <case condition="string-length(bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1')) > 0 or ( (bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:ActionCode') = &quot;ERROR&quot;) and (string-length(bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1')) = 0))">
+            <bpelx:annotation>
+              <bpelx:pattern>to check for creates only</bpelx:pattern>
+              <bpelx:general>
+                <bpelx:property name="userLabel">CheckIfRespIsForCreate</bpelx:property>
+              </bpelx:general>
+            </bpelx:annotation>
+            <sequence name="SequenceToSendToSFDC">
+              <assign name="AsgCredentials">
+                <copy>
+                  <from expression='ora:getPreference("loginId")'/>
+                  <to variable="InvokeSalesForceLoginMethod_login_InputVariable"
+                      part="parameters" query="/ns6:login/ns6:username"/>
+                </copy>
+                <copy>
+                  <from expression='ora:getPreference("password")'/>
+                  <to variable="InvokeSalesForceLoginMethod_login_InputVariable"
+                      part="parameters" query="/ns6:login/ns6:password"/>
+                </copy>
+              </assign>
+              <invoke name="InvokeSalesForceLoginMethod"
+                      inputVariable="InvokeSalesForceLoginMethod_login_InputVariable"
+                      outputVariable="InvokeSalesForceLoginMethod_login_OutputVariable"
+                      partnerLink="SalesForceLogin" portType="ns6:Soap"
+                      operation="login" bpelx:invokeAsDetail="no"/>
+              <assign name="readSessionIDIfSuccess">
+                <copy>
+                  <from variable="InvokeSalesForceLoginMethod_login_OutputVariable"
+                        part="parameters"
+                        query="/ns6:loginResponse/ns6:result/ns6:sessionId"/>
+                  <to variable="headerVar"
+                      query="/ns6:SessionHeader/ns6:sessionId"/>
+                </copy>
+              </assign>
+            </sequence>
+          </case>
+          <otherwise>
+            <empty name="DoNotSendUpdateResponseToSFDC"/>
+          </otherwise>
+        </switch>
+	</sequence>
+    </scope>
+    <scope name="ScopeForSFDCInvoke" variableAccessSerializable="no">
+      <variables>
+        <variable name="SendContactToSFDCStatusVar" type="xsd:string"/>
+      </variables>
+      <faultHandlers>
+        <catchAll>
+          <sequence name="Sequence1">
+            <assign name="AssignFailureOutput">
+              <copy>
+                <from expression="string('UNABLE_TO_SUBMIT_CONTACT')"/>
+                <to variable="SendContactToSFDCStatusVar"/>
+              </copy>
+            </assign>
+            <bpelx:exec name="AssignFaultLogin" version="1.5" language="java">
+              <![CDATA[String CNumber = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable","body","/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMContactUniqueNumber")).getFirstChild().getNodeValue();             
+         String sfdcNO = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable","body","/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1")).getFirstChild().getNodeValue();            
+         setCompositeInstanceTitle("SFDC:"+sfdcNO+";C-Number : " + CNumber + "; Flt");]]>
+            </bpelx:exec>
+          </sequence>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="SequenceForSFDCInvoke">
+        <switch name="SwitchToCheckLoginSuccess">
+          <case condition="
+bpws:getVariableData('loginDetails') != 'INVALID_LOGIN_FAULT' and (string-length(bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1')) > 0 or ( (bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:ActionCode') = &quot;ERROR&quot;) and (string-length(bpws:getVariableData('inputVariable','body','/ns2:ListOfGenContactInterface/ns2:ContactHeader/ns2:Contact/ns2:ContactResponse/ns2:RCRMField1')) = 0)))">
+            <bpelx:annotation>
+              <bpelx:pattern>If Login Success</bpelx:pattern>
+              <bpelx:general>
+                <bpelx:property name="userLabel">IfLoginSuccess and CreateResponse</bpelx:property>
+              </bpelx:general>
+            </bpelx:annotation>
+            <sequence name="SequenceForSFDCFinalSend">
+              <assign name="TransformContactResponseInSFDCFormat">
+                <bpelx:annotation>
+                  <bpelx:pattern>transformation</bpelx:pattern>
+                </bpelx:annotation>
+                <copy>
+                  <from expression="ora:doXSLTransformForDoc('xsl/TransformationForContactResponseToSFDC.xsl', $inputVariable.body)"/>
+                  <to variable="InvokeSalesforce_CNumberUpdate_InputVariable"
+                      part="parameters"/>
+                </copy>
+              </assign>
+              <invoke name="InvokeSalesforce"
+                      inputVariable="InvokeSalesforce_CNumberUpdate_InputVariable"
+                      outputVariable="InvokeSalesforce_CNumberUpdate_OutputVariable"
+                      partnerLink="SFDCEndpoint"
+                      portType="ns7:ContactManagementPortType"
+                      operation="CNumberUpdate"
+                      bpelx:invokeAsDetail="no"
+                      bpelx:inputHeaderVariable="headerVar"/>
+              <assign name="AssignOutput">
+                <copy>
+                  <from variable="InvokeSalesforce_CNumberUpdate_OutputVariable"
+                        part="parameters"
+                        query="/ns7:CNumberUpdateResponse/ns7:result/ns7:StatusCode"/>
+                  <to variable="SendContactToSFDCStatusVar"/>
+                </copy>
+              </assign>
+            </sequence>
+          </case>
+          <otherwise>
+            <empty name="DoNothing"/>
+          </otherwise>
+        </switch>
+      </sequence>
+    </scope>
+  </sequence>
+</process>

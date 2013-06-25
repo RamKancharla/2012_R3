@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSOM_SubmitOrderToCOMPASS" revision="1.0" state="on">
+    <import importType="wsdl" location="ENQ_GE_EI_EAI_TRIGGER.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerENQ_GE_EI_EAI_TRIGGER/"/>
+    <import importType="wsdl" location="CSOM_SubmitOrderToCOMPASSRS.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM"/>
+    <service name="CSOM.SubmitOrderToCOMPASSRS_ep" ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRS.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+        <binding.ws location="CSOM_SubmitOrderToCOMPASSRS.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.endpoint(submitOrder_ppt/submitOrder_ppt_pt)"/>
+    </service>
+    <component name="CSOM.SubmitOrderToCOMPASSRS">
+        <implementation.mediator src="CSOM.SubmitOrderToCOMPASSRS.mplan"/>
+    </component>
+    <reference name="CSOM.ENQ_GE_EI_EAI_TRIGGER" ui:wsdlLocation="ENQ_GE_EI_EAI_TRIGGER.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerENQ_GE_EI_EAI_TRIGGER/#wsdl.interface(submitOrder_ptt)"/>
+        <binding.jca config="ENQ_GE_EI_EAI_TRIGGER_mq.jca"/>
+    </reference>
+    <wire>
+        <source.uri>CSOM.SubmitOrderToCOMPASSRS_ep</source.uri>
+        <target.uri>CSOM.SubmitOrderToCOMPASSRS/CSOM.SubmitOrderToCOMPASSRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM.SubmitOrderToCOMPASSRS/CSOM.ENQ_GE_EI_EAI_TRIGGER</source.uri>
+        <target.uri>CSOM.ENQ_GE_EI_EAI_TRIGGER</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

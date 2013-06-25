@@ -1,0 +1,33 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<sensors targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker" xmlns="http://xmlns.oracle.com/bpel/sensor" xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker" xmlns:pc="http://xmlns.oracle.com/bpel/sensor" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TktRqst">
+   <sensor sensorName="ActSenInvPropagateTicketStatusToPropagateTTInvocationError" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="InvPropagateTicketStatusToPropagateTTInvocationError">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema" target="$TeamTrackInvokerIV/ttTktRqst/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:Action/ns2:SiebelId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="FltSenInvPropagateTicketStatusToPropagateTTInvocationError" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="InvPropagateTicketStatusToPropagateTTInvocationError">
+      <activityConfig evalTime="fault">
+         <variable outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema" target="$TeamTrackInvokerIV/ttTktRqst/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:Action/ns2:SiebelId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActSenInvMSTTeamTrackToUpdateTicket" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="InvMSTTeamTrackToUpdateTicket">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema" target="$TeamTrackInvokerIV/ttTktRqst/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:Action/ns2:SiebelId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="FltSenInvMSTTeamTrackToUpdateTicket" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="InvMSTTeamTrackToUpdateTicket">
+      <activityConfig evalTime="fault">
+         <variable outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema" target="$TeamTrackInvokerIV/ttTktRqst/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:Action/ns2:SiebelId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActSenInvMSTTeamTrackToCreateTicket" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="InvMSTTeamTrackToCreateTicket">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema" target="$TeamTrackInvokerIV/ttTktRqst/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:Action/ns2:SiebelId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="FltSenInvMSTTeamTrackToCreateTicket" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="InvMSTTeamTrackToCreateTicket">
+      <activityConfig evalTime="fault">
+         <variable outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema" target="$TeamTrackInvokerIV/ttTktRqst/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:Action/ns2:SiebelId"/>
+      </activityConfig>
+   </sensor>
+</sensors>

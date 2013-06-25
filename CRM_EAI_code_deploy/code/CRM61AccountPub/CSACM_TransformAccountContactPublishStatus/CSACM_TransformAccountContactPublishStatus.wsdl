@@ -1,0 +1,74 @@
+<definitions
+     name="CSACM_TransformAccountContactPublishStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <!--schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus"
+                 schemaLocation="CSACM_TransformAccountContactPublishStatus.xsd"/>
+        </schema-->
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+                 schemaLocation="EAI.MSG.CS.ACM.230_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+                 schemaLocation="EAI.MSG.CS.ACM.231_AccountContactStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+                 schemaLocation="EAI.MSG.CS.ACM.234_AccountContactStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CSACM_TransformAccountContactPublishStatusResponseMessage">
+        <part name="payload" element="ns3:CSAccountContactStatus"/>
+    </message>
+    <message name="CSACM_TransformAccountContactPublishStatusRequestMessage">
+        <part name="payload" element="ns4:EBCDICMessage"/>
+    </message>
+    <portType name="CSACM_TransformAccountContactPublishStatus">
+        <operation name="transformAccountContactPublishStatus">
+            <input message="client:CSACM_TransformAccountContactPublishStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="CSACM_TransformAccountContactPublishStatusCallback">
+        <operation name="onResult">
+            <input message="client:CSACM_TransformAccountContactPublishStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CSACM_TransformAccountContactPublishStatus">
+        <plnk:role name="CSACM_TransformAccountContactPublishStatusProvider">
+            <plnk:portType name="client:CSACM_TransformAccountContactPublishStatus"/>
+        </plnk:role>
+        <plnk:role name="CSACM_TransformAccountContactPublishStatusRequester">
+            <plnk:portType name="client:CSACM_TransformAccountContactPublishStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,16 @@
+<definitions
+    
+     targetNamespace="ttwebservices"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="ttwebservices"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <import namespace="ttwebservices" location="EAI.SRV.EXT.MST.056_ManageMigrationRequestService.wsdl"/>
+    <plnk:partnerLinkType name="MSTServiceSoap_PL">
+        <plnk:role name="MSTServiceSoap_Role">
+            <plnk:portType name="tns:MSTServiceSoap"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,14 @@
+<adapter-config name="CPfG" adapter="Ftp Adapter" wsdlLocation="CPfG.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/Ftp/ProductRefXML" adapterRef=""/>
+  <endpoint-interaction portType="Put_ptt" operation="Put">
+    <interaction-spec className="oracle.tip.adapter.ftp.outbound.FTPInteractionSpec">
+      <property name="FileType" value="ascii"/>
+      <property name="PhysicalDirectory" value="/flatfile/MM_ProductReferenceDataTransfer/events"/>
+      <property name="FileNamingConvention" value="EAI.MSG.EXT.130_%yyyyMMddhhmmss%_%SEQ%.xml"/>
+      <property name="NumberMessages" value="1"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

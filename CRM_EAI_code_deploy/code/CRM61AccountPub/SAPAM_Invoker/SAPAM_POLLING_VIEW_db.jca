@@ -1,0 +1,22 @@
+<adapter-config name="SAPAM_POLLING_VIEW" adapter="Database Adapter" wsdlLocation="SAPAM_POLLING_VIEW.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="inkaban01_DB" adapterRef=""/>
+  <endpoint-activation portType="SAPAM_POLLING_VIEW_ptt" operation="receive">
+    <activation-spec className="oracle.tip.adapter.db.DBActivationSpec">
+      <property name="DescriptorName" value="SAPAMPOLLINGVIEW.SapamPollingV"/>
+      <property name="QueryName" value="SAPAM_POLLING_VIEW"/>
+      <property name="PollingStrategy" value="LogicalDeletePollingStrategy"/>
+      <property name="MarkReadColumn" value="STATE"/>
+      <property name="MarkReadValue" value="P"/>
+      <property name="SequencingColumn" value="ID"/>
+      <property name="MaxRaiseSize" value="8"/>
+      <property name="MaxTransactionSize" value="8"/>
+      <property name="PollingInterval" value="11"/>
+      <property name="NumberOfThreads" value="1"/>
+      <property name="UseBatchDestroy" value="true"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+      <property name="MappingsMetaDataURL" value="SAPAM_POLLING_VIEW-or-mappings.xml"/>
+    </activation-spec>
+  </endpoint-activation>
+
+</adapter-config>

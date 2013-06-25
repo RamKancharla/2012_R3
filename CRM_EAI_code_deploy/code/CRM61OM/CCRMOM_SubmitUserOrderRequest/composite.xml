@@ -1,0 +1,44 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOM_SubmitUserOrderRequest" revision="1.0" state="on">
+    <import location="CCRMOM_SubmitUserOrderRequest.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateUserOrderRequest/CCRMOM_PropagateUserOrderRequest.wsdl" importType="wsdl"/>
+    <service name="anchorToCCRMOM_SubmitUserOrderRequest" ui:wsdlLocation="CCRMOM_SubmitUserOrderRequest.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest#wsdl.interface(CCRMOM_SubmitUserOrderRequestCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest#wsdl.interface(CCRMOM_SubmitUserOrderRequest)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest#wsdl.endpoint(CCRMOM_SubmitUserOrderRequest/CCRMOM_SubmitUserOrderRequest)"/>
+    </service>
+    <component name="CCRMOM_SubmitUserOrderRequest">
+        <implementation.bpel src="CCRMOM_SubmitUserOrderRequest.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMOM_PropagateUserOrderRequest" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateUserOrderRequest/CCRMOM_PropagateUserOrderRequest.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.interface(CCRMOM_PropagateUserOrderRequest)" callbackInterface="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.interface(CCRMOM_PropagateUserOrderRequestCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.endpoint(CCRMOM_PropagateUserOrderRequest/CCRMOM_PropagateUserOrderRequest)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateUserOrderRequest/anchorToPropagateUserOrderRequest?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.endpoint(CCRMOM_PropagateUserOrderRequest/CCRMOM_PropagateUserOrderRequestCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="SequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceChecker/SequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/anchorToSequencer?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>anchorToCCRMOM_SubmitUserOrderRequest</source.uri>
+        <target.uri>CCRMOM_SubmitUserOrderRequest/anchorToCCRMOM_SubmitUserOrderRequest</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_SubmitUserOrderRequest/CCRMOM_PropagateUserOrderRequest</source.uri>
+        <target.uri>CCRMOM_PropagateUserOrderRequest</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_SubmitUserOrderRequest/SequenceChecker</source.uri>
+        <target.uri>SequenceChecker</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

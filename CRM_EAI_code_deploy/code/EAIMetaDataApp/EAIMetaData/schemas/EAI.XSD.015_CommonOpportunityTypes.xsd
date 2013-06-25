@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.XSD.005_CommonOpportunityTypes.xsd
+* Type:       	XSD Schema
+* Description: The schema used for Common Opportunity attributes
+*
+* Change History
+* Version     Date      Author             Description Of Change
+*
+*  0.1        21/02/07  Sudhir Tumu	   Initial Version
+*  
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOpportunityTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOpportunityTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.12">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd"/>
+	<xsd:complexType name="_Opportunity">
+		<xsd:sequence>
+			<xsd:element name="OpportunityName" type="xsdLocal:_OpportunityName"/>
+			<xsd:element name="ParentOpportunityName" type="xsdLocal:_ParentOpportunityName"/>
+			<xsd:element name="OpportunityType" type="xsdLocal:_OpportunityType"/>
+			<xsd:element name="OpportunityRecordType" type="xsdLocal:_OpportunityRecordType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="_OpportunityName">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_ParentOpportunityName">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_OpportunityRecordType">
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_OpportunityType">
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+</xsd:schema>

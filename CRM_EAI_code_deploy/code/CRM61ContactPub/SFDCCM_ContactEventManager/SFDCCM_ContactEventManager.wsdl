@@ -1,0 +1,58 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="SFDCCM_ContactEventManager"
+     targetNamespace="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+     xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <plnk:partnerLinkType name="SFDCCM_ContactEventManager">
+        <plnk:role name="SFDCCM_ContactEventManagerProvider">
+            <plnk:portType name="client:SFDCCM_ContactEventManager"/>
+        </plnk:role>
+        <plnk:role name="SFDCCM_ContactEventManagerRequester">
+            <plnk:portType name="client:SFDCCM_ContactEventManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+            <import namespace="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+                 schemaLocation="xsd/SFDCCM_ContactEventManager.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.CM.197_ContactEvent.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest"
+                 schemaLocation="xsd/EAI.MSG.SFDC.CM.401_ContactRequest.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="SFDCCM_ContactEventManagerRequestMessage">
+        <wsdl:part name="payload" element="ns1:contactEvent"/>
+    </wsdl:message>
+    <wsdl:message name="SFDCCM_ContactEventManagerResponseMessage">
+        <wsdl:part name="payload" element="client:processResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="SFDCCM_ContactEventManager">
+        <wsdl:operation name="process">
+            <wsdl:input message="client:SFDCCM_ContactEventManagerRequestMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="SFDCCM_ContactEventManagerCallback">
+        <wsdl:operation name="processResponse">
+            <wsdl:input message="client:SFDCCM_ContactEventManagerResponseMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.siebel.com/xml/RCRMTeamTrack"
+            xmlns:xsdLocal="http://www.siebel.com/xml/RCRMTeamTrack"
+            attributeFormDefault="unqualified" elementFormDefault="qualified">
+ <xsd:annotation>
+  <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights
+                     reserved. Siebel XSD Generation</xsd:documentation>
+ </xsd:annotation>
+ <xsd:element name="RCRMTeamTrack" type="xsdLocal:RCRMTeamTrack"/>
+ <xsd:complexType name="RCRMTeamTrackTopElmt">
+  <xsd:sequence>
+   <xsd:element name="RCRMTeamTrack" type="xsdLocal:RCRMTeamTrack" minOccurs="1"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="RCRMTeamTrack">
+  <xsd:sequence>
+   <xsd:element name="Timestamp" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="TargetSystem" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SourceSystem" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MessageType" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MessageId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="IntObjectName" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="IntObjectFormat" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ActionCode" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMAction" type="xsdLocal:RCRMAction" minOccurs="1"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="RCRMAction">
+  <xsd:sequence>
+   <xsd:element name="UUID" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Status" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ProductName" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MigrationDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LegacyID" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Id" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Field3" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Field2" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Field1" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="CID" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+</xsd:schema>

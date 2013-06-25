@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+    xmlns:tns="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+    elementFormDefault="qualified">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <metadata>
+                <Creator>ThomsonReuters MIS Group</Creator>
+                <Author Href="mailto:alex.berenshtein@thomson.com">Alex Berenshtein</Author>
+                <Contributor/>
+                <Created>07-19-2010</Created>
+                <Modified/>
+                <Description>Siebel User Request</Description>
+                <Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+                <Language codeListID="ISO639-2">eng</Language>
+                <ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+                <Requires/>
+                <Copyright/>
+                <Status>Draft</Status>
+                <StatusDescription>Awaiting approval</StatusDescription>
+                <Version>1.0</Version>
+                <Project>SEA Siebel Integration</Project>
+                <Title>UserProvisionRequest</Title>
+            </metadata>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:include schemaLocation="SEACommonType.xsd"/>
+    <xsd:complexType name="UserInfo">
+        <xsd:sequence>
+            <xsd:element name="UserId" type="xsd:string" nillable="true"></xsd:element>
+            <xsd:element name="ReferenceSystemUserId" type="xsd:string" nillable="true"></xsd:element>
+            <xsd:element name="UserDetail" type="tns:UserDetailStructure" nillable="true" minOccurs="0"></xsd:element>
+            <xsd:element name="UserSetting" type="tns:UserSettingStructure" nillable="true" minOccurs="0"></xsd:element>
+            <xsd:element name="UserCredentials" type="tns:AuthenticationStructure" maxOccurs="unbounded" nillable="true" minOccurs="0"></xsd:element>
+            <xsd:element name="SubscriberInfo" type="tns:SubscriberInfoStructure" nillable="true"></xsd:element>
+            <xsd:element name="ActionCode" type="tns:TransactionActionType" nillable="true" minOccurs="0"></xsd:element>
+            <xsd:element name="PortfolioList" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="PortfolioItem" type="tns:ServiceStructure" maxOccurs="unbounded"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="UserProvisionRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="MessageHeader" type="tns:RequestHeaderStructure"></xsd:element>
+                <xsd:element name="MessageBody" maxOccurs="1">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="UserInfo" type="tns:UserInfo" maxOccurs="unbounded" nillable="true"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

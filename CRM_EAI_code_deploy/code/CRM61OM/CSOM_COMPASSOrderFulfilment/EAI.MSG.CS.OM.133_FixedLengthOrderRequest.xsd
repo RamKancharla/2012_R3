@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    /*************************************************************************
+    * Module:       EAI.MSG.CCRM.OM.133_FixedLengthOrderRequest.xsd
+    *               	CompassOrderFullFillment
+    * Type:         XML Schema Document
+    * Description:  Fixed length order request
+    *
+    *
+    * Change History
+    * Version		Date				Author									Description Of Change
+    * =======	========	==================		===============================
+    *  0.01			23/07/07		GPATCHIPULUSU					Initial Version
+    *  0.02			03/08/07		GPATCHIPULUSU					Added logical country code element
+    *  0.03			07/09/07		GPATCHIPULUSU					Changed import schema locations
+    *
+    *************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:cot="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.03">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="fixedLengthOrderRequest" type="xsdLocal:FixedLengthOrderRequest"/>
+	<xsd:complexType name="FixedLengthOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="basicResponse" type="cmt:BasicResponse"/>
+			<xsd:element name="logicalCountry" type="cot:CountryCode"/>
+			<xsd:element name="message" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

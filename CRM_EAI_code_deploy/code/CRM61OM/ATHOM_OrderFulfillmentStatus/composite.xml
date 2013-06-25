@@ -1,0 +1,70 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHOM_OrderFulfillmentStatus" revision="1.0" state="on">
+    <import location="ATHOM_OrderFulfillmentStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus"/>
+    <import location="AdpOrderCacheServ.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheServ/"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilment.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHOM_OrderFulfillmentStatusStub/ATHOM_OrderFulfillmentStatusStub.wsdl" importType="wsdl"/>
+    <service name="ATHOM_OrderFulfillmentStatus" ui:wsdlLocation="ATHOM_OrderFulfillmentStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus#wsdl.interface(ATHOM_OrderFulfillmentStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus#wsdl.endpoint(ATHOM_OrderFulfillmentStatus/ATHOM_OrderFulfillmentStatus)"/>
+    </service>
+    <component name="ATHOM_OrderFulfillmentStatusProcess">
+        <implementation.bpel src="ATHOM_OrderFulfillmentStatusProcess.bpel"/>
+        
+        
+        <property name="partnerLink.ATHOM_OrderFulfillmentStatusStub.validateXML" type="xs:string" many="false">true</property>
+    </component>
+    <reference name="ATHOM_OrderFulfillmentStatusStub" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHOM_OrderFulfillmentStatusStub/ATHOM_OrderFulfillmentStatusStub.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub#wsdl.interface(ATHOM_OrderFulfillmentStatusStub)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub#wsdl.endpoint(ATHOM_OrderFulfillmentStatusStub/ATHOM_OrderFulfillmentStatusStub)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHOM_OrderFulfillmentStatusStub/anchorToATHOM_OrderFulfillmentStatusStub?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="CSOM_COMPASSOrderFulfilment" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilment.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilment)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilmentCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.endpoint(CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilment)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_COMPASSOrderFulfilment/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.endpoint(CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilmentCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="OM_ManageOrderLineStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="AdpOrderCacheServ" ui:wsdlLocation="AdpOrderCacheServ.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheServ/#wsdl.interface(AdpOrderCacheServ_ptt)"/>
+        <binding.jca config="AdpOrderCacheServ_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>ATHOM_OrderFulfillmentStatus</source.uri>
+        <target.uri>ATHOM_OrderFulfillmentStatusProcess/ATHOM_OrderFulfillmentStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHOM_OrderFulfillmentStatusProcess/OM_ManageOrderLineStatus</source.uri>
+        <target.uri>OM_ManageOrderLineStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHOM_OrderFulfillmentStatusProcess/AdpOrderCacheServ</source.uri>
+        <target.uri>AdpOrderCacheServ</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHOM_OrderFulfillmentStatusProcess/CSOM_COMPASSOrderFulfilment</source.uri>
+        <target.uri>CSOM_COMPASSOrderFulfilment</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHOM_OrderFulfillmentStatusProcess/ATHOM_OrderFulfillmentStatusStub</source.uri>
+        <target.uri>ATHOM_OrderFulfillmentStatusStub</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

@@ -1,0 +1,64 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSOM_OrderSplitter" revision="1.0" state="on">
+
+    <import location="CSOM_OrderSplitter.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderBatcher/CSOM_OrderBatcher.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_UserFulfilment/CSOM_UserFulfilment.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="CSOM_OrderSplitter.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitterCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitter)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.endpoint(CSOM_OrderSplitter/CSOM_OrderSplitter)"/>
+    </service>
+    <component name="CSOM_OrderSplitter">
+        <implementation.bpel src="CSOM_OrderSplitter.bpel"/>
+        
+        
+    </component>
+    <reference name="CSOM_UserFulfilment" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_UserFulfilment/CSOM_UserFulfilment.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.interface(CSOM_UserFulfilment)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.interface(CSOM_UserFulfilmentCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.endpoint(CSOM_UserFulfilment/CSOM_UserFulfilment)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_UserFulfilment/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.endpoint(CSOM_UserFulfilment/CSOM_UserFulfilmentCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CCRMOM_ProxyPropagateOrderStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatus)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.endpoint(CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/anchorToProxyPropagateOrderStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.endpoint(CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CSOM_OrderBatcher" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderBatcher/CSOM_OrderBatcher.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher#wsdl.interface(CSOM_OrderBatcher)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher#wsdl.interface(CSOM_OrderBatcherCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher#wsdl.endpoint(CSOM_OrderBatcher/CSOM_OrderBatcher)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderBatcher/CSOM_OrderBatcher?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher#wsdl.endpoint(CSOM_OrderBatcher/CSOM_OrderBatcherCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CSOM_OrderSplitter/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_OrderSplitter/CSOM_OrderBatcher</source.uri>
+        <target.uri>CSOM_OrderBatcher</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_OrderSplitter/CCRMOM_ProxyPropagateOrderStatus</source.uri>
+        <target.uri>CCRMOM_ProxyPropagateOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_OrderSplitter/CSOM_UserFulfilment</source.uri>
+        <target.uri>CSOM_UserFulfilment</target.uri>
+    </wire>
+<!--
+<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property> 
+-->
+</composite>

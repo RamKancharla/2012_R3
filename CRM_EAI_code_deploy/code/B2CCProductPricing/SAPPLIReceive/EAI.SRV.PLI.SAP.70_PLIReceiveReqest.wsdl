@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="SI_ProductPricing_Receive_IB_Async"
+                  targetNamespace="http://trm.com:I002:OrderProcessing:ProductPricing_Receive"
+                  xmlns:p1="http://trm.com:I002:OrderProcessing:ProductPricing_Receive"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation/>
+  <wsp:UsingPolicy wsdl:required="true"/>
+  <wsp:Policy wsu:Id="OP_OP_ProductPricing_Receive_Async"/>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://trm.com:I002:OrderProcessing:ProductPricing_Receive"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns="http://trm.com:I002:OrderProcessing:ProductPricing_Receive">
+      <xsd:element name="MT_ProductPricing_Receive"
+                   type="DT_ProductPricing_Receive"/>
+      <xsd:complexType name="DT_ProductPricing_Receive">
+        <xsd:annotation>
+          <xsd:appinfo source="http://sap.com/xi/VersionID">43999f317a3911df9ea986eb1b9a9604</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element name="Header_Details">
+            <xsd:annotation>
+              <xsd:appinfo source="http://sap.com/xi/TextID">8bebb8005d4211dfc00200ff985cf885</xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="PPLID" type="xsd:string">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">76833820733b11dfc95d00ff983cee85</xsd:appinfo>
+                    <xsd:documentation>PPL ID</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZGPLI" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa068ba05d3f11dfa75300ff985cf885</xsd:appinfo>
+                    <xsd:documentation>PLI Code</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_MATNR" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5905d3f11dfadbd00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SAP Material Code (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRDNM" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5915d3f11dfb1b600ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Product Name (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRLVL" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5925d3f11df884200ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Product Level (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRDSTS" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5935d3f11dfac2200ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Product Status (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_QTTYP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5945d3f11df81e300ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Quote Type (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_RVTYP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5955d3f11df95c600ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Revenue Type (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRDTYP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5965d3f11df871200ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Product Type (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRDESC" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5975d3f11dfab2800ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Description (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_SC3" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5985d3f11df801400ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL SC3 (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_GADIS" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5995d3f11df8c3700ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL GA Discountable (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_TRGA" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d59a5d3f11df953700ff985cf885</xsd:appinfo>
+                    <xsd:documentation>TRGA</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRDLN" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d59b5d3f11dfb6f800ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Product Line (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_FRTRL" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d59c5d3f11df9d6300ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Free Trial (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_MNPRMSN" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d59d5d3f11dfcc4100ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Manual Permissioning Required
+                                       (Permissioning)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_WLCL" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d59e5d3f11dfb9b500ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Welcome Call (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_CLTRNG" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d59f5d3f11dfb66e00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Client training (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_SRVPRD" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a05d3f11dfa3a400ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Service Product (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_COMMAPP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a15d3f11dfcea700ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Commercial Approval Flag (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_CONSPN" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a25d3f11dfa33c00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Consumable Part Number</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_SLACAT" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a35d3f11dfa33c00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL SLA Category (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRDLTYP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a45d3f11dfa16b00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Product Login Type (Permissioning)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRDUTYP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a55d3f11dfadbc00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Product User Type (Permissioning)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_SPRCALL" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a65d3f11df9e7700ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Special Price Allowed (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_DVCE" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a75d3f11df92da00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Device (Permissioning)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_AUTOPRMSN" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a85d3f11dfacb500ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL (Auto) Permissioning System
+                                       (Permissioning)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_ASSCAT" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5a95d3f11dfbeb200ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Assignment Category (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_WLEML" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5aa5d3f11dfa6f000ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Welcome Email (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_GUAHRS" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5ab5d3f11dfbd5100ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Guarantee Hours (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_STB" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5ac5d3f11df80f700ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL STB : Straight Through Billed
+                                       (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRKEY" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5ad5d3f11dfbfc900ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Permissioning Key (Permissioning)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRMPRMSN" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5ae5d3f11dfcc9500ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Primary Manual Permissioning
+                                       System (Permissioning)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_BLPLT" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5af5d3f11dfcfab00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Billing Platform (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_CNVASS" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5b05d3f11df94ff00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Convert to Asset (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_TCHAPP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5b15d3f11df961b00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Technical Approval (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_TCHFLFL" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5b25d3f11df8a9400ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Technical Fulfillment Req.
+                                       (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_MRGCAT" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5b35d3f11df818d00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Margin Category (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_PRDAPPRQ" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5b45d3f11df959600ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Product Approval Req. (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_GLBPRCPRD" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5b55d3f11dfb82c00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Global Price Product (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_ELPRIC" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">76833821733b11df931300ff983cee85</xsd:appinfo>
+                    <xsd:documentation>Editable List Price allowed</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_AGRTYP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5b75d3f11df99f400ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Agreement Type (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_ORDBL" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5b85d3f11dfbd7500ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Orderable (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_VSBL" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5b95d3f11dfa2fe00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Visible (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_SRVTYP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5ba5d3f11dfa82000ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Service Type (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_LCPLI" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5bb5d3f11df89f800ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Local PLI (not in GPDMS) (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_RIN" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5bc5d3f11dfb2c200ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL RIN (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_DISCGRP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5bd5d3f11dfcaf500ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Discount Grouping (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_SNVLDISC" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5be5d3f11df995e00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Senior Volume Discount Contrib?
+                                       (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_MNVLDISC" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5bf5d3f11dfa88600ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Minor Volume Discount Contrib?
+                                       (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_CONTRCAT" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c05d3f11dfa9a600ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Contract Category (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_LICTYP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c15d3f11df8bf600ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Licence Type (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_3RYGRP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c25d3f11df939300ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL 3rd Party Royalty group (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_EMBSWPRD" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c35d3f11dfcb6800ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Embedded Software Product
+                                       (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_MNFPTNUM" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c45d3f11dfc75a00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Manufacturer Part Number (H/W
+                                       only) (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_MNFCTNAME" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c55d3f11dfc7c200ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Manufacturer Name (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_SOLAPP" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c65d3f11dfcf5300ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Solution Approvals (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_EMRGPRT" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c75d3f11df8af900ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Emergency Part (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_MAINTPRD" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c85d3f11df8c5d00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Maintenance Product (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_OPRSYS" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5c95d3f11dfc2c800ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Operating System (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_SOLMAINTPRD" type="xsd:string"
+                             minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5ca5d3f11dfa63f00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Solution Maint Product (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_INVBANK" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5cb5d3f11df85cc00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Investment Banking/Webcast (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_BUSCLS" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5cc5d3f11dfba2000ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Business Class (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_BILL" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5cd5d3f11df9b1600ff985cf885</xsd:appinfo>
+                    <xsd:documentation>Billable (Admin)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_TPRS" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5ce5d3f11dfba9300ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL TPRS Placeholder (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_BQTY" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5cf5d3f11dfa2b600ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Banded Quantity (Product)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_OPPRD" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5d05d3f11dfb07700ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Opportunity Product (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_SLATM" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5d15d3f11dfbd0f00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL SLA Time (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_MAPER" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5d25d3f11dfbe0b00ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Maintenance % (Solutions)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_ADPER" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5d35d3f11dfc61400ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Adherence % (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ZSB_GUPER" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5d45d3f11dfa11100ff985cf885</xsd:appinfo>
+                    <xsd:documentation>SIEBEL Guarantee % (Report)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+		<xsd:element name="ZSB_PRICL" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>SIEBEL Priority Classification</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ZSB_PRDCT" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>SIEBEL Product Category (CSS)</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ZSB_PRDST" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>SIEBEL Product Sub Type</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ZSB_DADFL" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>SIEBEL DAD Flag</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ZSB_DATFL" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>SIEBEL Datafeed Flag</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ZSB_EKGRP" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>SIEBEL Eikon Group</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ZSB_TRTYP" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>SIEBEL Training Type</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ZSB_PDPDS" type="xsd:string" minOccurs="0">
+              <xsd:annotation>
+                <xsd:documentation>PDP Description</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+                <xsd:element name="MAKTX" type="xsd:string" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">fa08d5d85d3f11df9d8400ff985cf885</xsd:appinfo>
+                    <xsd:documentation>Material Description (Short Text)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="Item_Details" minOccurs="0"
+                             maxOccurs="unbounded">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7ff5d4211dfbe1900ff985cf885</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:complexType>
+                    <xsd:sequence>
+                      <xsd:element name="PRICID" type="xsd:string">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7f25d4211dfc8aa00ff985cf885</xsd:appinfo>
+                          <xsd:documentation>Pricing ID</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="ZPLNM" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7f15d4211df935200ff985cf885</xsd:appinfo>
+                          <xsd:documentation>Price List Name</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="DATBI" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7f35d4211dfac4600ff985cf885</xsd:appinfo>
+                          <xsd:documentation>SIEBEL Valid To Date</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="DATAB" type="xsd:string" minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7f45d4211dfbb7100ff985cf885</xsd:appinfo>
+                          <xsd:documentation>SIEBEL Valid From Date</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="ZLPRIC" type="xsd:string"
+                                   minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7f55d4211df8dc100ff985cf885</xsd:appinfo>
+                          <xsd:documentation>Rate (condition amount or
+                                             percentage) where no scale exists</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="ZCURR_CODE" type="xsd:string"
+                                   minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7f65d4211dfaee000ff985cf885</xsd:appinfo>
+                          <xsd:documentation>Currency Key</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="ZSB_INACT" type="xsd:string"
+                                   minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7f85d4211dfb77d00ff985cf885</xsd:appinfo>
+                          <xsd:documentation>SIEBEL Inactive Flag</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="ZSB_PLIPER" type="xsd:string"
+                                   minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7f75d4211dfcbd000ff985cf885</xsd:appinfo>
+                          <xsd:documentation>SIEBEL PLI Maint Percent</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="ZSB_LCLSTS" type="xsd:string"
+                                   minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7fa5d4211df999100ff985cf885</xsd:appinfo>
+                          <xsd:documentation>SIEBEL Local Status</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="ZSB_LCLPLI" type="xsd:string"
+                                   minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7fb5d4211df998a00ff985cf885</xsd:appinfo>
+                          <xsd:documentation>SIEBEL Local PLI</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="ZSB_IGNOR" type="xsd:string"
+                                   minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">8bebb7f95d4211dfb37a00ff985cf885</xsd:appinfo>
+                          <xsd:documentation>SIEBEL Ignore Update</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                      <xsd:element name="ZSB_LCLPLILNG" type="xsd:string"
+                                   minOccurs="0">
+                        <xsd:annotation>
+                          <xsd:appinfo source="http://sap.com/xi/TextID">76833822733b11df9c2500ff983cee85</xsd:appinfo>
+                          <xsd:documentation>PLI Local Language Name</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:element>
+                    </xsd:sequence>
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="MT_ProductPricing_Receive">
+    <wsdl:documentation/>
+    <wsdl:part name="MT_ProductPricing_Receive"
+               element="p1:MT_ProductPricing_Receive"/>
+  </wsdl:message>
+  <wsdl:portType name="SI_ProductPricing_Receive_IB_Async">
+    <wsdl:documentation/>
+    <wsdl:operation name="OP_ProductPricing_Receive_Async">
+      <wsdl:documentation/>
+      <wsp:Policy>
+        <wsp:PolicyReference URI="#OP_OP_ProductPricing_Receive_Async"/>
+      </wsp:Policy>
+      <wsdl:input message="p1:MT_ProductPricing_Receive"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SI_ProductPricing_Receive_IB_AsyncBinding"
+                type="p1:SI_ProductPricing_Receive_IB_Async">
+    <soap:binding style="document"
+                  transport="http://schemas.xmlsoap.org/soap/http"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+    <wsdl:operation name="OP_ProductPricing_Receive_Async">
+      <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      <wsdl:input>
+        <soap:body use="literal"
+                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SI_ProductPricing_Receive_IB_AsyncService">
+    <wsdl:port name="SI_ProductPricing_Receive_IB_AsyncPort"
+               binding="p1:SI_ProductPricing_Receive_IB_AsyncBinding">
+      <soap:address location="http://sapmi3:50000/sap/xi/engine?type=entry&amp;version=3.0&amp;Sender.Service=*&amp;Interface=*%5E*"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

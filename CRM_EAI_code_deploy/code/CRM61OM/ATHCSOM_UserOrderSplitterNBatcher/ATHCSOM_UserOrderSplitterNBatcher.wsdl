@@ -1,0 +1,61 @@
+<definitions
+     name="ATHCSOM_UserOrderSplitterNBatcher"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher"
+                 schemaLocation="ATHCSOM_UserOrderSplitterNBatcher.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.CS.UOM.278_UserOrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.CS.UOM.281_ExtendedUserOrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHCSOM_UserOrderSplitterNBatcherResponseMessage">
+        <part name="payload" element="client:ATHCSOM_UserOrderSplitterNBatcherProcessResponse"/>
+    </message>
+    <message name="ATHCSOM_UserOrderSplitterNBatcherRequestMessage">
+        <part name="OrderRequest" element="ns1:CSUserOrder"/>
+    </message>
+    <message name="ExtendedUserOrderSplitterNBatcherReMsg">
+        <part name="payload" element="ns1:ExtendedCSUserOrder"/>
+    </message>
+    <portType name="ATHCSOM_UserOrderSplitterNBatcherCallback">
+        <operation name="onResult">
+            <input message="client:ATHCSOM_UserOrderSplitterNBatcherResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="ATHCSOM_UserOrderSplitterNBatcher">
+        <operation name="splitNBatchOrder">
+            <input message="client:ATHCSOM_UserOrderSplitterNBatcherRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHCSOM_UserOrderSplitterNBatcher">
+        <plnk:role name="ATHCSOM_UserOrderSplitterNBatcherProvider">
+            <plnk:portType name="client:ATHCSOM_UserOrderSplitterNBatcher"/>
+        </plnk:role>
+        <plnk:role name="ATHCSOM_UserOrderSplitterNBatcherRequester">
+            <plnk:portType name="client:ATHCSOM_UserOrderSplitterNBatcherCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

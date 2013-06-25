@@ -1,0 +1,31 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SAPOM_UserCreation" revision="1.0" state="on">
+    <import location="SAPOM_UserCreation.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation"/>
+    <import location="EAI.SRV.CM.SAP.72_UpdateUserContactRef.wsdl" namespace="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation"/>
+    <service name="SAPOM_UserCreation" ui:wsdlLocation="SAPOM_UserCreation.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.interface(SAPOM_UserCreationCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.interface(SAPOM_UserCreation)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.endpoint(SAPOM_UserCreation/SAPOM_UserCreation)"/>
+    </service>
+    <component name="SAPOM_UserCreationProcess">
+        <implementation.bpel src="SAPOM_UserCreationProcess.bpel"/>
+        
+        
+    </component>
+    <reference name="SI_CreateContacts_OB_Async" ui:wsdlLocation="EAI.SRV.CM.SAP.72_UpdateUserContactRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation#wsdl.interface(SI_CreateContacts_OB_Async)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="EAI.SRV.CM.SAP.72_UpdateUserContactRef.wsdl" port="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation#wsdl.endpoint(SI_CreateContacts_OB_AsyncService/SI_CreateContacts_OB_AsyncPort)">
+            <property name="oracle.webservices.auth.password">${sap.Password}</property>
+            <property name="oracle.webservices.auth.username">${sap.UserName}</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>SAPOM_UserCreation</source.uri>
+        <target.uri>SAPOM_UserCreationProcess/SAPOM_UserCreation</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM_UserCreationProcess/SI_CreateContacts_OB_Async</source.uri>
+        <target.uri>SI_CreateContacts_OB_Async</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

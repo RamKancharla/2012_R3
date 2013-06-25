@@ -1,0 +1,32 @@
+<definitions
+     name="CCRMAM_AccountDispatcher"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher"
+     xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+     xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher"
+             xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+             xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.AM.176_AccountEvent.xsd"/>
+        </schema>
+    </types>
+    <message name="CCRMAM_AccountDispatcherRequestMessage">
+        <part name="accountEvent" element="imp1:accountEvent"/>
+    </message>
+    <portType name="CCRMAM_AccountDispatcher">
+        <operation name="dispatchAccount">
+            <input message="client:CCRMAM_AccountDispatcherRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMAM_AccountDispatcher">
+        <plnk:role name="CCRMAM_AccountDispatcherProvider">
+            <plnk:portType name="client:CCRMAM_AccountDispatcher"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

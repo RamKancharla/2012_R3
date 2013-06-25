@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ATHOM_Invoker"
+             targetNamespace="http://xmlns.oracle.com/ATHOM_Invoker"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://xmlns.oracle.com/ATHOM_Invoker"
+             xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://xmlns.oracle.com/ATHOM_Invoker" schemaLocation="ATHOM_Invoker.xsd" />
+		</schema>
+                <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager"
+             xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+                 schemaLocation="EAI.MSG.ATH.OM.302_OrderRequest.xsd"/>
+        </xsd:schema>
+	</types>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<message name="ATHOM_InvokerRequestMessage">
+		<part name="payload" element="client:ATHOM_InvokerProcessRequest"/>
+	</message>
+
+	<message name="ATHOM_InvokerResponseMessage">
+		<part name="payload" element="client:ATHOM_InvokerProcessResponse"/>
+	</message>
+        <message name="ATHOMOrdReqGroupMsg">
+                <part name="ATHOMOrdReqGroupMsgPart" element="ns1:ATHOrdRequest"/>
+        </message>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- portType implemented by the ATHOM_Invoker BPEL process -->
+	<portType name="ATHOM_Invoker">
+		<operation name="initiate">
+			<input message="client:ATHOM_InvokerRequestMessage"/>
+		</operation>
+	</portType>
+
+	<!-- portType implemented by the requester of ATHOM_Invoker BPEL process
+	for asynchronous callback purposes
+	-->
+	<portType name="ATHOM_InvokerCallback">
+		<operation name="onResult">
+			<input message="client:ATHOM_InvokerResponseMessage"/>
+		</operation>
+	</portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	the ATHOM_Invoker partnerLinkType binds the provider and
+	requester portType into an asynchronous conversation.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<plnk:partnerLinkType name="ATHOM_Invoker">
+		<plnk:role name="ATHOM_InvokerProvider">
+			<plnk:portType name="client:ATHOM_Invoker"/>
+		</plnk:role>
+		<plnk:role name="ATHOM_InvokerRequester">
+			<plnk:portType name="client:ATHOM_InvokerCallback"/>
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

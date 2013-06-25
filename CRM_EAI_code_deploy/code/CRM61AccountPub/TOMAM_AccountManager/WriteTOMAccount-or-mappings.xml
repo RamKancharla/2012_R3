@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-persistence version="Eclipse Persistence Services - 2.0.2.v20100323-r6872" xmlns="http://www.eclipse.org/eclipselink/xsds/persistence" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:eclipselink="http://www.eclipse.org/eclipselink/xsds/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <name>WriteTOMAccount</name>
+   <class-mapping-descriptors>
+      <class-mapping-descriptor xsi:type="relational-class-mapping-descriptor">
+         <class>WriteTOMAccount.InterfaceBuffer</class>
+         <alias>InterfaceBuffer</alias>
+         <primary-key>
+            <field table="INTERFACE_BUFFER" name="ID" xsi:type="column"/>
+         </primary-key>
+         <events xsi:type="event-policy"/>
+         <querying xsi:type="query-policy">
+            <queries>
+               <query name="findAllInterfaceBuffer" xsi:type="read-all-query">
+                  <timeout>0</timeout>
+                  <reference-class>WriteTOMAccount.InterfaceBuffer</reference-class>
+                  <cache-usage>primary-key</cache-usage>
+                  <lock-mode>none</lock-mode>
+                  <container xsi:type="list-container-policy">
+                     <collection-type>java.util.Vector</collection-type>
+                  </container>
+               </query>
+            </queries>
+            <does-exist-query xsi:type="does-exist-query">
+               <existence-check>check-database</existence-check>
+            </does-exist-query>
+         </querying>
+         <attribute-mappings>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>id</attribute-name>
+               <field table="INTERFACE_BUFFER" name="ID" xsi:type="column"/>
+               <attribute-classification>java.math.BigDecimal</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>created</attribute-name>
+               <field table="INTERFACE_BUFFER" name="CREATED" xsi:type="column"/>
+               <attribute-classification>java.sql.Timestamp</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>payload</attribute-name>
+               <field table="INTERFACE_BUFFER" name="PAYLOAD" xsi:type="column"/>
+               <attribute-classification>[C</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>interfaceId</attribute-name>
+               <field table="INTERFACE_BUFFER" name="INTERFACE_ID" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>referenceId</attribute-name>
+               <field table="INTERFACE_BUFFER" name="REFERENCE_ID" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>state</attribute-name>
+               <field table="INTERFACE_BUFFER" name="STATE" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>lastUpdated</attribute-name>
+               <field table="INTERFACE_BUFFER" name="LAST_UPDATED" xsi:type="column"/>
+               <attribute-classification>java.sql.Timestamp</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>createdBy</attribute-name>
+               <field table="INTERFACE_BUFFER" name="CREATED_BY" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>updatedBy</attribute-name>
+               <field table="INTERFACE_BUFFER" name="UPDATED_BY" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+         </attribute-mappings>
+         <descriptor-type>independent</descriptor-type>
+         <caching>
+            <cache-type>weak-reference</cache-type>
+            <always-refresh>true</always-refresh>
+            <unitofwork-isolation-level>isolate-new-data-after-transaction</unitofwork-isolation-level>
+         </caching>
+         <remote-caching>
+            <cache-type>weak-reference</cache-type>
+         </remote-caching>
+         <instantiation/>
+         <copying xsi:type="instantiation-copy-policy"/>
+         <change-policy xsi:type="deferred-detection-change-policy"/>
+         <tables>
+            <table name="INTERFACE_BUFFER"/>
+         </tables>
+      </class-mapping-descriptor>
+   </class-mapping-descriptors>
+   <login xsi:type="database-login">
+      <platform-class>org.eclipse.persistence.platform.database.oracle.Oracle9Platform</platform-class>
+      <user-name></user-name>
+      <connection-url></connection-url>
+   </login>
+</object-persistence>

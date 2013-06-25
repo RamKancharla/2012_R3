@@ -1,0 +1,11 @@
+<adapter-config name="OrderStatusMonitorMQAdp" adapter="MQSeriesAdapter" wsdlLocation="OrderStatusMonitorMQAdp.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemote" adapterRef=""/>
+  <endpoint-activation portType="monitorOrderStatus_ptt" operation="monitorOrderStatus" UITransmissionPrimitive="Dequeue">
+    <activation-spec className="oracle.tip.adapter.mq.inbound.ActivationSpecImpl">
+      <property name="QueueName" value="${mq.token.prefix.cs}ALL_EAI_RPLY_TRANS"/>
+    </activation-spec>
+    <input/>
+  </endpoint-activation>
+
+</adapter-config>

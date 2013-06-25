@@ -1,0 +1,160 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      ATHCSOM_TransformUserOrderStatus.bpel 
+* Type:        BPEL Process 
+* Description: Asynchronous BPEL Process that Transforms Fixed lenght CS Format to XML by using WebService .
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         19/06/2009     Shanker Reddy            Initial Version 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHCSOM_TransformUserOrderStatus" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4=" http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5=" http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/Exception" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToATHCSOM_TransformUserOrderStatus" partnerLinkType="client:ATHCSOM_TransformUserOrderStatus" myRole="ATHCSOM_TransformUserOrderStatusProvider" partnerRole="ATHCSOM_TransformUserOrderStatusRequester"/>
+        <partnerLink name="ParseUserOrderStatus" partnerRole="ParseCSUserOrderResponse_Role" partnerLinkType="ns2:ParseCSUserOrderResponse_PL"/>
+        <partnerLink myRole="ATHUOM_PropagateUserOrderStatusRequester" name="ATHUOM_PropagateUserOrderStatus" partnerRole="ATHUOM_PropagateUserOrderStatusProvider" partnerLinkType="ns3:ATHUOM_PropagateUserOrderStatus"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="TransformUserOrderStatusIV" messageType="client:ATHCSOM_TransformUserOrderStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:ATHCSOM_TransformUserOrderStatusResponseMessage"/>
+        <variable name="InvParseUserOrderStatusIV" messageType="ns2:FLUserOrderResponse"/>
+        <variable name="InvParseUserOrderStatusOV" messageType="ns2:CSUserOrderResponse"/>
+        <variable name="Success_Response" type="xsd:string"/>
+        <variable name="ATHPropagateUserOrderStatusIV" messageType="ns3:ATHUOM_PropagateUserOrderStatusRequestMessage"/>
+        <variable name="TransactionId" type="xsd:string"/>
+        <variable name="UnKnownError" type="xsd:string"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleForBindingFault" language="java" version="1.5">
+                <![CDATA[String TransactionId = (String)getVariableData("TransactionId");        
+TransactionId=(TransactionId!=null ? TransactionId : " ");        
+setCompositeInstanceTitle(TransactionId+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleSelectionFailure" language="java" version="1.5">
+                <![CDATA[String TransactionId = (String)getVariableData("TransactionId");        
+TransactionId=(TransactionId!=null ? TransactionId : " ");        
+setCompositeInstanceTitle(TransactionId+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleForRemoteFault" language="java" version="1.5">
+                <![CDATA[String TransactionId = (String)getVariableData("TransactionId");        
+TransactionId=(TransactionId!=null ? TransactionId : " ");        
+setCompositeInstanceTitle(TransactionId+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqUnknownError">
+                <bpelx:exec name="AsgCustomTitleForGenericFault" language="java" version="1.5">
+                    <![CDATA[String TransactionId = (String)getVariableData("TransactionId");        
+TransactionId=(TransactionId!=null ? TransactionId : " ");        
+setCompositeInstanceTitle(TransactionId+" Fault");]]>
+                </bpelx:exec>
+                <assign name="AsgUnknownError">
+                    <copy>
+                        <from expression="&quot;UnknownError&quot;"/>
+                        <to variable="UnKnownError"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ATHCSOM_TransformUserOrderStatus.wsdl) -->
+        <receive name="rcvUserOrderStatus" partnerLink="anchorToATHCSOM_TransformUserOrderStatus" portType="client:ATHCSOM_TransformUserOrderStatus" operation="processUserOrderStatus" variable="TransformUserOrderStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="Success_Response"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformUserOrderStatusIV','payload','/ns1:EBCDICMessage/ns1:message'),356,30)"/>
+                <to variable="TransactionId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String TransactionId = (String)getVariableData("TransactionId");      
+TransactionId=(TransactionId!=null ? TransactionId : " ");      
+setCompositeInstanceTitle(TransactionId);]]>
+        </bpelx:exec>
+        <scope name="ScpParseUserOrderStatus">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrParseUserOrderStatus" faultName="ns5:ParseUserOrderStatusError" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqParseUserOrderStatus">
+                <assign name="TransUserOrderStatusToParseUserOrderStatus">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransUserOrderStatusToParseUserOrderStatus.xsl',bpws:getVariableData('TransformUserOrderStatusIV','payload'))"/>
+                        <to variable="InvParseUserOrderStatusIV" part="parameter"/>
+                    </copy>
+                </assign>
+                <invoke name="InvParseUserOrderStatus" partnerLink="ParseUserOrderStatus" portType="ns2:ParseCSUserOrderResponse" inputVariable="InvParseUserOrderStatusIV" outputVariable="InvParseUserOrderStatusOV" operation="ParseUserOrderResponse"/>
+            </sequence>
+        </scope>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('InvParseUserOrderStatusOV','parameter','/ns2:UserOrderResponse/ns2:parsingStatus/ns2:userResponse')=bpws:getVariableData('Success_Response')">
+                <scope name="ScpPropagateUserOrderStatus">
+                    <faultHandlers>
+                        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                            <throw name="ThrPropagateUserOrderStatus" faultName="ns5:PropagateUserOrderStatus" faultVariable="runtimeFault"/>
+                        </catch>
+                    </faultHandlers>
+                    <sequence name="SeqPropagateUserOrderStatus">
+                        <assign name="TransParseUserOrderStatusToATHPropagateUserOrderStatus">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransParseUserOrderStatusToATHPropagateUserOrderStatus.xsl',bpws:getVariableData('InvParseUserOrderStatusOV','parameter'))"/>
+                                <to variable="ATHPropagateUserOrderStatusIV" part="payload"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvATHPropagateUserOrderStatus" partnerLink="ATHUOM_PropagateUserOrderStatus" portType="ns3:ATHUOM_PropagateUserOrderStatus" inputVariable="ATHPropagateUserOrderStatusIV" operation="sendUserOrderStatus"/>
+                    </sequence>
+                </scope>
+            </case>
+            <otherwise>
+                <empty name="PropagateUserOrderStatus"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

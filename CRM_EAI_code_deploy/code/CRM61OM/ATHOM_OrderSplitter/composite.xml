@@ -1,0 +1,30 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHOM_OrderSplitter" revision="1.0" state="on">
+    <import location="ATHOM_OrderSplitter.wsdl" namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter"/>
+    <import namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHOM_OrderManager/ATHOMOrderManager.wsdl" importType="wsdl"/>
+    <service name="anchorToOrderSplitter" ui:wsdlLocation="ATHOM_OrderSplitter.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter#wsdl.interface(ATHOM_OrderSplitterCallback)" interface="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter#wsdl.interface(ATHOM_OrderSplitter)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter#wsdl.endpoint(ATHOM_OrderSplitter/ATHOM_OrderSplitter)"/>
+    </service>
+    <component name="ATHOM_OrderSplitter">
+        <implementation.bpel src="ATHOM_OrderSplitter.bpel"/>
+        
+        
+    </component>
+    <reference name="ATHOMOrderManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHOM_OrderManager/ATHOMOrderManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager#wsdl.interface(ATHOMOrderManager)"/>
+        <binding.ws port="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager#wsdl.endpoint(ATHOMOrderManager/ATHOMOrderManager_pt)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHOM_OrderManager/ATHOMOrderManager?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>anchorToOrderSplitter</source.uri>
+        <target.uri>ATHOM_OrderSplitter/anchorToOrderSplitter</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHOM_OrderSplitter/ATHOMOrderManager</source.uri>
+        <target.uri>ATHOMOrderManager</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

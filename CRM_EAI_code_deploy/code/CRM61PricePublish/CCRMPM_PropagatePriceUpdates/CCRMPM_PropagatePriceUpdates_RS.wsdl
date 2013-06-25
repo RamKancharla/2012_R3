@@ -1,0 +1,30 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<definitions
+     name="PropagatePriceUpdates_RS"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM"
+     xmlns:out1="http://www.siebel.com/xml/Price%20List"
+     xmlns:inp1="http://www.siebel.com/xml/Price%20List"
+    >
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.siebel.com/xml/Price%20List" schemaLocation="EAI.MSG.EXT.CCRM.PM.223_PriceUpdateRequest.xsd" />
+      </schema>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.siebel.com/xml/Price%20List" schemaLocation="EAI.MSG.EXT.CCRM.PM.223_PriceUpdateRequest.xsd" />
+      </schema>
+    </types>
+    <message name="PricePublish_request">
+        <part name="PricePublish" element="out1:PricePublish"/>
+    </message>
+    <message name="PricePublish_reply">
+        <part name="PricePublish" element="out1:PricePublish"/>
+    </message>
+    <portType name="propagatePriceUpdate_ppt">
+        <operation name="propagatePriceUpdate">
+            <input message="tns:PricePublish_request"/>
+            <output message="tns:PricePublish_reply"/>
+        </operation>
+    </portType>
+</definitions>

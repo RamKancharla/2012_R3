@@ -1,0 +1,24 @@
+<?binding.jca ReadSFDCAM_POLLING_V_db.jca?>
+<definitions name="ReadSFDCAM_POLLING_V" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/ReadSFDCAM_POLLING_V/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/ReadSFDCAM_POLLING_V/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/ReadSFDCAMPOLLINGV">
+    <plt:partnerLinkType name="ReadSFDCAM_POLLING_V_plt">
+        <plt:role name="ReadSFDCAM_POLLING_V_role">
+            <plt:portType name="tns:ReadSFDCAM_POLLING_V_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/ReadSFDCAMPOLLINGV" schemaLocation="ReadSFDCAMPOLLINGV_table.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" schemaLocation="EAI.MSG.SFDC.AM.236_PublishAccountEventRequest.xsd"/>
+        </schema>
+    </types>
+    <message name="SfdcamPollingVCollection_msg">
+        <part name="SfdcamPollingVCollection" element="top:SfdcamPollingVCollection"/>
+    </message>
+    <portType name="ReadSFDCAM_POLLING_V_ptt">
+        <operation name="receive">
+            <input message="tns:SfdcamPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

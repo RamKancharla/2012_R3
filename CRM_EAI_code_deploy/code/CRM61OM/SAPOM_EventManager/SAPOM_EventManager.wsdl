@@ -1,0 +1,52 @@
+<definitions
+     name="SAPOM_EventManager"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager"
+                 schemaLocation="SAPOM_EventManager.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+                 schemaLocation="EAI.MSG.SAP.OM.286_OrderRequest.xsd"/>
+        </schema>
+    </types>
+    <message name="SAPOM_EventManagerRequestMessage">
+        <part name="payload" element="ns1:SAPOrderRequest"/>
+    </message>
+    <message name="SAPOM_EventManagerResponseMessage">
+        <part name="payload" element="client:SAPOM_EventManagerProcessResponse"/>
+    </message>
+    <message name="distinctMsg">
+        <part name="distPart" element="ns1:SAPOrderRequest"/>
+    </message>
+    <portType name="SAPOM_EventManager">
+        <operation name="initiate">
+            <input message="client:SAPOM_EventManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="SAPOM_EventManagerCallback">
+        <operation name="onResult">
+            <input message="client:SAPOM_EventManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SAPOM_EventManager">
+        <plnk:role name="SAPOM_EventManagerProvider">
+            <plnk:portType name="client:SAPOM_EventManager"/>
+        </plnk:role>
+        <plnk:role name="SAPOM_EventManagerRequester">
+            <plnk:portType name="client:SAPOM_EventManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

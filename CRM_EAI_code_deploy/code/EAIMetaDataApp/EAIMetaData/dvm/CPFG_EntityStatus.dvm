@@ -1,0 +1,87 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="CPFG_EntityStatus" xmlns="http://xmlns.oracle.com/dvm">
+<description>Maps status values received from CPfG for electronic fulfilment requests and user promotion requests to values used in EAI.
+
+Used by:
+- CPFG_StatusUpdateValidator</description><columns><column name="CPFGStatusCode"/><column name="EAIStatus"/><column name="EAIStatusForUser"/><column name="EAIStatusReasonCode"/></columns>
+<rows><row><cell>EAI.EFRS.011</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell/></row>
+<row><cell>ERROR</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell/></row>
+<row><cell>UserEntityType</cell><cell>EAI.SRV.EXT.012.ENT002</cell><cell/><cell/></row>
+<row><cell>ElecFfmtReqEntityType</cell><cell>EAI.SRV.EXT.012.ENT001</cell><cell/><cell/></row>
+<row><cell>EAI.EFRS.010</cell><cell>COMPLETE</cell><cell>CPFG_PROMOTION_COMPLETE</cell><cell/></row>
+<row><cell>COMPLETE</cell><cell>COMPLETE</cell><cell>CPFG_PROMOTION_COMPLETE</cell><cell/></row>
+<row><cell>MXP000</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP000</cell></row>
+<row><cell>MXP001</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP001</cell></row>
+<row><cell>MXP002</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP002</cell></row>
+<row><cell>MXP003</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP003</cell></row>
+<row><cell>MXP004</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP004</cell></row>
+<row><cell>MXP005</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP005</cell></row>
+<row><cell>MXP006</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP006</cell></row>
+<row><cell>MXP007</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP007</cell></row>
+<row><cell>MXP008</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP008</cell></row>
+<row><cell>MXP009</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP009</cell></row>
+<row><cell>MXP010</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP010</cell></row>
+<row><cell>MXP020</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP020</cell></row>
+<row><cell>MXP021</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP021</cell></row>
+<row><cell>MXP022</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP022</cell></row>
+<row><cell>MXP023</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP023</cell></row>
+<row><cell>MXP024</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP024</cell></row>
+<row><cell>MXP025</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP025</cell></row>
+<row><cell>MXP026</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP026</cell></row>
+<row><cell>MXP027</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP027</cell></row>
+<row><cell>MXP050</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP050</cell></row>
+<row><cell>RM406</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM406</cell></row>
+<row><cell>RM411</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM411</cell></row>
+<row><cell>RM414</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM414</cell></row>
+<row><cell>RM410</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM410</cell></row>
+<row><cell>RM500</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM500</cell></row>
+<row><cell>RM503</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM503</cell></row>
+<row><cell>RM504</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM504</cell></row>
+<row><cell>RM505</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM505</cell></row>
+<row><cell>RM506</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM506</cell></row>
+<row><cell>RM600</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM600</cell></row>
+<row><cell>RM1011</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM1011</cell></row>
+<row><cell>RM2014</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM2014</cell></row>
+<row><cell>CAT00200</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00200</cell></row>
+<row><cell>CAT00202</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00202</cell></row>
+<row><cell>CAT00204</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00204</cell></row>
+<row><cell>CAT00205</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00205</cell></row>
+<row><cell>CAT00206</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00206</cell></row>
+<row><cell>CAT00207</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00207</cell></row>
+<row><cell>CAT00209</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00209</cell></row>
+<row><cell>CAT00203</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00203</cell></row>
+<row><cell>CAT00208</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00208</cell></row>
+<row><cell>CAT00210</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00210</cell></row>
+<row><cell>CAT00215</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00215</cell></row>
+<row><cell>CAT00216</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00216</cell></row>
+<row><cell>CAT00300</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00300</cell></row>
+<row><cell>CAT00500</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAT00500</cell></row>
+<row><cell>CAS00204</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAS00204</cell></row>
+<row><cell>CAS00300</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>CAS00300</cell></row>
+<row><cell>LAPS00300</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>LAPS00300</cell></row>
+<row><cell>DACS00210</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>DACS00210</cell></row>
+<row><cell>DACS00300</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>DACS00300</cell></row>
+<row><cell>ESB00300</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>ESB00300</cell></row>
+<row><cell>00201-AAA-INVALID MESSAGE VERSION</cell><cell>ERROR</cell><cell/><cell>00201-AAA</cell></row>
+<row><cell>00202-AAA-INVALID MESSAGE CONTENT</cell><cell>ERROR</cell><cell/><cell>00202-AAA</cell></row>
+<row><cell>00203-AAA-INVALID ACTION CODE</cell><cell>ERROR</cell><cell/><cell>00203-AAA</cell></row>
+<row><cell>00206-AAA-USER ACCOUNT ID UNKNOWN</cell><cell>ERROR</cell><cell/><cell>00206-AAA</cell></row>
+<row><cell>00207-AAA-USER HAS ENTITLEMENTS</cell><cell>ERROR</cell><cell/><cell>00207-AAA</cell></row>
+<row><cell>00300-AAA-UNKNOWN INTERNAL ERROR</cell><cell>ERROR</cell><cell/><cell>00300-AAA</cell></row>
+<row><cell>00204-AAA-USER DOES NOT EXIST</cell><cell>ERROR</cell><cell/><cell>00204-AAA</cell></row>
+<row><cell>00208-AAA-PRODUCT ID UNKNOWN</cell><cell>ERROR</cell><cell/><cell>00208-AAA</cell></row>
+<row><cell>00300-AAA-UNKNOWN INTERNAL SERVICE ERROR</cell><cell>ERROR</cell><cell/><cell>00300-AAA</cell></row>
+<row><cell>MXP011</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP011</cell></row>
+<row><cell>RM2016</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM2016</cell></row>
+<row><cell>RM502</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM502</cell></row>
+<row><cell>MXP028</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP028</cell></row>
+<row><cell>MXP040</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP040</cell></row>
+<row><cell>MXP041</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP041</cell></row>
+<row><cell>MXP042</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP042</cell></row>
+<row><cell>MXP043</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP043</cell></row>
+<row><cell>MXP044</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP044</cell></row>
+<row><cell>MXP045</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP045</cell></row>
+<row><cell>MXP046</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP046</cell></row>
+<row><cell>MXP047</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>MXP047</cell></row>
+<row><cell>RM415</cell><cell>ERROR</cell><cell>CPFG_PROMOTION_FAILED</cell><cell>RM415</cell></row>
+</rows></dvm>

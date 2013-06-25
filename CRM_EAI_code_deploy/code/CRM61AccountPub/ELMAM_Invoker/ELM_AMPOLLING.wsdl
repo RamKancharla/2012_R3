@@ -1,0 +1,21 @@
+<?binding.jca ELM_AMPOLLING_db.jca?>
+<definitions name="ELM_AMPOLLING" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/ELM_AMPOLLING/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/ELM_AMPOLLING/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/ELMAMPOLLING">
+    <plt:partnerLinkType name="ELM_AMPOLLING_plt">
+        <plt:role name="ELM_AMPOLLING_role">
+            <plt:portType name="tns:ELM_AMPOLLING_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/ELMAMPOLLING" schemaLocation="ELMAMPOLLING_table.xsd"/>
+        </schema>
+    </types>
+    <message name="ElmamPollingVCollection_msg">
+        <part name="ElmamPollingVCollection" element="top:ElmamPollingVCollection"/>
+    </message>
+    <portType name="ELM_AMPOLLING_ptt">
+        <operation name="receive">
+            <input message="tns:ElmamPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

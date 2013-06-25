@@ -1,0 +1,22 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<definitions
+     name="PopulateSolutionRS"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ"
+     xmlns:inp1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/PopulateSolution"
+    >
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/PopulateSolution" schemaLocation="EAI.MSG.EAI.CCRM.250_CCRMPopulateSolutionRequest.xsd" />
+      </schema>
+    </types>
+    <message name="EAICSZPopulateSolution_request">
+        <part name="EAICSZPopulateSolution" element="inp1:EAICSZPopulateSolution"/>
+    </message>
+    <portType name="assignSolutionToSR_ppt">
+        <operation name="assignSolutionToSR">
+            <input message="tns:EAICSZPopulateSolution_request"/>
+        </operation>
+    </portType>
+</definitions>

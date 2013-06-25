@@ -1,0 +1,35 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMCM_PropagateContactErrorStatus"
+           revision="1.2012" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="CCRMCM_PropagateContactErrorStatus.wsdl" namespace="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus"/>
+    <import location="ContactStatusUpdate.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerContactStatusUpdate/"/>
+    <service name="client" ui:wsdlLocation="CCRMCM_PropagateContactErrorStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus#wsdl.interface(CCRMCM_PropagateContactErrorStatusCallback)" interface="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus#wsdl.interface(CCRMCM_PropagateContactErrorStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus#wsdl.endpoint(CCRMCM_PropagateContactErrorStatus/CCRMCM_PropagateContactErrorStatus)"/>
+    </service>
+    <component name="CCRMCM_PropagateContactErrorStatus">
+        <implementation.bpel src="CCRMCM_PropagateContactErrorStatus.bpel"/>
+    </component>
+    <reference name="ContactStatusUpdate" ui:wsdlLocation="ContactStatusUpdate.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerContactStatusUpdate/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="ContactStatusUpdate_mq.jca">
+            <property name="jca.retry.interval" type="xs:string" many="false">60</property>
+        </binding.jca>
+        <property name="jca.retry.count" type="xs:int" many="false"
+                  override="may">9</property>
+        <property name="jca.retry.interval" type="xs:string" many="false">60</property>
+        <property name="jca.retry.backoff" type="xs:int" many="false"
+                  override="may">1</property>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMCM_PropagateContactErrorStatus/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMCM_PropagateContactErrorStatus/ContactStatusUpdate</source.uri>
+        <target.uri>ContactStatusUpdate</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************************************
+* Module:	EAI.MSG.CS.ACM.229_AccountContactPublishRequest.xsd
+*				
+* Type:		XML Schema Document
+* Description:	Publish Account Contact request in CS Domain
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		15/05/08	Sreeja Prasad			Initial Version
+*  0.02		10/06/08	Sreeja Prasad			Added the elements Status,PerClient,Suspend,Summary and CRHold in CSAccount type and 
+								Status,PerClient,Suspend in CSInstallationAddress & CSBillingAddress.
+*  0.03		11/06/08        Sreeja Prasad			Renamed element suspend to billingSuspensionRequired,summary to invoicingSummary, CRHold to CRHoldRequired 
+*  0.04		12/06/08        Sreeja Prasad	                Added ContactStatus in CSContact
+*  0.05		15/07/08        Sreeja Prasad	                Added customerReference,accountDescription and accountNotes in CSInstallationAddress and CSBillingAddress for PBI-854B.
+*  0.06		16/07/08        Sreeja Prasad			Removed ContactStatus from CSContact, added messageId in CSAccount.
+*  0.07		12/03/09        Sreeja Prasad			Added DirectDebit,Ex-Postel,TaxOffice,RIOIndicator,RIPurchaseOrder and ERPurchaseOrder
+*  0.08         25/11/09	Sreeja				Added the element ContractType
+*  0.09         11/02/10	Sreeja				Added the element globalSubNum as a child element for CSAccount element as part of Release 2
+*************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" 
+xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" 
+xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" 
+xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"  
+xmlns:gcap-NAT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes"  
+xmlns:gcap-NUT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes" 
+xmlns:gcap-cut="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" 
+targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.08">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.003_CommonAccountTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.009_NillableAccountTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.002_CommonUserTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.016_NillableUserTypes.xsd"/>
+	<xsd:element name="CSAccountContactRequest" type="xsdLocal:CSAccountContactRequest"/>
+	<xsd:complexType name="CSAccountContactRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+			<xsd:element name="messageHeader" type="gcap-cmt:CSCompassMessageHeader"/>
+			<xsd:element name="country" type="gcap-cat:CountryCode"/>
+			<xsd:element name="actionCode" type="gcap-cmt:ActionCode"/>
+			<xsd:element name="AccountId" type="gcap-cat:AccountID"/>
+			<xsd:element name="account" type="xsdLocal:CSAccount"/>
+			<xsd:element name="installAddress" type="xsdLocal:CSInstallationAddress"/>
+			<xsd:element name="billingAddress" type="xsdLocal:CSBillingAddress"/>
+			<xsd:element name="contact" type="xsdLocal:CSContact"  maxOccurs="20"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CSAccount">
+		<xsd:sequence>
+			<xsd:element name="subscriberNumber" type="gcap-cat:SubscriberNumber"/>
+			<xsd:element name="subscriberName" type="gcap-cat:SubscriberName"/>
+			<xsd:element name="irasRef" type="gcap-cat:IRASReference"/>
+			<xsd:element name="subscriberType" type="gcap-cat:OrganisationType"/>
+			<xsd:element name="subscriberRelation" type="xsd:string"/>
+			<xsd:element name="ifaceInd" type="xsd:string"/>
+			<xsd:element name="billingFrequency" type="gcap-cat:BillingFrequency"/>
+			<xsd:element name="businessCategory" type="gcap-cat:OrganisationType"/>
+			<xsd:element name="businessArea" type="gcap-cat:BusinessChannel"/>
+			<xsd:element name="subFG1" type="xsd:string"/>
+			<xsd:element name="subFG2" type="xsd:string"/>
+			<xsd:element name="TaxCode" type="gcap-NAT:TaxCode"/>
+			<xsd:element name="subscriberPayTerms" type="gcap-NAT:PayTerms"/>
+			<xsd:element name="accountFamily" type="gcap-NAT:AccountFamily"/>
+			<xsd:element name="subMulticSubno" type="xsd:string"/>
+			<xsd:element name="shortName" type="gcap-NAT:SubscriberShortName"/>
+			<xsd:element name="cityCode" type="gcap-NAT:City"/>
+			<xsd:element name="dirName" type="xsd:string"/>
+			<xsd:element name="enterpriseCode" type="gcap-NAT:QuotronClient"/>
+			<xsd:element name="VATNumber" type="gcap-NAT:VATCode"/>
+			<xsd:element name="billingSubscriberNumber" type="xsd:string"/>
+			<xsd:element name="status" type="gcap-NAT:SubscriberStatus"/>
+			<xsd:element name="perClient" type="gcap-NAT:PerClient"/>
+			<xsd:element name="billingSuspensionRequired" type="gcap-NAT:Suspend"/>
+			<xsd:element name="invoicingSummary" type="gcap-NAT:Summary"/>
+			<xsd:element name="CRHoldRequired" type="gcap-NAT:CRHold"/>
+			<xsd:element name="directDebitRequired" type="gcap-NAT:DirectDebit"/>
+			<xsd:element name="exPostel" type="gcap-NAT:Ex-Postel"/>
+			<xsd:element name="taxOffice" type="gcap-NAT:TaxOffice"/>
+			<xsd:element name="RIOIndicator" type="gcap-NAT:RIOIndicator"/>
+			<xsd:element name="contractType" type="gcap-NAT:ContractType"/>
+			<xsd:element name="globalSubNum" type="gcap-NAT:CustomerReferenceNumber"/>
+			<xsd:element name="messageId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CSInstallationAddress">
+		<xsd:sequence>
+			<xsd:element name="subAccount" type="gcap-cat:SubAccountNumber"/>
+			<xsd:element name="name1" type="gcap-NAT:AddressName"/>
+			<xsd:element name="name2" type="gcap-NAT:AddressName"/>
+			<xsd:element name="addressType" type="gcap-cat:AddressType"/>
+			<xsd:element name="building" type="gcap-NAT:PrimaryAccountStreetAddress"/>
+			<xsd:element name="street" type="gcap-cat:StreetAddress"/>
+			<xsd:element name="city" type="gcap-NAT:City"/>
+			<xsd:element name="state" type="gcap-NAT:PrimaryAccountState"/>
+			<xsd:element name="country" type="gcap-cat:Country"/>
+			<xsd:element name="zipCode" type="gcap-cat:PostalCode"/>
+			<xsd:element name="GeoCode" type="xsd:string"/>
+			<xsd:element name="status" type="gcap-NAT:SubscriberStatus"/>
+			<xsd:element name="perClient" type="gcap-NAT:PerClient"/>
+			<xsd:element name="billingSuspensionRequired" type="gcap-NAT:Suspend"/>
+			<xsd:element name="accountDescription" type="gcap-NAT:AccountDescription"/>
+			<xsd:element name="accountNotes" type="gcap-NAT:AccountNotes"/>
+			<xsd:element name="customerReference" type="gcap-NAT:CustomerReference"/>
+			<xsd:element name="RIPurchaseOrder" type="gcap-NAT:RIPurchaseOrder"/>
+			<xsd:element name="ERPurchaseOrder" type="gcap-NAT:ERPurchaseOrder"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CSBillingAddress">
+		<xsd:sequence>
+			<xsd:element name="subAccount" type="gcap-cat:SubAccountNumber"/>
+			<xsd:element name="name1" type="gcap-NAT:AddressName"/>
+			<xsd:element name="name2" type="gcap-NAT:AddressName"/>
+			<xsd:element name="addressType" type="gcap-cat:AddressType"/>
+			<xsd:element name="building" type="gcap-NAT:PrimaryAddressName"/>
+			<xsd:element name="street" type="gcap-cat:StreetAddress"/>
+			<xsd:element name="city" type="gcap-NAT:City"/>
+			<xsd:element name="state" type="gcap-NAT:PrimaryAccountState"/>
+			<xsd:element name="country" type="gcap-cat:Country"/>
+			<xsd:element name="zipCode" type="gcap-cat:PostalCode"/>
+			<xsd:element name="GeoCode" type="xsd:string"/>
+			<xsd:element name="status" type="gcap-NAT:SubscriberStatus"/>
+			<xsd:element name="perClient" type="gcap-NAT:PerClient"/>
+			<xsd:element name="billingSuspensionRequired" type="gcap-NAT:Suspend"/>
+			<xsd:element name="accountDescription" type="gcap-NAT:AccountDescription"/>
+			<xsd:element name="accountNotes" type="gcap-NAT:AccountNotes"/>
+			<xsd:element name="customerReference" type="gcap-NAT:CustomerReference"/>
+			<xsd:element name="RIPurchaseOrder" type="gcap-NAT:RIPurchaseOrder"/>
+			<xsd:element name="ERPurchaseOrder" type="gcap-NAT:ERPurchaseOrder"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CSContact">
+		<xsd:sequence>
+			<xsd:element name="contactId" type="gcap-cut:Id"/>
+			<xsd:element name="personId" type="xsd:string"/>
+			<xsd:element name="contactType" type="xsd:string"/>
+			<xsd:element name="responsibilityCode" type="gcap-cut:RelationshipType"/>
+			<xsd:element name="firstName" type="gcap-NUT:FirstName"/>
+			<xsd:element name="lastName" type="gcap-cut:LastName"/>
+			<xsd:element name="title" type="gcap-NUT:MM"/>
+			<xsd:element name="jobTitle" type="gcap-NUT:JobTitle"/>
+			<xsd:element name="businessTelephoneNumber" type="gcap-NUT:WorkPhone"/>
+			<xsd:element name="homeTelephoneNumber" type="gcap-NUT:CellularPhone"/>
+			<xsd:element name="messageId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,33 @@
+<definitions
+     name="CCRMOM_OrderRequestValidatorStub"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" schemaLocation="CCRMOM_OrderRequestValidatorStub.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CCRM.OM.138_OrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMOM_OrderRequestValidatorStubRequestMessage">
+        <part name="payload" element="ns1:orderRequest"/>
+    </message>
+    <portType name="CCRMOM_OrderRequestValidatorStub">
+        <operation name="initiate">
+            <input message="client:CCRMOM_OrderRequestValidatorStubRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOM_OrderRequestValidatorStub">
+        <plnk:role name="CCRMOM_OrderRequestValidatorStubProvider">
+            <plnk:portType name="client:CCRMOM_OrderRequestValidatorStub"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

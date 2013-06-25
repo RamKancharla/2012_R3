@@ -1,0 +1,86 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     elementFormDefault="qualified" version="0.1">
+    <xsd:complexType name="EaiHeader">
+        <xsd:sequence>
+            <xsd:element name="applicationId" type="xsd:string"/>
+            <xsd:element name="transactionId" type="xsd:string"/>
+            <xsd:element name="messageId" type="xsd:string"/>
+            <xsd:element name="messageHistory" type="xsd:string"/>
+            <xsd:element name="tracingId" type="xsd:string" nillable="true"/>
+            <xsd:element name="timeStamp" type="xsd:dateTime"/>
+            <xsd:element name="instanceId" type="xsd:string" nillable="true"/>
+            <xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+            <xsd:element name="payloadVersion" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CanonicalOrder">
+        <xsd:sequence>
+            <xsd:element name="logicalCountry" type="xsd:string"/>
+            <xsd:element name="orderHeader" type="tns:CanonicalOrderHeader"/>
+            <xsd:element name="orderLineItem" type="tns:CanonicalOLI" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CanonicalOLI">
+        <xsd:sequence>
+            <xsd:element name="CRMOLIId" type="xsd:string"/>
+            <xsd:element name="parentOrderItemId" type="xsd:string"/>
+            <xsd:element name="rootItemId" type="xsd:string"/>
+            <xsd:element name="actionCode" type="xsd:string"/>
+            <xsd:element name="businessCase" type="xsd:string"/>
+            <xsd:element name="salesCode" type="xsd:string"/>
+            <xsd:element name="subscriber" type="xsd:string"/>
+            <xsd:element name="subAccount" type="xsd:string"/>
+            <xsd:element name="PLI" type="xsd:string"/>
+            <xsd:element name="permissioningSystem" type="xsd:string"/>
+            <xsd:element name="manualPermissioningRequired" type="xsd:string"/>
+            <xsd:element name="AKR" type="xsd:string"/>
+            <xsd:element name="userID" type="xsd:string"/>
+            <xsd:element name="userIDtype" type="xsd:string"/>
+            <xsd:element name="userNumber" type="xsd:string"/>
+            <xsd:element name="firstName" type="xsd:string"/>
+            <xsd:element name="lastname" type="xsd:string"/>
+            <xsd:element name="dob" type="xsd:string"/>
+            <xsd:element name="isNewUser" type="xsd:string"/>
+            <xsd:element name="installDate" type="xsd:string"/>
+            <xsd:element name="removalDate" type="xsd:string"/>
+            <xsd:element name="QUID" type="xsd:string"/>
+            <xsd:element name="discount" type="xsd:string"/>
+            <xsd:element name="specialPrice" type="xsd:string"/>
+            <xsd:element name="specialPriceCurr" type="xsd:string"/>
+            <xsd:element name="specialPriceRestrictionDate" type="xsd:string"/>
+            <xsd:element name="itemNumber" type="xsd:string"/>
+            <xsd:element name="startStopBillingDate" type="xsd:string"/>
+            <xsd:element name="billingType" type="xsd:string"/>
+            <xsd:element name="billingNote" type="xsd:string"/>
+            <xsd:element name="freeTrailFlag" type="xsd:string"/>
+            <xsd:element name="STB" type="xsd:string"/>
+            <xsd:element name="assetIntegrationId" type="xsd:string"/>
+            <xsd:element name="orderLineStatus" type="xsd:string"/>
+            <xsd:element name="permissioningStatus" type="xsd:string"/>
+            <xsd:element name="interfaceForBilling" type="xsd:string"/>
+            <xsd:element name="interfaceForFulfilment" type="xsd:string"/>
+            <xsd:element name="productIntegrationId" type="xsd:string"/>
+            <xsd:element name="freeTrialEndDate" type="xsd:string"/>
+            <xsd:element name="configuredAttribute" type="tns:CanonicalConfiguredAttribute" maxOccurs="unbounded"
+                 minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CanonicalConfiguredAttribute">
+        <xsd:sequence>
+            <xsd:element name="attributeIntegrationId" type="xsd:string"/>
+            <xsd:element name="attributeName" type="xsd:string"/>
+            <xsd:element name="valueIntegrationId" type="xsd:string"/>
+            <xsd:element name="value" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CanonicalOrderHeader">
+        <xsd:sequence>
+            <xsd:element name="CRMOrderNumber" type="xsd:string"/>
+            <xsd:element name="installDate" type="xsd:string"/>
+            <xsd:element name="removalDate" type="xsd:string"/>
+            <xsd:element name="orderNote" type="xsd:string"/>
+            <xsd:element name="orderStatus" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

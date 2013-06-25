@@ -1,0 +1,419 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+* Module:     {Name of the file TF_OrderDispatcher.bpel}   
+* Type:        {BPEL FILE} 
+  
+  Created: Thu Jun 26 14:23:00 BST 2008
+* Change History 
+* Version      Date         Author                           Description Of Change 
+*  1.0         26/06/08     Chandrasekhar Reddy              Initial Version
+*  2.0         25/07/08     Dasaradh                         Added Decision Service and Invoking TOMOMInvoker basing on TechFfmtAction 
+*  3.0         12/08/08     Dasaradh                         Added a new case basing on TechftmAction and updateType variable   
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TF_OrderDispatcher" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns16="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus" xmlns:ns17="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateOrderCache/" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns15="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher/correlationset" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/Exception" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns20="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:ns13="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ns18="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateOrderCache" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/TF/TOM" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/OrderManagement" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns19="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns14="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TF/Exception" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns21="http://xmlns.oracle.com/pcbpel/adapter/db/WriteTOMOrder/" xmlns:ns8="http://xmlns.oracle.com/bpel" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToTFDispatcher" partnerLinkType="client:TF_OrderDispatcher" myRole="TF_OrderDispatcherProvider" partnerRole="TF_OrderDispatcherRequester"/>
+        <partnerLink name="AsyncSequenceChecker" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns20:AsyncSequenceChecker" myRole="AsyncSequenceCheckerRequester"/>
+        <partnerLink name="UpdateOrderCache" partnerRole="UpdateOrderCache_role" partnerLinkType="ns17:UpdateOrderCache_plt"/>
+        <partnerLink name="TF_ManageOrderLineStatus" partnerRole="TF_ManageOrderLineStatusProvider" partnerLinkType="ns19:TF_ManageOrderLineStatus"/>
+        <partnerLink name="WriteTOMOrder" partnerRole="WriteTOMOrder_role" partnerLinkType="ns21:WriteTOMOrder_plt"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser"
+                     partnerRole="SequenceReleaserProvider"
+                     partnerLinkType="ns7:SequenceReleaser"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:TF_OrderDispatcherResponseMessage"/>
+        <variable name="RcvOrderRequestIV" messageType="client:TF_OrderDispatcherRequestMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <!--<variable name="InvTOMOMInvokeIV"
+                  messageType="ns2:TOMOMInvokerRequestMessage"/>-->
+        <variable name="FilteredOrderRequest" messageType="client:TF_OrderDispatcherRequestMessage"/>
+        <variable name="RuleFacts" messageType="client:RuleFactsMessage"/>
+        <variable name="NumberOfOrderLinesToSendToTOM" type="xsd:integer"/>
+        <variable name="InvSequenceRelease_releaseSequence_InputVariable" messageType="ns7:SequenceReleaserRequestMessage"/>
+        <variable name="InvUpdateOrderCache_IV" messageType="ns17:OrderCacheCollection_msg"/>
+        <variable name="InvUpdateOrderCache_Filter_update_InputVariable" messageType="ns17:OrderCacheCollection_msg"/>
+        <variable name="InvTFManageOrderLineStatus_manageOrderLineStatus_InputVariable" messageType="ns19:TF_ManageOrderLineStatusRequestMessage"/>
+        <variable name="InvAsyncSequenceCheckerIV" messageType="ns20:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="SequenceCheckerOV" messageType="ns20:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="TOMOMInvokerIV" element="ns4:orderRequest"/>
+        <variable name="InvWriteTOMOrderIV" messageType="ns21:InterfaceBufferCollection_msg"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="TFOrderCorrelationSet" properties="ns15:OrderCorrelationProperty"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="bpelx:DecideNextActionRemoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnDecideNextActionFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)                           
+                        getVariableData("RcvOrderRequestIV", "TOMOrderRequest", "/ns1:tfOrderRequest/ns1:orderHeader/ns1:OrderNumber"));           
+                                   
+  String orderNumber =   orderNumberNode == null?";" : orderNumberNode.getFirstChild().getNodeValue();                        
+ String title= "ORD: "+orderNumber+"; Fault";           
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)                          
+                        getVariableData("RcvOrderRequestIV", "TOMOrderRequest", "/ns1:tfOrderRequest/ns1:orderHeader/ns1:OrderNumber"));          
+                                  
+ String orderNumber =   orderNumberNode == null?";" : orderNumberNode.getFirstChild().getNodeValue();                    
+ String title= "ORD: "+orderNumber+"; Fault";          
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)                         
+                        getVariableData("RcvOrderRequestIV", "TOMOrderRequest", "/ns1:tfOrderRequest/ns1:orderHeader/ns1:OrderNumber"));         
+                                 
+  String orderNumber =   orderNumberNode == null?";" : orderNumberNode.getFirstChild().getNodeValue();                              
+ String title= "ORD: "+orderNumber+"; Fault";         
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)                         
+                        getVariableData("RcvOrderRequestIV", "TOMOrderRequest", "/ns1:tfOrderRequest/ns1:orderHeader/ns1:OrderNumber"));         
+                                 
+ String orderNumber =   orderNumberNode == null?";" : orderNumberNode.getFirstChild().getNodeValue();                              
+ String title= "ORD: "+orderNumber+"; Fault";         
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:conflictingReceive" faultVariable="runtimeFault">
+            <sequence name="Sequence_1">
+                <bpelx:exec name="AsgCustomTitleOnConflictingRecieve" language="java" version="1.5">
+                    <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)                          
+                        getVariableData("RcvOrderRequestIV", "TOMOrderRequest", "/ns1:tfOrderRequest/ns1:orderHeader/ns1:OrderNumber"));          
+                                  
+ String orderNumber =   orderNumberNode == null?";" : orderNumberNode.getFirstChild().getNodeValue();                                
+ String title= "ORD: "+orderNumber+"; Fault";          
+ setCompositeInstanceTitle(title);]]>
+                </bpelx:exec>
+            </sequence>
+        </catch>
+        <catchAll>
+            <sequence name="Sequence_2">
+                <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                    <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)                        
+                        getVariableData("RcvOrderRequestIV", "TOMOrderRequest", "/ns1:tfOrderRequest/ns1:orderHeader/ns1:OrderNumber"));        
+                                
+  String orderNumber =   orderNumberNode == null?";" : orderNumberNode.getFirstChild().getNodeValue();                           
+ String title= "ORD: "+orderNumber+"; Fault";        
+ setCompositeInstanceTitle(title);]]>
+                </bpelx:exec>
+                <assign name="AsgUnknownError">
+                    <copy>
+                        <from expression="&quot;unKnowm Error&quot;"/>
+                        <to variable="runtimeFault" part="code"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TF_OrderDispatcher.wsdl) -->
+        <receive name="RcvOrderRequest" partnerLink="anchorToTFDispatcher" portType="client:TF_OrderDispatcher" operation="dispatchOrderToTOM" variable="RcvOrderRequestIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitialVariables">
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="RcvOrderRequestIV" part="TOMOrderRequest" query="/ns1:tfOrderRequest/ns1:eaiHeader/ns3:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="RcvOrderRequestIV" part="TOMOrderRequest" query="/ns1:tfOrderRequest/ns1:eaiHeader/ns3:instanceId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsnCustomTitle" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)                       
+                        getVariableData("RcvOrderRequestIV", "TOMOrderRequest", "/ns1:tfOrderRequest/ns1:orderHeader/ns1:OrderNumber"));       
+                               
+  String orderNumber =   orderNumberNode == null?";" : orderNumberNode.getFirstChild().getNodeValue();                             
+ String title= "ORD: "+orderNumber;       
+ setCompositeInstanceTitle(title);]]>
+        </bpelx:exec>
+        <assign name="TransInputToSequenceCheckerIV">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransInputToSequenceCheckerIV.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                <to variable="InvAsyncSequenceCheckerIV" part="payload"/>
+            </copy>
+        </assign>
+        <invoke name="InvAsyncSequenceChecker" partnerLink="AsyncSequenceChecker" portType="ns20:AsyncSequenceChecker" operation="initiate" inputVariable="InvAsyncSequenceCheckerIV"/>
+        <receive name="ReceiveSequenceRelease" partnerLink="AsyncSequenceChecker" portType="ns20:AsyncSequenceCheckerCallback" operation="onResult" variable="SequenceCheckerOV" createInstance="no"/>
+        <assign name="AsgInitialValues">
+            <copy>
+                <from expression="0"/>
+                <to variable="NumberOfOrderLinesToSendToTOM"/>
+            </copy>
+        </assign>
+        <assign name="TransActionCodeAndBusinessCase">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransActionCodeAndBusinessCase.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                <to variable="RcvOrderRequestIV" part="TOMOrderRequest"/>
+            </copy>
+        </assign>
+        <assign name="TransfOrderRequestToRuleFacts">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransOrderRequestToRuleFacts.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                <to variable="RuleFacts" part="Facts"/>
+            </copy>
+        </assign>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest','/ns12:tfOrderRequest/ns12:updateType') = 'REDUCED'">
+                <bpelx:annotation>
+                    <bpelx:pattern>REDUCED updateType</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="REDUCED_Update_Sequence">
+                    <assign name="TransGetTechFfmtActionFromOrderCache">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransRuleFactsToRuleFactsUsingOrderCache.xsl',bpws:getVariableData('RuleFacts','Facts'))"/>
+                            <to variable="RuleFacts" part="Facts"/>
+                        </copy>
+                    </assign>
+                    <switch name="Switch_2">
+                        <case condition="bpws:getVariableData('RuleFacts','Facts','/ns6:orderLineRepository/ns6:orderLineRequestFacts/ns6:TechFfmtAction') = 'SendToTOM'">
+                            <bpelx:annotation>
+                                <bpelx:pattern>SendToTOM</bpelx:pattern>
+                            </bpelx:annotation>
+                            <sequence name="Sequence_5">
+                                <assign name="TransOrderLinetoTOMOMInvoker">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransformOrderRequestToTOMOMInvoker.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                                        <to variable="TOMOMInvokerIV"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransInputToWriteTOMOrder">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransInputToWriteTOMOrder.xsl',bpws:getVariableData('TOMOMInvokerIV'))"/>
+                                        <to variable="InvWriteTOMOrderIV" part="InterfaceBufferCollection"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvWriteTOMOrder" partnerLink="WriteTOMOrder" portType="ns21:WriteTOMOrder_ptt" operation="insert" inputVariable="InvWriteTOMOrderIV"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <sequence name="Sequence_7">
+                                <assign name="TransInputToSequenceRelease">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransInputToSequenceRelease.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                                        <to variable="InvSequenceRelease_releaseSequence_InputVariable" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvSequenceRelease" portType="ns7:SequenceReleaser" inputVariable="InvSequenceRelease_releaseSequence_InputVariable"
+                                        partnerLink="SequenceReleaser"
+                                        operation="releaseSequence"/>
+                            </sequence>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </case>
+            <case condition="bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest','/ns12:tfOrderRequest/ns12:updateType') = 'FULL'">
+                <bpelx:annotation>
+                    <bpelx:pattern>FULL updateType</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="FULL_Update_Sequence">
+                    <assign name="TransApplyFilteringRules">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransApplyFilteringRules.xsl',bpws:getVariableData('RuleFacts','Facts'))"/>
+                            <to variable="RuleFacts" part="Facts"/>
+                        </copy>
+                    </assign>
+                    <assign name="AsgInitialValueToFilteredOrderRequest">
+                        <copy>
+                            <from variable="RcvOrderRequestIV" part="TOMOrderRequest" query="/ns12:tfOrderRequest"/>
+                            <to variable="FilteredOrderRequest" part="TOMOrderRequest" query="/ns12:tfOrderRequest"/>
+                        </copy>
+                    </assign>
+                    <assign name="TransPopulateFiltererOrderRequest">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransPopulateFilteredOrderRequest.xsl',bpws:getVariableData('RuleFacts','Facts'))"/>
+                            <to variable="FilteredOrderRequest" part="TOMOrderRequest"/>
+                        </copy>
+                    </assign>
+                    <assign name="AsgFilteredOrderRequestStaticValues">
+                        <copy>
+                            <from variable="RcvOrderRequestIV" part="TOMOrderRequest" query="/ns12:tfOrderRequest/ns12:eaiHeader"/>
+                            <to variable="FilteredOrderRequest" part="TOMOrderRequest" query="/ns12:tfOrderRequest/ns12:eaiHeader"/>
+                        </copy>
+                        <copy>
+                            <from variable="RcvOrderRequestIV" part="TOMOrderRequest" query="/ns12:tfOrderRequest/ns12:messageHeader"/>
+                            <to variable="FilteredOrderRequest" part="TOMOrderRequest" query="/ns12:tfOrderRequest/ns12:messageHeader"/>
+                        </copy>
+                        <copy>
+                            <from variable="RcvOrderRequestIV" part="TOMOrderRequest" query="/ns12:tfOrderRequest/ns12:orderHeader"/>
+                            <to variable="FilteredOrderRequest" part="TOMOrderRequest" query="/ns12:tfOrderRequest/ns12:orderHeader"/>
+                        </copy>
+                        <copy>
+                            <from variable="RcvOrderRequestIV" part="TOMOrderRequest" query="/ns12:tfOrderRequest/ns12:updateType"/>
+                            <to variable="FilteredOrderRequest" part="TOMOrderRequest" query="/ns12:tfOrderRequest/ns12:updateType"/>
+                        </copy>
+                    </assign>
+                    <assign name="AsgUpdateNumberOfOrderLinesToSendToTOM">
+                        <copy>
+                            <from expression="count(bpws:getVariableData('FilteredOrderRequest','TOMOrderRequest','/ns12:tfOrderRequest/ns12:orderLineItem'))"/>
+                            <to variable="NumberOfOrderLinesToSendToTOM"/>
+                        </copy>
+                    </assign>
+                    <switch name="CheckTechFfmtAction">
+                        <case condition="(bpws:getVariableData('FilteredOrderRequest','TOMOrderRequest','/ns12:tfOrderRequest/ns12:updateType') = 'FULL') and (bpws:getVariableData('NumberOfOrderLinesToSendToTOM')   > 0) ">
+                            <bpelx:annotation>
+                                <bpelx:pattern>FULL update where any line has TechFfmtAction=SendToTOM</bpelx:pattern>
+                            </bpelx:annotation>
+                            <sequence name="Sequence_6">
+                                <assign name="TransformOrderReqToUpdateOrderCache_SendToTOM">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransformOrderReqToUpdateOrderCache_SendToTOM.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                                        <to variable="InvUpdateOrderCache_IV" part="OrderCacheCollection"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvUpdateOrderCache_SendToTOM" partnerLink="UpdateOrderCache" portType="ns17:UpdateOrderCache_ptt" operation="update" inputVariable="InvUpdateOrderCache_IV"/>
+                                <scope name="SendToTOM">
+                                    <faultHandlers>
+                                        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                            <throw name="ThrOnTOMOMInvokerRemotefault" faultName="ns10:TOMOMInvokerRemotefault" faultVariable="runtimeFault"/>
+                                        </catch>
+                                    </faultHandlers>
+                                    <sequence name="SeqSendToTOM">
+                                        <assign name="TransOrderLinetoTOMOMInvoker">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransformOrderRequestToTOMOMInvoker.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                                                <to variable="TOMOMInvokerIV"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="TransInputToWriteTOMOrder">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransInputToWriteTOMOrder.xsl',bpws:getVariableData('TOMOMInvokerIV'))"/>
+                                                <to variable="InvWriteTOMOrderIV" part="InterfaceBufferCollection"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvWriteTOMOrder" partnerLink="WriteTOMOrder" portType="ns21:WriteTOMOrder_ptt" operation="insert" inputVariable="InvWriteTOMOrderIV"/>
+                                    </sequence>
+                                </scope>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <sequence name="Sequence_8">
+                                <assign name="TransformOrderReqToUpdateOrderCache_Filter">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransformOrderReqToUpdateOrderCache_Filter.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                                        <to variable="InvUpdateOrderCache_Filter_update_InputVariable" part="OrderCacheCollection"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvOrderReqToUpdateOrderCache_Filter" partnerLink="UpdateOrderCache" portType="ns17:UpdateOrderCache_ptt" operation="update" inputVariable="InvUpdateOrderCache_Filter_update_InputVariable"/>
+                                <scope name="PropagateStatus">
+                                    <faultHandlers>
+                                        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                            <throw name="ThrOnPropagateOrderStatusRemoteFault" faultName="ns10:PropagateOrderStatusRemoteFault" faultVariable="runtimeFault"/>
+                                        </catch>
+                                    </faultHandlers>
+                                    <sequence name="SeqReplyToSiebel">
+                                        <assign name="TransOrderStatusToPropagateOrderStatus">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransOrderStatusToPropagateOrderStatus.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                                                <to variable="InvTFManageOrderLineStatus_manageOrderLineStatus_InputVariable" part="manageOrderLine"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvTFManageOrderLineStatus" partnerLink="TF_ManageOrderLineStatus" portType="ns19:TF_ManageOrderLineStatus" operation="manageOrderLineStatus" inputVariable="InvTFManageOrderLineStatus_manageOrderLineStatus_InputVariable"/>
+                                        <assign name="TransInputToSequenceRelease">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransInputToSequenceRelease.xsl',bpws:getVariableData('RcvOrderRequestIV','TOMOrderRequest'))"/>
+                                                <to variable="InvSequenceRelease_releaseSequence_InputVariable" part="payload"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvSequenceReleaser" portType="ns7:SequenceReleaser" inputVariable="InvSequenceRelease_releaseSequence_InputVariable"
+                                                partnerLink="SequenceReleaser"
+                                                operation="releaseSequence"/>
+                                    </sequence>
+                                </scope>
+                            </sequence>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </case>
+            <otherwise>
+                <throw name="ThrowOnUnknownUpdateType" faultName="bpws:selectionFailure" faultVariable="runtimeFault"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

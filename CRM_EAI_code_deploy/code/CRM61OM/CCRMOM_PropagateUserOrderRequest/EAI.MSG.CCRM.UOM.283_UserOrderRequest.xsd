@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.CCRM.UOM.283_UserOrderRequest.xsd
+	* Type:        XSD Schema
+	* Description: The schema used in EAI components to transform from Athena to Siebel format.
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         24/11/09  Sreeja			Initial version
+	* 0.2	      30/11/09	Sreeja			Added the QuoteId
+	* 0.3	      30/11/09	Sreeja			Added ExtraField1,ExtraField2,ExtraField3 & ErrorMessage
+	* 0.4	      17/02/10	Sreeja			Added AnonymousFlagReason,AnonymousFlag & WorkPhone for PBI-433
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.siebel.com/xml/AthenaRequest"
+            xmlns:xsdLocal="http://www.siebel.com/xml/AthenaRequest"
+            xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd"
+	    nxsd:encoding="UTF-8"
+            attributeFormDefault="unqualified" elementFormDefault="qualified">
+ <xsd:annotation>
+  <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights
+                     reserved. Siebel XSD Generation</xsd:documentation>
+ </xsd:annotation>
+ <xsd:element name="AthenaRequest" type="xsdLocal:AthenaRequest"/>
+ <xsd:complexType name="AthenaRequestTopElmt">
+  <xsd:sequence>
+   <xsd:element name="AthenaRequest" type="xsdLocal:AthenaRequest" minOccurs="1"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="AthenaRequest">
+  <xsd:sequence>
+   <xsd:element name="TransactionId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Timestamp" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="TargetSystem" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SourceSystem" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MessageType" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MessageId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="IntObjectName" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="IntObjectFormat" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="HeaderSubscriber" type="xsdLocal:HeaderSubscriber"
+                minOccurs="1" maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="HeaderSubscriber">
+  <xsd:sequence>
+   <xsd:element name="TransactionId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SubscriberNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SubAccountNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="QuoteId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ExtraField3" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ExtraField2" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ExtraField1" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ErrorMessage" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ActionCode" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Services" type="xsdLocal:Services" minOccurs="1"
+                maxOccurs="unbounded"/>
+   <xsd:element name="MoveSubscriber" type="xsdLocal:MoveSubscriber"
+                minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Services">
+  <xsd:sequence>
+   <xsd:element name="WorkPhone" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="UniqueLineNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="TransactionId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="TSAId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Status" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ReferenceItemNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PLI" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Operation" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="LastName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="HardStopFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="FirstName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ExtraField3" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ExtraField2" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ExtraField1" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ErrorMessage" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="EmailAddress" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="EffectiveDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CJR" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="AthenaSubId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AnonymousFlagReason" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AnonymousFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="MoveSubscriber">
+  <xsd:sequence>
+   <xsd:element name="SubscriberNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SubAccountNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ExtraField3" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ExtraField2" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ExtraField1" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+</xsd:schema>

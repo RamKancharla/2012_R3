@@ -1,0 +1,53 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter"
+     xmlns:csns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:comt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes"
+     xmlns:ns="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <types>
+        <xs:schema targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <xs:include schemaLocation="EAI.MSG.CS.OM.164_UserCreationRequest.xsd"/>
+        </xs:schema>
+        <xs:schema targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <xs:include schemaLocation="EAI.MSG.CS.OM.162_FixedLengthRequest.xsd"/>
+        </xs:schema>
+      </types>
+    <message name="UserRequest">
+        <part name="parameter" element="csns:CSUserRequest"/>
+    </message>
+    <message name="FLUserRequest">
+        <part name="parameter" element="csns:CSfixedLengthRequest"/>
+    </message>
+    <portType name="TransformUserRequest">
+        <operation name="transform">
+            <input message="tns:UserRequest"/>
+            <output message="tns:FLUserRequest"/>
+        </operation>
+    </portType>
+    <binding name="TransformUserRequestSOAP" type="tns:TransformUserRequest">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="transform">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="TransformUserRequest">
+        <port name="UserRequest" binding="tns:TransformUserRequestSOAP">
+            <soap:address location="http://10.2.137.209:8888/TransformService-TransformUserToCSFormat-context-root/UserRequest"/>
+        </port>
+    </service>
+</definitions>

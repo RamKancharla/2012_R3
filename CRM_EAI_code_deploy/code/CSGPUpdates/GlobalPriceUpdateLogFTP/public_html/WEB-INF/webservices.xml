@@ -1,0 +1,17 @@
+<webservices xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd"
+     version="1.1">
+    <webservice-description>
+        <webservice-description-name>FTPPLLogRequest</webservice-description-name>
+        <wsdl-file>WEB-INF/wsdl/FTPPLLogRequest.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/FTPPLLogRequest-java-wsdl-mapping.xml</jaxrpc-mapping-file>
+        <port-component>
+            <port-component-name>FTPLogRequest</port-component-name>
+            <wsdl-port xmlns:wsa0="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog">wsa0:FTPLogRequest</wsdl-port>
+            <service-endpoint-interface>com.reuters.eai.cs.gpu.FTPPLLogRequest_PortType</service-endpoint-interface>
+            <service-impl-bean>
+                <servlet-link>FTPLogRequest</servlet-link>
+            </service-impl-bean>
+        </port-component>
+    </webservice-description>
+</webservices>

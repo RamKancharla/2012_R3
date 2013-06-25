@@ -1,0 +1,338 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:     SAPOM_EventManager
+* Type:        BPEL FILE 
+* Description: Asychronous BPEL Process Which propogates OLI's to SAP for UserCreation through a new component SAPOM_UserCreation only when PublishContactTOSAP is 'Y'and writes the data to Interface_Buffer.
+* Change History
+* Version      Date         Author        Description Of Change 
+*  1.0         24/03/10     Sundeep       Initial Version 
+*  1.1         22/12/10     Lavanya       As part of CR490 OLI's are propogated to SAP for UserCreation Through a new component SAPOM_UserCreation only when PublishContactTOSAP is 'Y'.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="SAPOM_EventManager" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/top/WriteContact" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/jms/DequeSAPCont/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation" xmlns:ns10="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:SAPOM_EventManager" myRole="SAPOM_EventManagerProvider" partnerRole="SAPOM_EventManagerRequester"/>
+        <partnerLink myRole="AsyncSequenceCheckerRequester" name="AsyncSequenceChecker" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns1:AsyncSequenceChecker"/>
+        <partnerLink name="WriteContact" partnerRole="WriteContact_role" partnerLinkType="ns2:WriteContact_plt"/>
+      <!--  <partnerLink myRole="SI_CreateContacts_OB_Async_Role"
+                     name="SI_CreateContacts_OB_Async"
+                     partnerRole="SI_CreateContacts_OB_Async_Role"
+                     partnerLinkType="ns8:SI_CreateContacts_OB_Async_PL"/>-->
+        <partnerLink myRole="SAPOM_UserCreationRequester" name="SAPOM_UserCreation" partnerRole="SAPOM_UserCreationProvider" partnerLinkType="ns10:SAPOM_UserCreation"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <!--<variable name="noOfOrderLinesSet" type="xsd:int"/>-->
+        <!--<variable name="orderLineIndex" type="xsd:int"/>-->
+        <!--   <variable name="distUser" messageType="client:distinctMsg"/>-->
+        <variable name="inputVariable" messageType="client:SAPOM_EventManagerRequestMessage"/>
+        <variable name="outputVariable" messageType="client:SAPOM_EventManagerResponseMessage"/>
+        <variable name="InvSeqCheckerIV" messageType="ns1:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="rcvSequenceReleaserOV" messageType="ns1:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="InvInterfaceBufferIV" messageType="ns2:InterfaceBufferCollection_msg"/>
+        <variable name="SAPOrderReq" messageType="client:SAPOM_EventManagerRequestMessage"/>
+        <variable name="TransIV" messageType="client:SAPOM_EventManagerRequestMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+       <!-- <variable name="FlowN_DistuserNumber_Var" type="xsd:int"/>-->
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.3">
+                <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:SAPOrderRequest/ns3:orderHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                      
+                        
+String setCompositeInstanceTitle=((orderID!= null ? "OrderID: "+orderID : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:SAPOrderRequest/ns3:orderHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                     
+ 
+setCompositeInstanceTitle((orderID!= null ? "OrderID: "+orderID : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:SAPOrderRequest/ns3:orderHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                     
+ 
+setCompositeInstanceTitle((orderID!= null ? "OrderID: "+orderID : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:SAPOrderRequest/ns3:orderHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                     
+                       
+setCompositeInstanceTitle((orderID!= null ? "OrderID: "+orderID : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SAPOM_EventManager.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:SAPOM_EventManager" operation="initiate" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:SAPOrderRequest/ns3:orderHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                    
+                      
+String Title=("OrderID: " +orderID);                          
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <assign name="AsgInitVariables">
+            <!-- <copy>
+                <from expression="count(bpws:getVariableData('inputVariable','payload','/ns3:SAPOrderRequest/ns3:orderLineItem'))"/>
+                <to variable="noOfOrderLinesSet"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="orderLineIndex"/>
+            </copy>-->
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="inputVariable" part="payload" query="/ns3:SAPOrderRequest/ns3:eaiHeader/ns4:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="inputVariable" part="payload" query="/ns3:SAPOrderRequest/ns3:eaiHeader/ns4:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="&quot;EAI&quot;"/>
+                <to variable="inputVariable" part="payload" query="/ns3:SAPOrderRequest/ns3:eaiHeader/ns4:applicationId"/>
+            </copy>
+            <copy>
+                <from expression="&quot;;EAI&quot;"/>
+                <to variable="inputVariable" part="payload" query="/ns3:SAPOrderRequest/ns3:eaiHeader/ns4:messageHistory"/>
+            </copy>
+            <copy>
+                <from expression="&quot;1&quot;"/>
+                <to variable="inputVariable" part="payload" query="/ns3:SAPOrderRequest/ns3:eaiHeader/ns4:timeToLive"/>
+            </copy>
+            <copy>
+                <from expression="&quot;V&quot;"/>
+                <to variable="inputVariable" part="payload" query="/ns3:SAPOrderRequest/ns3:eaiHeader/ns4:payloadVersion"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCurrentDate()"/>
+                <to variable="inputVariable" part="payload" query="/ns3:SAPOrderRequest/ns3:eaiHeader/ns4:timeStamp"/>
+            </copy>
+            <copy>
+                <from expression="ora:getProcessId()"/>
+                <to variable="inputVariable" part="payload" query="/ns3:SAPOrderRequest/ns3:eaiHeader/ns4:transactionId"/>
+            </copy>
+        </assign>
+        <assign name="TransInputToSequenceCheck">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransInputToSequenceCheck.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="InvSeqCheckerIV" part="payload"/>
+            </copy>
+        </assign>
+        <invoke name="InvSeqChecker" partnerLink="AsyncSequenceChecker" portType="ns1:AsyncSequenceChecker" operation="initiate" inputVariable="InvSeqCheckerIV"/>
+        <receive name="SeqCheckerResponse" partnerLink="AsyncSequenceChecker" portType="ns1:AsyncSequenceCheckerCallback" operation="onResult" variable="rcvSequenceReleaserOV" createInstance="no"/>
+        <!--   <assign name="TransDistinctUserID">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransDistinctUserID.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="distUser" part="distPart"/>
+            </copy>
+        </assign>-->
+        <!--<bpelx:flowN name="FlowN_DistinctUserNumber"
+                     N="count(bpws:getVariableData('distUser','distPart','/ns3:SAPOrderRequest/ns3:orderLineItem'))"
+                     indexVariable="FlowN_DistuserNumber_Var">
+            <sequence name="Sequence_1">
+                <scope name="SingleUserNumberScope">
+                    <variables>
+                        <variable name="extOrderRequestIV"
+                                  messageType="client:SAPOM_EventManagerRequestMessage"/>
+                        <variable name="singleSubscriberIV"
+                                  messageType="client:SAPOM_EventManagerRequestMessage"/>
+                        <variable name="InvSAPCreateContactIV"
+                                  messageType="ns8:MT_Create_Contacts"/>
+                    </variables>
+                    <switch name="IsNewUser">
+                        <case condition="bpws:getVariableData('inputVariable','payload','/ns3:SAPOrderRequest/ns3:orderLineItem[bpws:getVariableData(&quot;FlowN_DistuserNumber_Var&quot;)]/ns3:PublishContactToSAP') = 'Y'">
+                            <sequence name="SeqSingleUserNumber">
+                                <assign name="AsgUserNumber">
+                                    <copy>
+                                        <from variable="distUser"
+                                              part="distPart"
+                                              query="/ns3:SAPOrderRequest/ns3:orderLineItem[bpws:getVariableData('FlowN_DistuserNumber_Var')]/ns3:userNumber"/>
+                                        <to variable="inputVariable"
+                                            part="payload"
+                                            query="/ns3:SAPOrderRequest/ns3:eaiHeader/ns4:messageHistory"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransOrderRequestToExtendOrderRequest">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransOrderRequestToExtendOrderRequest.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                                        <to variable="extOrderRequestIV"
+                                            part="payload"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransExtendedRequestToSingleRequest">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransExtendedRequestToSingleRequest.xsl',bpws:getVariableData('extOrderRequestIV'))"/>
+                                        <to variable="singleSubscriberIV"/>
+                                    </copy>
+                                </assign>
+                                    <assign name="AsnUserInfo">
+                                    <copy>
+                                        <from expression="bpws:getVariableData('inputVariable','payload','/ns3:SAPOrderRequest/ns3:orderLineItem[bpws:getVariableData(&quot;orderLineIndex&quot;)+1]/ns3:userNumber')"/>
+                                        <to variable="InvSAPCreateContactIV"
+                                            part="MT_Create_Contacts"
+                                            query="/ns8:MT_Create_Contacts/Record/SIEBEL_ID"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="bpws:getVariableData('inputVariable','payload','/ns3:SAPOrderRequest/ns3:orderLineItem[bpws:getVariableData(&quot;orderLineIndex&quot;)+1]/ns3:firstName')"/>
+                                        <to variable="InvSAPCreateContactIV"
+                                            part="MT_Create_Contacts"
+                                            query="/ns8:MT_Create_Contacts/Record/NAME1"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="bpws:getVariableData('inputVariable','payload','/ns3:SAPOrderRequest/ns3:orderLineItem[bpws:getVariableData(&quot;orderLineIndex&quot;)+1]/ns3:lastname')"/>
+                                        <to variable="InvSAPCreateContactIV"
+                                            part="MT_Create_Contacts"
+                                            query="/ns8:MT_Create_Contacts/Record/NAME2"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="bpws:getVariableData('inputVariable','payload','/ns3:SAPOrderRequest/ns3:orderLineItem[bpws:getVariableData(&quot;orderLineIndex&quot;)+1]/ns3:WorkPhone')"/>
+                                        <to variable="InvSAPCreateContactIV"
+                                            part="MT_Create_Contacts"
+                                            query="/ns8:MT_Create_Contacts/Record/TELEPHONE"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="bpws:getVariableData('inputVariable','payload','/ns3:SAPOrderRequest/ns3:orderLineItem[bpws:getVariableData(&quot;orderLineIndex&quot;)+1]/ns3:EmailAddress')"/>
+                                        <to variable="InvSAPCreateContactIV"
+                                            part="MT_Create_Contacts"
+                                            query="/ns8:MT_Create_Contacts/Record/EMAIL"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="bpws:getVariableData('inputVariable','payload','/ns3:SAPOrderRequest/ns3:orderLineItem[bpws:getVariableData(&quot;orderLineIndex&quot;)+1]/ns3:ContactStatus')"/>
+                                        <to variable="InvSAPCreateContactIV"
+                                            part="MT_Create_Contacts"
+                                            query="/ns8:MT_Create_Contacts/Record/STATUS"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransToContactsWsdl">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransToContactsWsdl.xsl',bpws:getVariableData('singleSubscriberIV','payload'))"/>
+                                        <to variable="InvSAPCreateContactIV"
+                                            part="MT_Create_Contacts"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvSAPCreateContact"
+                                        partnerLink="SI_CreateContacts_OB_Async"
+                                        portType="ns8:SI_CreateContacts_OB_Async"
+                                        operation="OP_CreateContacts_Async"
+                                        inputVariable="InvSAPCreateContactIV"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>
+                </scope>
+            </sequence>
+        </bpelx:flowN>-->
+        <!--<while name="While_1"
+               condition="bpws:getVariableData('noOfOrderLinesSet')>0">
+            <sequence name="UserCreateSeq">
+                <assign name="updateIndexVariables">
+                    <copy>
+                        <from expression="bpws:getVariableData('noOfOrderLinesSet')-1"/>
+                        <to variable="noOfOrderLinesSet"/>
+                    </copy>
+                    <copy>
+                        <from expression="bpws:getVariableData('orderLineIndex')+1"/>
+                        <to variable="orderLineIndex"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>-->
+        <scope name="UserCreationScope">
+            <variables>
+                <variable name="InvUserCreationIV" messageType="ns10:SAPOM_UserCreationRequestMessage"/>
+                <variable name="RcvUserCreationRespOV" messageType="ns10:SAPOM_UserCreationResponseMessage"/>
+            </variables>
+            <sequence name="UserCreationSeq">
+                <assign name="TransToUserCreation">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransToUserCreation.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                        <to variable="InvUserCreationIV" part="payload"/>
+                    </copy>
+                </assign>
+                <switch name="Switch_1">
+                    <case condition="count(bpws:getVariableData('InvUserCreationIV','payload','/ns3:SAPOrderRequest/ns3:orderLineItem'))>0">
+                        <sequence name="Sequence_1">
+                            <invoke name="InvUserCreation" partnerLink="SAPOM_UserCreation" portType="ns10:SAPOM_UserCreation" operation="initiate" inputVariable="InvUserCreationIV"/>
+                            <receive name="RcvUserCreationResp" partnerLink="SAPOM_UserCreation" portType="ns10:SAPOM_UserCreationCallback" operation="onResult" variable="RcvUserCreationRespOV" createInstance="no"/>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <empty name="DoNothing"/>
+                    </otherwise>
+                </switch>
+            </sequence>
+        </scope>
+        <assign name="TransToBuffer">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransToBuffer.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="TransIV" part="payload"/>
+            </copy>
+        </assign>
+        <assign name="TransInputToInterfaceBuffer">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransInputToInterfaceBuffer.xsl',bpws:getVariableData('TransIV','payload'))"/>
+                <to variable="InvInterfaceBufferIV" part="InterfaceBufferCollection"/>
+            </copy>
+        </assign>
+        <invoke name="WriteContact" partnerLink="WriteContact" portType="ns2:WriteContact_ptt" operation="insert" inputVariable="InvInterfaceBufferIV"/>
+    </sequence>
+</process>

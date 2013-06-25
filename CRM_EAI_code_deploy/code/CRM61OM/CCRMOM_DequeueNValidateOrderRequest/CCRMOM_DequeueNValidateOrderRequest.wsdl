@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions targetNamespace="http://xmlns.oracle.com/CCRMOM_DequeueNValidateOrderRequest"
+             xmlns:client="http://xmlns.oracle.com/CCRMOM_DequeueNValidateOrderRequest"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"            
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:tns="http://xmlns.oracle.com/CCRMOM_DequeueNValidateOrderRequest"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+             xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+             xmlns:order="http://www.siebel.com/xml/RCRM%20Order%20Entry">
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.siebel.com/xml/RCRM%20Order%20Entry" schemaLocation="EAI.MSG.CCRM.OM.148_OrderRequest.xsd"/>
+        </schema>
+    </types>
+    <message name="OrderRequest_msg">
+        <part name="OrderRequest" element="order:OrderRequest"/>
+    </message>
+    <portType name="CCRMOM_DequeueNValidateOrderRequest">
+        <operation name="initiate">
+            <input message="client:OrderRequest_msg"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOM_DequeueNValidateOrderRequest">
+        <plnk:role name="CCRMOM_DequeueNValidateOrderRequestProvider">
+            <plnk:portType name="client:CCRMOM_DequeueNValidateOrderRequest"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

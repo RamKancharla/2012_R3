@@ -1,0 +1,19 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="CPFG_ProfileUpdateServiceValidatorProcessRequest">
+		<complexType>
+			<sequence>
+				<element name="input" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="CPFG_ProfileUpdateServiceValidatorProcessResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

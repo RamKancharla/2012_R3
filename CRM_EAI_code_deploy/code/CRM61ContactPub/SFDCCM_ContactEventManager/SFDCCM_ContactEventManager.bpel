@@ -1,0 +1,198 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Dec 20 15:58:54 GMT+05:30 2011
+  Author:  swetha.hosalli
+  Type: BPEL 1.1 Process
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="SFDCCM_ContactEventManager"
+         targetNamespace="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+         xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+         xmlns:ora="http://schemas.oracle.com/xpath/extension"
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+         xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+         xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"
+         xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/SFDCCM_ContactEventManager/WriteContact"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest"
+         xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/SFDCCM_ContactEventManager/WriteContactToInterfaceBuffer"
+         xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+         xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+         xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/top/WriteContactToInterfaceBuffer">
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    --> 
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="sfdccm_contacteventmanager_client" partnerLinkType="client:SFDCCM_ContactEventManager" myRole="SFDCCM_ContactEventManagerProvider" partnerRole="SFDCCM_ContactEventManagerRequester"/>
+        <partnerLink name="WriteContactToInterfaceBuffer"
+                     partnerLinkType="ns6:WriteContactToInterfaceBuffer_plt"
+                     partnerRole="WriteContactToInterfaceBuffer_role"/>
+        <partnerLink name="SequenceChecker"
+                     partnerLinkType="ns3:AsyncSequenceChecker"
+                     partnerRole="AsyncSequenceCheckerProvider"
+                     myRole="AsyncSequenceCheckerRequester"/>
+    </partnerLinks>
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="receiveContactVar" messageType="client:SFDCCM_ContactEventManagerRequestMessage"/>
+
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:SFDCCM_ContactEventManagerResponseMessage"/>
+        <variable name="InputVariable"
+                  messageType="client:SFDCCM_ContactEventManagerRequestMessage"/>                        
+        <variable name="SFDCManagerVar" element="ns5:contactPubRequest"/>
+        <variable name="Interface_BufferVar"
+                  messageType="ns6:InterfaceBufferCollection_msg"/>
+        <variable name="ContactAccountCount" type="xsd:int"/>
+    </variables>
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SFDCCM_ContactEventManager.wsdl) -->
+        <receive name="receiveContact" partnerLink="sfdccm_contacteventmanager_client" portType="client:SFDCCM_ContactEventManager" operation="process"
+                 variable="receiveContactVar" createInstance="yes"/>
+
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgnInitVariable">
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="receiveContactVar" part="payload"
+                    query="/ns1:contactEvent/ns1:eaiHeader/ns2:instanceId"/>
+            </copy>           
+            <copy>
+                <from expression="oraext:generate-guid()"/>
+                <to variable="receiveContactVar" part="payload"
+                    query="/ns1:contactEvent/ns1:eaiHeader/ns2:tracingId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AssignContactTitle" version="1.5" language="java">
+            <![CDATA[String ContactNumber = ((oracle.xml.parser.v2.XMLElement)                                       
+                        getVariableData("receiveContactVar", "payload", "/ns1:contactEvent/ns1:contact/ns1:ContactNumber")).getFirstChild().getNodeValue();                                          
+setCompositeInstanceTitle("ContactNumber: " + ContactNumber);]]>
+        </bpelx:exec>
+        <sequence name="Sequence1">
+            <scope name="Scope1">
+                <variables>
+                    <variable name="InvAsyncSequenceCheckerInputVar"
+                              messageType="ns3:AsyncSequenceCheckerRequestMessage"/>
+                    <variable name="ReceiveAsynSeqReleaseInputVar"
+                              messageType="ns3:AsyncSequenceCheckerResponseMessage"/>
+                </variables>
+                <sequence>
+                    <assign name="TransSFDCFilter">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:doXSLTransformForDoc('TransFilteringSFDCMsg.xsl', $receiveContactVar.payload)"/>
+                            <to variable="receiveContactVar" part="payload"/>
+                        </copy>
+                    </assign>
+                    <switch name="Switch1">
+                        <case condition="count(bpws:getVariableData('receiveContactVar','payload','/ns1:contactEvent/ns1:contact/ns1:ContactAccount'))>0">
+                            <scope name="Scope2">
+                                <sequence>
+                                    <assign name="TransContactToSFDCContact">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:doXSLTransformForDoc('TransContactInputToSFDCContactMsg.xsl', $receiveContactVar.payload)"/>
+                                            <to variable="SFDCManagerVar"/>
+                                        </copy>
+                                    </assign>
+                                    <assign name="TransToSeqChecker">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:doXSLTransformForDoc('TransContactMsgToAsynSeqChecker.xsl', $receiveContactVar.payload)"/>
+                                            <to variable="InvAsyncSequenceCheckerInputVar"
+                                                part="payload"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvAsyncSequenceChecker"
+                                            inputVariable="InvAsyncSequenceCheckerInputVar"
+                                            partnerLink="SequenceChecker"
+                                            portType="ns3:AsyncSequenceChecker"
+                                            operation="initiate"
+                                            bpelx:invokeAsDetail="no"/>
+                                    <receive name="ReceiveAsynSeqRelease"
+                                             createInstance="no"
+                                             variable="ReceiveAsynSeqReleaseInputVar"
+                                             partnerLink="SequenceChecker"
+                                             portType="ns3:AsyncSequenceCheckerCallback"
+                                             operation="onResult"/>
+                                    <assign name="TransToInterfaceBuffer">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:doXSLTransformForDoc('TransSFDC_ContactToInterfaceBuffer.xsl', $SFDCManagerVar)"/>
+                                            <to variable="Interface_BufferVar"
+                                                part="InterfaceBufferCollection"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvInterfaceBuffer"
+                                            inputVariable="Interface_BufferVar"
+                                            partnerLink="WriteContactToInterfaceBuffer"
+                                            portType="ns6:WriteContactToInterfaceBuffer_ptt"
+                                            operation="insert"
+                                            bpelx:invokeAsDetail="no"/>
+                                </sequence>
+                            </scope>
+                        </case>
+                        <otherwise>
+                            <sequence name="Sequence3">
+                                <empty name="DoNothing"/>
+                                <terminate name="TerminateProcess"/>
+                            </sequence>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </scope>
+        </sequence>
+    </sequence>
+</process>

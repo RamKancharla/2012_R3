@@ -1,0 +1,30 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMAM_DequeueAccountRequest" revision="1.0" state="on">
+    <import location="DequeueAccountRequest.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueAccountRequest/"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher" location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMAM_AccountDispatcher/CCRMAM_AccountDispatcher.wsdl" importType="wsdl"/>
+    <service name="DequeueAccountRequest" ui:wsdlLocation="DequeueAccountRequest.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueAccountRequest/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeueAccountRequest_mq.jca"/>
+    </service>
+    <component name="CCRMAM_DequeueAccountRequest">
+        <implementation.bpel src="CCRMAM_DequeueAccountRequest.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMAM_AccountDispatcher" ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMAM_AccountDispatcher/CCRMAM_AccountDispatcher.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher#wsdl.interface(CCRMAM_AccountDispatcher)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher#wsdl.endpoint(CCRMAM_AccountDispatcher/CCRMAM_AccountDispatcher)" location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMAM_AccountDispatcher/CCRMAM_AccountDispatcher?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>DequeueAccountRequest</source.uri>
+        <target.uri>CCRMAM_DequeueAccountRequest/DequeueAccountRequest</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMAM_DequeueAccountRequest/CCRMAM_AccountDispatcher</source.uri>
+        <target.uri>CCRMAM_AccountDispatcher</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

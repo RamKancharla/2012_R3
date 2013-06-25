@@ -1,0 +1,37 @@
+<definitions
+     name="CCRMMG_SubmitTicket"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/TktRqst"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/TktRqst"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket"
+                 schemaLocation="CCRMMG_SubmitTicket.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/TktRqst"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/TktRqst" schemaLocation="EAI.MSG.CCRM.MG.270_TicketRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMMG_SubmitTicketRequestMessage">
+        <part name="tktRqst" element="ns1:ticketRequestResponse"/>
+    </message>
+    <message name="CCRMMG_SubmitTicketResponseMessage">
+        <part name="tktResponse" element="ns1:ticketRequestResponse"/>
+    </message>
+    <portType name="CCRMMG_SubmitTicket">
+        <operation name="submitTicketRequest">
+            <input message="client:CCRMMG_SubmitTicketRequestMessage"/>
+            <output message="client:CCRMMG_SubmitTicketResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMMG_SubmitTicket">
+        <plnk:role name="CCRMMG_SubmitTicketProvider">
+            <plnk:portType name="client:CCRMMG_SubmitTicket"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

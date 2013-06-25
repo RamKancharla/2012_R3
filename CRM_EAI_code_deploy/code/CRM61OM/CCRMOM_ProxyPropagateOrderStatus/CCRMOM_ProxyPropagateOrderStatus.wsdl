@@ -1,0 +1,72 @@
+<definitions
+     name="CCRMOM_ProxyPropagateOrderStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus/correlationset"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus/correlationset"
+         location="CCRMOM_ProxyPropagateOrderStatus_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus"
+                 schemaLocation="CCRMOM_ProxyPropagateOrderStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.OM.180_ExtendedOrderStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" schemaLocation="EAI.MSG.UTL.268_SequenceCheckerRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMOM_ProxyPropagateOrderStatusRequestMessage">
+        <part name="orderStatus" element="ns1:orderStatus"/>
+    </message>
+    <message name="ReleaseSequenceMessage">
+        <part name="releaseSequence" element="ns3:basicResponse"/>
+    </message>
+    <message name="CCRMOM_ProxyPropagateOrderStatusResponseMessage">
+        <part name="payload" element="client:CCRMOM_ProxyPropagateOrderStatusProcessResponse"/>
+    </message>
+    <message name="SequenceCheckMessageType">
+        <part name="seqCheck" element="ns2:sequenceCheckRequest"/>
+    </message>
+    <portType name="CCRMOM_ProxyPropagateOrderStatus">
+        <operation name="initiate">
+            <input message="client:CCRMOM_ProxyPropagateOrderStatusRequestMessage"/>
+        </operation>
+        <operation name="updateReleaseStatus">
+            <input name="updateReleaseStatusMsg" message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMOM_ProxyPropagateOrderStatusCallback">
+        <operation name="onResult">
+            <input message="client:CCRMOM_ProxyPropagateOrderStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOM_ProxyPropagateOrderStatus">
+        <plnk:role name="CCRMOM_ProxyPropagateOrderStatusProvider">
+            <plnk:portType name="client:CCRMOM_ProxyPropagateOrderStatus"/>
+        </plnk:role>
+        <plnk:role name="CCRMOM_ProxyPropagateOrderStatusRequester">
+            <plnk:portType name="client:CCRMOM_ProxyPropagateOrderStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:SeqCorrSetProp" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns6:SequenceCheckerRequestMessage" part="payload" query="/ns2:checkSequenceRequest/ns2:seqRequestDetails/ns2:correlationID"
+         xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+    <bpws:propertyAlias propertyName="pns1:SeqCorrSetProp" messageType="client:ReleaseSequenceMessage" part="releaseSequence"
+         query="/ns3:basicResponse/ns3:eaiHeader/ns5:tracingId" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+</definitions>

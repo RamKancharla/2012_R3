@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMTF_PropagateQuoteStatus" revision="1.0" state="on">
+    <import location="CCRMTF_PropagateQuoteStatus.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus"/>
+    <import location="RCRMReceiveQuoteApprovalRef.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM"/>
+    <service name="anchorToPropogateQuoteStatus" ui:wsdlLocation="CCRMTF_PropagateQuoteStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus#wsdl.interface(CCRMTF_PropagateQuoteStatusCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus#wsdl.interface(CCRMTF_PropagateQuoteStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus#wsdl.endpoint(CCRMTF_PropagateQuoteStatus/CCRMTF_PropagateQuoteStatus)"/>
+    </service>
+    <component name="CCRMTF_PropagateQuoteStatus">
+        <implementation.bpel src="CCRMTF_PropagateQuoteStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="RCRMReceiveQuoteApproval" ui:wsdlLocation="RCRMReceiveQuoteApprovalRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.interface(RCRMReceiveQuoteApproval)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="RCRMReceiveQuoteApprovalRef.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.endpoint(RCRM_spcVetting_spcRequest/RCRMReceiveQuoteApproval)"/>
+    </reference>
+    <wire>
+        <source.uri>anchorToPropogateQuoteStatus</source.uri>
+        <target.uri>CCRMTF_PropagateQuoteStatus/anchorToPropogateQuoteStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMTF_PropagateQuoteStatus/RCRMReceiveQuoteApproval</source.uri>
+        <target.uri>RCRMReceiveQuoteApproval</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

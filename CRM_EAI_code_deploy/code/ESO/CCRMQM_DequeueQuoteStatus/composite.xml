@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="CCRMQM_DequeueQuoteStatus" revision="1.0" mode="active" state="on" xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="QuoteStatusDeq.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerQuoteStatusDeq/"/>
+    <import namespace="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcher.wsdl"
+            importType="wsdl"/>
+    <service ui:wsdlLocation="QuoteStatusDeq.wsdl" name="QuoteStatusDeq">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerQuoteStatusDeq/#wsdl.interface(Dequeue_ptt)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="QuoteStatusDeq_mq.jca"/>
+    </service>
+    <component name="CCRMQM_DequeueQuoteStatus">
+        <implementation.bpel src="CCRMQM_DequeueQuoteStatus.bpel"/>
+    </component>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcher.wsdl" name="CCRMQM_QuoteStatusDispatcher">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.interface(CCRMQM_QuoteStatusDispatcher)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.interface(CCRMQM_QuoteStatusDispatcherCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.endpoint(CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcher)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcher?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.endpoint(CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcherCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>QuoteStatusDeq</source.uri>
+        <target.uri>CCRMQM_DequeueQuoteStatus/QuoteStatusDeq</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMQM_DequeueQuoteStatus/CCRMQM_QuoteStatusDispatcher</source.uri>
+        <target.uri>CCRMQM_QuoteStatusDispatcher</target.uri>
+    </wire>
+</composite>

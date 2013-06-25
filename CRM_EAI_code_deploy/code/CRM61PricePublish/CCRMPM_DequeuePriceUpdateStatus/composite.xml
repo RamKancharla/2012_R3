@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPM_DequeuePriceUpdateStatus" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="DequeuePriceStatus.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeuePriceStatus/"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus.wsdl"
+            importType="wsdl"/>
+    <service name="DequeuePriceStatus" ui:wsdlLocation="DequeuePriceStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeuePriceStatus/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeuePriceStatus_mq.jca"/>
+    </service>
+    <component name="CCRMPM_DequeuePriceUpdateStatus">
+        <implementation.bpel src="CCRMPM_DequeuePriceUpdateStatus.bpel"/>
+    </component>
+    <reference name="CCRMPM_PropagatePriceUpdateStatus"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatus)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.endpoint(CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.endpoint(CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>DequeuePriceStatus</source.uri>
+        <target.uri>CCRMPM_DequeuePriceUpdateStatus/DequeuePriceStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_DequeuePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus</source.uri>
+        <target.uri>CCRMPM_PropagatePriceUpdateStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

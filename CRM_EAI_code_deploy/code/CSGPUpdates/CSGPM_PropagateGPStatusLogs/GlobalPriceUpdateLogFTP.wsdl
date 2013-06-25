@@ -1,0 +1,18 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:WL5G3N2="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <plnk:partnerLinkType name="FTPPLLogRequest_PL">
+        <plnk:role name="FTPPLLogRequest_Role">
+            <plnk:portType name="WL5G3N2:FTPPLLogRequest"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <wsdl:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog"
+         location="http://eaidev2:8004/GlobalPriceUpdateLogFTP/FTPLogRequest?WSDL"/>
+</wsdl:definitions>

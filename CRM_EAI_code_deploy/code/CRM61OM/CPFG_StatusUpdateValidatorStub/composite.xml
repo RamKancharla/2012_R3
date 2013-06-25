@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFG_StatusUpdateValidatorStub" revision="1.0" state="on">
+    <import location="CPFG_StatusUpdateValidatorStub.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"/>
+    <service name="anchorToValidationStub" ui:wsdlLocation="CPFG_StatusUpdateValidatorStub.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.interface(CPFG_StatusUpdateValidatorStub)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.endpoint(CPFG_StatusUpdateValidatorStub/CPFG_StatusUpdateValidatorStub)"/>
+    </service>
+    <component name="CPFG_StatusUpdateValidatorStub">
+        <implementation.bpel src="CPFG_StatusUpdateValidatorStub.bpel"/>
+    </component>
+    <wire>
+        <source.uri>anchorToValidationStub</source.uri>
+        <target.uri>CPFG_StatusUpdateValidatorStub/anchorToValidationStub</target.uri>
+    </wire>
+<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>
+</composite>

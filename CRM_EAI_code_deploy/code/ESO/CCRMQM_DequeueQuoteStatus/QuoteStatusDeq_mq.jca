@@ -1,0 +1,12 @@
+<adapter-config name="QuoteStatusDeq" adapter="MQSeriesAdapter" wsdlLocation="QuoteStatusDeq.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemoteCRMtoEAI" adapterRef=""/>
+  <endpoint-activation portType="Dequeue_ptt" operation="Dequeue" UITransmissionPrimitive="Dequeue">
+    <activation-spec className="oracle.tip.adapter.mq.inbound.ActivationSpecImpl">
+     <property name="QueueName" value="${mq.token.prefix}CRM_EAI_312_ESO_QT_RPLY_Q"/>
+      <!--<property name="QueueName" value="${EAI.Outbound.GenericQuote.Response.Queue}"/> -->
+    </activation-spec>
+    <input/>
+  </endpoint-activation>
+
+</adapter-config>

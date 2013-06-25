@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="HostnameReplace" default="change.all">
+
+<target name="change.all">
+
+			<echo message="CHANGE HOSTS" />
+			<echo message="${basedir}" />
+			<echo message="${deploy.server}" />
+			<echo message="${deploy.port}" />
+
+	<replace dir="${basedir}" token="eaidev2:8000" value="${deploy.server}:${deploy.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+		<include name="**/*.xml"/>
+		<include name="**/*.componentType"/>
+	</replace>	   
+	<replace dir="${basedir}" token="eaidev2:8004" value="${deploy.server}:${deploy.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+		<include name="**/*.xml"/>
+		<include name="**/*.componentType"/>		
+	</replace>
+<replace dir="${basedir}" token="inkaban3ua-eai05:8000" value="${deploy.server}:${deploy.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+		<include name="**/*.xml"/>
+		<include name="**/*.componentType"/>		
+	</replace>	   
+
+</target>
+</project>     

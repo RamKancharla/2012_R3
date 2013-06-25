@@ -1,0 +1,54 @@
+<definitions
+     name="ATHOM_OrderSplitter"
+     targetNamespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension">
+            <import namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter"
+                 schemaLocation="ATHOM_OrderSplitter.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+                 schemaLocation="EAI.MSG.ATH.OM.300_OrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHOM_OrderSplitterResponseMessage">
+        <part name="payload" element="client:ATHOM_OrderSplitterProcessResponse"/>
+    </message>
+    <message name="ATHOM_OrderSplitterRequestMessage">
+        <part name="orderRequest" element="ns1:orderRequest"/>
+    </message>
+    <message name="DistinctSubscriberMsg">
+        <part name="distinctSubscriberRequest" element="ns1:orderRequest"/>
+    </message>
+    <portType name="ATHOM_OrderSplitterCallback">
+        <operation name="onResult">
+            <input message="client:ATHOM_OrderSplitterResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="ATHOM_OrderSplitter">
+        <operation name="splitOrder">
+            <input message="client:ATHOM_OrderSplitterRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHOM_OrderSplitter">
+        <plnk:role name="ATHOM_OrderSplitterProvider">
+            <plnk:portType name="client:ATHOM_OrderSplitter"/>
+        </plnk:role>
+        <plnk:role name="ATHOM_OrderSplitterRequester">
+            <plnk:portType name="client:ATHOM_OrderSplitterCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

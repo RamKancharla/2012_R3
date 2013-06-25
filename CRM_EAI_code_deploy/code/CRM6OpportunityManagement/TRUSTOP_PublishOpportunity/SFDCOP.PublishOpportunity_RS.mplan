@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="SFDCOP.PublishOpportunity_RS" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="publishOpportunity">
+      <switch>
+         <case name="Case_1_SFDCOP.PublishOpportunity_RS.publishOpportunity" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/publishOpportunity_To_SFDCOpportunityEvent.xsl,$in.parameter)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="SFDCOP.PropagateOpportunityAdp" operation="process">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/basicResponse_To_basicResponseElement.xsl,$in.payload)" name="$out.parameter"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

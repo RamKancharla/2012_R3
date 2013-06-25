@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.EXT.115_FTLUpdateProfileRequest.xsd
+* Type:       	XSD Schema
+* Description: The schema used for FTL and update profile from CPfG
+*
+* Change History
+* Version     	Date      	Author             Description Of Change
+*
+*  0.01		05/04/07  	Kevin Wood	   Initial Version
+*  0.02		19/04/07  	Geratayya P	   Added UpdateType
+**********************************************************************************-->
+<xsd:schema xmlns:local="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-mt="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes" xmlns:gcap="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes" xmlns:gcap-cat="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonAccountTypes" targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementServices" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.02">
+	<xsd:import namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes" schemaLocation="EAI.XSD.002_CommonUserTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes" schemaLocation="EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonAccountTypes" schemaLocation="EAI.XSD.003_CommonAccountTypes.xsd"/>
+	<xsd:complexType name="FTLUpdateProfileRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-mt:EaiHeader"/>
+			<xsd:element name="updateType" type="gcap-mt:UpdateType"/>
+			<xsd:element name="userDetails" type="gcap:UserDetails"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="ftlUpdateProfileRequest" type="local:FTLUpdateProfileRequest"/>
+</xsd:schema>

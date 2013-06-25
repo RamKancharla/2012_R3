@@ -1,0 +1,48 @@
+<definitions
+     name="CPFG_ProfileUpdateServiceValidator"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator"
+                 schemaLocation="CPFG_ProfileUpdateServiceValidator.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+                 schemaLocation="EAI.MSG.CCRM.124_UpdateProfileRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFG_ProfileUpdateServiceValidatorRequestMessage">
+        <part name="payload" element="ns1:UpdateProfileRequest"/>
+    </message>
+    <message name="CPFG_ProfileUpdateServiceValidatorResponseMessage">
+        <part name="payload" element="ns2:basicResponse"/>
+    </message>
+    <portType name="CPFG_ProfileUpdateServiceValidator">
+        <operation name="UpdateUserProfile">
+            <input message="client:CPFG_ProfileUpdateServiceValidatorRequestMessage"/>
+            <output message="client:CPFG_ProfileUpdateServiceValidatorResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFG_ProfileUpdateServiceValidator">
+        <plnk:role name="CPFG_ProfileUpdateServiceValidatorProvider">
+            <plnk:portType name="client:CPFG_ProfileUpdateServiceValidator"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

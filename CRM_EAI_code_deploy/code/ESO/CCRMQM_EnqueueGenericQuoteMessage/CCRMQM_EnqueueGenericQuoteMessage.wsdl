@@ -1,0 +1,44 @@
+<definitions
+     name="CCRMQM_EnqueueGenericQuoteMessage"
+     targetNamespace="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/CRM/GenericQuoteMessage"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage"
+    >
+  <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage" schemaLocation="CCRMQM_EnqueueGenericQuoteMessage.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/CRM/GenericQuoteMessage"
+                 schemaLocation="EAI.MSG.CCRM.Quote.312_GenericQuoteMessage.xsd"/>
+        </schema>
+    </types>
+    <message name="CCRMQM_EnqueueGenericQuoteMessageRequestMessage">
+        <part name="payload" element="ns1:ListOfGenQuoteInterface"/>
+    </message>
+    <message name="CCRMQM_EnqueueGenericQuoteMessageResponseMessage">
+        <part name="payload" element="client:CCRMQM_EnqueueGenericQuoteMessageProcessResponse"/>
+    </message>
+    <portType name="CCRMQM_EnqueueGenericQuoteMessage">
+        <operation name="initiate">
+            <input message="client:CCRMQM_EnqueueGenericQuoteMessageRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMQM_EnqueueGenericQuoteMessageCallback">
+        <operation name="onResult">
+            <input message="client:CCRMQM_EnqueueGenericQuoteMessageResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMQM_EnqueueGenericQuoteMessage">
+        <plnk:role name="CCRMQM_EnqueueGenericQuoteMessageProvider">
+            <plnk:portType name="client:CCRMQM_EnqueueGenericQuoteMessage"/>
+        </plnk:role>
+        <plnk:role name="CCRMQM_EnqueueGenericQuoteMessageRequester">
+            <plnk:portType name="client:CCRMQM_EnqueueGenericQuoteMessageCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

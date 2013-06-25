@@ -1,0 +1,212 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      TF_ManageQuote.bpel 
+* Type:        BPEL FILE 
+* Description: ASynchronous BPEL Process which persists the quote request data using DynaXRef
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         17/10/07     ANVV Sharma             Initial Version 
+*  1.1         30/10/07     Sunil V                 Added Fault Sensors
+*  1.2         03/01/08     Sunil V                 Added custom title and replace DynaXRef with inbuilt XRef functionality
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TF_ManageQuote" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://xmlns.oracle.com/DynaXRef" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TOM" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/DynamicXReference" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/Exception" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TechFul" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonQuoteTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="ManageQuoteAnchor" partnerLinkType="client:TF_ManageQuote" myRole="TF_ManageQuoteProvider" partnerRole="TF_ManageQuoteRequester"/>
+        <partnerLink name="INTERFACE_BUFFER" partnerRole="INTERFACE_BUFFER_role" partnerLinkType="ns9:INTERFACE_BUFFER_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="manageQuoteRequest" messageType="client:TF_ManageQuoteRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="manageQuoteResponse" messageType="client:TF_ManageQuoteResponseMessage"/>
+        <variable name="initialQuoteStatus" type="xsd:string"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="remoteInvocationError" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="errorMessage" type="xsd:string"/>
+        <variable name="TOMSubmitQuoteIV" messageType="client:QuoteRequestMessageType"/>
+        <variable name="quoteNoRev" type="xsd:string"/>
+        <variable name="apprRecID" type="xsd:string"/>
+        <variable name="WriteQuote_insert_InputVariable" messageType="ns9:InterfaceBufferCollection_msg"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="ns6:InvalidQuoteStatus" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnInvalidQuoteStatus" language="java" version="1.5">
+                <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteNumber")).getFirstChild().getNodeValue();                                   
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteStatus")).getFirstChild().getNodeValue();         
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteNumber")).getFirstChild().getNodeValue();                                  
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteStatus")).getFirstChild().getNodeValue();        
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="remoteInvocationError">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteNumber")).getFirstChild().getNodeValue();                                  
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteStatus")).getFirstChild().getNodeValue();        
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleSelectionFault" language="java" version="1.5">
+                <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteNumber")).getFirstChild().getNodeValue();                                  
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteStatus")).getFirstChild().getNodeValue();        
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="ns6:subLanguageExecutionFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSubLanguageExecutionFault" language="java" version="1.5">
+                <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteNumber")).getFirstChild().getNodeValue();                                   
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteStatus")).getFirstChild().getNodeValue();         
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericError" language="java" version="1.5">
+                <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteNumber")).getFirstChild().getNodeValue();                                  
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteStatus")).getFirstChild().getNodeValue();        
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");]]>
+            </bpelx:exec>
+            <assign name="AsgGenericErrorMessage">
+                <copy>
+                    <from expression="'UnKnownError'"/>
+                    <to variable="errorMessage"/>
+                </copy>
+            </assign>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TF_ManageQuote.wsdl) -->
+        <receive name="rcvManageQuoteRequest" partnerLink="ManageQuoteAnchor" portType="client:TF_ManageQuote" operation="manageQuote" variable="manageQuoteRequest" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitialVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','InitialQuoteStatus','Value', 'New')"/>
+                <to variable="initialQuoteStatus"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="manageQuoteRequest" part="manageQuoteRequest" query="/ns1:vettingRequest/ns1:eaiHeader/ns2:instanceId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                             
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteNumber")).getFirstChild().getNodeValue();                                
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                             
+                        getVariableData("manageQuoteRequest","manageQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteStatus")).getFirstChild().getNodeValue();      
+setCompositeInstanceTitle("Q: " + quoteNumber + "; ST: "+ quoteStatus);]]>
+        </bpelx:exec>
+        <switch name="SwitchOnQuoteStatus">
+            <case condition="bpws:getVariableData('manageQuoteRequest','manageQuoteRequest','/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteStatus') = bpws:getVariableData('initialQuoteStatus')">
+                <bpelx:annotation>
+                    <bpelx:pattern>New Quote</bpelx:pattern>
+                </bpelx:annotation>
+                <assign name="AsgQuoteNoRevForXRef">
+                    <copy>
+                        <from variable="manageQuoteRequest" part="manageQuoteRequest" query="/ns1:vettingRequest/ns1:quoteHeader/ns3:approvalRecordNumber"/>
+                        <to variable="apprRecID"/>
+                    </copy>
+                    <copy>
+                        <from expression="concat(bpws:getVariableData('manageQuoteRequest','manageQuoteRequest','/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteNumber'),'#',bpws:getVariableData('manageQuoteRequest','manageQuoteRequest','/ns1:vettingRequest/ns1:quoteHeader/ns3:revisionNumber'))"/>
+                        <to variable="quoteNoRev"/>
+                    </copy>
+                    <copy>
+                        <from expression="xref:populateXRefRow('oramds:/apps/EAIMetaData/Xref/TOM_QUOTEID_APPRECID.xref','APPRECID',bpws:getVariableData('apprRecID'),'QUOTENUMBER',bpws:getVariableData('quoteNoRev'),'ADD')"/>
+                        <to variable="quoteNoRev"/>
+                    </copy>
+                </assign>
+            </case>
+            <otherwise>
+                <empty name="doNothing"/>
+            </otherwise>
+        </switch>
+        <scope name="ScopeTOMSubmitQuote">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="remoteInvocationError">
+                    <throw name="ThrSubmitQuoteToTOMRemoteFault" faultName="ns6:TOMFault" faultVariable="remoteInvocationError"/>
+                </catch>
+                <catch faultName="bpelx:subLanguageExecutionFault" faultVariable="runTimeFault">
+                    <throw name="ThrSubLanguageExecutionFault" faultName="ns6:subLanguageExecutionFault" faultVariable="runTimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqTOMSubmitQuote">
+                <assign name="TransManageTOM">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransManageQuoteToQuoteReq.xsl',bpws:getVariableData('manageQuoteRequest','manageQuoteRequest'))"/>
+                        <to variable="TOMSubmitQuoteIV" part="QuoteRequestMessagePart"/>
+                    </copy>
+                </assign>
+                <assign name="TransManageQuoteToWriteQuote">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransManageQuoteToWriteIntBuffer1.xsl',bpws:getVariableData('TOMSubmitQuoteIV','QuoteRequestMessagePart'))"/>
+                        <to variable="WriteQuote_insert_InputVariable" part="InterfaceBufferCollection"/>
+                    </copy>
+                </assign>
+                <invoke name="WriteQuote" partnerLink="INTERFACE_BUFFER" portType="ns9:INTERFACE_BUFFER_ptt" operation="insert" inputVariable="WriteQuote_insert_InputVariable"/>
+                <!--   <assign name="TransManageTOM">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransManageTOM.xsl',bpws:getVariableData('manageQuoteRequest','manageQuoteRequest'))"/>
+                        <to variable="TOMSubmitQuoteIV"/>
+                    </copy>
+                </assign>
+                <invoke name="InvTOMSubmitQuote"
+                        partnerLink="TOM_SubmitQuoteToTOM"
+                        portType="ns7:TOM_SubmitQuoteToTOM" operation="vetQuote"
+                        inputVariable="TOMSubmitQuoteIV"/> -->
+            </sequence>
+        </scope>
+    </sequence>
+</process>

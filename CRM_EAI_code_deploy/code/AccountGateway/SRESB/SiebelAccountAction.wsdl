@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?Siebel-Property-Set EscapeNames="false"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsdLocal1="http://www.siebel.com/xml/RCRM%20Account%20Action"
+             targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM">
+  <types>
+    <xsd:schema elementFormDefault="qualified"
+                attributeFormDefault="unqualified"
+                targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="http://www.siebel.com/xml/RCRM%20Account%20Action"></xsd:import>
+      <xsd:element name="RCRMAccoutActionData_Input">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Process_spcInstance_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Object_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Siebel_spcOperation_spcObject_spcId"
+                         type="xsd:string"></xsd:element>
+            <xsd:element ref="xsdLocal1:ActionThinBc"></xsd:element>
+            <xsd:element name="Error_spcCode" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcMessage" type="xsd:string"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="RCRMAccoutActionData_Output">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Error_spcCode" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcMessage" type="xsd:string"></xsd:element>
+            <xsd:element name="Object_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Process_spcInstance_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Siebel_spcOperation_spcObject_spcId"
+                         type="xsd:string"></xsd:element>
+            <xsd:element ref="xsdLocal1:ActionThinBc"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+    <xsd:schema elementFormDefault="qualified"
+                attributeFormDefault="unqualified"
+                xmlns:xsdLocal1="http://www.siebel.com/xml/RCRM%20Account%20Action"
+                targetNamespace="http://www.siebel.com/xml/RCRM%20Account%20Action"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:annotation>
+        <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All
+                           rights reserved. Siebel XSD Generation</xsd:documentation>
+      </xsd:annotation>
+      <xsd:element name="ActionThinBc" type="xsdLocal1:ActionThinBc"></xsd:element>
+      <xsd:complexType name="ActionThinBcTopElmt">
+        <xsd:sequence>
+          <xsd:element name="ActionThinBc" maxOccurs="1" minOccurs="1"
+                       type="xsdLocal1:ActionThinBc"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ActionThinBc">
+        <xsd:sequence>
+          <xsd:element name="SubType" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="PlannedCompletion" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="Planned" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMField4" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMField3" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMField2" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMField1" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="TotalRecords" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="TimeStamp" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="SearchSpec" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string250"></xsd:element>
+          <xsd:element name="PageNumber" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string5"></xsd:element>
+          <xsd:element name="ErrorMessage" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="ErrorCode" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="ContactName" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string150"></xsd:element>
+          <xsd:element name="Description" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string2000"></xsd:element>
+          <xsd:element name="AccountId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="Created" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="ActivityId" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="Abstract" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string150"></xsd:element>
+          <xsd:element name="Status" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="Type" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:simpleType name="string250">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="250"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string2000">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="2000"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string15">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="15"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string30">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="30"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string5">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="5"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string150">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="150"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:schema>
+  </types>
+  <message name="RCRMAccoutActionData_Input">
+    <part name="RCRMAccoutActionData_Input"
+          element="tns:RCRMAccoutActionData_Input"></part>
+  </message>
+  <message name="RCRMAccoutActionData_Output">
+    <part name="RCRMAccoutActionData_Output"
+          element="tns:RCRMAccoutActionData_Output"></part>
+  </message>
+  <portType name="RCRMAccoutActionData">
+    <operation name="RCRMAccoutActionData">
+      <input message="tns:RCRMAccoutActionData_Input"></input>
+      <output message="tns:RCRMAccoutActionData_Output"></output>
+    </operation>
+  </portType>
+  <binding name="RCRMAccoutActionData" type="tns:RCRMAccoutActionData">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+                  style="document"></soap:binding>
+    <operation name="RCRMAccoutActionData">
+      <soap:operation soapAction="document/http://www.reuters.com/ns/2007/09/01/GCAP/RCRM:RCRMAccoutActionData"></soap:operation>
+      <input>
+        <soap:body use="literal"></soap:body>
+      </input>
+      <output>
+        <soap:body use="literal"></soap:body>
+      </output>
+    </operation>
+  </binding>
+  <service name="RCRM_spcAccount_spcAction">
+    <port binding="tns:RCRMAccoutActionData" name="RCRMAccoutActionData">
+          <soap:address location="${siebel.protocol}://${siebel.host}/eai_enu/start.swe?SWEExtSource=WebService&amp;SWEExtCmd=Execute&amp;UserName=${siebel.UserName}&amp;Password=${siebel.Password}"></soap:address> 
+    </port>
+  </service>
+</definitions>

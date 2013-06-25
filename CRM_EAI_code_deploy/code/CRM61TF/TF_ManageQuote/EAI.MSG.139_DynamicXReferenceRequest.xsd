@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    /*************************************************************************
+    * Module:       EAI MSG 139_DynamicXReferenceRequest
+    *               	Dynamic X Reference
+    * Type:         XML Schema Document
+    * Description:  Used to request to the service of dynamic cross reference
+    *
+    *
+    * Change History
+    * Version		Date				Author									Description Of Change
+    * =======	========	==================		===============================
+    *  0.01			10/08/07		S GANNAVARAPU					Initial Version
+    *  0.02			10/08/07		G PATCHIPULUSU				Added eaiHeader and changed the enumeration for action code
+    *  0.03			12/08/07		G PATCHIPULUSU				Added link ref type
+    *  0.04			13/08/07		G PATCHIPULUSU				Change the Link Ref Type 
+	*  0.05			17/09/07		GPATCHIPULUSU					Changed the common schema location
+    *
+    *************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/DynamicXReference" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/DynamicXReference" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.05">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="dynaXRefRequest" type="xsdLocal:DynamicXReferenceRequest"/>
+	<xsd:complexType name="DynamicXReferenceRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="actionCode" type="xsdLocal:ActionCode"/>
+			<xsd:element name="refType" type="xsdLocal:RefType"/>
+			<xsd:element name="source" type="xsdLocal:Source"/>
+			<xsd:element name="target" type="xsdLocal:Target"/>
+			<xsd:element name="linkRefType" type="xsdLocal:LinkRefType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="ActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>C</content>
+					<comment>Insert/Create</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>R</content>
+					<comment>Read/Select</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>U</content>
+					<comment>Update</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>D</content>
+					<comment>Delete</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RefType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LinkRefType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Source">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Z-TST001</content>
+					<comment>CRM Order Line Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Target">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>zqA12</content>
+					<comment>Can be CRM Asset Integration Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

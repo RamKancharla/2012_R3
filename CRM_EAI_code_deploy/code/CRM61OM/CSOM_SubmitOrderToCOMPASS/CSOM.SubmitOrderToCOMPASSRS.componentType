@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRS.wsdl" name="CSOM.SubmitOrderToCOMPASSRS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+    </service>
+    <reference ui:wsdlLocation="ENQ_GE_EI_EAI_TRIGGER.wsdl" name="CSOM.ENQ_GE_EI_EAI_TRIGGER">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerENQ_GE_EI_EAI_TRIGGER/#wsdl.interface(submitOrder_ptt)"/>
+    </reference>
+</componentType>

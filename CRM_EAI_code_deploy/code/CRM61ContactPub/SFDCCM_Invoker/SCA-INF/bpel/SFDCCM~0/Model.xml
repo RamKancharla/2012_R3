@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="SFDCCM_Invoker" targetNamespace="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_Invoker" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_POLLING_V" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions" xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns3="http://xmlns.oracle.com/InterfaceManager" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/SFDCCM_Invoker/Update_Interfacebuffer" xmlns:ns5="urn:enterprise.soap.sforce.com" xmlns:ns6="http://soap.sforce.com/schemas/class/ContactManagement" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/top/SFDCCM_POLLING_V" xmlns:ns8="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns11="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/db/top/Update_Interfacebuffer" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_PollingServ" xmlns:ns14="http://xmlns.oracle.com/pcbpel/adapter/db/top/SFDCCM_PollingServ" xmlns:ns15="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_Invoker" xmlns:ns16="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus" id="BpPrc0">
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    --> 
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="SalesForce" partnerRole="Soap" partnerLinkType="ns5:SalesForce"/>
+        <partnerLink name="InterfaceManager" partnerRole="InterfaceManagerProvider" partnerLinkType="ns3:InterfaceManager"/>
+        <partnerLink name="Update_Interfacebuffer" partnerLinkType="ns4:Update_Interfacebuffer_plt" partnerRole="Update_Interfacebuffer_role"/>
+        <partnerLink name="ContactManagement" partnerLinkType="ns6:ContactManagement" partnerRole="ContactManagementPortType"/>
+        <partnerLink name="SequenceReleaser" partnerLinkType="ns2:SequenceReleaser" partnerRole="SequenceReleaserProvider" myRole="SequenceReleaserRequester"/>
+        <partnerLink name="SFDCCM_PollingServ" partnerLinkType="ns13:SFDCCM_PollingServ_plt" myRole="SFDCCM_PollingServ_role"/>
+        <partnerLink name="CCRMCM_PropagateErrorStatus" partnerLinkType="ns16:CCRMCM_PropagateContactErrorStatus" partnerRole="CCRMCM_PropagateContactErrorStatusProvider" myRole="CCRMCM_PropagateContactErrorStatusRequester"/>
+    </partnerLinks>
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+   
+        
+        <variable name="nReceived" type="xsd:integer"/>
+        <variable name="nProcessed" type="xsd:integer"/>
+        <variable name="nSent" type="xsd:int"/>
+        <variable name="nErrors" type="xsd:integer"/>
+        <variable name="errorMessage" type="xsd:string"/>
+        <variable name="nFailure" type="xsd:integer"/>
+        <variable name="releaseSequence" type="xsd:boolean"/>
+        <variable name="loginDetails" type="xsd:string"/>
+        <variable name="InvRequestHealthCheck_process_InputVariable" messageType="ns3:InterfaceManagerRequestMessage"/>
+        <variable name="InvRequestHealthCheck_process_OutputVariable" messageType="ns3:InterfaceManagerResponseMessage"/>
+                  
+        <variable name="rawMessage" type="xsd:string"/>
+        <variable name="javaException" type="xsd:string"/>
+        <variable name="id" type="xsd:string"/>
+        <variable name="created" type="xsd:string"/>
+        <variable name="interfaceId" type="xsd:string"/>
+        <variable name="referenceId" type="xsd:string"/>
+        <variable name="state" type="xsd:string"/>        
+        <variable name="parsedRawMessage" type="xsd:string"/>
+      <!--  <variable name="SFDC_Input_IV" element="ns8:Contacts"/>  -->     
+        <variable name="IntefaceUpdateDBIV" messageType="ns4:InterfaceBufferCollection_msg"/>
+        <variable name="RequestHealthCheckIV" messageType="ns3:InterfaceManagerRequestMessage"/>
+        <variable name="RequestHealthCheckOV" messageType="ns3:InterfaceManagerResponseMessage"/>
+        <variable name="SIEBELID" type="xsd:string"/>
+        <variable name="UniqueID" type="xsd:string"/>
+        <variable name="ContactManagementMappingVariable" messageType="ns6:TRUSTInboundContactRequest"/>
+       <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="ReleaseSequenceIVar" messageType="ns2:SequenceReleaserRequestMessage"/>
+        <variable name="rcvPolledSFDCContact" messageType="ns13:SfdccmPollingVCollection_msg"/>
+
+        <variable name="contactPubRequest" element="ns8:contactPubRequest"/>
+        <variable name="InvSiebepError_IV" messageType="ns16:CCRMCM_PropagateContactErrorStatusRequestMessage"/>
+    </variables>
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main" id="BpSeq0">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SFDCCM_Invoker.wsdl) -->
+        <receive name="receiveInput" variable="rcvPolledSFDCContact" createInstance="yes" partnerLink="SFDCCM_PollingServ" portType="ns13:SFDCCM_PollingServ_ptt" operation="receive" id="BpRcv0"/>
+
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgnInitVariable" id="BpAss0">
+          <!--  <copy>
+                <from expression="count(bpws:getVariableData('rcvSFDCPolling_InputVariable','SfdccmPollingVCollection','/ns2:SfdccmPollingVCollection/ns2:SfdccmPollingV'))"/>
+                <to variable="nReceived"/> 
+            </copy>-->
+            <copy>
+                <from expression="0"/>
+                <to variable="nProcessed"/>
+            </copy>
+            <copy>
+                <from expression="count(bpws:getVariableData('rcvPolledSFDCContact','SfdccmPollingVCollection','/ns14:SfdccmPollingVCollection/ns14:SfdccmPollingV'))"/>
+                <to variable="nReceived"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nSent"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nErrors"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="errorMessage"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nFailure"/>
+            </copy>
+            <copy>
+                <from expression="'false'"/>
+                <to variable="releaseSequence"/>
+            </copy>
+            <copy>
+                <from expression="'null'"/>
+                <to variable="loginDetails"/>
+            </copy>
+        </assign>
+                <bpelx:exec name="SetInitialTitle" version="1.5" language="java" id="BxExe0">
+            <![CDATA[setCompositeInstanceTitle("Processing " + getVariableData("nReceived") + " messages");]]>
+        </bpelx:exec>
+
+        <scope name="ScopeCallSFDC" variableAccessSerializable="no" id="BpScp0">
+         <variables>
+                <variable name="InvSalesforceLoginIV" messageType="ns5:loginRequest"/>
+                <variable name="InvSalesforceLoginOV" messageType="ns5:loginResponse"/>
+                <variable name="HeaderReq" element="ns5:SessionHeader"/>
+            </variables>
+         <faultHandlers id="BpFhs0">
+                <catchAll id="BpCAl0">
+                    <sequence name="Sequence_10" id="BpSeq1">
+                        <assign name="IncrementFailedInRetry" id="BpAss1">
+                            <copy>
+                                <from expression="bpws:getVariableData('nFailure')+1"/>
+                                <to variable="nFailure"/>
+                            </copy>
+                        </assign>
+                        <assign name="AsgState_Error_Release" id="BpAss2">
+                            <copy>
+                                <from expression="'R'"/>
+                                <to variable="state"/>
+                            </copy>
+                            <copy>
+                                <from expression="'true'"/>
+                                <to variable="releaseSequence"/>
+                            </copy>
+                            <copy>
+                                <from expression="'INVALID_LOGIN Fault'"/>
+                                <to variable="loginDetails"/>
+                            </copy>
+                            <copy>
+                                <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                <to variable="errorMessage"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>           
+            <sequence name="SeqCallSFDC" id="BpSeq2">
+                <assign name="AsgnCredentials" id="BpAss3">
+                    <copy>
+                        <from expression="ora:getPreference(&quot;loginId&quot;)"/>
+                        <to variable="InvSalesforceLoginIV" part="parameters" query="/ns5:login/ns5:username"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getPreference(&quot;password&quot;)"/>
+                        <to variable="InvSalesforceLoginIV" part="parameters" query="/ns5:login/ns5:password"/>
+                    </copy>
+                </assign>
+                <invoke name="InvSalesforceLogin" inputVariable="InvSalesforceLoginIV" outputVariable="InvSalesforceLoginOV" partnerLink="SalesForce" portType="ns5:Soap" operation="login" id="BpInv0"/>
+                <assign name="ReadSessionID" id="BpAss4">
+                    <copy>
+                        <from variable="InvSalesforceLoginOV" part="parameters" query="/ns5:loginResponse/ns5:result/ns5:sessionId"/>
+                        <to variable="HeaderReq" query="/ns5:SessionHeader/ns5:sessionId"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+      <while name="While1" condition="bpws:getVariableData('nProcessed') &lt; bpws:getVariableData('nReceived')" id="BpWhl0">
+            <sequence name="Sequence_1" id="BpSeq3">
+                <scope name="PublishContacts" variableAccessSerializable="no" id="BpScp1">
+                    <!-- <variables>
+                 
+                       <variable name="SFDC_Input_Payload"
+                                  element="ns8:Contacts"/> 
+                    </variables>-->
+                    <sequence name="SeqContactManagementWithoutSFDCid" id="BpSeq4">
+                       <assign name="AsgnContactToLocalVariable" id="BpAss5">
+                            <copy>
+                                <from variable="rcvPolledSFDCContact" part="SfdccmPollingVCollection" query="/ns14:SfdccmPollingVCollection/ns14:SfdccmPollingV[bpws:getVariableData('nProcessed') + 1]/ns14:id"/>
+                                <to variable="id"/>
+                            </copy>
+                            <copy>
+                                <from variable="rcvPolledSFDCContact" part="SfdccmPollingVCollection" query="/ns14:SfdccmPollingVCollection/ns14:SfdccmPollingV[bpws:getVariableData('nProcessed') + 1]/ns14:created"/>
+                                <to variable="created"/>
+                            </copy>
+                            <copy>
+                                <from variable="rcvPolledSFDCContact" part="SfdccmPollingVCollection" query="/ns14:SfdccmPollingVCollection/ns14:SfdccmPollingV[bpws:getVariableData('nProcessed') + 1]/ns14:interfaceId"/>
+                                <to variable="interfaceId"/>
+                            </copy>
+                            <copy>
+                                <from variable="rcvPolledSFDCContact" part="SfdccmPollingVCollection" query="/ns14:SfdccmPollingVCollection/ns14:SfdccmPollingV[bpws:getVariableData('nProcessed') + 1]/ns14:referenceId"/>
+                                <to variable="referenceId"/>
+                            </copy>
+                        </assign>
+                        <bpelx:exec name="ReplaceUnsafeCharactersInRawMessage" id="BxExe1"/>
+                        <switch name="Switch1" id="BpSwt0">
+                            <case condition="bpws:getVariableData('javaException')  != ''">
+                                <empty name="TODOThrow" id="BpEmp0"/>
+                            </case>
+                            <otherwise>
+                                <empty name="DoNothing" id="BpEmp1"/>
+                            </otherwise>
+                        </switch>
+                        <scope name="Scope1" id="BpScp2">
+                            <variables>
+                           
+                                <variable name="InvokeContactManagementIV" messageType="ns6:CNumberUpdateRequest"/>
+                                <variable name="InvokeContactManagementOV" messageType="ns6:CNumberUpdateResponse"/>
+                                <variable name="InvokeTRUSTInboundContactIV" messageType="ns6:TRUSTInboundContactRequest"/>
+                                <variable name="InvokeTRUSTInboundContactOV" messageType="ns6:TRUSTInboundContactResponse"/>
+                               
+                            </variables>
+                            <sequence id="BpSeq5">
+                                <assign name="AsgnContact" id="BpAss6">
+                                    <copy>
+                                        <from variable="rcvPolledSFDCContact" part="SfdccmPollingVCollection" query="/ns14:SfdccmPollingVCollection/ns14:SfdccmPollingV[bpws:getVariableData('nProcessed') + 1]/ns14:payload"/>
+                                        <to variable="rawMessage"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="ora:parseEscapedXML(bpws:getVariableData('rawMessage'))"/>
+                                        <to variable="contactPubRequest"/>
+                                    </copy>
+                                </assign>
+                             
+                                <switch name="Switch2" id="BpSwt1">
+                                    <case condition="bpws:getVariableData('loginDetails')!='INVALID_LOGIN Fault'">
+                                        <bpelx:annotation>
+                                            <bpelx:general/>
+                                        </bpelx:annotation>
+                                        <sequence name="Sequence1" id="BpSeq6">
+                                            <assign name="AsgnInitVariablesTOSFDCInbound" id="BpAss7">                                                
+                                            <!--    <copy>
+                                                     <from expression="xref:lookupXRef(&quot;oramds:/apps/EAIMetaData/Xref/CRM_SFDC_ACCTXREF.xref&quot;,&quot;SIEBELID&quot;,bpws:getVariableData('SIEBELID'), &quot;SFDCID&quot;,false())"/>
+                                                    <to variable="SfdcContactMsgPayload"
+                                                        query="/ns8:TRUSTInboundContact/ns8:ConRequest/ns8:SFDCId"/>
+                                                </copy> -->
+                                                <copy>
+                                                    <from variable="contactPubRequest" query="/ns8:contactPubRequest/ns8:contact/ns8:ContactUniqueNumber"/>
+                                                    <to variable="SIEBELID"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:generateGUID()"/>
+                                                    <to variable="UniqueID"/>
+                                                </copy>
+                                                  <copy>
+                                                    <from expression="xref:lookupXRef(&quot;oramds:/apps/EAIMetaData/Xref/SFDC_CRM_CONTACTSXREF.xref&quot;,&quot;CONTACTUNIQUENUMBER&quot;,bpws:getVariableData('SIEBELID'), &quot;SFDCCONTACTID&quot;,false())"/>
+                                                    <to variable="contactPubRequest" query="/ns8:contactPubRequest/ns8:contact/ns8:SFDCId"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="TransInputToSFDC" id="BpAss8">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:doXSLTransformForDoc('TransformContactPubRequestMsgToSFDCInboundMsg.xsl', $contactPubRequest)"/>
+                                                    <to variable="InvokeTRUSTInboundContactIV" part="parameters"/>
+                                                </copy>
+                                            </assign>
+                                            <scope name="Scope2" id="BpScp3">
+                                                <faultHandlers id="BpFhs1">
+                                                    <catchAll id="BpCAl1">
+                                                        <empty name="Empty1" id="BpEmp2"/>
+                                                    </catchAll>
+                                                </faultHandlers>
+                                                <invoke name="InvokeContactManagement" inputVariable="InvokeTRUSTInboundContactIV" outputVariable="InvokeTRUSTInboundContactOV" partnerLink="ContactManagement" portType="ns6:ContactManagementPortType" operation="TRUSTInboundContact" bpelx:invokeAsDetail="no" id="BpInv1"/>
+                                            </scope>
+                                            <switch name="Switch3" id="BpSwt2">
+                                                <case condition="bpws:getVariableData('InvokeTRUSTInboundContactOV','parameters','/ns6:TRUSTInboundContactResponse/ns6:result/ns6:StatusCode')='ERROR'">
+                                                    <sequence name="Sequence2" id="BpSeq7">
+                                                        <bpelx:exec name="AsgCustomTitleOnTrustError" version="1.5" language="java" id="BxExe2">
+                                                            <![CDATA[String ContactID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("contactPubRequest","/ns8:contactPubRequest/ns8:contact/ns8:ContactUniqueNumber")).getFirstChild().getNodeValue();                       
+                         
+String Title=("SFDC_ContactID: " +ContactID+";SF-AP-Flt");                             
+setCompositeInstanceTitle(Title);]]>
+                                                        </bpelx:exec>
+                                                        <assign name="AsgState-WARNING-Release" id="BpAss9">
+                                                            <copy>
+                                                                <from expression="ora:getPreference(&quot;BusinessFaultStatus&quot;)"/>
+                                                                <to variable="state"/>
+                                                            </copy>
+                                                        <!--    <copy>
+                                                                <from expression="bpws:getVariableData('SfdcContactMsgPayload','/ns8:TRUSTInboundContact/ns8:ConRequest/ns8:ContactUniqueNumber')"/>
+                                                                <to variable="referenceId"/>
+                                                            </copy> -->
+                                                          <!--  <copy>
+                                                                  <from expression="ora:getContentAsString(bpws:getVariableData('SfdcContactMsgPayload'))"/>
+                                                                <to variable="rawMessage"/>
+                                                            </copy> -->
+                                                        </assign>
+                                                        <assign name="TransErrorResponseToSiebel" id="BpAss10">
+                                                            <bpelx:annotation>
+                                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                                            </bpelx:annotation>
+                                                            <copy>
+                                                                <from expression="ora:doXSLTransformForDoc('TransSFDCErrorResponseToSiebelQueue.xsl', $InvokeTRUSTInboundContactOV.parameters)"/>
+                                                                <to variable="InvSiebepError_IV" part="payload"/>
+                                                            </copy>
+                                                        </assign>
+                                                        <invoke name="InvSiebelError" partnerLink="CCRMCM_PropagateErrorStatus" portType="ns16:CCRMCM_PropagateContactErrorStatus" operation="initiate" inputVariable="InvSiebepError_IV" bpelx:invokeAsDetail="no" id="BpInv2"/>
+                                                    </sequence>
+                                                </case>
+                                                <otherwise>
+                                                    <sequence name="SeqToXREF" id="BpSeq8">
+                                                        <switch name="FilterForPopulateXref" id="BpSwt3">
+                                                  <!--          <case condition="string-length(bpws:getVariableData('SfdcContactMsgPayload','/ns8:TRUSTInboundContact/ns8:ConRequest/ns8:SFDCID')) >0"> -->
+                                                             <case condition="bpws:getVariableData('id')='true'">
+                                                                <sequence name="Sequence3" id="BpSeq9">
+                                                                    <empty name="DoNothing" id="BpEmp3"/>
+                                                                    <assign name="AsgState-COMPLETE-Release" id="BpAss11">
+                                                                        <copy>
+                                                                            <from expression="'C'"/>
+                                                                            <to variable="state"/>
+                                                                        </copy>
+                                                                    </assign>
+                                                                </sequence>
+                                                            </case>
+                                                            <otherwise>                                                                
+                                                                    <scope name="ScopePopulateXREF" variableAccessSerializable="no" id="BpScp4">
+                                                                    <faultHandlers id="BpFhs2">
+                                                                    <catchAll id="BpCAl2">
+                                                                        <throw name="ThrInvalidResponseException" faultName="bpelx:invalidResponse" faultVariable="runTimeFault" id="BpThw0"/>
+                                                                    </catchAll>
+                                                                </faultHandlers>
+                                                                     <sequence name="Sequence4" id="BpSeq10">
+                                                                    <assign name="TransdataToxref" id="BpAss12">
+                                                                        <bpelx:annotation>
+                                                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                                                        </bpelx:annotation>
+                                                                            <copy>
+                                                                                <from expression="ora:doXSLTransformForDoc('TransDataToXREF.xsl', $InvokeTRUSTInboundContactOV.parameters)"/>
+                                                                                <to variable="InvokeTRUSTInboundContactOV" part="parameters"/>
+                                                                            </copy>
+                                                                        </assign>
+                                                                    <assign name="AsgState-COMPLETE-Release" id="BpAss13">
+                                                                            <copy>
+                                                                                <from expression="'C'"/>
+                                                                                <to variable="state"/>
+                                                                            </copy>
+                                                                        </assign>
+                                                                </sequence>
+                                                                </scope>
+                                                            </otherwise>
+                                                        </switch>
+                                                    </sequence>
+                                                </otherwise>
+                                            </switch>
+                                        </sequence>
+                                    </case>
+                                    <otherwise>
+                                        <assign name="LoginFailed" id="BpAss14">
+                                    <!--     <copy>
+                                            <from expression="bpws:getVariableData('SfdcContactMsgPayload','/ns8:TRUSTInboundContact/ns8:ConRequest/ns8:ContactUniqueNumber')"/>
+                                            <to variable="referenceId"/>
+                                        </copy> -->
+                                        <copy>
+                                            <from expression="bpws:getVariableData('loginDetails')"/>
+                                            <to variable="errorMessage"/>
+                                        </copy>
+                                      </assign>  
+                                    </otherwise>
+                                </switch>
+                            </sequence>
+                        </scope>
+                    </sequence>
+                </scope>
+                <sequence name="ReleaseSequence" id="BpSeq11">
+                    <assign name="AsnSequenceRelRequest" id="BpAss15">
+                        <copy>
+                            <from expression="&quot;EAI&quot;"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:eaiHeader/ns9:applicationId"/>
+                        </copy>
+                        <copy>
+                            <from variable="contactPubRequest" query="/ns8:contactPubRequest/ns8:eaiHeader/ns9:tracingId"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:correlationID"/>
+                        </copy>
+                        <copy>
+                            <from variable="contactPubRequest" query="/ns8:contactPubRequest/ns8:eaiHeader/ns9:tracingId"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:eaiHeader/ns9:tracingId"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCompositeInstanceId()"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:eaiHeader/ns9:transactionId"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCompositeInstanceId()"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:eaiHeader/ns9:messageId"/>
+                        </copy>
+                        <copy>
+                            <from expression="&quot;EAI;&quot;"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:eaiHeader/ns9:messageHistory"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCurrentDateTime()"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:eaiHeader/ns9:timeStamp"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCompositeInstanceId()"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:eaiHeader/ns9:instanceId"/>
+                        </copy>
+                        <copy>
+                            <from expression="&quot;1&quot;"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:eaiHeader/ns9:timeToLive"/>
+                        </copy>
+                        <copy>
+                            <from expression="&quot;V&quot;"/>
+                            <to variable="ReleaseSequenceIVar" part="payload" query="/ns11:releaseSequenceRequest/ns11:eaiHeader/ns9:payloadVersion"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvokeReleaseSequencer" inputVariable="ReleaseSequenceIVar" partnerLink="SequenceReleaser" portType="ns2:SequenceReleaser" operation="releaseSequence" bpelx:invokeAsDetail="no" id="BpInv3"/>
+                </sequence>
+                <sequence name="SeqUpdateDB" id="BpSeq12">
+                    <assign name="TransBlankUpdateSuccessMessage" id="BpAss16">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:doXSLTransformForDoc('InvUpdate_InterfaceBufferTbl.xsl', $IntefaceUpdateDBIV.InterfaceBufferCollection)"/>
+                            <to variable="IntefaceUpdateDBIV" part="InterfaceBufferCollection"/>
+                        </copy>
+                    </assign>
+                    <assign name="AsgSuccessMessageToDbWriteBack" id="BpAss17">
+                        <copy>
+                            <from variable="id"/>
+                            <to variable="IntefaceUpdateDBIV" part="InterfaceBufferCollection" query="/ns12:InterfaceBufferCollection/ns12:InterfaceBuffer/ns12:id"/>
+                        </copy>
+                        <copy>
+                            <from variable="created"/>
+                            <to variable="IntefaceUpdateDBIV" part="InterfaceBufferCollection" query="/ns12:InterfaceBufferCollection/ns12:InterfaceBuffer/ns12:created"/>
+                        </copy>
+                        <copy>
+                            <from variable="interfaceId"/>
+                            <to variable="IntefaceUpdateDBIV" part="InterfaceBufferCollection" query="/ns12:InterfaceBufferCollection/ns12:InterfaceBuffer/ns12:interfaceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="referenceId"/>
+                            <to variable="IntefaceUpdateDBIV" part="InterfaceBufferCollection" query="/ns12:InterfaceBufferCollection/ns12:InterfaceBuffer/ns12:referenceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="state"/>
+                            <to variable="IntefaceUpdateDBIV" part="InterfaceBufferCollection" query="/ns12:InterfaceBufferCollection/ns12:InterfaceBuffer/ns12:state"/>
+                        </copy>
+                        <copy>
+                            <from variable="rawMessage"/>
+                            <to variable="IntefaceUpdateDBIV" part="InterfaceBufferCollection" query="/ns12:InterfaceBufferCollection/ns12:InterfaceBuffer/ns12:payload"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCompositeInstanceId()"/>
+                            <to variable="IntefaceUpdateDBIV" part="InterfaceBufferCollection" query="/ns12:InterfaceBufferCollection/ns12:InterfaceBuffer/ns12:updatedBy"/>
+                        </copy>
+                        <bpelx:remove>
+                        <bpelx:target part="InterfaceBufferCollection" variable="IntefaceUpdateDBIV" query="/ns12:InterfaceBufferCollection/ns12:InterfaceBuffer/ns12:lastUpdated"/>
+                        </bpelx:remove>
+                        <copy>
+                            <from variable="errorMessage"/>
+                            <to variable="IntefaceUpdateDBIV" part="InterfaceBufferCollection" query="/ns12:InterfaceBufferCollection/ns12:InterfaceBuffer/ns12:errorMessage"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvokeUpdateDB" inputVariable="IntefaceUpdateDBIV" partnerLink="Update_Interfacebuffer" portType="ns4:Update_Interfacebuffer_ptt" operation="update" bpelx:invokeAsDetail="no" id="BpInv4"/>
+                </sequence>
+                <assign name="IncrementProcessed" id="BpAss18">
+                    <copy>
+                        <from expression="bpws:getVariableData('nProcessed')+1"/>
+                        <to variable="nProcessed"/>
+                    </copy>
+                    <copy>
+                        <from expression="''"/>
+                        <to variable="errorMessage"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <bpelx:exec name="SetCompletedTitle" version="1.5" language="java" id="BxExe3">
+            <![CDATA[setCompositeInstanceTitle("Completed R:P:E:F=" + getVariableData("nReceived") + ":" + getVariableData("nProcessed") + ":" + getVariableData("nErrors") + ":" + getVariableData("nFailure"));]]>
+        </bpelx:exec>
+        <switch name="Switch4" id="BpSwt4">
+            <case condition="bpws:getVariableData('nProcessed') = bpws:getVariableData('nFailure')">
+                <sequence name="Sequence5" id="BpSeq13">
+                    <assign name="AsgHealthCheckParams" id="BpAss19">
+                        <copy>
+                            <from expression="'doHealthCheck'"/>
+                            <to variable="RequestHealthCheckIV" part="payload" query="/ns3:InterfaceManagerProcessRequest/ns3:operation"/>
+                        </copy>
+                        <copy>
+                            <from expression="'SFDCCM'"/>
+                            <to variable="RequestHealthCheckIV" part="payload" query="/ns3:InterfaceManagerProcessRequest/ns3:interfaceConfig/ns10:id"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvRequestHealthCheck" inputVariable="RequestHealthCheckIV" outputVariable="RequestHealthCheckOV" partnerLink="InterfaceManager" portType="ns3:InterfaceManager" operation="process" bpelx:invokeAsDetail="no" id="BpInv5"/>
+                    <terminate name="Terminate" id="BpTer0"/>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing" id="BpEmp4"/>
+            </otherwise>
+        </switch>
+ 
+    </sequence>
+</process><!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Dec 22 14:28:21 GMT+05:30 2011
+  Author:  swetha.hosalli
+  Type: BPEL 1.1 Process
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->

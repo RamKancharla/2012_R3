@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.TOM.OM.239_UpdateOrderResponse.xsd
+*						Order Management (Core Suite)
+* Type:				XML Schema Document
+* Description:  	Core Suite Order Status Schema with asset integration id in order line
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		25/06/08	Sreeja Prasad			Initial Version
+*  0.02		07/07/08	Rob Billington			Made order lines optional
+*
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement" xmlns:cot="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.02">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:element name="orderResponseStatus" type="xsdLocal:OrderResponse"/>
+	<xsd:complexType name="OrderResponse">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="orderHeader" type="cot:TOMResponseOrderHeader"/>
+			<xsd:element name="orderLineItem" type="cot:TOMResponseOLI" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

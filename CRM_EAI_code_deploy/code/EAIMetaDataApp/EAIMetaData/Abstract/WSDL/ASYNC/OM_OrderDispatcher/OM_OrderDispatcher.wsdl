@@ -1,0 +1,84 @@
+<definitions
+     name="OM_OrderDispatcher"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/correlationset"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/correlationset"
+             xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/OM_OrderDispatcher/imports/EAI.MSG.OM.125_OrderRequest.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/correlationset"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM"
+             xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/OM_OrderDispatcher/imports/EAI.MSG.OM.193_ExtendedOrderRequest.xsd"/>
+        </xsd:schema>
+        <!--xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/correlationset"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="rules/xsd/EAI.MSG.OM.201_OrderLineRequestFacts.xsd"/>
+        </xsd:schema-->
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/correlationset"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/OM_OrderDispatcher/imports/DistinctNextAction.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="OM_OrderDispatcherRequestMessage">
+        <part name="orderRequest" element="ns1:orderRequest"/>
+    </message>
+    <message name="OM_OrderDispatcherResponseMessage">
+        <part name="payload" element="ns1:orderRequest"/>
+    </message>
+    <!--message name="RuleFactsMessage">
+        <part name="facts" element="ns1:orderLineRepository"/>
+    </message-->
+    <message name="ExtendedOrderRequestMessageType">
+        <part name="extendedOrderRequest" element="ns1:extendedOrderRequest"/>
+    </message>
+    <message name="DistinctNextAction">
+        <part name="distinctNextActions" element="ns1:distinctNextActions"/>
+    </message>
+    <portType name="OM_OrderDispatcher">
+        <operation name="dispatchOrder">
+            <input message="client:ExtendedOrderRequestMessageType"/>
+        </operation>
+    </portType>
+    <portType name="OM_OrderDispatcherCallback">
+        <operation name="onResult">
+            <input message="client:OM_OrderDispatcherResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="OM_OrderDispatcher">
+        <plnk:role name="OM_OrderDispatcherProvider">
+            <plnk:portType name="client:OM_OrderDispatcher"/>
+        </plnk:role>
+        <plnk:role name="OM_OrderDispatcherRequester">
+            <plnk:portType name="client:OM_OrderDispatcherCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

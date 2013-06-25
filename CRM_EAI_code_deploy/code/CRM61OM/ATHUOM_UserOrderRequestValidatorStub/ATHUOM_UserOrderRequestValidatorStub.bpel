@@ -1,0 +1,51 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Jun 18 12:05:42 GMT+05:30 2009
+  Author:  Dasaradh
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHUOM_UserOrderRequestValidatorStub" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToATHUOM_UserOrderRequestValidatorStub" partnerLinkType="client:ATHUOM_UserOrderRequestValidatorStub" myRole="ATHUOM_UserOrderRequestValidatorStubProvider"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:ATHUOM_UserOrderRequestValidatorStubRequestMessage"/>
+        <variable name="RcvUserOrderRequestIV" messageType="client:ATHUOM_UserOrderRequestValidatorStubRequestMessage"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ATHUOM_UserOrderRequestValidatorStub.wsdl) -->
+        <receive name="RcvUserOrderRequestIn" partnerLink="anchorToATHUOM_UserOrderRequestValidatorStub" portType="client:ATHUOM_UserOrderRequestValidatorStub" operation="validateUserOrder" variable="RcvUserOrderRequestIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+    </sequence>
+</process>

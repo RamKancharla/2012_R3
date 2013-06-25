@@ -1,0 +1,1598 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<process name="SequenceReleaser" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/EAIOWNER/MESSAGE_SEQUENCER/RELEASE_SEQ/" xmlns:ns7="http://schemas.xmlsoap.org/ws/2003/03/addressing" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/DynPLToSequenceReleaser" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/ReleaseSequenceDBAdapter/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/OM/Exception" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToSeqReleaser" partnerLinkType="client:SequenceReleaser" myRole="SequenceReleaserProvider" partnerRole="SequenceReleaserRequester"/>
+        <partnerLink name="ReleaseSequenceDBAdapter" partnerRole="ReleaseSequenceDBAdapter_role" partnerLinkType="ns3:ReleaseSequenceDBAdapter_plt"/>
+        <partnerLink name="DynPLToSequenceReleaser" partnerRole="DynPLToSequenceReleaserProvider" partnerLinkType="ns6:DynPLToSequenceReleaser"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:SequenceReleaserResponseMessage"/>
+        <variable name="seqReleaseRequest" messageType="client:SequenceReleaserRequestMessage"/>
+        <variable name="releaseSequence_IV" messageType="ns3:args_in_msg"/>
+        <variable name="releaseSequence_OV" messageType="ns3:args_out_msg"/>
+        <variable name="seqReleaseResponse" messageType="client:SequenceReleaserResponseMessage"/>
+        <variable name="partnerReference" element="ns7:EndpointReference"/>
+        <variable name="wakeupTF_ManageOrderLines" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="wakeupCCRMOP_PublishOpportunity" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="wakeupCPF_UpdateProfile" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="wakeupInvTransformOrderStatusIV" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="wakeupInvCPFGAM_AccountManagerIV" messageType="ns6:ReleaseSequenceMessageType"/>
+        <variable name="wakeupInvSFDCAMAccountEventManagerIV" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="wakeupTRUSTOPOpportunityManagerIV" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="wakeupTRUSTAMAccountManagerIV" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="wakeUpProxyPropagateOrderStatus" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="wakeupTF_OrderDispatcher" messageType="ns6:ReleaseSequenceMessageType"/>
+        <variable name="wakeupCSOMOrderBatcherToReleaseIV" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="wakeupTOMAMAccountManager_IV" messageType="ns6:ReleaseSequenceMessageType"/>
+        <variable name="wakeupContactManagerToRelease" messageType="ns6:ReleaseSequenceMessageType"/>
+        <variable name="wakeupCPFGOMUserOrderManagerIV" messageType="ns6:ReleaseSequenceMessageType"/>
+        <variable name="wakeupPropagatePriceUpdateStatusIV" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="contactrunTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="wakeupAsyncSequenceCheckerIV" messageType="ns6:ReleaseSequenceMessage"/>
+        <variable name="WakeUpCCRMOMSubmitUserOrderRequestIV" messageType="ns6:ReleaseSequenceMessage"/>
+    </variables>
+    <!-- Receive input from requestor. (Note: This maps to operation defined in SequenceReleaser.wsdl) -->
+    <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SequenceReleaser.wsdl) -->
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <scope name="SequenceReleaser">
+            <faultHandlers>
+                <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+                    <assign name="TransBindingFaultToOutput">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransRemoteFaultToOutput.xsl',bpws:getVariableData('seqReleaseRequest','payload'))"/>
+                            <to variable="seqReleaseResponse" part="payload"/>
+                        </copy>
+                    </assign>
+                </catch>
+                <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+                    <assign name="TransSelectionFailureFaultToOutput">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransRemoteFaultToOutput',bpws:getVariableData('seqReleaseRequest','payload'))"/>
+                            <to variable="seqReleaseResponse" part="payload"/>
+                        </copy>
+                    </assign>
+                </catch>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <assign name="TransRemoteFaultToOutput">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransRemoteFaultToOutput.xsl',bpws:getVariableData('seqReleaseRequest','payload'))"/>
+                            <to variable="seqReleaseResponse" part="payload"/>
+                        </copy>
+                    </assign>
+                </catch>
+                <catch faultName="ns8:SeqTransformOrderStatusRemoteFault" faultVariable="runtimeFault">
+                    <assign name="TransTransformOrderStatusRemoteFault">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransRemoteFaultToOutput.xsl',bpws:getVariableData('seqReleaseRequest','payload'))"/>
+                            <to variable="seqReleaseResponse" part="payload"/>
+                        </copy>
+                    </assign>
+                </catch>
+                <catch faultName="ns8:SeqAccountManagerToReleaseRemoteFault" faultVariable="runtimeFault">
+                    <assign name="TransInvAccountMnagerRemoteFault">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransRemoteFaultToOutput.xsl',bpws:getVariableData('seqReleaseRequest','payload'))"/>
+                            <to variable="seqReleaseResponse" part="payload"/>
+                        </copy>
+                    </assign>
+                </catch>
+                <catch faultName="ns8:SeqContactManagerToReleaseRemoteFault" faultVariable="contactrunTimeFault">
+                    <assign name="TransInvContactManagerRemoteFault">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransRemoteFaultToOutput.xsl',bpws:getVariableData('seqReleaseRequest','payload'))"/>
+                            <to variable="seqReleaseResponse" part="payload"/>
+                        </copy>
+                    </assign>
+                </catch>
+                <catch faultName="ns8:UserOrderManagerSeqError" faultVariable="runtimeFault">
+                    <assign name="TransUserOrderManager">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransRemoteFaultToOutput.xsl',bpws:getVariableData('seqReleaseRequest','payload'))"/>
+                            <to variable="seqReleaseResponse" part="payload"/>
+                        </copy>
+                    </assign>
+                </catch>
+                <catchAll>
+                    <assign name="TransGenericFaultToOutput">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransRemoteFaultToOutput.xsl',bpws:getVariableData('seqReleaseRequest','payload'))"/>
+                            <to variable="seqReleaseResponse" part="payload"/>
+                        </copy>
+                    </assign>
+                </catchAll>
+            </faultHandlers>
+            <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+            <sequence name="SeqReleaseSequence">
+                <!-- Receive input from requestor. (Note: This maps to operation defined in SequenceReleaser.wsdl) -->
+                <receive name="receiveInput" partnerLink="anchorToSeqReleaser" portType="client:SequenceReleaser" operation="releaseSequence" createInstance="yes" variable="seqReleaseRequest"/>
+                <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+                <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+                    <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)            
+                        getVariableData("seqReleaseRequest", "payload", "/ns1:releaseSequenceRequest/ns1:correlationID")).getFirstChild().getNodeValue();               
+ setCompositeInstanceTitle(orderNumber);]]>
+                </bpelx:exec>
+                <assign name="AsgPrcoessToBeReleased">
+                    <copy>
+                        <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:correlationID"/>
+                        <to variable="releaseSequence_IV" part="InputParameters" query="/ns4:InputParameters/ns4:P_CORRELATION_ID_IN"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getCompositeInstanceId()"/>
+                        <to variable="releaseSequence_IV" part="InputParameters" query="/ns4:InputParameters/ns4:P_RELEASER_INST_ID"/>
+                    </copy>
+                </assign>
+                <invoke name="InvReleaseSeq" partnerLink="ReleaseSequenceDBAdapter" portType="ns3:ReleaseSequenceDBAdapter_ptt" operation="ReleaseSequenceDBAdapter" inputVariable="releaseSequence_IV" outputVariable="releaseSequence_OV"/>
+                <switch name="ChkReleaseResponse">
+                    <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT') = '-1'">
+                        <bpelx:annotation>
+                            <bpelx:pattern>No pending processes</bpelx:pattern>
+                        </bpelx:annotation>
+                        <sequence name="SeqWakeUpSequenceChecker">
+                            <assign name="TransSeqReleaseResponse">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransSequenceReleaseResponse.xsl',bpws:getVariableData('releaseSequence_OV','OutputParameters'))"/>
+                                    <to variable="seqReleaseResponse" part="payload"/>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </case>
+                    <case condition="(bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT') != '-1') and  not (starts-with(bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT'), 'ERROR'))">
+                        <bpelx:annotation>
+                            <bpelx:pattern>A process to be released</bpelx:pattern>
+                        </bpelx:annotation>
+                        <sequence name="SeqWakeUpSequenceChecker">
+                            <switch name="ChkPrcoess">
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT') = dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;CCRMOMSubmitUserOrderRequestProcess&quot;,&quot;Value&quot;,&quot;CCRMOM_SubmitUserOrderRequest&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>CCRMOM_SubmitUserOrderRequest</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <scope name="ScpCCRMOMSubmitUserOrderRequest">
+                                        <sequence name="SeqCCRMOMSubmitUserOrderRequest">
+                                            <assign name="AsgReleaseRequestToCCRMOMSubmitUserOrderRequest">
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="xp20:current-dateTime()"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                    <to variable="WakeUpCCRMOMSubmitUserOrderRequestIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgCCRMOMSubmitUserOrderRequestPR">
+                                                <copy>
+                                                    <from>
+                                                        <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                            <Address/>
+                                                        </EndpointReference>
+                                                    </from>
+                                                    <to variable="partnerReference"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getPreference(&quot;CCRMOM_SubmitUserOrderRequest&quot;)"/>
+                                                    <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="partnerReference"/>
+                                                    <to partnerLink="DynPLToSequenceReleaser"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvCCRMOMSubmitUserOrderRequest" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus" inputVariable="WakeUpCCRMOMSubmitUserOrderRequestIV"/>
+                                        </sequence>
+                                    </scope>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')= 'AsyncSequenceChecker'">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>AsyncSequenceChecker</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="Sequence_1">
+                                        <assign name="AsgReleaseRequestToAsyncSequenceChecker">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeupAsyncSequenceCheckerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgAsyncSequenceCheckerPR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;AsyncSequenceChecker&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvAsyncSequenceCheckerRelease" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus" inputVariable="wakeupAsyncSequenceCheckerIV"/>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT') = dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;PropagatePriceBPELProcess&quot;,&quot;Value&quot;,&quot;CCRMPM_PropagatePriceUpdateStatus&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>CCRMPM_PropagatePriceUpdateStatus</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <scope name="ScpCCRMPM_PropagatePriceUpdateStatus">
+                                        <faultHandlers>
+                                            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                                <throw name="ThrInvAccountManagerToReleaseRemoteFault" faultName="ns8:SeqAccountManagerToReleaseRemoteFault" faultVariable="runtimeFault"/>
+                                            </catch>
+                                        </faultHandlers>
+                                        <sequence name="SeqWakeupPropagatePriceUpdateStatus">
+                                            <assign name="AsgReleaseRequestToPropagatePriceUpdateStatus">
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                    <to variable="wakeupPropagatePriceUpdateStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                    <to variable="wakeupPropagatePriceUpdateStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                    <to variable="wakeupPropagatePriceUpdateStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                    <to variable="wakeupPropagatePriceUpdateStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="xp20:current-dateTime()"/>
+                                                    <to variable="wakeupPropagatePriceUpdateStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="wakeupPropagatePriceUpdateStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupPropagatePriceUpdateStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                    <to variable="wakeupPropagatePriceUpdateStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                    <to variable="wakeupPropagatePriceUpdateStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgPropagatePriceUpdateStatusTR">
+                                                <copy>
+                                                    <from>
+                                                        <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                            <Address/>
+                                                        </EndpointReference>
+                                                    </from>
+                                                    <to variable="partnerReference"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getPreference(&quot;PropagatePriceUpdateStatus&quot;)"/>
+                                                    <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="partnerReference"/>
+                                                    <to partnerLink="DynPLToSequenceReleaser"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvPropagatePriceUpdateStatus" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus" inputVariable="wakeupPropagatePriceUpdateStatusIV"/>
+                                        </sequence>
+                                    </scope>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;TOMContactManagerBPELProcess&quot;,&quot;Value&quot;,&quot;TOMCM_ContactManager&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>TOMCM_ContactManager</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <scope name="ScpTOMCM_ContactManager">
+                                        <faultHandlers>
+                                            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                                <throw name="ThrInvContactManagerToReleaseRemoteFault" faultName="ns8:SeqAccountManagerToReleaseRemoteFault" faultVariable="contactrunTimeFault"/>
+                                            </catch>
+                                        </faultHandlers>
+                                        <sequence name="SeqWakeupContactManagerToRelease">
+                                            <assign name="AsgReleaseRequestToTOMContactManager">
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="xp20:current-dateTime()"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                    <to variable="wakeupContactManagerToRelease" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgTOMCM_ContactManagerPR">
+                                                <copy>
+                                                    <from>
+                                                        <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                            <Address/>
+                                                        </EndpointReference>
+                                                    </from>
+                                                    <to variable="partnerReference"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getPreference(&quot;TOMCM_ContactManager&quot;)"/>
+                                                    <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="partnerReference"/>
+                                                    <to partnerLink="DynPLToSequenceReleaser"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvTOMCMContactManagerToRelease" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="releaseSequence" inputVariable="wakeupContactManagerToRelease"/>
+                                        </sequence>
+                                    </scope>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;TOMAccountManagerBPELProcess&quot;,&quot;Value&quot;,&quot;TOMAM_AccountManager&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>TOMAM_AccountManager</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <scope name="ScpTOMAM_AccountManager">
+                                        <faultHandlers>
+                                            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                                <throw name="ThrInvAccountManagerToReleaseRemoteFault" faultName="ns8:SeqAccountManagerToReleaseRemoteFault" faultVariable="runtimeFault"/>
+                                            </catch>
+                                        </faultHandlers>
+                                        <sequence name="SeqWakeupTOMAMAccountManager">
+                                            <assign name="AsgReleaseRequestToTOMAMAccountManager">
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="xp20:current-dateTime()"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                    <to variable="wakeupTOMAMAccountManager_IV" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgTOMAM_AccountManagerPR">
+                                                <copy>
+                                                    <from>
+                                                        <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                            <Address/>
+                                                        </EndpointReference>
+                                                    </from>
+                                                    <to variable="partnerReference"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getPreference(&quot;TOMAM_AccountManager&quot;)"/>
+                                                    <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="partnerReference"/>
+                                                    <to partnerLink="DynPLToSequenceReleaser"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvAccountManagerToRelease" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="releaseSequence" inputVariable="wakeupTOMAMAccountManager_IV"/>
+                                        </sequence>
+                                    </scope>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;OrderBatcherBPELProcess&quot;,&quot;Value&quot;,&quot;CSOM_OrderBatcher&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>CSOM_OrderBatcher</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="SeqWakeupCSOMOrderBatcherToRelease">
+                                        <assign name="AsgReleaseRequestToCSOMOrderBatcher">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeupCSOMOrderBatcherToReleaseIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgCSOM_OrderBatcherPR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;CSOM_OrderBatcher&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvOrderBatcherToRelease" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="releaseOrderBatcher" inputVariable="wakeupCSOMOrderBatcherToReleaseIV"/>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;TOMOrdersBPELProcess&quot;,&quot;Value&quot;,&quot;TF_OrderDispatcher&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>TF_OrderDispatcher</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <scope name="ScpTF_OrderDispatcher">
+                                        <faultHandlers>
+                                            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                                <throw name="ThrInvTF_OrderDispatcherToReleaseRemoteFault" faultName="ns8:SeqTF_OrderDispatcherReleaseRemotefault" faultVariable="runtimeFault"/>
+                                            </catch>
+                                        </faultHandlers>
+                                        <sequence name="SeqWakeupTF_OrderDispatcher">
+                                            <assign name="AsgReleaseRequestToTF_OrderDispatche">
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="xp20:current-dateTime()"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                    <to variable="wakeupTF_OrderDispatcher" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgTF_OrderDispatcherPR">
+                                                <copy>
+                                                    <from>
+                                                        <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                            <Address/>
+                                                        </EndpointReference>
+                                                    </from>
+                                                    <to variable="partnerReference"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getPreference(&quot;TF_OrderDispatcher&quot;)"/>
+                                                    <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="partnerReference"/>
+                                                    <to partnerLink="DynPLToSequenceReleaser"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvTF_OrderDispatcher" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="releaseSequence" inputVariable="wakeupTF_OrderDispatcher"/>
+                                        </sequence>
+                                    </scope>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;CPfGUserOrderBPELProcess&quot;,&quot;Value&quot;,&quot;CPFGOM_UserOrderManager&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>CPFGOM_UserOrderManager</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <scope name="ScpCPFGOMUserOrderManager">
+                                        <faultHandlers>
+                                            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                                <throw name="ThrInvCPfGOMUserOrderManagerRemoteFault" faultName="ns8:UserOrderManagerSeqError" faultVariable="runtimeFault"/>
+                                            </catch>
+                                        </faultHandlers>
+                                        <sequence name="SeqCPFGOMUserOrderManager">
+                                            <assign name="AsgReleaseRequestToCPfGOMUserOrderManagerStatus">
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="xp20:current-dateTime()"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupCPFGOMUserOrderManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgCPfGOMUserOrderManagerStatusPR">
+                                                <copy>
+                                                    <from>
+                                                        <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                            <Address/>
+                                                        </EndpointReference>
+                                                    </from>
+                                                    <to variable="partnerReference"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getPreference(&quot;CPFGOM_UserOrderManager&quot;)"/>
+                                                    <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="partnerReference"/>
+                                                    <to partnerLink="DynPLToSequenceReleaser"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvCPFGOMUserOrderManager" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="releaseSequence" inputVariable="wakeupCPFGOMUserOrderManagerIV"/>
+                                        </sequence>
+                                    </scope>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;ProxyPropagateOrderStatusBPELProcess&quot;,&quot;Value&quot;,&quot;CCRMOM_ProxyPropagateOrderStatus&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>CCRMOM_ProxyPropagateOrderStatus</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="SeqWakeUpProxyPropagateOrderStatus">
+                                        <assign name="AsgReleaseRequestToProxyPropagateOrderStatus">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeUpProxyPropagateOrderStatus" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgProxyPropagateOrderStatusPR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;CCRMOM_ProxyPropagateOrderStatus&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvProxyPropagateOrderStatus" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus" inputVariable="wakeUpProxyPropagateOrderStatus"/>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;TRUSTAMAccountManager&quot;,&quot;Value&quot;,&quot;TRUSTAM_AccountManager&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>TRUSTAM_AccountManager</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="SeqWakeupTRUSTAMAccountManager">
+                                        <assign name="AsgnReleaseReqToTRUSTAMAccountManager">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeupTRUSTAMAccountManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgTRUSTAMAccountManagerPR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;TRUSTAM_AccountManager&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvTRUSTAMAccountManager" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus" inputVariable="wakeupTRUSTAMAccountManagerIV"/>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;TRUSTOP_OpportunityManagerProcess&quot;,&quot;Value&quot;,&quot;TRUSTOP_OpportunityManager&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>TRUSTOP_OpportunityManage</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="SeqWakeupTRUSTOPOpportunityManager">
+                                        <assign name="AsgReleaseRequestToTRUSTOPOpportunityManager">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeupTRUSTOPOpportunityManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgTRUSTOPOpportunityManagerPR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;TRUSTOP_OpportunityManager&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvTRUSTOPOpportunityManager" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus" inputVariable="wakeupTRUSTOPOpportunityManagerIV"/>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SFDCAMAccountEventManagerProcess&quot;,&quot;Value&quot;,&quot;SFDCAM_AccountEventManager&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>SFDCAM_AccountEventManager</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="SeqWakeupInvSFDCAMAccountEventManager">
+                                        <assign name="AsgnReleaseReqToSFDCAMAccountEventManager">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeupInvSFDCAMAccountEventManagerIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgSFDCAMAccountEventManagerPR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;SFDCAM_AccountEventManager&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvSFDCAMAccountEventManager" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus" inputVariable="wakeupInvSFDCAMAccountEventManagerIV"/>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT')=dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;CPFGAccountManagerBPELProcess&quot;,&quot;Value&quot;,&quot;CPFGAM_AccountManager&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>CPFGAM_AccountManager</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="SeqWakeupInvCPFGAM_AccountManager">
+                                        <assign name="AsgReleaseReqToCPFGAMAccountManager">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeupInvCPFGAM_AccountManagerIV" part="relSequencePart" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgCPFGAM_AccountManagerPR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;CPFGAM_AccountManager&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvCPFGAM_AccountManager" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="releaseSequence" inputVariable="wakeupInvCPFGAM_AccountManagerIV"/>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT') = dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;TransformOrderStatusBPELProcess&quot;,&quot;Value&quot;,&quot;CSOM_TransformOrderStatus&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>CSOM_TransformOrderStatus</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <scope name="ScpCSOM_TransformOrderStatus">
+                                        <faultHandlers>
+                                            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                                <throw name="ThrInvTransformOrderStatusRemoteFault" faultName="ns8:SeqTransformOrderStatusRemoteFault" faultVariable="runtimeFault"/>
+                                            </catch>
+                                        </faultHandlers>
+                                        <sequence name="SeqWakeupInvTransformOrderStatus">
+                                            <assign name="AsgReleaseRequestToTransfromOrderStatus">
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="xp20:current-dateTime()"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                    <to variable="wakeupInvTransformOrderStatusIV" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgTransformOrderStatusPR">
+                                                <copy>
+                                                    <from>
+                                                        <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                            <Address/>
+                                                        </EndpointReference>
+                                                    </from>
+                                                    <to variable="partnerReference"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getPreference(&quot;CSOM_TransformOrderStatus&quot;)"/>
+                                                    <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="partnerReference"/>
+                                                    <to partnerLink="DynPLToSequenceReleaser"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvTransformOrderStatus" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus" inputVariable="wakeupInvTransformOrderStatusIV"/>
+                                        </sequence>
+                                    </scope>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT') = dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;CCRMOPPublishOpportunityProcess&quot;,&quot;Value&quot;,&quot;CCRMOP_PublishOpportunity&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>CCRMOP_PublishOpportunity</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="SeqWakeupCCRMOP_PublishOpportunity">
+                                        <assign name="AsgReleaseRequestToCCRMOPPublishOpportunity">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeupCCRMOP_PublishOpportunity" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgCCRMOP_PublishOpportunityPR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;CCRMOP_PublishOpportunity&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvCCRMOP_PublishOpportunity" inputVariable="wakeupCCRMOP_PublishOpportunity" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus"/>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT') = dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;CPFGUpdateProfileProcess&quot;,&quot;Value&quot;,&quot;CPF_UpdateProfile&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>CPF_UpdateProfile</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="SeqWakeupCPF_UpdateProfile">
+                                        <assign name="AsgReleaseReqToCPFUpdateProfile">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeupCPF_UpdateProfile" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgCPF_UpdateProfilePR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;CPF_UpdateProfile&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvCPF_UpdateProfile" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="updateReleaseStatus" inputVariable="wakeupCPF_UpdateProfile"/>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('releaseSequence_OV','OutputParameters','/ns4:OutputParameters/ns4:P_PROCESS_OUT') = dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;TFManageOrderLineStatusBPELProcess&quot;,&quot;Value&quot;,&quot;TF_ManageOrderLineStatus&quot;)">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>TF_ManageOrderLineStatus</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="SeqWakeupTF_ManageOrderLines">
+                                        <assign name="AsgReleaseRequestToTF_ManageOrderLineStatus">
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="releaseSequence_OV" part="OutputParameters" query="/ns4:OutputParameters/ns4:P_CORRELATION_ID_OUT"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:response"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                                <to variable="wakeupTF_ManageOrderLines" part="releaseSequence" query="/ns5:basicResponse/ns5:basicResponse/ns2:responseCode"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="AsgTF_ManageOrderLineStatusPR">
+                                            <copy>
+                                                <from>
+                                                    <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                                        <Address/>
+                                                    </EndpointReference>
+                                                </from>
+                                                <to variable="partnerReference"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getPreference(&quot;TF_ManageOrderLineStatus&quot;)"/>
+                                                <to variable="partnerReference" query="/ns7:EndpointReference/ns7:Address"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="partnerReference"/>
+                                                <to partnerLink="DynPLToSequenceReleaser"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvTF_ManageOrderLineStatus" partnerLink="DynPLToSequenceReleaser" portType="ns6:DynPLToSequenceReleaser" operation="releaseTOMOrderStatus" inputVariable="wakeupTF_ManageOrderLines"/>
+                                    </sequence>
+                                </case>
+                                <otherwise>
+                                    <empty name="ProcessFlowNotImplemented"/>
+                                </otherwise>
+                            </switch>
+                            <assign name="TransSequenceReleaseResponse">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransSequenceReleaseResponse.xsl',bpws:getVariableData('releaseSequence_OV','OutputParameters'))"/>
+                                    <to variable="seqReleaseResponse" part="payload"/>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <assign name="TransSequenceErrorReleaseResponse">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransSequenceErrorReleaseResponse.xsl',bpws:getVariableData('releaseSequence_OV','OutputParameters'))"/>
+                                <to variable="seqReleaseResponse" part="payload"/>
+                            </copy>
+                        </assign>
+                    </otherwise>
+                </switch>
+            </sequence>
+        </scope>
+        <assign name="AsgEAIHeader">
+            <copy>
+                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:applicationId"/>
+                <to variable="seqReleaseResponse" part="payload" query="/ns5:basicResponse/ns5:eaiHeader/ns2:applicationId"/>
+            </copy>
+            <copy>
+                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:transactionId"/>
+                <to variable="seqReleaseResponse" part="payload" query="/ns5:basicResponse/ns5:eaiHeader/ns2:transactionId"/>
+            </copy>
+            <copy>
+                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageId"/>
+                <to variable="seqReleaseResponse" part="payload" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageId"/>
+            </copy>
+            <copy>
+                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                <to variable="seqReleaseResponse" part="payload" query="/ns5:basicResponse/ns5:eaiHeader/ns2:messageHistory"/>
+            </copy>
+            <copy>
+                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:tracingId"/>
+                <to variable="seqReleaseResponse" part="payload" query="/ns5:basicResponse/ns5:eaiHeader/ns2:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="xp20:current-dateTime()"/>
+                <to variable="seqReleaseResponse" part="payload" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeStamp"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="seqReleaseResponse" part="payload" query="/ns5:basicResponse/ns5:eaiHeader/ns2:instanceId"/>
+            </copy>
+            <copy>
+                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                <to variable="seqReleaseResponse" part="payload" query="/ns5:basicResponse/ns5:eaiHeader/ns2:timeToLive"/>
+            </copy>
+            <copy>
+                <from variable="seqReleaseRequest" part="payload" query="/ns1:releaseSequenceRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                <to variable="seqReleaseResponse" part="payload" query="/ns5:basicResponse/ns5:eaiHeader/ns2:payloadVersion"/>
+            </copy>
+        </assign>
+    </sequence>
+</process>

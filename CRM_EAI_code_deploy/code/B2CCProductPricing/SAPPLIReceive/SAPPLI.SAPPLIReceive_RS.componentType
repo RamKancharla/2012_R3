@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="EAI.SRV.PLI.SAP.70_PLIReceiveReqest.wsdl" name="SAPPLI.SAPPLIReceive_RS">
+        <interface.wsdl interface="http://trm.com:I002:OrderProcessing:ProductPricing_Receive#wsdl.interface(SI_ProductPricing_Receive_IB_Async)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPLI_EnqueueRequest/CCRMPLI_EnqueueRequest.wsdl" name="SAPPLI.CCRMPLI_EnqueueRequestSOAPAdp">
+        <interface.wsdl interface="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest#wsdl.interface(CCRMPLI_EnqueueRequest)"/>
+    </reference>
+</componentType>

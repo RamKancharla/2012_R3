@@ -1,0 +1,12 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     elementFormDefault="qualified" version="0.3">
+    <xsd:include schemaLocation="EAI.XSD.015_CPFGEF_OrderFulfilmentCrossRefServiceCommonStructures.xsd"/>
+    <xsd:element name="splitOrderRequest" type="tns:SplitOrderRequest"/>
+    <xsd:complexType name="SplitOrderRequest">
+        <xsd:sequence>
+            <xsd:element name="eaiHeader" type="tns:EaiHeader"/>
+            <xsd:element name="crmOrder" type="tns:CanonicalOrder"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

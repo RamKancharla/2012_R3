@@ -1,0 +1,31 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TTMG_UpdateTicketService" revision="1.0" state="on">
+    <import importType="wsdl" location="EAI.SRV.EXT.MST.057_PropagateMigrationStatusService.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigration"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TTMG_UpdateTicket/TTMG_UpdateTicket.wsdl" importType="wsdl"/>
+    <service name="TTMG.UpdateTicketServiceInRS_ep" ui:wsdlLocation="EAI.SRV.EXT.MST.057_PropagateMigrationStatusService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigration#wsdl.interface(propagateMigrationStatus)"/>
+        <binding.ws location="EAI.SRV.EXT.MST.057_PropagateMigrationStatusService.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigration#wsdl.endpoint(propagateStatusService/propagateStatus)">
+            <property name="oracle.soa.ws.outbound.omitWSA" type="xs:boolean" many="false" override="may">true</property>
+            <property name="oracle.soa.addressing.response.enabled" type="xs:boolean" many="false" override="may">false</property>
+        </binding.ws>
+    </service>
+    <component name="TTMG.UpdateTicketServiceInRS">
+        <implementation.mediator src="TTMG.UpdateTicketServiceInRS.mplan"/>
+    </component>
+    <reference name="TTMG.UpdateTicket" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TTMG_UpdateTicket/TTMG_UpdateTicket.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket#wsdl.interface(TTMG_UpdateTicket)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket#wsdl.endpoint(TTMG_UpdateTicket/TTMG_UpdateTicket)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TTMG_UpdateTicket/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>TTMG.UpdateTicketServiceInRS_ep</source.uri>
+        <target.uri>TTMG.UpdateTicketServiceInRS/TTMG.UpdateTicketServiceInRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TTMG.UpdateTicketServiceInRS/TTMG.UpdateTicket</source.uri>
+        <target.uri>TTMG.UpdateTicket</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

@@ -1,0 +1,155 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Dec 21 18:18:59 GMT+05:30 2010
+  Author:  Lavanya Chagantipati.
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="SAPOM_UserCreationProcess" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="SAPOM_UserCreation" partnerLinkType="client:SAPOM_UserCreation" myRole="SAPOM_UserCreationProvider" partnerRole="SAPOM_UserCreationRequester"/>
+        <partnerLink name="SI_CreateContacts_OB_Async" partnerRole="SI_CreateContacts_OB_Async_Role" partnerLinkType="ns3:SI_CreateContacts_OB_Async_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="rcvRequest" messageType="client:SAPOM_UserCreationRequestMessage"/>
+        <variable name="outputVariable" messageType="client:SAPOM_UserCreationResponseMessage"/>
+        <variable name="distUser" messageType="client:SAPOM_UserCreationRequestMessage"/>
+        <variable name="indexLineItem" type="xsd:int"/>
+        <variable name="extOrderRequestIV" messageType="client:SAPOM_UserCreationRequestMessage"/>
+        <variable name="singleSubscriberIV" messageType="client:SAPOM_UserCreationRequestMessage"/>
+        <variable name="InvSAPCreateContactIV" messageType="ns3:MT_Create_Contacts"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.3">
+                <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvRequest","payload","/ns1:SAPOrderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                        
+                          
+String setCompositeInstanceTitle=((orderID!= null ? "OrderID: "+orderID : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.3">
+                <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvRequest","payload","/ns1:SAPOrderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                        
+                          
+String setCompositeInstanceTitle=((orderID!= null ? "OrderID: "+orderID : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.3">
+                <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvRequest","payload","/ns1:SAPOrderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                        
+                          
+String setCompositeInstanceTitle=((orderID!= null ? "OrderID: "+orderID : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.3">
+                <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvRequest","payload","/ns1:SAPOrderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                        
+                          
+String setCompositeInstanceTitle=((orderID!= null ? "OrderID: "+orderID : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SAPOM_UserCreation.wsdl) -->
+        <receive name="receiveInput" partnerLink="SAPOM_UserCreation" portType="client:SAPOM_UserCreation" operation="initiate" variable="rcvRequest" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderID  = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvRequest","payload","/ns1:SAPOrderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                      
+                        
+String Title=("OrderID: " +orderID);                            
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <assign name="AsgValues">
+            <copy>
+                <from expression="1"/>
+                <to variable="indexLineItem"/>
+            </copy>
+        </assign>
+        <assign name="TransDistinctUserID">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransDistinctUserID.xsl',bpws:getVariableData('rcvRequest','payload'))"/>
+                <to variable="distUser" part="payload"/>
+            </copy>
+        </assign>
+        <while name="While_1" condition="bpws:getVariableData('indexLineItem')&lt;=count(bpws:getVariableData('distUser','payload','/ns1:SAPOrderRequest/ns1:orderLineItem'))">
+            <sequence name="DistUserSequence">
+                <assign name="AsgUserNumber">
+                    <copy>
+                        <from variable="distUser" part="payload" query="/ns1:SAPOrderRequest/ns1:orderLineItem[bpws:getVariableData('indexLineItem')]/ns1:userNumber"/>
+                        <to variable="rcvRequest" part="payload" query="/ns1:SAPOrderRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                    </copy>
+                </assign>
+                <assign name="TransOrderRequestToExtendOrderRequest">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransOrderRequestToExtendOrderRequest.xsl',bpws:getVariableData('rcvRequest','payload'))"/>
+                        <to variable="extOrderRequestIV" part="payload"/>
+                    </copy>
+                </assign>
+                <assign name="TransExtendedRequestToSingleRequest">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransExtendedRequestToSingleRequest.xsl',bpws:getVariableData('extOrderRequestIV','payload'))"/>
+                        <to variable="singleSubscriberIV" part="payload"/>
+                    </copy>
+                </assign>
+                <assign name="TransToContactsWsdl">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransToContactsWsdl.xsl',bpws:getVariableData('singleSubscriberIV','payload'))"/>
+                        <to variable="InvSAPCreateContactIV" part="MT_Create_Contacts"/>
+                    </copy>
+                </assign>
+                <invoke name="InvSAPCreateContact" partnerLink="SI_CreateContacts_OB_Async" portType="ns3:SI_CreateContacts_OB_Async" operation="OP_CreateContacts_Async" inputVariable="InvSAPCreateContactIV"/>
+                <assign name="incrementIndex">
+                    <copy>
+                        <from expression="bpws:getVariableData('indexLineItem')+1"/>
+                        <to variable="indexLineItem"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <invoke name="callbackClient" partnerLink="SAPOM_UserCreation" portType="client:SAPOM_UserCreationCallback" operation="onResult" inputVariable="outputVariable"/>
+    </sequence>
+</process>

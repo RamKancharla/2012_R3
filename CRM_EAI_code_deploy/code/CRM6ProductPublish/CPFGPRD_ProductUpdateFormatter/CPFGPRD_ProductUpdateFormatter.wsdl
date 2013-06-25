@@ -1,0 +1,37 @@
+<definitions
+     name="CPFGPRD_ProductUpdateFormatter"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ProductManagementServices"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ProductManagementServices"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ProductManagementServices"
+                 schemaLocation="EAI.MSG.EXT.130_ProductReferenceDataUpdate.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ProductManagementServices"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter"
+                 schemaLocation="StandaloneProductReferenceDataUpdate.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFGPRD_ProductUpdateFormatterRequestMessage">
+        <part name="payload" element="ns1:productReferenceDataUpdate"/>
+    </message>
+    <message name="standaloneProductUpdateMessage">
+        <part name="payload" element="client:productDefinitionUpdate"/>
+    </message>
+    <portType name="CPFGPRD_ProductUpdateFormatter">
+        <operation name="initiate">
+            <input message="client:CPFGPRD_ProductUpdateFormatterRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFGPRD_ProductUpdateFormatter">
+        <plnk:role name="CPFGPRD_ProductUpdateFormatterProvider">
+            <plnk:portType name="client:CPFGPRD_ProductUpdateFormatter"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

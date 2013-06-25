@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="EAI.SRV.EXT.TOM.042_PropagateOrderLineStatusService.wsdl" name="TOM.UpdateOrderStatus_RS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/OrderTechFul#wsdl.interface(PropagateOrderStatusSoap)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOMOM_UpdateOrderRequestValidator/TOMOM_UpdateOrderRequestValidator.wsdl" name="TOM.UpdateOrderRequestValidator">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator#wsdl.interface(TOMOM_UpdateOrderRequestValidator)"/>
+    </reference>
+</componentType>

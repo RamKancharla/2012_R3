@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="WSEndpointReplace" default="change.all">
+ 
+<target name="change.all">
+
+	<echo message="Change endpoints in Webservices to point to wls port" />
+
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/TransformToCSFormatAccountContactPublish/AccountContactRequest?WSDL" 
+			value="http://@wls.host@:@wls.port@/TransformToCSFormatAccountContactPublish/AccountContactRequest?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>	   
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/ParseCSAccountContactPublishStatus/ParseAccountContactPublishStatus?WSDL" 
+			value="http://@wls.host@:@wls.port@/ParseCSAccountContactPublishStatus/ParseAccountContactPublishStatus?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>	   
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/TransformMoveUserToCSFormat/TransformMoveUserToCSFormatRequest?WSDL" 
+			value="http://@wls.host@:@wls.port@/TransformMoveUserToCSFormat/TransformMoveUserToCSFormatRequest?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>	   
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/ParseUserOrderStatus/ParseUserOrderResponse?WSDL" 
+			value="http://@wls.host@:@wls.port@/ParseUserOrderStatus/ParseUserOrderResponse?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>	   
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/TransformToCSFormat/OrderRequest?WSDL" 
+			value="http://@wls.host@:@wls.port@/TransformToCSFormat/OrderRequest?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>	   
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/TransformToCSUserRequest/TransformToCSUserRequest?wsdl" 
+			value="http://@wls.host@:@wls.port@/TransformToCSUserRequest/TransformToCSUserRequest?wsdl">
+		<include name="**/*.wsdl"/>
+	</replace>	   
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/CPFGEF_OrderFulfilmentCrossRefService/CrossRefServiceSplitOrderSOAPPort?wsdl" 
+			value="http://@wls.host@:@wls.port@/CPFGEF_OrderFulfilmentCrossRefService/CrossRefServiceSplitOrderSOAPPort?wsdl">
+		<include name="**/*.wsdl"/>
+	</replace>	   
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/ParseOrderStatus/parseOrderStatus?WSDL" 
+			value="http://@wls.host@:@wls.port@/ParseOrderStatus/parseOrderStatus?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>	   
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/TransformUserToCSFormat/UserRequest?WSDL" 
+			value="http://@wls.host@:@wls.port@/TransformUserToCSFormat/UserRequest?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/ParseUserStatus/parseUserStatus?WSDL" 
+			value="http://@wls.host@:@wls.port@/ParseUserStatus/parseUserStatus?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/TransformPriceUpdateToCSFormat/PriceUpdateRequest?WSDL" 
+			value="http://@wls.host@:@wls.port@/TransformPriceUpdateToCSFormat/PriceUpdateRequest?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/ParseCSPriceUpdateStatus/parsePriceUpdateStatus?WSDL" 
+			value="http://@wls.host@:@wls.port@/ParseCSPriceUpdateStatus/parsePriceUpdateStatus?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>
+	<replace dir="${basedir}" token="http://@soa.host@:@soa.port@/GlobalPriceUpdateLogFTP/FTPLogRequest?WSDL" 
+			value="http://@wls.host@:@wls.port@/GlobalPriceUpdateLogFTP/FTPLogRequest?WSDL">
+		<include name="**/*.wsdl"/>
+	</replace>
+
+
+</target>
+</project>     

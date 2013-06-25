@@ -1,0 +1,33 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TTMG_UpdateTicket" revision="1.0" state="on">
+    <import location="TTMG_UpdateTicket.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatus.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="TTMG_UpdateTicket.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket#wsdl.interface(TTMG_UpdateTicket)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket#wsdl.endpoint(TTMG_UpdateTicket/TTMG_UpdateTicket)"/>
+    </service>
+    <component name="TTMG_UpdateTicket">
+        <implementation.bpel src="TTMG_UpdateTicket.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMG_PropagateTicketStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.endpoint(CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMG_PropagateTicketStatus/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.endpoint(CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>TTMG_UpdateTicket/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TTMG_UpdateTicket/CCRMG_PropagateTicketStatus</source.uri>
+        <target.uri>CCRMG_PropagateTicketStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

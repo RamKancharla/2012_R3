@@ -1,0 +1,24 @@
+<adapter-config name="Update_Interface_Buffer" adapter="Database Adapter" wsdlLocation="Update_Interface_Buffer.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/OM" UIConnectionName="Inkbau_BLR_DB" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@10.136.164.152:1521:EAIDEV"/>
+      <property name="UserName" value="Eaiowner"/>
+      <property name="Password" value="D17D09B7D556B6F53AC0A5374043425B"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="Update_Interface_Buffer_ptt" operation="update">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="UpdateInterfaceBuffer.InterfaceBuffer"/>
+      <property name="DmlType" value="update"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="Update_Interface_Buffer-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

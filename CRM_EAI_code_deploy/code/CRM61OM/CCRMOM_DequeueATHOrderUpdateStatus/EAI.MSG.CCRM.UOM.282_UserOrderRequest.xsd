@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.CCRM.UOM.282_UserOrderRequest.xsd
+	* Type:        XSD Schema
+	* Description: The schema used in EAI components to transform from Athena to Siebel format.
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         24/11/09  Sreeja		    Initial version
+	* 0.2	      30/11/09	Sreeja		    Added the QuoteId
+	* 0.3	      30/11/09	Sreeja		    Added the ExtraField1,ExtraField2,ExtraField3 & ErrorMessage
+	* 0.4         12/02/10  Sreeja		    Added AnonymousFlag and Phone for PBI-433
+	* 0.5         18/02/10  Sreeja		    Added anonymousFlagReason for PBI-433
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement"
+	xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+	xmlns:gcap-cuot="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes"
+	xmlns:gcap-nuot="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement"
+	elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.5">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.019_CommonUserOrderTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.020_NillableUserOrderTypes.xsd" />
+	<xsd:element name="userOrderRequest" type="xsdLocal:userOrderRequest"/>
+	<xsd:complexType name="userOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:CCRMOrderHeader"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CCRMOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="transactionId" type="gcap-cuot:TransactionId" />
+			<xsd:element name="subscriberNumber" type="gcap-cuot:Subscriber"/>
+			<xsd:element name="subAccount" type="gcap-nuot:SubAccount"/>
+			<xsd:element name="actionCode" type="gcap-nuot:ActionCode"/>
+			<xsd:element name="QuoteId" type="gcap-nuot:QuoteId"/>
+			<xsd:element name="errorMessage" type="gcap-nuot:ErrorMessage"/> 
+			<xsd:element name="extraField1" type="gcap-nuot:ExtraField1"/> 
+			<xsd:element name="extraField2" type="gcap-nuot:ExtraField1"/> 
+			<xsd:element name="extraField3" type="gcap-nuot:ExtraField1"/> 
+			<xsd:element name="MoveSubscriber" type="xsdLocal:MoveToSubscriber" />
+			<xsd:element name="userOrderLineItem" type="xsdLocal:CCRMOLI" minOccurs="1" maxOccurs="unbounded"/>
+	        </xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="MoveToSubscriber">
+		<xsd:sequence>
+			<xsd:element name="subscriberId" type="gcap-nuot:Subscriber" />
+			<xsd:element name="subAccountId" type="gcap-nuot:SubAccount" />
+			<xsd:element name="ErrorMessage" type="gcap-nuot:ErrorMessage"/> 
+			<xsd:element name="extraField1" type="gcap-nuot:ExtraField1"/> 
+			<xsd:element name="extraField2" type="gcap-nuot:ExtraField1"/> 
+			<xsd:element name="extraField3" type="gcap-nuot:ExtraField1"/> 
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CCRMOLI">
+		<xsd:sequence>
+			<xsd:element name="UOLIId" type="gcap-nuot:UOLIId"/>
+			<xsd:element name="transactionId" type="gcap-cuot:TransactionId" />
+			<xsd:element name="TSAID" type="gcap-nuot:TSAID"/>
+			<xsd:element name="itemNumber" type="gcap-nuot:ItemNumber"/>
+			<xsd:element name="PLI" type="gcap-nuot:PLI"/>
+			<xsd:element name="Operation" type="gcap-nuot:InstallRemoveInd"/>
+			<xsd:element name="firstName" type="gcap-nuot:FirstName"/>
+			<xsd:element name="lastName" type="gcap-nuot:LastName"/>
+			<xsd:element name="hardStopFlag" type="gcap-nuot:HardStopFlag"/>
+			<xsd:element name="emailId" type="gcap-nuot:EmailId"/>
+			<xsd:element name="effectiveDate" type="gcap-nuot:EffectiveDate"/>
+			<xsd:element name="athenaSubId" type="gcap-nuot:AthenaSubId"/>
+			<xsd:element name="errorMessage" type="gcap-nuot:ErrorMessage"/> 
+			<xsd:element name="extraField1" type="gcap-nuot:ExtraField1"/> 
+			<xsd:element name="extraField2" type="gcap-nuot:ExtraField1"/> 
+			<xsd:element name="extraField3" type="gcap-nuot:ExtraField1"/>
+			<xsd:element name="anonymous" type="gcap-nuot:AnonymousFlag"/>
+			<xsd:element name="anonymousFlagReason" type="gcap-nuot:AnonymousFlagReason"/>
+			<xsd:element name="phone" type="gcap-nuot:Phone"/>
+		 </xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

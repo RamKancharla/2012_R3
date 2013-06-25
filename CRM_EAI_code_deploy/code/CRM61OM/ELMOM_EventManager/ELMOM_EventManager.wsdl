@@ -1,0 +1,46 @@
+<definitions
+     name="ELMOM_EventManager"
+     targetNamespace="http://xmlns.oracle.com/ELMOM_EventManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://xmlns.oracle.com/ELMOM_EventManager"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/ELMOM_EventManager">
+            <import namespace="http://xmlns.oracle.com/ELMOM_EventManager" schemaLocation="ELMOM_EventManager.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/ELMOM_EventManager">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.ELM.101_UpdateOrderRequest.xsd"/>
+        </schema>
+    </types>
+    <message name="ELMOM_EventManagerResponseMessage">
+        <part name="payload" element="client:ELMOM_EventManagerProcessResponse"/>
+    </message>
+    <message name="ELMOM_EventManagerRequestMessage">
+        <part name="payload" element="ns1:elmOrderRequest"/>
+    </message>
+    <message name="ELMOMMessageType">
+        <part name="ELMOMMessageType" type="ns1:ELMOrderRequest"/>
+    </message>
+    <portType name="ELMOM_EventManagerCallback">
+        <operation name="onResult">
+            <input message="client:ELMOM_EventManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="ELMOM_EventManager">
+        <operation name="initiate">
+            <input message="client:ELMOM_EventManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ELMOM_EventManager">
+        <plnk:role name="ELMOM_EventManagerProvider">
+            <plnk:portType name="client:ELMOM_EventManager"/>
+        </plnk:role>
+        <plnk:role name="ELMOM_EventManagerRequester">
+            <plnk:portType name="client:ELMOM_EventManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

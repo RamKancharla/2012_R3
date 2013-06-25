@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.OM.125_OrderRequest.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:	Canonical Order Schema document
+*
+*
+* Change History
+* Version		Date				Author									Description Of Change
+* =======	========	==================		===============================
+*  0.01		02/03/2010	Rob Billington				Namespace changed to be local to the process
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.1">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<!-- Request -->
+        <xsd:element name="orderRequest" type="xsdLocal:OrderRequest"/>
+	<xsd:complexType name="OrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="logicalCountry" type="xsd:string"/>
+			<xsd:element name="messageHeader" type="xsdLocal:CanonicalMessageHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:CanonicalOrderHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:CanonicalOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+                        <xsd:element name="parentOrderItemId" type="xsd:string"/>
+			<xsd:element name="rootItemId" type="xsd:string"/>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="businessCase" type="xsd:string"/>
+			<xsd:element name="salesCode" type="xsd:string"/>
+			<xsd:element name="subscriber" type="xsd:string"/>
+			<xsd:element name="subAccount" type="xsd:string"/>
+			<xsd:element name="PLI" type="xsd:string"/>
+			<xsd:element name="permissioningSystem" type="xsd:string"/>
+			<xsd:element name="manualPermissioningRequired" type="xsd:string"/>
+			<xsd:element name="AKR" type="xsd:string"/>
+			<xsd:element name="userID" type="xsd:string"/>
+                        <xsd:element name="userIDtype" type="xsd:string"/>
+			<xsd:element name="userNumber" type="xsd:string"/>
+			<xsd:element name="firstName" type="xsd:string"/>
+			<xsd:element name="lastname" type="xsd:string"/>
+			<xsd:element name="dob" type="xsd:string"/>
+			<xsd:element name="isNewUser" type="xsd:string"/>
+			<xsd:element name="installDate" type="xsd:string"/>
+			<xsd:element name="removalDate" type="xsd:string"/>
+			<xsd:element name="QUID" type="xsd:string"/>
+			<xsd:element name="discount" type="xsd:string"/>
+			<xsd:element name="specialPrice" type="xsd:string"/>
+			<xsd:element name="specialPriceCurr" type="xsd:string"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsd:string"/>
+			<xsd:element name="itemNumber" type="xsd:string"/>
+			<xsd:element name="startStopBillingDate" type="xsd:string"/>
+			<xsd:element name="billingType" type="xsd:string"/>
+			<xsd:element name="billingNote" type="xsd:string"/>
+			<xsd:element name="freeTrailFlag" type="xsd:string"/>
+			<xsd:element name="STB" type="xsd:string"/>
+			<xsd:element name="assetIntegrationId" type="xsd:string"/>
+			<xsd:element name="orderLineStatus" type="xsd:string"/>
+			<xsd:element name="permissioningStatus" type="xsd:string"/>
+			<xsd:element name="interfaceForBilling" type="xsd:string"/>
+			<xsd:element name="interfaceForFulfilment" type="xsd:string"/>
+                        <xsd:element name="productIntegrationId" type="xsd:string"/>
+                        <xsd:element name="freeTrialEndDate" type="xsd:string"/>
+			<!-- modified for PBI-333 -->
+			<xsd:element name="WorkPhone" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ResponseCode" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMePlatformId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMSupportLanguage" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMSegGrpEndUserActivity" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMRegionalFocus" type="xsd:string" minOccurs="0"  maxOccurs="1"/>
+			<xsd:element name="RCRMMarketingConsentSetDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMManualPermissionedFlag" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLocalLastName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLocalFirstName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLocalDACSId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLegalConsentSetDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLegalConsent" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLastUpdatedProfileDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMFTLFlagSetDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMFTLCompleteFlag" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMErrorContext" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMErrorCode" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMDirectMarketing" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMCPfGTempURL" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMBillingAccount" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMActionCode" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMAAAUpdatedProfileDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="PrimaryAccountId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ParentOrderItemId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ModId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="MM" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="EmailAddress" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<!-- end -->
+
+                        <xsd:element name="configuredAttribute" type="xsdLocal:_CCRMOMConfiguredAttribute" maxOccurs="unbounded" minOccurs="0"/>
+                        <xsd:element name="contactMarketFocus" type="xsd:string"/>
+                        <xsd:element name="contactReutersMessagingId" type="xsd:string"/>
+                        <xsd:element name="billingPlatform" type="xsd:string"/>
+                        <xsd:element name="umbrellaProductIntegrationId" type="xsd:string"/>
+                        
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderNumber" type="xsd:string"/>
+                     <xsd:element name="AAATransactionId" type="xsd:string"/>
+			<xsd:element name="installDate" type="xsd:string"/>
+			<xsd:element name="removalDate" type="xsd:string"/>
+			<xsd:element name="po" type="xsd:string"/>
+			<xsd:element name="orderNote" type="xsd:string"/>
+			<xsd:element name="orderStatus" type="xsd:string"/>
+			<xsd:element name="ssPersonId" type="xsd:string"/>
+			<xsd:element name="slPersonId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+         <xsd:complexType name="_CCRMOMConfiguredAttribute">
+                <xsd:sequence>
+                    <xsd:element name="attributeIntegrationId" type="xsd:string"/>
+                    <xsd:element name="attributeName" type="xsd:string"/>
+                    <xsd:element name="valueIntegrationId" type="xsd:string"/>
+                    <xsd:element name="value" type="xsd:string"/>
+                </xsd:sequence>
+        </xsd:complexType>
+        
+        <!-- Response Message -->
+        <xsd:element name="orderStatusUpdate" type="xsdLocal:OrderStatusUpdate"/>
+	<xsd:complexType name="OrderStatusUpdate">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:StatusUpdateOrderHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:StatusUpdateOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="StatusUpdateOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+                        <xsd:element name="permissioningStatus" type="xsd:string"/>
+			<xsd:element name="permissioningStatusReasonCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="StatusUpdateOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderNumber" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

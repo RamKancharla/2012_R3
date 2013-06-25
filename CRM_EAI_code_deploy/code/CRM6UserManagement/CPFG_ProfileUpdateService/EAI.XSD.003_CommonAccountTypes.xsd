@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by robin goode (Reuters Software (Thailand) Limited) -->
+<!--********************************************************************************
+	* Module:      EAI.XSD.003_CommonAccountTypes.xsd
+	* Type:       	XSD Schema
+	* Description: The schema used for Common Account Message attributes
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         02/03/07   R. Sivarajan (Detica) Initial version                
+	* 0.02        06/03/07   Rob Billington		   Version scheme changed             
+	* 0.03        03/04/07   Geratayya P		   Updated as based on Contact EAI IO Object Def 20070328 v07.xls
+	* 0.04	      26/07/07   Mark Flynn            Updated with new account definitions
+	* 0.05	      15/10/07	 Mark Flynn		       Updated with Region / Sub Region
+	* 0.06	      15/11/07   Mark Flynn		       Updated with MCC Code & Organization Type
+	* 0.07		  20/11/07   Andrew Humphreys	   Minor fixes. Moved <xsd:complexType to correct place, added ns to MccCode (gcap:MccCode)
+	* 0.08        02/05/08   Andrew Humphreys      Remove region.subregion, mcccode fileds from account type 
+	* 1.0         16/05/08   Andrew Humphreys      Changed namespaces to be AAA owned
+	* 1.01		  06/07/08	 Carlo Marcoli		   Removed organizationType from Account Type
+	* 1.1         14/08/08	 Carlo Marcoli	       Validation constraints have been reviewed
+        * 1.2         24/11/08  Vlad Jornitski      Set minoccurs maxoccurs, removed nillable
+        * 1.3         18/12/08   Ravi Sankaran		Account.accountType is mandatory - set minoccurs to 1
+	**********************************************************************************-->
+<xsd:schema xmlns:gcap="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonAccountTypes" xmlns:gcap-sa="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonAccountTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.07">
+  <xsd:complexType name="Account">
+    <xsd:sequence>
+      <xsd:element name="accountID" type="gcap:AccountID"/>
+      <xsd:element name="parentAccountID" type="gcap:AccountID" minOccurs="0"/>
+      <xsd:element name="accountName" type="gcap:AccountName" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="site" type="gcap:Site" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="address" type="gcap:Address" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="city" type="gcap:City" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="country" type="gcap:Country" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="accountType" type="gcap:AccountType" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="accountDomain" type="gcap:accountDomain" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="SubscriberAccount">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <gcap-sa:EquivalentDataItem/>
+        <gcap-sa:Example>
+          <content/>
+          <comment/>
+        </gcap-sa:Example>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:length value="7"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="AccountID">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <gcap-sa:EquivalentDataItem>
+          CDM.v2.ACCOUNT.ROW_ID
+        </gcap-sa:EquivalentDataItem>
+        <gcap-sa:Example>
+          <content>1-FFR2-10</content>
+          <comment>Siebel ROW ID for the account</comment>
+        </gcap-sa:Example>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="AccountName">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <gcap-sa:EquivalentDataItem>
+          CDM.v2.ACCOUNT.NAME
+        </gcap-sa:EquivalentDataItem>
+        <gcap-sa:Example>
+          <content>HSBC LONDON</content>
+          <comment>
+            Name of the account - free text subject to
+            chnage
+          </comment>
+        </gcap-sa:Example>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="Site">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <gcap-sa:EquivalentDataItem>
+          CDM.v2.ACCOUNT.SITE
+        </gcap-sa:EquivalentDataItem>
+        <gcap-sa:Example>
+          <content>2-FFR2-10 LONDON</content>
+          <comment>
+            Siebel ROWID for the account appended with city
+          </comment>
+        </gcap-sa:Example>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="Address">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <gcap-sa:EquivalentDataItem>
+          CDM.v2.ACCOUNT.ACCOUNT ADDRESS.STREET ADDRESS
+        </gcap-sa:EquivalentDataItem>
+        <gcap-sa:Example>
+          <content>29-42 Canary Wharf</content>
+          <comment>Free Text address field</comment>
+        </gcap-sa:Example>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="City">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <gcap-sa:EquivalentDataItem>
+          CDM.v2.ACCOUNT.ACCOUNT ADDRESS.CITY
+        </gcap-sa:EquivalentDataItem>
+        <gcap-sa:Example>
+          <content>London</content>
+          <comment/>
+        </gcap-sa:Example>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="Country">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <gcap-sa:EquivalentDataItem>
+          CDM.v2.ACCOUNT.ACCOUNT ADDRESS.COUNTRY
+        </gcap-sa:EquivalentDataItem>
+        <gcap-sa:Example>
+          <content>UK</content>
+          <comment/>
+        </gcap-sa:Example>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="OrganisationType">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <gcap-sa:EquivalentDataItem>
+          CDM.v2.ACCOUNT.ORGANISATION TYPE
+        </gcap-sa:EquivalentDataItem>
+        <gcap-sa:Example>
+          <content>Buy Side</content>
+          <comment/>
+        </gcap-sa:Example>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="AccountType">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <gcap-sa:EquivalentDataItem>
+          CDM.v2.ACCOUNT.CLASS
+        </gcap-sa:EquivalentDataItem>
+        <gcap-sa:Example>
+          <content/>
+          <comment/>
+        </gcap-sa:Example>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="accountDomain">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="2"/>
+      <xsd:enumeration value="SL"/>
+      <xsd:enumeration value="PA"/>
+      <xsd:enumeration value="X1"/>
+      <xsd:enumeration value="X2"/>
+      <xsd:enumeration value="X3"/>
+      <xsd:enumeration value="X4"/>
+      <xsd:enumeration value="X5"/>
+      <xsd:enumeration value="T1"/>
+      <xsd:enumeration value="T2"/>
+      <xsd:enumeration value="T3"/>
+      <xsd:enumeration value="R1"/>
+      <xsd:enumeration value="R2"/>
+      <xsd:enumeration value="R3"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

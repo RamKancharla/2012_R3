@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.XSD.005_CommonMessageTypes.xsd
+	* Type:       	XSD Schema
+	* Description: The schema used for Common Message attributes
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	*  0.1        21/02/07  Siva (Detica)	   Initial Version
+	*  0.02       06/03/07  Rob Billington	   Trimmed down
+	*  0.03	      07/03/07  Kevin Wood	       Added Eai Header tracking fields	
+	*  0.04       22/03/07  Kevin Wood   	   Included timetolive value in EAI Header
+	*  0.05       23/03/07  Geratayya P	       Changed the elements in the camel case
+	*  0.06       26/03/07  Rob Billington     Added action code taken from common user types.  Added EntityStatusCode. Increased Message length to 4000. Added comments and examples for response Code. Set length of EntityStatusCode to 12.
+	*  0.07	      10/04/07  Kevin Wood         Updated EAI header to reflect optional fields
+	*  0.08	      19/04/07  Geratayya P	       Added UpdateType
+	*  0.09	      23/05/07  Geratayya P	       Updated the BasicResponse type
+	*  0.1	      04/06/07  Geratayya P	       Added Nillable Action Code and restriction
+	*  0.11	      23/07/07  Geratayya P	       Updated the response code comments. 0 - for success, non-zero for failure
+	*  1.0        16/05/08  Andrew Humphreys   Changed namespaces to be AAA owned
+	**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:gcap-sa="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations"
+	xmlns:ns1="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+	targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.1">
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations"
+		schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd" />
+	<xsd:complexType name="BasicResponse">
+		<xsd:sequence>
+			<xsd:element name="response" type="ns1:Response" />
+			<xsd:element name="responseCode" type="ns1:ResponseCode" />
+			<xsd:element name="responseMessage" type="ns1:Message" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="ActionCode">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableActionCode">
+		<xsd:restriction base="xsd:string" />
+	</xsd:simpleType>
+	<xsd:simpleType name="UpdateType">
+		<xsd:restriction base="xsd:string" />
+	</xsd:simpleType>
+	<xsd:simpleType name="EntityStatusCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem />
+				<gcap-sa:Example>
+					<content>EAI.USER.010</content>
+					<comment>User enabled for CPfG</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>EAI.USER.011</content>
+					<comment>User disabled for CPfG</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>EAI.USER.012</content>
+					<comment>
+						CPfG enablement status is unknown for user
+					</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>EAI.ACCT.010</content>
+					<comment>Account synchronised with CPfG</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="12" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ResponseCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem />
+				<gcap-sa:Example>
+					<content>00203-EAI-INVALID ACTION CODE</content>
+					<comment>In valid action code</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>00202-EAI-INVALID MESSAGE CONTENT</content>
+					<comment>
+						Invalid message content provided by service
+						client
+					</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>00401-EAI-TIMEOUT ERROR</content>
+					<comment>
+						Timeout error returned if the service cannot
+						respond within a specified time.
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="250" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ErrorCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem />
+				<gcap-sa:Example>
+					<content>EAI.SRV.CCRM.009.010</content>
+					<comment>
+						Error code 010 specific to the EAI.SRV.CCRM.009
+						interface
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Message">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem />
+				<gcap-sa:Example>
+					<content />
+					<comment />
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="eaiHeader" type="ns1:EaiHeader" />
+	<xsd:complexType name="EaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="ns1:string10" />
+			<xsd:element name="transactionId" type="ns1:string30" />
+			<xsd:element name="messageId" type="ns1:string30" />
+			<xsd:element name="messageHistory" type="ns1:string100" />
+			<xsd:element name="tracingId" type="ns1:string50"
+				nillable="true" />
+			<xsd:element name="timeStamp" type="xsd:dateTime" />
+			<xsd:element name="instanceId" type="ns1:string40"
+				nillable="true" />
+			<xsd:element name="timeToLive" type="xsd:int"
+				nillable="true" minOccurs="0" />
+			<xsd:element name="payloadVersion" type="ns1:string3" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="Response">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem />
+				<gcap-sa:Example>
+					<content>non-zero</content>
+					<comment>Failure</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>0</content>
+					<comment>Success</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="0" />
+			<xsd:enumeration value="1" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string15">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

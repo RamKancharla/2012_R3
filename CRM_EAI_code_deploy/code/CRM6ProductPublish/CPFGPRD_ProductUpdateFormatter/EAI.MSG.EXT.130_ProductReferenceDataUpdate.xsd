@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.EXT.130_ProductReferenceDataUpdate.xsd
+	* Type:        XSD Schema
+	* Description: The schema used to send updates to the product catalogue to Downstream Systems
+	*
+	* Change History
+	* Version     	Date      Author              			Description Of Change
+	*
+	*  0.1        	06/06/07  Rob Billington   			Initial Version
+	*  0.2        	20/07/07  Rob Billington   	   		Structural Changes
+	*  0.3        	06/08/07  Rob Billington   	   		Added references to external schemas
+	*  0.4        	10/09/07  Rob Billington   	   		Removed Product User Type, Product Download URL
+	*                                                           Renamed Attribute default value to free text value.
+	*                                                           Added configuration description.
+	*  0.5        	08/10/07  Rob Billington   	   		Significant Re-structuring to reflect one product per message and 
+	*                                                           attributes are no longer managed independently of products.
+	*                                                           Removed free text value from configuration. Removed range values.
+	*                                                           Changed Product Name, Description, Status, Attribute Name and Product Type to reference common types.
+	*                                                           Changed ConfigurationDescription to reference common types.
+	*  0.6        	11/11/07  Rob Billington   	   		Removed Effective Start and End Dates and Orderable attributes
+      *                                                           Moved FreeTrialAllowed back up to product level
+	*  0.7        	17/12/07  Rob Billington   	   		Added permissioning system.
+	*  0.8        	19/12/07  Rob Billington   	   		Added NillableProductTypes import and made permissioningSystem optional.
+	*  0.9        	06/11/08  Rob Billington   	   		Corrected multiplicity for  add-on list and attribute list
+	*  0.10        	04/12/08  Rob Billington   	   		Added isCommerciallyAffecting
+	**********************************************************************************-->
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ProductManagementServices" version="0.8" xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ProductManagementServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-mt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:gcap-pt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonProductTypes" xmlns:gcap-NPT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableProductTypes">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonProductTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.007_CommonProductTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableProductTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.010_NillableProductTypes.xsd" />
+	<xsd:element name="productReferenceDataUpdate">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="eaiHeader" type="gcap-mt:EaiHeader" />
+				<xsd:element name="productDefinitionUpdate" type="local:ProductDefinitionUpdate"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="ProductConfigurationList">
+		<xsd:sequence>
+			<xsd:element name="productConfiguration" type="local:ProductConfiguration" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ProductDefinitionUpdate">
+		<xsd:sequence>
+			<xsd:element name="productID" type="gcap-pt:ProductID" />
+			<xsd:element name="actionCode" type="local:ActionCode" />
+			<xsd:element name="productName" type="gcap-pt:ProductName" />
+			<xsd:element name="productDescription" type="gcap-pt:ProductDescription" />
+			<xsd:element name="definitionVersion" type="xsd:string" />
+			<xsd:element name="productStatus" type="gcap-pt:ProductStatus" />
+			<xsd:element name="freeTrialAllowed" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<gcap-sa:EquivalentDataItem>
+							[SIEBEL LDM].[PRODUCT].[ELIGIBLE FOR FREE TRIAL]
+						</gcap-sa:EquivalentDataItem>
+						<gcap-sa:Example>
+							<content>true</content>
+							<comment></comment>
+						</gcap-sa:Example>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="productType" type="gcap-pt:ProductType" />
+ 			<xsd:element name="productConfigurationList" type="local:ProductConfigurationList" />
+			<xsd:element name="addOns" type="local:AddOnList" />
+			<xsd:element name="attributeDefinitionList" type="local:AttributeDefinitionList" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ProductConfiguration">
+		<xsd:sequence>
+			<xsd:element name="configurationID"
+				type="xsd:positiveInteger" />
+            <xsd:element name="description" type="gcap-pt:ConfigurationDescription"></xsd:element>
+            <xsd:element name="globalPLI" type="gcap-pt:GlobalPLI" />
+            <xsd:element name="permissioningSystem" type="gcap-NPT:PermissioningSystem" />
+			<xsd:element name="attributeList">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="attribute"
+							type="local:Attribute" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element> 		
+            </xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AttributeDefinition">
+		<xsd:sequence>
+			<xsd:element name="attributeID" type="gcap-pt:AttributeID" />
+			<xsd:element name="attributeName" type="gcap-pt:AttributeName" />
+			<xsd:element name="freeTextAllowed" type="xsd:boolean" />
+			<xsd:element name="isCommerciallyAffecting" type="xsd:boolean" />
+			<xsd:element name="allowedValueList">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="allowedAttributeValue" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:attribute name="valueID" type="gcap-pt:ValueID" />
+								<xsd:attribute name="valueName" type="gcap-pt:ValueName" />
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Attribute">
+		<xsd:attribute name="attributeID" type="gcap-pt:AttributeID" />
+		<xsd:attribute name="valueID" type="gcap-pt:ValueID" />
+	</xsd:complexType>
+	<xsd:complexType name="AddOnList">
+		<xsd:sequence>
+			<xsd:element name="addOn" type="local:AddOn" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AttributeDefinitionList">
+		<xsd:sequence>
+			<xsd:element name="attributeDefinition" type="local:AttributeDefinition"  minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AddOn">
+		<xsd:attribute name="productID" type="gcap-pt:ProductID" />
+	</xsd:complexType>
+	<xsd:complexType name="ActionCode">
+		<xsd:attribute name="code">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="EAI.SRV.EXT.0017.ACT001" />
+					<xsd:enumeration value="EAI.SRV.EXT.0017.ACT002" />
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+</xsd:schema>

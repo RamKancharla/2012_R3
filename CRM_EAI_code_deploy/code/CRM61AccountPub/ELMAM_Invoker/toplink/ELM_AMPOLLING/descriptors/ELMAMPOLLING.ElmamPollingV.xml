@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="Cp1252"?>
+<descriptor type="relational">
+   <name>ELMAMPOLLING.ElmamPollingV</name>
+   <class-handle>
+      <type-name>ELMAMPOLLING.ElmamPollingV</type-name>
+   </class-handle>
+   <transactional-policy type="relational">
+      <descriptor-alias>ElmamPollingV</descriptor-alias>
+      <refresh-cache-policy>
+         <always-refresh-cache>true</always-refresh-cache>
+      </refresh-cache-policy>
+      <caching-policy>
+         <cache-size>100</cache-size>
+         <cache-type>Weak</cache-type>
+         <existence-checking>Check database</existence-checking>
+      </caching-policy>
+      <query-manager type="relational">
+         <query-list>
+            <query type="relational-read-all">
+               <name>ELM_AMPOLLING</name>
+               <query-timeout>0</query-timeout>
+               <lock-mode>Acquire Locks NO WAIT</lock-mode>
+               <refresh-identity-map-result>true</refresh-identity-map-result>
+               <refresh-remote-identity-map-result>true</refresh-remote-identity-map-result>
+               <cache-usage>Check Cache by Primary Key</cache-usage>
+               <relational-options>
+                  <format type="expression">
+                     <main-compound-expression type="compound">
+                        <operator-type>AND</operator-type>
+                     </main-compound-expression>
+                  </format>
+                  <bind-all-parameters>true</bind-all-parameters>
+               </relational-options>
+            </query>
+            <query type="relational-read-all">
+               <name>findAllElmamPollingV</name>
+               <query-timeout>0</query-timeout>
+               <lock-mode>Do Not Acquire Locks</lock-mode>
+               <cache-usage>Check Cache by Primary Key</cache-usage>
+               <relational-options>
+                  <format type="expression">
+                     <main-compound-expression type="compound">
+                        <operator-type>AND</operator-type>
+                     </main-compound-expression>
+                  </format>
+                  <bind-all-parameters>true</bind-all-parameters>
+               </relational-options>
+            </query>
+         </query-list>
+         <insert-query type="insert">
+            <relational-options>
+               <format type="sql">
+                  <query-string></query-string>
+               </format>
+            </relational-options>
+         </insert-query>
+         <delete-query type="delete">
+            <relational-options>
+               <format type="sql">
+                  <query-string></query-string>
+               </format>
+            </relational-options>
+         </delete-query>
+         <update-query type="update">
+            <relational-options>
+               <format type="sql">
+                  <query-string></query-string>
+               </format>
+            </relational-options>
+         </update-query>
+         <read-object-query type="read-object">
+            <relational-options>
+               <format type="sql">
+                  <query-string></query-string>
+               </format>
+            </relational-options>
+         </read-object-query>
+         <read-all-query type="read-all">
+            <relational-options>
+               <format type="sql">
+                  <query-string></query-string>
+               </format>
+            </relational-options>
+         </read-all-query>
+      </query-manager>
+      <locking-policy type="relational"/>
+      <primary-key-policy>
+         <primary-key-handles>
+            <column-handle>
+               <column-table-name>EAIOWNER.ELMAM_POLLING_V</column-table-name>
+               <column-name>ID</column-name>
+            </column-handle>
+         </primary-key-handles>
+      </primary-key-policy>
+   </transactional-policy>
+   <mappings>
+      <mapping type="direct-to-field">
+         <name>created</name>
+         <attribute-handle>
+            <attribute-declaring-type-name>ELMAMPOLLING.ElmamPollingV</attribute-declaring-type-name>
+            <attribute-name>created</attribute-name>
+         </attribute-handle>
+         <column-handle>
+            <column-table-name>EAIOWNER.ELMAM_POLLING_V</column-table-name>
+            <column-name>CREATED</column-name>
+         </column-handle>
+      </mapping>
+      <mapping type="direct-to-field">
+         <name>id</name>
+         <attribute-handle>
+            <attribute-declaring-type-name>ELMAMPOLLING.ElmamPollingV</attribute-declaring-type-name>
+            <attribute-name>id</attribute-name>
+         </attribute-handle>
+         <column-handle>
+            <column-table-name>EAIOWNER.ELMAM_POLLING_V</column-table-name>
+            <column-name>ID</column-name>
+         </column-handle>
+      </mapping>
+      <mapping type="direct-to-field">
+         <name>interfaceId</name>
+         <attribute-handle>
+            <attribute-declaring-type-name>ELMAMPOLLING.ElmamPollingV</attribute-declaring-type-name>
+            <attribute-name>interfaceId</attribute-name>
+         </attribute-handle>
+         <column-handle>
+            <column-table-name>EAIOWNER.ELMAM_POLLING_V</column-table-name>
+            <column-name>INTERFACE_ID</column-name>
+         </column-handle>
+      </mapping>
+      <mapping type="direct-to-field">
+         <name>lastUpdated</name>
+         <attribute-handle>
+            <attribute-declaring-type-name>ELMAMPOLLING.ElmamPollingV</attribute-declaring-type-name>
+            <attribute-name>lastUpdated</attribute-name>
+         </attribute-handle>
+         <column-handle>
+            <column-table-name>EAIOWNER.ELMAM_POLLING_V</column-table-name>
+            <column-name>LAST_UPDATED</column-name>
+         </column-handle>
+      </mapping>
+      <mapping type="direct-to-field">
+         <name>payload</name>
+         <attribute-handle>
+            <attribute-declaring-type-name>ELMAMPOLLING.ElmamPollingV</attribute-declaring-type-name>
+            <attribute-name>payload</attribute-name>
+         </attribute-handle>
+         <column-handle>
+            <column-table-name>EAIOWNER.ELMAM_POLLING_V</column-table-name>
+            <column-name>PAYLOAD</column-name>
+         </column-handle>
+      </mapping>
+      <mapping type="direct-to-field">
+         <name>referenceId</name>
+         <attribute-handle>
+            <attribute-declaring-type-name>ELMAMPOLLING.ElmamPollingV</attribute-declaring-type-name>
+            <attribute-name>referenceId</attribute-name>
+         </attribute-handle>
+         <column-handle>
+            <column-table-name>EAIOWNER.ELMAM_POLLING_V</column-table-name>
+            <column-name>REFERENCE_ID</column-name>
+         </column-handle>
+      </mapping>
+      <mapping type="direct-to-field">
+         <name>state</name>
+         <attribute-handle>
+            <attribute-declaring-type-name>ELMAMPOLLING.ElmamPollingV</attribute-declaring-type-name>
+            <attribute-name>state</attribute-name>
+         </attribute-handle>
+         <column-handle>
+            <column-table-name>EAIOWNER.ELMAM_POLLING_V</column-table-name>
+            <column-name>STATE</column-name>
+         </column-handle>
+      </mapping>
+   </mappings>
+   <primary-table-handle>
+      <table-name>EAIOWNER.ELMAM_POLLING_V</table-name>
+   </primary-table-handle>
+</descriptor>

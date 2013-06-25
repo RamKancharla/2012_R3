@@ -1,0 +1,46 @@
+<definitions
+     name="ATHCSOM_UserOrderFulfilment"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment"
+                 schemaLocation="ATHCSOM_UserOrderFulfilment.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.CS.UOM.276_UserOrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHCSOM_UserOrderFulfilmentRequestMessage">
+        <part name="AthOrderRequest" element="ns1:CSUserOrderRequest"/>
+    </message>
+    <message name="ATHCSOM_UserOrderFulfilmentResponseMessage">
+        <part name="payload" element="client:ATHCSOM_UserOrderFulfilmentProcessResponse"/>
+    </message>
+    <portType name="ATHCSOM_UserOrderFulfilment">
+        <operation name="transformAthOrder">
+            <input message="client:ATHCSOM_UserOrderFulfilmentRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="ATHCSOM_UserOrderFulfilmentCallback">
+        <operation name="onResult">
+            <input message="client:ATHCSOM_UserOrderFulfilmentResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHCSOM_UserOrderFulfilment">
+        <plnk:role name="ATHCSOM_UserOrderFulfilmentProvider">
+            <plnk:portType name="client:ATHCSOM_UserOrderFulfilment"/>
+        </plnk:role>
+        <plnk:role name="ATHCSOM_UserOrderFulfilmentRequester">
+            <plnk:portType name="client:ATHCSOM_UserOrderFulfilmentCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

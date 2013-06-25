@@ -1,0 +1,278 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Oct 16 18:35:47 BST 2009
+  Author:  rob.billington
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TOMOM_InvokerDBAdapter" targetNamespace="http://xmlns.oracle.com/TOMOM_InvokerDBAdapter" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/top/TOMOMPOLLINGV" xmlns:client="http://xmlns.oracle.com/TOMOM_InvokerDBAdapter" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/TOMOM_POLLING_V/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink myRole="TOMOMInvokerRequester" name="TOMOMInvoker" partnerRole="TOMOMInvokerProvider" partnerLinkType="ns1:TOMOMInvoker"/>
+        <!--<partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser"
+                     partnerRole="SequenceReleaserProvider"
+                     partnerLinkType="ns9:SequenceReleaser"/>-->
+        <partnerLink myRole="TOMOM_POLLING_V_role" name="TOMOM_POLLING_V" partnerLinkType="ns2:TOMOM_POLLING_V_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="InvTOMOMInvokerIV" messageType="ns1:TOMOMInvokerRequestMessage"/>
+        <variable name="TOMOM_POLLING_V_InputVariable" messageType="ns2:TomomPollingVCollection_msg"/>
+        <variable name="INTERFACE_BUFFER_InputVariable" messageType="ns3:InterfaceBufferCollection_msg"/>
+        <variable name="nReceived" type="xsd:integer"/>
+        <variable name="order" messageType="ns1:TOMOMInvokerRequestMessage"/>
+        <variable name="rawMessage" type="xsd:string"/>
+        <variable name="parsedMessage" messageType="ns1:TOMOMInvokerRequestMessage"/>
+        <variable name="parsedRawMessage" type="xsd:string"/>
+        <variable name="javaException" type="xsd:string"/>
+        <!--<variable name="InvSequenceReleaserIV"
+                  messageType="ns9:SequenceReleaserRequestMessage"/>-->
+        <variable name="ReceiveResponse_onResult_IV" messageType="ns1:TOMOMInvokerResponseMessage"/>
+        <variable name="state" type="xsd:string"/>
+        <variable name="releaseSequence" type="xsd:boolean"/>
+        <variable name="updatedByInstanceId" type="xsd:string"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TOMOM_InvokerDBAdapter.wsdl) -->
+        <receive name="receiveInputMessages" partnerLink="TOMOM_POLLING_V" portType="ns2:TOMOM_POLLING_V_ptt" operation="receive" variable="TOMOM_POLLING_V_InputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitialVariables">
+            <copy>
+                <from expression="ora:countNodes('TOMOM_POLLING_V_InputVariable','TomomPollingVCollection','/ns5:TomomPollingVCollection/ns5:TomomPollingV')"/>
+                <to variable="nReceived"/>
+            </copy>
+        </assign>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('nReceived') = 1">
+                <bpelx:annotation>
+                    <bpelx:pattern>nReceived=1</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_1">
+                    <assign name="AsgOrderToLocalVariables">
+                        <copy>
+                            <from variable="TOMOM_POLLING_V_InputVariable" part="TomomPollingVCollection" query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:payload"/>
+                            <to variable="rawMessage"/>
+                        </copy>
+                    </assign>
+                    <bpelx:exec name="ReplaceUnsafeCharactersInRawMessage" language="java" version="1.3">
+                        <![CDATA[try {                           
+    setVariableData("parsedRawMessage", ((String)getVariableData("rawMessage")).replaceAll("&", "&amp;") );     
+    } catch (Exception e) {                        
+        setVariableData("javaException", e.getMessage() );                 
+    }]]>
+                    </bpelx:exec>
+                    <switch name="Switch_2">
+                        <case condition="bpws:getVariableData('javaException')  != ''">
+                            <bpelx:annotation>
+                                <bpelx:pattern>Exception Thrown</bpelx:pattern>
+                            </bpelx:annotation>
+                            <assign name="AsgState-FAILED-DoNotRelease">
+                                <copy>
+                                    <from expression="'false'"/>
+                                    <to variable="releaseSequence"/>
+                                </copy>
+                                <copy>
+                                    <from expression="'F'"/>
+                                    <to variable="state"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="updatedByInstanceId"/>
+                                </copy>
+                            </assign>
+                        </case>
+                        <otherwise>
+                            <sequence name="Sequence_3">
+                                <assign name="AsgOrder">
+                                    <copy>
+                                        <from expression="ora:parseEscapedXML(bpws:getVariableData('parsedRawMessage'))"/>
+                                        <to variable="order" part="payload" query="/ns6:orderRequest"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="TOMOM_POLLING_V_InputVariable" part="TomomPollingVCollection" query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:id"/>
+                                        <to variable="order" part="payload" query="/ns6:orderRequest/ns6:eaiHeader/ns7:transactionId"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="TOMOM_POLLING_V_InputVariable" part="TomomPollingVCollection" query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:created"/>
+                                        <to variable="order" part="payload" query="/ns6:orderRequest/ns6:eaiHeader/ns7:timeStamp"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="TOMOM_POLLING_V_InputVariable" part="TomomPollingVCollection" query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:interfaceId"/>
+                                        <to variable="order" part="payload" query="/ns6:orderRequest/ns6:eaiHeader/ns7:messageHistory"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="TOMOM_POLLING_V_InputVariable" part="TomomPollingVCollection" query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:referenceId"/>
+                                        <to variable="order" part="payload" query="/ns6:orderRequest/ns6:orderHeader/ns8:orderNumber"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="TOMOM_POLLING_V_InputVariable" part="TomomPollingVCollection" query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:state"/>
+                                        <to variable="order" part="payload" query="/ns6:orderRequest/ns6:eaiHeader/ns7:payloadVersion"/>
+                                    </copy>
+                                </assign>
+                                <bpelx:exec name="SetTitle" language="java" version="1.3">
+                                    <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)                         
+                        getVariableData("order","payload","/ns6:orderRequest/ns6:orderHeader/ns8:orderNumber"));       
+  String orderNumber =   orderNumberNode == null?";" : orderNumberNode.getFirstChild().getNodeValue();                               
+ String title= "ORD: "+orderNumber;         
+ setCompositeInstanceTitle(title);]]>
+                                </bpelx:exec>
+                                <invoke name="InvTOMOMInvoker" partnerLink="TOMOMInvoker" portType="ns1:TOMOMInvoker" operation="fulfillOrder" inputVariable="order"/>
+                                <!--<receive name="ReceiveResponse"
+                                         partnerLink="TOMOMInvoker"
+                                         portType="ns1:TOMOMInvokerCallback"
+                                         operation="onResult"
+                                         variable="ReceiveResponse_onResult_IV"
+                                         createInstance="no"/>
+                                <assign name="AsgStateAndReleaseSeq">
+                                    <copy>
+                                        <from variable="ReceiveResponse_onResult_IV"
+                                              part="payload"
+                                              query="/ns1:TOMOMInvokerProcessResponse/ns1:result"/>
+                                        <to variable="state"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="ReceiveResponse_onResult_IV"
+                                              part="payload"
+                                              query="/ns1:TOMOMInvokerProcessResponse/ns1:releaseSequence"/>
+                                        <to variable="releaseSequence"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="ReceiveResponse_onResult_IV"
+                                              part="payload"
+                                              query="/ns1:TOMOMInvokerProcessResponse/ns1:instanceID"/>
+                                        <to variable="updatedByInstanceId"/>
+                                    </copy>
+                                </assign>-->
+                            </sequence>
+                        </otherwise>
+                    </switch>
+                    <!-- <assign name="Asg_INTERFACE_BUFFER_Update">
+                        <copy>
+                            <from variable="ReceiveResponse_onResult_IV"
+                                  part="payload"
+                                  query="/ns1:TOMOMInvokerProcessResponse/ns1:result"/>
+                            <to variable="INTERFACE_BUFFER_InputVariable"
+                                part="InterfaceBufferCollection"
+                                query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:state"/>
+                        </copy>
+                        <copy>
+                            <from variable="TOMOM_POLLING_V_InputVariable"
+                                  part="TomomPollingVCollection"
+                                  query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:id"/>
+                            <to variable="INTERFACE_BUFFER_InputVariable"
+                                part="InterfaceBufferCollection"
+                                query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:id"/>
+                        </copy>
+                        <copy>
+                            <from variable="TOMOM_POLLING_V_InputVariable"
+                                  part="TomomPollingVCollection"
+                                  query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:created"/>
+                            <to variable="INTERFACE_BUFFER_InputVariable"
+                                part="InterfaceBufferCollection"
+                                query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:created"/>
+                        </copy>
+                        <copy>
+                            <from variable="TOMOM_POLLING_V_InputVariable"
+                                  part="TomomPollingVCollection"
+                                  query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:payload"/>
+                            <to variable="INTERFACE_BUFFER_InputVariable"
+                                part="InterfaceBufferCollection"
+                                query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:payload"/>
+                        </copy>
+                        <copy>
+                            <from variable="TOMOM_POLLING_V_InputVariable"
+                                  part="TomomPollingVCollection"
+                                  query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:interfaceId"/>
+                            <to variable="INTERFACE_BUFFER_InputVariable"
+                                part="InterfaceBufferCollection"
+                                query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:interfaceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="TOMOM_POLLING_V_InputVariable"
+                                  part="TomomPollingVCollection"
+                                  query="/ns5:TomomPollingVCollection/ns5:TomomPollingV/ns5:referenceId"/>
+                            <to variable="INTERFACE_BUFFER_InputVariable"
+                                part="InterfaceBufferCollection"
+                                query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:referenceId"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCompositeInstanceId()"/>
+                            <to variable="INTERFACE_BUFFER_InputVariable"
+                                part="InterfaceBufferCollection"
+                                query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:updatedBy"/>
+                        </copy>
+                    </assign>
+                    <invoke name="updateMessageStatus"
+                            partnerLink="INTERFACE_BUFFER"
+                            portType="ns3:INTERFACE_BUFFER_ptt"
+                            operation="update"
+                            inputVariable="INTERFACE_BUFFER_InputVariable"/>-->
+                    <!--<switch name="SequenceRelease">
+                        <case condition="true=bpws:getVariableData('ReceiveResponse_onResult_IV','payload','/ns1:TOMOMInvokerProcessResponse/ns1:releaseSequence')">
+                            <bpelx:annotation>
+                                <bpelx:pattern>releaseSequence=true</bpelx:pattern>
+                            </bpelx:annotation>
+                            <sequence name="Sequence_2">
+                                <assign name="AsgSequenceReleaserInput">
+                                    <copy>
+                                        <from variable="order" part="payload"
+                                              query="/ns6:orderRequest/ns6:eaiHeader/ns7:tracingId"/>
+                                        <to variable="InvSequenceReleaserIV"
+                                            part="payload"
+                                            query="/ns10:releaseSequenceRequest/ns10:correlationID"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="'TOMOMInvoker_DBAdapter'"/>
+                                        <to variable="InvSequenceReleaserIV"
+                                            part="payload"
+                                            query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns7:applicationId"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvSequenceReleaser"
+                                        partnerLink="SequenceReleaser"
+                                        portType="ns9:SequenceReleaser"
+                                        operation="releaseSequence"
+                                        inputVariable="InvSequenceReleaserIV"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>-->
+                </sequence>
+            </case>
+            <otherwise>
+                <terminate name="TerminateOnIncorrectArgumentCount"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

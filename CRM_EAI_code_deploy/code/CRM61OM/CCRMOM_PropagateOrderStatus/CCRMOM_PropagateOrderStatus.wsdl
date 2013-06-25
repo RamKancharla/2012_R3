@@ -1,0 +1,86 @@
+<definitions
+     name="CCRMOM_PropagateOrderStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://www.siebel.com/xml/RCRM%20Order%20Entry"
+     xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRM"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/correlationset"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/correlationset" location="CCRMOM_PropagateOrderStatus_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.siebel.com/xml/RCRM%20Order%20Entry" xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/correlationset">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" schemaLocation="CCRMOM_PropagateOrderStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.siebel.com/xml/RCRM%20Order%20Entry"
+             xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/correlationset">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRM"
+                 schemaLocation="EAI.MSG.OM.225_OrderStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.siebel.com/xml/RCRM%20Order%20Entry" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRM"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/correlationset"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM">
+            <xsd:import namespace="http://www.siebel.com/xml/RCRM%20Order%20Entry" schemaLocation="EAI.MSG.CCRM.OM.148_OrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.siebel.com/xml/RCRM%20Order%20Entry" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRM"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/correlationset"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRM"
+                 schemaLocation="EAI.MSG.OM.225_ExtendedOrderStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMOM_PropagateOrderStatusResponseMessage">
+        <part name="payload" element="client:CCRMOM_PropagateOrderStatusProcessResponse"/>
+    </message>
+  <message name="CCRMOM_PropagateOrderStatusRequestMessage">
+        <part name="payload" element="ns1:crmOrderStatus"/>
+    </message>
+    <message name="CSUpdateStatusMsg">
+        <part name="CSUpdateStatus" element="ns4:OrderRequest"/>
+    </message>
+    <message name="CCRMOM_ExtendedPropagateOrderStatus">
+        <part name="CCRMOM_ExtendedPropagateOrderStatusPart" element="ns1:ExtendedcrmOrderStatus"/>
+    </message>
+    <portType name="CCRMOM_PropagateOrderStatusCallback">
+        <operation name="onResult">
+            <input message="client:CCRMOM_PropagateOrderStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMOM_PropagateOrderStatus">
+        <operation name="sendOrderStatus">
+            <input message="client:CCRMOM_PropagateOrderStatusRequestMessage"/>
+        </operation>
+        <operation name="updateOrderStatus">
+            <input name="CSOrderUpdate" message="client:CSUpdateStatusMsg"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOM_PropagateOrderStatus">
+        <plnk:role name="CCRMOM_PropagateOrderStatusProvider">
+            <plnk:portType name="client:CCRMOM_PropagateOrderStatus"/>
+        </plnk:role>
+        <plnk:role name="CCRMOM_PropagateOrderStatusRequester">
+            <plnk:portType name="client:CCRMOM_PropagateOrderStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:corrProp" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/mq/headerCSOrderUpdate/"
+         messageType="ns5:OrderRequest_msg" part="OrderRequest" query="/ns4:OrderRequest/ns4:MessageId"/>
+    <bpws:propertyAlias propertyName="pns1:corrProp" messageType="client:CSUpdateStatusMsg" part="CSUpdateStatus"
+         query="/ns4:OrderRequest/ns4:MessageId"/>
+</definitions>

@@ -1,0 +1,43 @@
+<definitions
+     name="SFDCOP_Invoker"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/SFDC/OpportunityManagementServices"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.xmlsoap.org/ws/2003/03/addressing"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/external/SFDC/OpportunityManagementServices"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" location="CCRMOP_POLLING_V.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/external/SFDC/OpportunityManagementServices">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/SFDC/OpportunityManagementServices"
+                 schemaLocation="SFDCOP_Invoker.xsd"/>
+        </schema>
+        
+    </types>
+    <message name="SFDCOP_InvokerRequestMessage">
+        <part name="payload" element="client:SFDCOP_InvokerProcessRequest"/>
+    </message>
+    <message name="SFDCOP_InvokerResponseMessage">
+        <part name="payload" element="client:SFDCOP_InvokerProcessResponse"/>
+    </message>
+    <portType name="SFDCOP_Invoker">
+        <operation name="initiate">
+            <input message="client:SFDCOP_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="SFDCOP_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:SFDCOP_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SFDCOP_Invoker">
+        <plnk:role name="SFDCOP_InvokerProvider">
+            <plnk:portType name="client:SFDCOP_Invoker"/>
+        </plnk:role>
+        <plnk:role name="SFDCOP_InvokerRequester">
+            <plnk:portType name="client:SFDCOP_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

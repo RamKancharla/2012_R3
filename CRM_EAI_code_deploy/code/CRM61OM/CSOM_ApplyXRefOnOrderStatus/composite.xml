@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSOM_ApplyXRefOnOrderStatus" revision="1.0" state="on">
+    <import importType="wsdl" location="CSOM_ApplyXRefOnOrderStatusInRS.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl" importType="wsdl"/>
+    <service name="CSOM.ApplyXRefOnOrderStatusInRS_ep" ui:wsdlLocation="CSOM_ApplyXRefOnOrderStatusInRS.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(applyStaticXRefData_ppt)"/>
+        <binding.ws location="CSOM_ApplyXRefOnOrderStatusInRS.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.endpoint(applyStaticXRefData_ppt/applyStaticXRefData_ppt_pt)"/>
+    </service>
+    <component name="CSOM.ApplyXRefOnOrderStatusInRS">
+        <implementation.mediator src="CSOM.ApplyXRefOnOrderStatusInRS.mplan"/>
+    </component>
+    <reference name="OM.ManageOrderLineStatusSOAPAdp" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CSOM.ApplyXRefOnOrderStatusInRS_ep</source.uri>
+        <target.uri>CSOM.ApplyXRefOnOrderStatusInRS/CSOM.ApplyXRefOnOrderStatusInRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM.ApplyXRefOnOrderStatusInRS/OM.ManageOrderLineStatusSOAPAdp</source.uri>
+        <target.uri>OM.ManageOrderLineStatusSOAPAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

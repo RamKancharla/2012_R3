@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.CCRM.090_PropagateUserRequest.xsd
+* Type:        XSD Schema
+*
+* Change History
+* Version     Date      Author              			Description Of Change
+*  0.01        21/02/07  Geratayya Patchipulusu   	   	Initial Version
+*  0.02        06/03/07  Rob Billington		   	   	Version scheme changed
+*  0.03        23/03/07  Geratayya Patchipulusu		   	Included EAI Header and 
+*								File Name Change
+*  0.04        26/03/07  Rob Billington			   	Action Code now taken from common message types
+*  0.06        27/04/07  Geratayya P		  		Moved user details to local
+*  0.03        13/08/07  Aravind Murthy 		        Deleted Primary Account Details Modified according to new API Spec(Implementing New CR).
+**********************************************************************************-->
+<xsd:schema xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:gcap="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+            xmlns:gcap-mt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+            xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            version="0.06">
+ <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.002_CommonUserTypes.xsd"/>
+ <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+ <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.003_CommonAccountTypes.xsd"/>
+ <xsd:complexType name="PropagateUser">
+  <xsd:sequence>
+   <xsd:element name="eaiHeader" type="gcap-mt:EaiHeader"/>
+   <xsd:element name="actionCode" type="gcap-mt:ActionCode"/>
+   <xsd:element name="userDetails" type="gcap:UserDetails"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:element name="propagateUserRequest" type="local:PropagateUser"/>
+</xsd:schema>

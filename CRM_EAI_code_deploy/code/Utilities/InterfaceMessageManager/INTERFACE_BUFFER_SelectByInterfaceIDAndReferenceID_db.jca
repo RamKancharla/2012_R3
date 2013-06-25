@@ -1,0 +1,23 @@
+<adapter-config name="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID" adapter="Database Adapter" wsdlLocation="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="eaidev2_EAIOWNER" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//eaidev2:1521/EAIDEV2"/>
+      <property name="UserName" value="eaiowner"/>
+      <property name="Password" value="E8D26CEB17C942CF78415AE2B31C2AA9"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID_ptt" operation="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceIDSelect_InterfaceID_ReferenceID">
+    <interaction-spec className="oracle.tip.adapter.db.DBReadInteractionSpec">
+      <property name="DescriptorName" value="INTERFACEBUFFERSelectByInterfaceIDAndReferenceID.InterfaceBuffer"/>
+      <property name="QueryName" value="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceIDSelect"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+      <property name="MappingsMetaDataURL" value="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

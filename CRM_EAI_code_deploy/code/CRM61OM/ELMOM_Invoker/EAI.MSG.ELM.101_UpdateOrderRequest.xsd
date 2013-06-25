@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.ELM.101_UpdateOrderRequest.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:	Canonical Order Schema document
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		10/10/11	Phani Kumar			Initial Version
+*  
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+            targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.09">
+ <xsd:element name="elmOrderRequest" type="xsdLocal:ELMOrderRequest"/>
+	<xsd:complexType name="ELMOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="orderHeader" type="xsdLocal:CanonicalELMOrdHeader"/>
+   <xsd:element name="orderLineItem" type="xsdLocal:CanonicalELMOrdLineItem"
+                maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+ <xsd:complexType name="CanonicalELMOrdLineItem">
+  <xsd:sequence>
+   <xsd:element name="CRMOLIId" type="xsd:string"/>
+   <xsd:element name="parentOrderItemId" type="xsd:string"/>
+   <xsd:element name="rootItemId" type="xsd:string"/>
+   <xsd:element name="actionCode" type="xsd:string"/>
+   <xsd:element name="businessCase" type="xsd:string"/>
+   <xsd:element name="PLI" type="xsd:string"/>
+   <xsd:element name="AKR" type="xsd:string"/>
+   <xsd:element name="RCRMField1" type="xsd:string"/>
+   <xsd:element name="RCRMField2" type="xsd:string"/>
+   <xsd:element name="RCRMField3" type="xsd:string"/>
+   <xsd:element name="RCRMField4" type="xsd:string"/>
+   <xsd:element name="RCRMField5" type="xsd:string"/>
+   <xsd:element name="assetIntegrationId" type="xsd:string"/>
+   <xsd:element name="orderLineStatus" type="xsd:string"/>
+   <xsd:element name="permissioningStatus" type="xsd:string"/>
+   <xsd:element name="productIntegrationId" type="xsd:string"/>
+   <xsd:element name="LicenceType" type="xsd:string"/>
+   <xsd:element name="RCRMField6" type="xsd:string"/>
+   <xsd:element name="billingAccountId" type="xsd:string"/>
+   <xsd:element name="quantity" type="xsd:string"/>
+   <xsd:element name="productName" type="xsd:string"/>
+   <xsd:element name="BillingNote" type="xsd:string"/>
+   <xsd:element name="orderPermissionStatus" type="xsd:string"/>
+   <xsd:element name="InstallSubscriberNum" type="xsd:string"/>
+   <xsd:element name="InstallSubAccountNum" type="xsd:string"/>
+   <xsd:element name="BillToSubscriberNum" type="xsd:string"/>
+   <xsd:element name="BillToSubAccountNum" type="xsd:string"/>
+  </xsd:sequence>
+ </xsd:complexType>
+	<xsd:complexType name="CanonicalELMOrdHeader">
+		<xsd:sequence>
+			<xsd:element name="OrderNumber" type="xsd:string"/>
+			<xsd:element name="RCRMField1" type="xsd:string"/>
+			<xsd:element name="RCRMField2" type="xsd:string"/>
+			<xsd:element name="orderStatus" type="xsd:string"/>
+			<xsd:element name="quoteNumber" type="xsd:string"/>
+			<xsd:element name="businessCase" type="xsd:string"/>
+			<xsd:element name="accountId" type="xsd:string"/>
+			<xsd:element name="poNumber" type="xsd:string"/>
+			<xsd:element name="RCRMField3" type="xsd:string"/>
+			<xsd:element name="orderType" type="xsd:string"/>
+			<xsd:element name="AssignedOMS" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

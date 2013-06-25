@@ -1,0 +1,42 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" name="CCRMOP_PublishOpportunity" revision="1.0" mode="active" state="on">
+    <import location="CCRMOP_PublishOpportunity.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity"/>
+    <import location="WriteOpportunity.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteOpportunity/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" importType="wsdl"/>
+    <service ui:wsdlLocation="CCRMOP_PublishOpportunity.wsdl" name="anchorToCCRMOP_PublishOpportunity">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.interface(CCRMOP_PublishOpportunity)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.interface(CCRMOP_PublishOpportunityCallback)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.endpoint(CCRMOP_PublishOpportunity/CCRMOP_PublishOpportunity)"/>
+    </service>
+    <component name="CCRMOP_PublishOpportunity">
+        <implementation.bpel src="CCRMOP_PublishOpportunity.bpel"/>
+        
+        
+    </component>
+    <reference ui:wsdlLocation="WriteOpportunity.wsdl" name="WriteOpportunity">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteOpportunity/#wsdl.interface(WriteOpportunity_ptt)"/>
+        <binding.jca config="WriteOpportunity_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" name="AsyncSequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToCCRMOP_PublishOpportunity</source.uri>
+        <target.uri>CCRMOP_PublishOpportunity/anchorToCCRMOP_PublishOpportunity</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOP_PublishOpportunity/WriteOpportunity</source.uri>
+        <target.uri>WriteOpportunity</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOP_PublishOpportunity/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+</composite>

@@ -1,0 +1,15 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+     version="2.5">
+    <servlet>
+        <description>Web Service TransformToCSUserRequest</description>
+        <display-name>Web Service TransformToCSUserRequest</display-name>
+        <servlet-name>TransformToCSUserRequest</servlet-name>
+        <servlet-class>com.reuters.eai.cc.uom.TransformToCSUserRequestImpl</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TransformToCSUserRequest</servlet-name>
+        <url-pattern>TransformToCSUserRequest</url-pattern>
+    </servlet-mapping>
+</web-app>

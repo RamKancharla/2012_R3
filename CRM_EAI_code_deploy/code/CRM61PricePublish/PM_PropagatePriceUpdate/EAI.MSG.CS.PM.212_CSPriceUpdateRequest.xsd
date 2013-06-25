@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*********************************************************************************
+* Module        EAI.MSG.CS.PM.212_CSPriceUpdateRequest
+* Type          XML Schema Document
+*
+* Description    Compass Price List Publish Schema document including message header
+*               which is required by Compass. This helps in generating fixed length message
+*
+*
+* Change History
+* Version	Date		Author			Description Of Change
+* =======	======		=================	================================
+*  0.01		08/04/08	Sreeja Prasad		Initial Version
+*************************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate" xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:gcap-cpt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" xmlns:gcap-cps="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.012_CommonPriceTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.014_CommonPriceStructures.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="priceUpdateRequest" type="xsdLocal:_CSPriceUpdateRequest"/>
+	<xsd:complexType name="_CSPriceUpdateRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+			<xsd:element name="logicalCountry" type="gcap-cpt:CountryCode"/>
+			<xsd:element name="messageHeader" type="gcap-cmt:CompassMessageHeader"/>
+			<xsd:element name="priceUpdateReqHeader" type="gcap-cps:_CSPriceUpdateReqHeader"/>
+			<xsd:element name="priceUpdateReqLineItem" type="gcap-cps:_CSPriceUpdateReqLineItem" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

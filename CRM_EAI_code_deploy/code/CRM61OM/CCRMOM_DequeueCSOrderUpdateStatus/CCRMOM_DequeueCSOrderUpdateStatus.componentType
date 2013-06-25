@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="DequeueCSOrderUpdates.wsdl" name="DequeueCSOrderUpdates">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueCSOrderUpdates/#wsdl.interface(Dequeue_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus.wsdl" name="CCRMOM_PropagateOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatusCallback)"/>
+    </reference>
+</componentType>

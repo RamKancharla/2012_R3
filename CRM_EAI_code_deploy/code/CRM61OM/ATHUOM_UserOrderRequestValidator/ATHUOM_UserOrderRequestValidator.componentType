@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ATHUOM_UserOrderRequestValidator.wsdl" name="anchorToATHUOM_UserOrderRequestValidator">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator#wsdl.interface(ATHUOM_UserOrderRequestValidator)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_SubmitUserOrderRequest/CCRMOM_SubmitUserOrderRequest.wsdl" name="CCRMOM_SubmitUserOrderRequest">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest#wsdl.interface(CCRMOM_SubmitUserOrderRequest)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest#wsdl.interface(CCRMOM_SubmitUserOrderRequestCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHUOM_UserOrderRequestValidatorStub/ATHUOM_UserOrderRequestValidatorStub.wsdl" name="ATHUOM_UserOrderRequestValidatorStub">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub#wsdl.interface(ATHUOM_UserOrderRequestValidatorStub)"/>
+    </reference>
+</componentType>

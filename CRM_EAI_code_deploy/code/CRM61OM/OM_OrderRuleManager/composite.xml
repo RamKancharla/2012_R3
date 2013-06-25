@@ -1,0 +1,50 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="OM_OrderRuleManager" revision="1.0" state="on">
+    <import location="OM_OrderRuleManager.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM" location="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/OM_OrderDispatcher/OM_OrderDispatcher.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/OrderLineRequestDictionary141008/OrderLineRequestDictionary141008_DecisionService_1"
+            location="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/OrderRequestRule/OrderLineRequestDictionary141008_DecisionService_1.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/OrderLineRequestDictionary141008/OrderLineRequestDictionary141008_DecisionService_1"
+            location="OrderLineRequestDictionary141008_DecisionService_1Wrapper.wsdl"
+            importType="wsdl"/>
+    <service name="OM_OrderRuleManager" ui:wsdlLocation="OM_OrderRuleManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderRuleManagerCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderRuleManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.endpoint(OM_OrderRuleManager/OM_OrderRuleManager)"/>
+    </service>
+    <component name="OM_OrderRuleManagerProcess">
+        <implementation.bpel src="OM_OrderRuleManagerProcess.bpel"/>
+        
+        
+    </component>
+    <reference name="OM_OrderDispatcher" ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/OM_OrderDispatcher/OM_OrderDispatcher.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderDispatcher)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderDispatcherCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.endpoint(OM_OrderDispatcher/OM_OrderDispatcher)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_OrderDispatcher/anchorToOrderDispatcher?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.endpoint(OM_OrderDispatcher/OM_OrderDispatcherCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="OrderRequestRule"
+               ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/OrderRequestRule/OrderLineRequestDictionary141008_DecisionService_1.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/OrderLineRequestDictionary141008/OrderLineRequestDictionary141008_DecisionService_1#wsdl.interface(IDecisionService)"/>
+        <binding.ws port="http://xmlns.oracle.com/OrderLineRequestDictionary141008/OrderLineRequestDictionary141008_DecisionService_1#wsdl.endpoint(OrderLineRequestDictionary141008_DecisionService_1_ep/IDecisionService_pt)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OrderRequestRule/OrderLineRequestDictionary141008_DecisionService_1_ep?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>OM_OrderRuleManager</source.uri>
+        <target.uri>OM_OrderRuleManagerProcess/OM_OrderRuleManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>OM_OrderRuleManagerProcess/OM_OrderDispatcher</source.uri>
+        <target.uri>OM_OrderDispatcher</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>OM_OrderRuleManagerProcess/OrderRequestRule</source.uri>
+        <target.uri>OrderRequestRule</target.uri>
+    </wire>
+</composite>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TF_OrderDispatcher.wsdl" name="anchorToTFDispatcher">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcher)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcherCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="WriteTOMOrder.wsdl" name="WriteTOMOrder">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteTOMOrder/#wsdl.interface(WriteTOMOrder_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" name="AsyncSequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/TF_ManageOrderLineStatus.wsdl" name="TF_ManageOrderLineStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus#wsdl.interface(TF_ManageOrderLineStatus)"/>
+    </reference>
+    <reference ui:wsdlLocation="UpdateOrderCache.wsdl" name="UpdateOrderCache">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateOrderCache/#wsdl.interface(UpdateOrderCache_ptt)"/>
+    </reference>
+    <reference name="SequenceReleaser"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+</componentType>

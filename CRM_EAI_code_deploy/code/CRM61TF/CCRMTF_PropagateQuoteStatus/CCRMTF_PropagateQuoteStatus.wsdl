@@ -1,0 +1,44 @@
+<definitions
+     name="CCRMTF_PropagateQuoteStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus"
+                 schemaLocation="CCRMTF_PropagateQuoteStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul" schemaLocation="EAI.MSG.CCRM.TF.156_VettingStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMTF_PropagateQuoteStatusRequestMessage">
+        <part name="PropagateQuoteStatusRequest" element="ns1:vettingStatus"/>
+    </message>
+    <message name="CCRMTF_PropagateQuoteStatusResponseMessage">
+        <part name="payload" element="client:CCRMTF_PropagateQuoteStatusProcessResponse"/>
+    </message>
+    <portType name="CCRMTF_PropagateQuoteStatus">
+        <operation name="sendVettingStatus">
+            <input message="client:CCRMTF_PropagateQuoteStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMTF_PropagateQuoteStatusCallback">
+        <operation name="onResult">
+            <input message="client:CCRMTF_PropagateQuoteStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMTF_PropagateQuoteStatus">
+        <plnk:role name="CCRMTF_PropagateQuoteStatusProvider">
+            <plnk:portType name="client:CCRMTF_PropagateQuoteStatus"/>
+        </plnk:role>
+        <plnk:role name="CCRMTF_PropagateQuoteStatusRequester">
+            <plnk:portType name="client:CCRMTF_PropagateQuoteStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

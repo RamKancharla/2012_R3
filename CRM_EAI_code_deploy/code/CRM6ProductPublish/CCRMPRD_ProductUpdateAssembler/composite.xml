@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPRD_ProductUpdateAssembler" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="CCRMPRD_ProductUpdateAssembler.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGPRD_ProductUpdateFormatter/CPFGPRD_ProductUpdateFormatter.wsdl"
+            importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="CCRMPRD_ProductUpdateAssembler.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler#wsdl.interface(CCRMPRD_ProductUpdateAssembler)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler#wsdl.endpoint(CCRMPRD_ProductUpdateAssembler/CCRMPRD_ProductUpdateAssembler)"/>
+    </service>
+    <component name="CCRMPRD_ProductUpdateAssembler">
+        <implementation.bpel src="CCRMPRD_ProductUpdateAssembler.bpel"/>
+    </component>
+    <reference name="CPFGPRD_ProductUpdateFormatter"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGPRD_ProductUpdateFormatter/CPFGPRD_ProductUpdateFormatter.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter#wsdl.interface(CPFGPRD_ProductUpdateFormatter)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter#wsdl.endpoint(CPFGPRD_ProductUpdateFormatter/CPFGPRD_ProductUpdateFormatter)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGPRD_ProductUpdateFormatter/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMPRD_ProductUpdateAssembler/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPRD_ProductUpdateAssembler/CPFGPRD_ProductUpdateFormatter</source.uri>
+        <target.uri>CPFGPRD_ProductUpdateFormatter</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

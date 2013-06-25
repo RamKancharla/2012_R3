@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.TOM.OM.237_PropagateOrderRequest.xsd
+*						Order Management (CCRM)
+* Type:				XML Schema Document
+* Description:	Order Schema document including message header in TOM Domain
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		24/06/08	Sreeja Prasad			Initial Version
+*  0.02		10/07/08	Rob Billington			Added updateType
+*
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement" xmlns:comt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.02">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="orderRequest" type="xsdLocal:TOMOrderRequest"/>
+	<xsd:complexType name="TOMOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="orderHeader" type="comt:TOMOrderHeader"/>
+			<xsd:element name="orderLineItem" type="comt:TOMOLI"  maxOccurs="unbounded"/>
+                        <xsd:element name="updateType" type="xsdLocal:UpdateType"/>
+     		</xsd:sequence>
+	</xsd:complexType>
+        
+        <xsd:simpleType name="UpdateType">
+            <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="FULL"/>
+                <xsd:enumeration value="REDUCED"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+
+</xsd:schema>

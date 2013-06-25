@@ -1,0 +1,49 @@
+<definitions
+     name="SAPCM_Contacts"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/SAPCM_Contacts/"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/SAPCM_Contacts/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:db="http://xmlns.oracle.com/pcbpel/adapter/db/SAPCM_Contacts"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/SAPCM_Contacts" schemaLocation="SAPCM_Contacts.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+                 schemaLocation="EAI.MSG.CM.287_CreateContactRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SAPCM_ContactsInput_msg">
+        <part name="SAPCM_ContactsInput_msg" element="db:SAPCM_ContactsInput"/>
+    </message>
+    <portType name="SAPCM_Contacts_ptt">
+        <operation name="SAPCM_Contacts">
+            <input message="tns:SAPCM_ContactsInput_msg"/>
+        </operation>
+    </portType>
+    <binding name="SAPCM_Contacts_binding" type="tns:SAPCM_Contacts_ptt">
+        <jca:binding/>
+        <operation name="SAPCM_Contacts">
+            <jca:operation SqlString="update interface_buffer set state=&apos;C&apos; where id=? and state=&apos;P&apos;"
+                 InteractionSpec="oracle.tip.adapter.db.DBPureSQLInteractionSpec"/>
+            <input/>
+        </operation>
+    </binding>
+    <service name="SAPCM_Contacts">
+        <port name="SAPCM_Contacts_pt" binding="tns:SAPCM_Contacts_binding">
+            <jca:address location="eis/DB/EAISOA" UIConnectionName="B2CC-DB" ManagedConnectionFactory="oracle.tip.adapter.db.DBManagedConnectionFactory"
+                 mcf.DriverClassName="oracle.jdbc.OracleDriver" mcf.PlatformClassName="oracle.toplink.internal.databaseaccess.Oracle9Platform"
+                 mcf.ConnectionString="jdbc:oracle:thin:@10.15.35.192:1521:EAIB2CC" mcf.UserName="eaiowner"
+                 mcf.Password="D17D09B7D556B6F53AC0A5374043425B"/>
+        </port>
+    </service>
+    <plt:partnerLinkType name="SAPCM_Contacts_plt">
+        <plt:role name="SAPCM_Contacts_role">
+            <plt:portType name="tns:SAPCM_Contacts_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+</definitions>

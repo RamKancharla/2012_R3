@@ -1,0 +1,64 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGEF_Invoker" revision="1.0" state="on">
+    <import location="UpdateINTERFACE_BUFFER.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateINTERFACE_BUFFER/"/>
+    <import location="CPFGEF_POLLING_V.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/CPFGEF_POLLING_V/"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidator.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/InterfaceManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" importType="wsdl"/>
+    <!--import namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices"
+            location="MM_GCAPInbound_Exp_ElectronicFulfilmentInterface_PARef1.wsdl"
+            importType="wsdl"/-->
+    <import namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices" location="MM_GCAPInbound_Exp_ElectronicFulfilmentInterface_PARef.wsdl" importType="wsdl"/>
+    <service name="CPFGEF_POLLING_V" ui:wsdlLocation="CPFGEF_POLLING_V.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/CPFGEF_POLLING_V/#wsdl.interface(CPFGEF_POLLING_V_ptt)"/>
+        <binding.jca config="CPFGEF_POLLING_V_db.jca"/>
+    </service>
+    <component name="CPFGEF_Invoker">
+        <implementation.bpel src="CPFGEF_Invoker.bpel"/>
+        
+        
+    </component>
+    <reference name="CPFG_StatusUpdateValidator" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidator.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.interface(CPFG_StatusUpdateValidator)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.endpoint(CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidator)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidator/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="UpdateINTERFACE_BUFFER" ui:wsdlLocation="UpdateINTERFACE_BUFFER.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateINTERFACE_BUFFER/#wsdl.interface(UpdateINTERFACE_BUFFER_ptt)"/>
+        <binding.jca config="UpdateINTERFACE_BUFFER_db.jca"/>
+    </reference>
+    <reference name="Exp_ElectronicFulfilmentInterface_PA_ElectronicFulfilmentInterfaceHttp_Service" ui:wsdlLocation="MM_GCAPInbound_Exp_ElectronicFulfilmentInterface_PARef.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices#wsdl.interface(ElectronicFulfilmentInterface)"/>
+        <binding.ws port="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices/PA#wsdl.endpoint(Exp_ElectronicFulfilmentInterface_PA_ElectronicFulfilmentInterfaceHttpService/Exp_ElectronicFulfilmentInterface_PA_ElectronicFulfilmentInterfaceHttpPort)" location="MM_GCAPInbound_Exp_ElectronicFulfilmentInterface_PARef.wsdl" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="InterfaceManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+        <binding.ws port="http://xmlns.oracle.com/InterfaceManager#wsdl.endpoint(InterfaceManager/InterfaceManager)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CPFGEF_POLLING_V</source.uri>
+        <target.uri>CPFGEF_Invoker/CPFGEF_POLLING_V</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_Invoker/InterfaceManager</source.uri>
+        <target.uri>InterfaceManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_Invoker/CPFG_StatusUpdateValidator</source.uri>
+        <target.uri>CPFG_StatusUpdateValidator</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_Invoker/UpdateINTERFACE_BUFFER</source.uri>
+        <target.uri>UpdateINTERFACE_BUFFER</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_Invoker/Exp_ElectronicFulfilmentInterface_PA_ElectronicFulfilmentInterfaceHttp_Service</source.uri>
+        <target.uri>Exp_ElectronicFulfilmentInterface_PA_ElectronicFulfilmentInterfaceHttp_Service</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

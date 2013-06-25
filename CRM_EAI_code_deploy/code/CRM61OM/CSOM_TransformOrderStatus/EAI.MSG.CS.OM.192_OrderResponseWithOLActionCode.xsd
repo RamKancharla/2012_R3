@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:         EAI.MSG.CS.OM.192_OrderResponseWithOLActionCode.xsd
+*                 Order Management (Core Suite)
+* Type:           XML Schema Document
+* Description:    Core Suite Order Status Schema with asset integration id, order line action code and root item id in the order line
+*
+*
+* Change History
+* Version       Date            Author                          Description Of Change
+* =======       ========        ==================              ===============================
+*  0.01         03/01/08        G PATCHIPULUSU                  Initial Version
+*  0.02         23/07/08        S GANNAVARAPU                   Added Business Case field at the line level. 
+*  0.03         19/08/08        Sreeja		                Added SID in _LocalAstResponseOLI
+*  0.04         11/02/10        Sreeja		                Added PermBillFlag in _LocalAstResponseOLI
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" xmlns:comt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.03">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:element name="localOrderResponseStatus" type="xsdLocal:_LocalOrderResponse"/>
+	<xsd:complexType name="_LocalOrderResponse">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="parsingStatus" type="cmt:BasicResponse"/>
+			<xsd:element name="logicalCountry" type="comt:CountryCode"/>
+			<xsd:element name="messageHeader" type="comt:MessageHeader"/>
+			<xsd:element name="orderHeader" type="comt:ResponseOrderHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:_LocalAstResponseOLI" maxOccurs="250"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_LocalAstResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="comt:_CRMOLIId" /> 
+			<xsd:element name="actionCode" type="comt:CCRMOLIActionCode" /> 
+			<xsd:element name="rootItemId" type="comt:_CRMOLIId" />
+			<xsd:element name="businessCase" type="comt:_CRMBusinessCase" /> 
+			<xsd:element name="itemNumber" type="comt:ItemNumber" /> 
+			<xsd:element name="ILA" type="comt:_ILA" /> 
+			<xsd:element name="userNumber" type="comt:UserNumber" /> 
+			<xsd:element name="userId" type="comt:UserID" /> 
+			<xsd:element name="QUID" type="comt:_QUID" /> 
+			<xsd:element name="orderLinestatus" type="comt:OrderLinestatus" /> 
+			<xsd:element name="requestStatus" type="comt:RequestStatus" /> 
+			<xsd:element name="assetIntegrationId" type="comt:NillableAssetIntegrationId" /> 
+			<xsd:element name="SID" type="comt:_SID"/>
+			<xsd:element name="permBillFlag" type="comt:PermBillFlag"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

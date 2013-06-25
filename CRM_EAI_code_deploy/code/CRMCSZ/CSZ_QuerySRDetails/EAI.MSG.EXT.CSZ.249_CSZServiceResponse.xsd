@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.EXT.CSZ.245_CSZServiceResponse.xsd
+* Type:       	XSD Schema
+* Description: The schema used for Common Message attributes
+*
+* Change History
+* Version     Date      Author             Description Of Change
+*
+*  0.1        11/07/08  Sunil Vuppala	   Initial Version
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/ServiceRequest" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:csz="http://www.reuters.com/ns/2007/09/01/GCAP/CommonServiceRequestTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/ServiceRequest" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonServiceRequestTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.018_CommonServiceRequestTypes.xsd"/>
+<xsd:element name="CSZServiceResponse" type="xsdLocal:CSZServiceResponse"/>
+<xsd:complexType name="CSZServiceResponse">
+	<xsd:sequence>
+		<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+		<xsd:element name="SRDetails" type="xsdLocal:SRDetails"/>
+	</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="SRDetails">
+	<xsd:sequence>
+		<xsd:element name="SRNumber" type="csz:SRNumber"/>
+                <xsd:element name="Abstract" type="csz:Abstract"/>
+		<xsd:element name="SRType" type="csz:SRType"/>
+		<xsd:element name="SRSubType" type="csz:SRSubType"/>
+                <xsd:element name="Component" type="csz:Component"/>
+		<xsd:element name="Product" type="csz:Product"/>
+		<xsd:element name="ProductVersion" type="csz:ProductVersion"/>
+		<xsd:element name="DeliveryInfrastructure" type="csz:DeliveryInfrastructure"/>
+		<xsd:element name="MarketSector" type="csz:MarketSector"/>
+		<xsd:element name="DataGeography" type="csz:DataGeography"/>
+		<xsd:element name="Description" type="csz:Description"/>
+		<xsd:element name="Resolution" type="csz:Resolution"/>
+                <xsd:element name="ContactFirstName" type="csz:ContactFirstName"/>
+		<xsd:element name="ContactLastName" type="csz:ContactLastName"/>
+		<xsd:element name="ContactEmail" type="csz:ContactEmail"/>
+		<xsd:element name="Account" type="csz:Account"/>
+		<xsd:element name="Status" type="csz:Status"/>
+	</xsd:sequence>
+</xsd:complexType>
+</xsd:schema>

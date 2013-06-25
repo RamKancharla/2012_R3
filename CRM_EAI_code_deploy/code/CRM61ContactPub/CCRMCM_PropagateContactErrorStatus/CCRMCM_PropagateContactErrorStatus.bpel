@@ -1,0 +1,183 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Purpose: BPEL Process
+  * Version		Date		Author		          Description Of Change
+  * 0.1                 12/01/2011	Albin Issac 	          Initial.
+  
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMCM_PropagateContactErrorStatus" targetNamespace="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:client="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerContactStatusUpdate/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns2="http://www.siebel.com/xml/RCRMContactPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:ns7="http://www.siebel.com/xml/RCRMGenericContactInterface">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client"
+                     partnerLinkType="client:CCRMCM_PropagateContactErrorStatus"
+                     myRole="CCRMCM_PropagateContactErrorStatusProvider"
+                     partnerRole="CCRMCM_PropagateContactErrorStatusRequester"/>
+        <partnerLink name="ContactStatusUpdate" partnerRole="Enqueue_role"
+                     partnerLinkType="ns1:Enqueue_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable"
+                  messageType="client:CCRMCM_PropagateContactErrorStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable"
+                  messageType="client:CCRMCM_PropagateContactErrorStatusResponseMessage"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMCM_PropagateContactErrorStatus.wsdl) -->
+        <receive name="receiveInput" partnerLink="client"
+                 portType="client:CCRMCM_PropagateContactErrorStatus"
+                 operation="initiate" variable="inputVariable"
+                 createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">String
+                                                                        ContactRowId
+                                                                        =
+                                                                        ((oracle.xml.parser.v2.XMLElement)
+                                                                        getVariableData("inputVariable",
+                                                                        "payload",
+                                                                        "/ns2:PublishContactRequestReponse/ns2:PublishContactRequest/ns2:Contact/ns2:ContactRowId")).getFirstChild().getNodeValue();
+                                                                        setCompositeInstanceTitle("ContactId:
+                                                                        " +
+                                                                        ContactRowId);<![CDATA[String ContactRowId = ((oracle.xml.parser.v2.XMLElement)                                       
+                        getVariableData("inputVariable", "payload", "/ns2:PublishContactRequestReponse/ns2:PublishContactRequest/ns2:Contact/ns2:ContactRowId")).getFirstChild().getNodeValue();                                          
+setCompositeInstanceTitle("ContactId: " + ContactRowId);]]></bpelx:exec>
+       
+        <scope name="ScpPublishContactStatus">
+            <variables>
+                <variable name="InvContactStatusUpdate_Enqueue_InputVariable"
+                          messageType="ns1:PublishContactRequestReponse_msg"/>
+            </variables>
+            <sequence name="SeqPublishContactStatus">
+                <switch name="Switch">
+                    <case condition="bpws:getVariableData('inputVariable','payload','/ns2:PublishContactRequestReponse/ns2:Header/ns2:messageHistory')='TOM'">
+                        <empty name="DoNothing"/>
+                    </case>
+                    <case condition="bpws:getVariableData('inputVariable','payload','/ns2:PublishContactRequestReponse/ns2:PublishContactResponse/ns2:Response') = 'E'">
+                        <bpelx:annotation>
+                            <bpelx:pattern>ERROR</bpelx:pattern>
+                        </bpelx:annotation>
+                        <sequence name="Sequence_1">
+                       <!--     <assign name="TransformContactErrorStatus">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransformationContactErrorStatus.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable"
+                                        part="body"/>
+                                </copy>
+                            </assign> -->
+                            <assign name="TransformContactErrorStatus">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransContactErrorStatusToSiebel.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable"
+                                        part="body"/>
+                                </copy>
+                            </assign>
+                      <!--      <assign name="AssignContactErrorStatus">
+                                <copy>
+                                    <from expression="'EAI'"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable"
+                                        part="PublishContactRequestReponse"
+                                        query="/ns2:PublishContactRequestReponse/ns2:Header/ns2:applicationId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable" part="PublishContactRequestReponse" query="/ns2:PublishContactRequestReponse/ns2:Header/ns2:transactionId"/>
+                                 </copy>
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable" part="PublishContactRequestReponse" query="/ns2:PublishContactRequestReponse/ns2:Header/ns2:msgId"/>
+                                </copy>
+                                <copy>
+                                    <from variable="inputVariable"
+                                          part="payload"
+                                          query="/ns2:PublishContactRequestReponse/ns2:Header/ns2:messageHistory"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable"
+                                        part="body"
+                                        query="/ns7:ListOfGenContactInterface/ns7:ContactHeader/ns7:SourceSystem"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:generateGUID()"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable"
+                                        part="PublishContactRequestReponse"
+                                        query="/ns2:PublishContactRequestReponse/ns2:Header/ns2:tracingId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCurrentDateTime()"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable"
+                                        part="PublishContactRequestReponse"
+                                        query="/ns2:PublishContactRequestReponse/ns2:Header/ns2:timeStamp"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable" part="PublishContactRequestReponse" query="/ns2:PublishContactRequestReponse/ns2:Header/ns2:instanceId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="1"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable"
+                                        part="PublishContactRequestReponse"
+                                        query="/ns2:PublishContactRequestReponse/ns2:Header/ns2:timeToLive"/>
+                                </copy>
+                            </assign> -->
+                            <assign name="AssignContactErrorStatus">
+                                <copy>
+                                    <from expression="ora:generateGUID()"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable"
+                                        part="body"
+                                        query="/ns7:ListOfGenContactInterface/ns7:ContactHeader/ns7:MessageId"/>
+                                </copy>                      
+                                <copy>
+                                    <from expression="xp20:format-dateTime(xp20:current-dateTime(),'[D01]/[M01]/[Y0001] [H01]:[m01]:[s01]')"/>
+                                    <to variable="InvContactStatusUpdate_Enqueue_InputVariable"
+                                        part="body"
+                                        query="/ns7:ListOfGenContactInterface/ns7:ContactHeader/ns7:LastUpdatedTimeStamp"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvContactStatusUpdate"
+                                    partnerLink="ContactStatusUpdate"
+                                    portType="ns1:Enqueue_ptt"
+                                    operation="Enqueue"
+                                    inputVariable="InvContactStatusUpdate_Enqueue_InputVariable"/>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <empty name="DoNothing"/>
+                    </otherwise>
+                </switch>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

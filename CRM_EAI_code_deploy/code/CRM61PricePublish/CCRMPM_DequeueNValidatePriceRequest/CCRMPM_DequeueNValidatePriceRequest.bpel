@@ -1,0 +1,201 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMPM_DequeueNValidatePriceRequest.bpel 
+* Type:        BPEL FILE 
+* Description: Empty BPEL Process that validates the price request message and invokes PM_PropagatePrice.
+* Change History
+* Version      Date         Author       Description Of Change 
+*  1.0         15/10/08     Sreeja       Initial Version 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMPM_DequeueNValidatePriceRequest" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_DequeueNValidatePriceRequest" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueueValidateStatus/" xmlns:ns4="http://www.siebel.com/xml/Price%20List" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns12="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" xmlns:ns5="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_DequeueNValidatePriceRequest" xmlns:ns6="ThrInvalidVariablesException" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns11="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueueValidationMessage/" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeuePriceRequest/" xmlns:ns3="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ns2="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/mq/headerUpdateValidationMessage/" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink myRole="Dequeue_role" name="DequeuePriceRequest" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink name="CCRMPM_PriceRequestValidatorStub" partnerRole="CCRMPM_PriceRequestValidatorStubProvider" partnerLinkType="ns5:CCRMPM_PriceRequestValidatorStub"/>
+    <partnerLink myRole="PM_PropagatePriceUpdateRequester" name="PM_PropagatePriceUpdate" partnerRole="PM_PropagatePriceUpdateProvider" partnerLinkType="ns7:PM_PropagatePriceUpdate"/>
+    <partnerLink name="EnqueueValidateStatus" partnerRole="Enqueue_role" partnerLinkType="ns13:Enqueue_plt"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <variable name="successResponse" type="xsd:string"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="InvPriceRequestValidatorStubIV" messageType="ns5:CCRMPM_PriceRequestValidatorStubRequestMessage"/>
+    <variable name="InvPropagatePriceUpdateIV" messageType="ns7:PM_PropagatePriceUpdateRequestMessage"/>
+    <variable name="InvEnqueueValidationMessageIV" messageType="ns13:PricePublish_msg"/>
+    <variable name="rcvPriceRequestIV" messageType="ns1:PricePublish_msg"/>
+  </variables>
+  <faultHandlers>
+    <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnBindFault" language="java" version="1.5">
+        <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+try{      
+     
+String priceHdrId = ((oracle.xml.parser.v2.XMLElement)                  
+                        getVariableData("rcvPriceRequestIV", "PricePublish", "/ns4:PricePublish/ns4:PriceList/ns4:Id")).getFirstChild().getNodeValue();                                     
+          
+                                  
+ String title=(priceHdrId!=null ? ("CRMPLHId: "+priceHdrId+";Fault") : ".;");     
+      
+ setCompositeInstanceTitle(title);  
+ }   
+ catch(Exception e){      
+setCompositeInstanceTitle("CRMPLHId: Null");      
+}]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+        <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+try{      
+     
+String priceHdrId = ((oracle.xml.parser.v2.XMLElement)                  
+                        getVariableData("rcvPriceRequestIV", "PricePublish", "/ns4:PricePublish/ns4:PriceList/ns4:Id")).getFirstChild().getNodeValue();                                     
+          
+                                  
+ String title=(priceHdrId!=null ? ("CRMPLHId: "+priceHdrId+";Fault") : ".;");     
+      
+ setCompositeInstanceTitle(title);  
+ }   
+ catch(Exception e){      
+setCompositeInstanceTitle("CRMPLHId: Null");      
+}]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+        <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+try{      
+     
+String priceHdrId = ((oracle.xml.parser.v2.XMLElement)                  
+                        getVariableData("rcvPriceRequestIV", "PricePublish", "/ns4:PricePublish/ns4:PriceList/ns4:Id")).getFirstChild().getNodeValue();                                     
+          
+                                  
+ String title=(priceHdrId!=null ? ("CRMPLHId: "+priceHdrId+";Fault") : ".;");     
+      
+ setCompositeInstanceTitle(title);  
+ }   
+ catch(Exception e){      
+setCompositeInstanceTitle("CRMPLHId: Null");      
+}]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+      <sequence name="SeqEnqueueInvalidPriceReq">
+        <empty name="Empty_1"/>
+        <assign name="TransEnqueueInvalidPriceRequest">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransInvalidReqToEnqueueRequest.xsl',bpws:getVariableData('rcvPriceRequestIV','PricePublish'))"/>
+            <to part="PricePublish" variable="InvEnqueueValidationMessageIV"/>
+          </copy>
+        </assign>
+        <invoke name="InvEnqueueValidationMessage" partnerLink="EnqueueValidateStatus" portType="ns13:Enqueue_ptt" operation="Enqueue" inputVariable="InvEnqueueValidationMessageIV"/>
+      </sequence>
+    </catch>
+    <catchAll>
+      <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+        <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+try{       
+      
+String priceHdrId = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("rcvPriceRequestIV", "PricePublish", "/ns4:PricePublish/ns4:PriceList/ns4:Id")).getFirstChild().getNodeValue();                                      
+           
+                                   
+ String title=(priceHdrId!=null ? ("CRMPLHId: "+priceHdrId+";Fault") : ".;");      
+       
+ setCompositeInstanceTitle(title);   
+ }    
+ catch(Exception e){       
+setCompositeInstanceTitle("CRMPLHId: Null");       
+}]]>
+      </bpelx:exec>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <receive name="rcvPriceRequest" partnerLink="DequeuePriceRequest" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="rcvPriceRequestIV" createInstance="yes"/>
+    <assign name="AsgInitialVariables">
+      <copy>
+        <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+        <to variable="successResponse"/>
+      </copy>
+    </assign>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[/*Write your java code below e.g.      
+	System.out.println("Hello, World");     
+*/     
+ try{       
+       
+String priceId = ((oracle.xml.parser.v2.XMLElement)                                   
+                        getVariableData("rcvPriceRequestIV", "PricePublish", "/ns4:PricePublish/ns4:PriceList/ns4:Id")).getFirstChild().getNodeValue();                                      
+String Title=(priceId!=null ? ("CRMPLHId: "+ priceId) : ".;");                                             
+setCompositeInstanceTitle(Title);       
+}       
+catch(Exception e){       
+setCompositeInstanceTitle("CRMPLHId: ");       
+}]]>
+    </bpelx:exec>
+    <scope name="ScpValidatePriceUpdateRequest">
+      <faultHandlers>
+        <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+          <throw name="ThrValidationException" faultName="bpelx:invalidVariables" faultVariable="runtimeFault"/>
+        </catch>
+      </faultHandlers>
+      <sequence name="SeqPriceUpdateRequest">
+        <assign name="TransDequeuePriceRequestToValidateRequest">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransDequeuePriceReqToValidateRequest.xsl',bpws:getVariableData('rcvPriceRequestIV','PricePublish'))"/>
+            <to variable="InvPriceRequestValidatorStubIV" part="payload"/>
+          </copy>
+        </assign>
+        <invoke name="InvPriceRequestValidatorStub" partnerLink="CCRMPM_PriceRequestValidatorStub" portType="ns5:CCRMPM_PriceRequestValidatorStub" operation="initiate" inputVariable="InvPriceRequestValidatorStubIV"/>
+      </sequence>
+    </scope>
+    <scope name="ScpPropagatePriceRequest">
+      <sequence name="SeqPropagateRequest">
+        <assign name="TransPropagatePriceRequest">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransValidatedReqToPropagatePriceRequest.xsl',bpws:getVariableData('InvPriceRequestValidatorStubIV','payload'))"/>
+            <to variable="InvPropagatePriceUpdateIV" part="payload"/>
+          </copy>
+        </assign>
+        <invoke name="InvPropagatePriceUpdate" partnerLink="PM_PropagatePriceUpdate" portType="ns7:PM_PropagatePriceUpdate" operation="initiate" inputVariable="InvPropagatePriceUpdateIV"/>
+      </sequence>
+    </scope>
+  </sequence>
+</process>

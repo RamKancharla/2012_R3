@@ -1,0 +1,31 @@
+<definitions
+     name="CPFG_StatusUpdateValidatorStub"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" schemaLocation="CPFG_StatusUpdateValidatorStub.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"
+                 schemaLocation="EAI.MSG.EXT.121_PropagateStatusUpdateRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFG_StatusUpdateValidatorStubRequestMessage">
+        <part name="payload" element="ns1:propagateStatusUpdateRequest"/>
+    </message>
+    <portType name="CPFG_StatusUpdateValidatorStub">
+        <operation name="validateXML">
+            <input message="client:CPFG_StatusUpdateValidatorStubRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFG_StatusUpdateValidatorStub">
+        <plnk:role name="CPFG_StatusUpdateValidatorStubProvider">
+            <plnk:portType name="client:CPFG_StatusUpdateValidatorStub"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

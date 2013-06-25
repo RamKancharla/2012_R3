@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGCM_ContactManager" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="CPFGCM_ContactManager.wsdl" namespace="http://xmlns.oracle.com/CPFGCM_ContactManager"/>
+    <import location="WriteContact.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl"
+            importType="wsdl"/>
+    <service name="CPFGCM_ContactManager" ui:wsdlLocation="CPFGCM_ContactManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.interface(CPFGCM_ContactManagerCallback)" interface="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.interface(CPFGCM_ContactManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.endpoint(CPFGCM_ContactManager/CPFGCM_ContactManager)"/>
+    </service>
+    <component name="CPFGCM_ContactManagerProcess">
+        <implementation.bpel src="CPFGCM_ContactManagerProcess.bpel"/>
+    </component>
+    <reference name="AsyncSequenceChecker"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="WriteContact" ui:wsdlLocation="WriteContact.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/#wsdl.interface(WriteContact_ptt)"/>
+        <binding.jca config="WriteContact_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>CPFGCM_ContactManager</source.uri>
+        <target.uri>CPFGCM_ContactManagerProcess/CPFGCM_ContactManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGCM_ContactManagerProcess/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGCM_ContactManagerProcess/WriteContact</source.uri>
+        <target.uri>WriteContact</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

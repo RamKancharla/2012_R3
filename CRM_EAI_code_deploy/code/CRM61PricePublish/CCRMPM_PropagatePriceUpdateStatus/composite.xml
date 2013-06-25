@@ -1,0 +1,56 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPM_PropagatePriceUpdateStatus" revision="1.0" state="on">
+    <import location="CCRMPM_PropagatePriceUpdateStatus.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus"/>
+    <import location="EnqueuePriceUpdateStatus.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueuePriceUpdateStatus/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" importType="wsdl"/>
+    <service name="CCRMPM_PropagatePriceUpdateStatus" ui:wsdlLocation="CCRMPM_PropagatePriceUpdateStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatusCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.endpoint(CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus)"/>
+    </service>
+    <component name="CCRMPM_PropagatePriceUpdateStatusProcess">
+        <implementation.bpel src="CCRMPM_PropagatePriceUpdateStatusProcess.bpel"/>
+        <property name="preference.type">WS</property>
+        
+        
+    </component>
+    <reference name="EnqueuePriceUpdateStatus" ui:wsdlLocation="EnqueuePriceUpdateStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueuePriceUpdateStatus/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="EnqueuePriceUpdateStatus_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="SequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceChecker/SequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/anchorToSequencer?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="SequenceReleaser" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>CCRMPM_PropagatePriceUpdateStatus</source.uri>
+        <target.uri>CCRMPM_PropagatePriceUpdateStatusProcess/CCRMPM_PropagatePriceUpdateStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_PropagatePriceUpdateStatusProcess/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_PropagatePriceUpdateStatusProcess/EnqueuePriceUpdateStatus</source.uri>
+        <target.uri>EnqueuePriceUpdateStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_PropagatePriceUpdateStatusProcess/SequenceChecker</source.uri>
+        <target.uri>SequenceChecker</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

@@ -1,0 +1,55 @@
+<definitions
+     name="ELMAM_EventManager"
+     targetNamespace="http://xmlns.oracle.com/ELMAM_EventManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://www.reuters.com/ns/2010/07/07/SAMI/ELM/AM/AccountPublish"
+     xmlns:client="http://xmlns.oracle.com/ELMAM_EventManager"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/ELMAM_EventManager">
+            <import namespace="http://xmlns.oracle.com/ELMAM_EventManager" schemaLocation="ELMAM_EventManager.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/ELMAM_EventManager">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.AM.176_AccountEvent.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.reuters.com/ns/2010/07/07/SAMI/ELM/AM/AccountPublish">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/07/07/SAMI/ELM/AM/AccountPublish"
+                 schemaLocation="EAI.MSG.ELM.AM.301_PublishAccount.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ELMAM_EventManagerRequestMessage">
+        <part name="payload" element="ns1:accountEvent"/>
+    </message>
+    <message name="ELMAM_EventManagerResponseMessage">
+        <part name="payload" element="client:ELMAM_EventManagerProcessResponse"/>
+    </message>
+    <message name="ELMEventType1">
+        <part name="ELMEventType1" element="ns2:AccountPublish"/>
+    </message>
+    <message name="ELMMessageType1">
+        <part name="ELMMessageType1" element="ns1:accountEvent"/>
+    </message>
+    <portType name="ELMAM_EventManager">
+        <operation name="initiate">
+            <input message="client:ELMAM_EventManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="ELMAM_EventManagerCallback">
+        <operation name="onResult">
+            <input message="client:ELMAM_EventManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ELMAM_EventManager">
+        <plnk:role name="ELMAM_EventManagerProvider">
+            <plnk:portType name="client:ELMAM_EventManager"/>
+        </plnk:role>
+        <plnk:role name="ELMAM_EventManagerRequester">
+            <plnk:portType name="client:ELMAM_EventManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

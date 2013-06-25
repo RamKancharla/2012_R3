@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="DequeueTRUSTOptyUpdate.wsdl" name="DequeueTRUSTOptyUpdate">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTOptyUpdate/#wsdl.interface(Dequeue_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="enterpriseRef.wsdl" name="SalesForce">
+        <interface.wsdl interface="urn:enterprise.soap.sforce.com#wsdl.interface(Soap)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_SubmitOpportunity/CCRMOP_SubmitOpportunity.wsdl" name="CCRMOP_SubmitOpportunity">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.interface(CCRMOP_SubmitOpportunity)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.interface(CCRMOP_SubmitOpportunityCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="EAI.SRV.EXT.SFDC.051_SendOpportunityToSFDCServiceRef.wsdl" name="TRUSTOpptyUpdate">
+        <interface.wsdl interface="http://soap.sforce.com/schemas/class/OpportunityManagement#wsdl.interface(OpportunityManagementPortType)"/>
+    </reference>
+    <property name="preference.password" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.loginId" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

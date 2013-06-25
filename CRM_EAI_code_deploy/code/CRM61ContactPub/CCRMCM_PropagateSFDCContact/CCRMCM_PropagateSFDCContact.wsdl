@@ -1,0 +1,34 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="CCRMCM_PropagateSFDCContact"
+     targetNamespace="http://xmlns.oracle.com/CRM61ContactPub/CCRMCM_PropagateSFDCContact/CCRMCM_PropagateSFDCContact"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns1="http://soap.sforce.com/schemas/class/ContactManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/CCRMCM_PropagateSFDCContact/CCRMCM_PropagateSFDCContact"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <plnk:partnerLinkType name="CCRMCM_PropagateSFDCContact">
+        <plnk:role name="CCRMCM_PropagateSFDCContactProvider">
+            <plnk:portType name="client:CCRMCM_PropagateSFDCContact"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <wsdl:import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/CRM61ContactPub/CCRMCM_PropagateSFDCContact/CCRMCM_PropagateSFDCContact"
+                 schemaLocation="xsd/CCRMCM_PropagateSFDCContact.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://soap.sforce.com/schemas/class/ContactManagement">
+            <import namespace="http://soap.sforce.com/schemas/class/ContactManagement" schemaLocation="xsd/EAI.MSG.SFDC.CM.402.TRUSTOutboundRequestAndResponse.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="CCRMCM_PropagateSFDCContactRequestMessage">
+        <wsdl:part name="payload" element="ns1:TRUSTOutboundContact"/>
+    </wsdl:message>
+    <wsdl:portType name="CCRMCM_PropagateSFDCContact">
+        <wsdl:operation name="process">
+            <wsdl:input message="client:CCRMCM_PropagateSFDCContactRequestMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

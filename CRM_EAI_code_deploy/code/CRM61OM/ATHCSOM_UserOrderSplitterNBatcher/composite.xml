@@ -1,0 +1,49 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHCSOM_UserOrderSplitterNBatcher" revision="1.0" state="on">
+    <import location="ATHCSOM_UserOrderSplitterNBatcher.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHCSOM_MoveUser/ATHCSOM_MoveUser.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHCSOM_UserOrderFulfilment/ATHCSOM_UserOrderFulfilment.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="ATHCSOM_UserOrderSplitterNBatcher.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher#wsdl.interface(ATHCSOM_UserOrderSplitterNBatcherCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher#wsdl.interface(ATHCSOM_UserOrderSplitterNBatcher)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher#wsdl.endpoint(ATHCSOM_UserOrderSplitterNBatcher/ATHCSOM_UserOrderSplitterNBatcher)"/>
+    </service>
+    <component name="ATHCSOM_UserOrderSplitterNBatcher">
+        <implementation.bpel src="ATHCSOM_UserOrderSplitterNBatcher.bpel"/>
+        
+        
+    </component>
+    <reference name="ATHCSOM_MoveUser" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHCSOM_MoveUser/ATHCSOM_MoveUser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.interface(ATHCSOM_MoveUser)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.interface(ATHCSOM_MoveUserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.endpoint(ATHCSOM_MoveUser/ATHCSOM_MoveUser)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHCSOM_MoveUser/anchorToATHCSOMMoveUser?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.endpoint(ATHCSOM_MoveUser/ATHCSOM_MoveUserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="ATHCSOM_UserOrderFulfilment" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHCSOM_UserOrderFulfilment/ATHCSOM_UserOrderFulfilment.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment#wsdl.interface(ATHCSOM_UserOrderFulfilment)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment#wsdl.interface(ATHCSOM_UserOrderFulfilmentCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment#wsdl.endpoint(ATHCSOM_UserOrderFulfilment/ATHCSOM_UserOrderFulfilment)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHCSOM_UserOrderFulfilment/anchorToATHCSOMUserOrderFulfilment?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment#wsdl.endpoint(ATHCSOM_UserOrderFulfilment/ATHCSOM_UserOrderFulfilmentCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>ATHCSOM_UserOrderSplitterNBatcher/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHCSOM_UserOrderSplitterNBatcher/ATHCSOM_UserOrderFulfilment</source.uri>
+        <target.uri>ATHCSOM_UserOrderFulfilment</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHCSOM_UserOrderSplitterNBatcher/ATHCSOM_MoveUser</source.uri>
+        <target.uri>ATHCSOM_MoveUser</target.uri>
+    </wire>
+<!--
+<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property> 
+-->
+</composite>

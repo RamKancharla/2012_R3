@@ -1,0 +1,16 @@
+<adapter-config name="Enqueue_GenQuoteServ" adapter="MQSeriesAdapter" wsdlLocation="Enqueue_GenQuoteServ.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemoteCRMtoEAI" adapterRef=""/>
+  <endpoint-interaction portType="Enqueue_ptt" operation="Enqueue" UITransmissionPrimitive="Enqueue">
+    <interaction-spec className="oracle.tip.adapter.mq.outbound.InteractionSpecImpl">
+      <property name="QueueName" value="${mq.token.prefix}EAI_CRM_312_ESO_QT_RQST_Q"/>
+      <property name="MessageType" value="NORMAL"/>
+      <property name="MessageFormat" value="NONE"/>
+      <property name="Priority" value="AS_Q_DEF"/>
+      <property name="Persistence" value="AS_Q_DEF"/>
+      <property name="Expiry" value="NEVER"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

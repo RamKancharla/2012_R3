@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.OM.286_OrderRequest.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:	Canonical Order Schema document to be used for order splliter
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		05/07/07	G PATCHIPULUSU			Initial Version
+*  0.02		18/05/10	Chakrapani			Added SoldToAccountNumber,RCRMField6,RCRMField7,quoteNumber in CCRMOMOrderHeader and SAPOrderNumber,RCRMField6,RCRMField7,RCRMField1,
+								RCRMField8,RCRMField9,RCRMField10,SAPActionCode,SAPBusinessCase,CalculatedListPrice,ListPrice,BillingPeriod,PublishContactToSAP,ContactStatus,product in CCRMOM_OLI as part of SAP Integration
+*  0.03		08/06/10	Mallesh			        Added WorkPhone,EmailAddress in CCRMOM_OLI as part of SAP Integration                                                                
+*  0.04         01/07/10        Chakrapani                      Added PPLID in CCRMOM_OLI as part of SAP Integration
+*  0.05         12/01/11        Lavanya                         Added two fields RCRMSAPConCountry,RCRMDiscountReason at header level and OLI level respectively.
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+
+xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.12">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="SAPOrderRequest" type="xsdLocal:SAPOrderRequest"/>
+	<xsd:complexType name="SAPOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="logicalCountry" type="xsd:string"/>
+			<xsd:element name="messageHeader" type="xsdLocal:SAPMessageHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:SAPOrderHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:SAPOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SAPOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+                        <xsd:element name="parentOrderItemId" type="xsd:string"/>
+			<xsd:element name="rootItemId" type="xsd:string"/>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="businessCase" type="xsd:string"/>
+			<xsd:element name="salesCode" type="xsd:string"/>
+			<xsd:element name="subscriber" type="xsd:string"/>
+			<xsd:element name="subAccount" type="xsd:string"/>
+			<xsd:element name="PLI" type="xsd:string"/>
+			<xsd:element name="permissioningSystem" type="xsd:string"/>
+			<xsd:element name="billingSystem" type="xsd:string"/>
+			<xsd:element name="manualPermissioningRequired" type="xsd:string"/>
+			<xsd:element name="AKR" type="xsd:string"/>
+			<xsd:element name="userID" type="xsd:string"/>
+                        <xsd:element name="userIDtype" type="xsd:string"/>
+			<xsd:element name="userNumber" type="xsd:string"/>
+			<xsd:element name="firstName" type="xsd:string"/>
+			<xsd:element name="lastname" type="xsd:string"/>
+			<xsd:element name="dob" type="xsd:string"/>
+			<xsd:element name="isNewUser" type="xsd:string"/>
+			<xsd:element name="installDate" type="xsd:string"/>
+			<xsd:element name="removalDate" type="xsd:string"/>
+			<xsd:element name="QUID" type="xsd:string"/>
+			<xsd:element name="discount" type="xsd:string"/>
+			<xsd:element name="specialPrice" type="xsd:string"/>
+			<xsd:element name="specialPriceCurr" type="xsd:string"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsd:string"/>
+			<xsd:element name="itemNumber" type="xsd:string"/>
+			<xsd:element name="startStopBillingDate" type="xsd:string"/>
+			<xsd:element name="billingType" type="xsd:string"/>
+			<xsd:element name="billingNote" type="xsd:string"/>
+			<xsd:element name="freeTrailFlag" type="xsd:string"/>
+			<xsd:element name="STB" type="xsd:string"/>
+			<xsd:element name="assetIntegrationId" type="xsd:string"/>
+			<xsd:element name="orderLineStatus" type="xsd:string"/>
+			<xsd:element name="permissioningStatus" type="xsd:string"/>
+			<xsd:element name="interfaceForBilling" type="xsd:string"/>
+			<xsd:element name="interfaceForFulfilment" type="xsd:string"/>
+                        <xsd:element name="productIntegrationId" type="xsd:string"/>
+                        <xsd:element name="freeTrialEndDate" type="xsd:string"/>
+			<xsd:element name="permBillFlag" type="xsd:string"/>
+                        <xsd:element name="SAPBillable" type="xsd:string"/>
+			<xsd:element name="SAPItemNumber" type="xsd:string"/>
+			<xsd:element name="PONumber" type="xsd:string"/>
+			<xsd:element name="InstallLocationAccountNumber" type="xsd:string"/>
+			<xsd:element name="BillToAccountNumber" type="xsd:string"/>
+			<xsd:element name="LegalEntityId" type="xsd:string"/>
+			<xsd:element name="QuoteNumber" type="xsd:string"/>
+			<xsd:element name="ProductDescription" type="xsd:string"/>
+			<xsd:element name="RecurringBillingNoteFlag" type="xsd:string"/>
+			<xsd:element name="EditedListPrice" type="xsd:string"/>
+			<xsd:element name="quantity" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="accountLocId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="InstallLocationAccountId" type="xsd:string"/>
+                        <xsd:element name="RCRMBillingAccount" type="xsd:string"/>
+			<xsd:element name="RCRMField2" type="xsd:string"/>
+			<xsd:element name="RCRMField3" type="xsd:string"/>
+			<xsd:element name="account" type="xsd:string"/>
+			<!-- SAP Integration 18May2010-->
+			<xsd:element name="SAPOrderNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField6" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField7" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField1" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField8" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField9" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField10" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SAPActionCode" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SAPBusinessCase" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="CalculatedListPrice" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ListPrice" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="BillingPeriod" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="PublishContactToSAP" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ContactStatus" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="product" type="xsd:string"/>
+                        <xsd:element name="WorkPhone" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="EmailAddress" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="PPLID" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<!-- End-->
+                        <!--As part of CR477 RCRMDiscountReason is added at OLI level -->
+			<xsd:element name="RCRMDiscountReason" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+               </xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SAPMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SAPOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderNumber" type="xsd:string"/>
+			<xsd:element name="installDate" type="xsd:string"/>
+			<xsd:element name="removalDate" type="xsd:string"/>
+			<xsd:element name="po" type="xsd:string"/>
+			<xsd:element name="orderNote" type="xsd:string"/>
+			<xsd:element name="orderStatus" type="xsd:string"/>
+			<xsd:element name="ssPersonId" type="xsd:string"/>
+			<xsd:element name="slPersonId" type="xsd:string"/>
+			<xsd:element name="account" type="xsd:string"/>
+			<xsd:element name="RCRMField1" type="xsd:string"/>
+			<xsd:element name="tempOrderVar" type="xsd:string" minOccurs="0"/>
+			<!-- SAP Integration 18May2010-->
+			<xsd:element name="SoldToAccountNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField6" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField7" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="quoteNumber" type="xsd:string"/>
+			<!-- End-->
+                        <!--As part of CR477 a new field RCRMSAPConCountry is added at hearder level-->
+			<xsd:element name="RCRMSAPConCountry" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>     
+</xsd:schema>

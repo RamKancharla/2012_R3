@@ -1,0 +1,48 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/PM/PriceUpdateRequestFormatter"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/CS/PM/PriceUpdateRequestFormatter"
+     xmlns:csns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:comt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes"
+     xmlns:csfns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthRequest"
+     xmlns:ns="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthRequest" location="EAI.MSG.CS.207_FixedLengthConversionResponse.xsd"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate" location="EAI.MSG.CS.PM.206_PriceUpdateRequest.xsd"/>
+    <message name="PriceUpdateRequest">
+        <part name="parameter" element="csns:CSPriceUpdate"/>
+    </message>
+    <message name="PriceUpdateResponse">
+        <part name="parameter" element="csfns:fixedLengthRequest"/>
+    </message>
+    <portType name="TransformPriceUpdateRequest">
+        <operation name="transform">
+            <input message="tns:PriceUpdateRequest"/>
+            <output message="tns:PriceUpdateResponse"/>
+        </operation>
+    </portType>
+    <binding name="TransformPriceUpdateRequestSOAP" type="tns:TransformPriceUpdateRequest">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="transform">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="TransformPriceUpdateToCSFormat">
+        <port name="PriceUpdateRequest" binding="tns:TransformPriceUpdateRequestSOAP">
+            <soap:address location="http://10.2.136.243:8888/CRM61PricePublish-TransformPriceUpdateToCSFormat-context-root/PriceUpdateRequest"/>
+        </port>
+    </service>
+</definitions>

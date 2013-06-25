@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.ATH.UOM.304_UserOrderResponse.xsd
+	* Type:        XSD Schema
+	* Description: The schema used in EAI components to get the asynchronous response that is order status from SEA system. 
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         12/06/09  Sreeja			Initial version
+        * 0.2         06/10/10  Ramanjana		Added the UserSettingStructure node
+        * 0.3         13/10/10  Ramanjana		Changed the type for actionCode of UserMessageBody node
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+	xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+	xmlns:gcap-cuot="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes"
+	xmlns:gcap-nuot="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.7">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.019_CommonUserOrderTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.020_NillableUserOrderTypes.xsd" />
+	<xsd:element name = "userProvisionResponse" type="local:UserProvisionResponse"/>
+       <xsd:complexType name="UserProvisionResponse">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader" />
+			<xsd:element name="userMessageHeader" type="local:UserMessageHeader" />
+			<xsd:element name="userMessageBody" type="local:UserMessageBody" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+        <xsd:complexType name="UserMessageHeader">
+        <xsd:sequence>
+            <xsd:element name="TransactionId" type="gcap-nuot:TransactionId"/>
+            <xsd:element name="ReferenceSystem" type="gcap-nuot:RequestSystem"/>
+	    <xsd:element name="orderNumber" type="gcap-cuot:SiebelOrderNumber"/>
+            <xsd:element name="ResponseDate" type="gcap-nuot:EffectiveDate"/>
+            <xsd:element name="subscriberNumber" type="gcap-cuot:Subscriber"/>
+            <xsd:element name="subAccount" type="gcap-nuot:SubAccount"/>
+             <xsd:element name="RequestStage" type="gcap-nuot:ExtraField1"/>
+            <xsd:element name="ActionCode" type="gcap-nuot:AthActionCode"/>
+            <xsd:element name="Status" type="gcap-nuot:ExtraField1"/>
+            <xsd:element name="NumberRequestedRecords" type="xsd:nonNegativeInteger"/>
+            <xsd:element name="NumberSuccessfulRecords" type="xsd:nonNegativeInteger"/>
+            <xsd:element name="NumberFailedRecords" type="xsd:nonNegativeInteger"/>
+        </xsd:sequence>
+    </xsd:complexType>
+     <xsd:complexType name="UserMessageBody">
+        <xsd:sequence>
+            <xsd:element name="UserId" type="gcap-nuot:AthenaSubId"/>
+            <xsd:element name="ReferenceSystemUserId" type="gcap-cuot:UOLIId"/>
+            <xsd:element name="subscriberNumber" type="gcap-cuot:Subscriber"/>
+            <xsd:element name="subAccount" type="gcap-nuot:SubAccount"/>
+            <xsd:element name="ActionCode" type="xsd:string" nillable="true" minOccurs="0" />
+            <xsd:element name="TransactionStatus" type="gcap-nuot:ExtraField1"/>
+            <xsd:element name="TransactionId" type="gcap-nuot:TransactionId" />
+            <xsd:element name="ErrorCode" type="gcap-nuot:ExtraField1"/>
+            <xsd:element name="ErrorMsg" type="gcap-nuot:ErrorMessage"/>
+            <xsd:element name="portfolioList" type="local:PortfolioList" maxOccurs="unbounded"/>
+            <xsd:element name="UserSettingStructure" type="local:UserSettingStructure" maxOccurs="unbounded"/>
+        </xsd:sequence>
+     </xsd:complexType>
+      <xsd:complexType name="PortfolioList">
+        <xsd:sequence>
+                <xsd:element name="productCode" type="gcap-nuot:PLI"/>
+                <xsd:element name="productLineReferenceNumber" type="gcap-nuot:UOLIId"/>
+                <xsd:element name="ErrorCode" type="gcap-nuot:ExtraField1"/>
+                <xsd:element name="ErrorMsg" type="gcap-nuot:ErrorMessage" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="UserSettingStructure">
+        <xsd:sequence>
+            <xsd:element name="Server" type="local:ServerStructure"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ServerStructure">
+        <xsd:sequence>
+            <xsd:element name="ServerName" type="xsd:string" default="AUTO"></xsd:element>
+            <xsd:element name="ServerType" type="local:ServerType" nillable="true" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="ServerType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="PRIMARY"/>
+            <xsd:enumeration value="BACKUP"/>
+            <xsd:enumeration value="VIRTUAL"/>
+            <xsd:enumeration value="INTERNET"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+   </xsd:schema>

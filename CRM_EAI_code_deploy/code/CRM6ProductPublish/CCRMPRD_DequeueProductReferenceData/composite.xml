@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPRD_DequeueProductReferenceData" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="Dequeue.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeue/"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPRD_ProductUpdateAssembler/CCRMPRD_ProductUpdateAssembler.wsdl"
+            importType="wsdl"/>
+    <service name="Dequeue" ui:wsdlLocation="Dequeue.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeue/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="Dequeue_mq.jca"/>
+    </service>
+    <component name="CCRMPRD_DequeueProductReferenceData">
+        <implementation.bpel src="CCRMPRD_DequeueProductReferenceData.bpel"/>
+    </component>
+    <reference name="CCRMPRD_ProductUpdateAssembler"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPRD_ProductUpdateAssembler/CCRMPRD_ProductUpdateAssembler.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler#wsdl.interface(CCRMPRD_ProductUpdateAssembler)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler#wsdl.endpoint(CCRMPRD_ProductUpdateAssembler/CCRMPRD_ProductUpdateAssembler)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPRD_ProductUpdateAssembler/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>Dequeue</source.uri>
+        <target.uri>CCRMPRD_DequeueProductReferenceData/Dequeue</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPRD_DequeueProductReferenceData/CCRMPRD_ProductUpdateAssembler</source.uri>
+        <target.uri>CCRMPRD_ProductUpdateAssembler</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

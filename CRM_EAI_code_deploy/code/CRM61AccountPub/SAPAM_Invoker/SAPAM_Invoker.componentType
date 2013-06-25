@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="SAPAM_POLLING_VIEW.wsdl" name="SAPAM_POLLING_VIEW">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/SAPAM_POLLING_VIEW/#wsdl.interface(SAPAM_POLLING_VIEW_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="EAI.SRV.AM.SAP.71_AccountPublishRef.wsdl" name="CustomerAccountPublish">
+        <interface.wsdl interface="http://trm.com:I001:CustomerMaster:AccountMessage#wsdl.interface(SI_Create_CustomerAccount_OB_Async)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="Update_Interface_Buffer.wsdl" name="Update_Interface_Buffer">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Interface_Buffer/#wsdl.interface(Update_Interface_Buffer_ptt)"/>
+    </reference>
+    <reference name="SequenceReleaser"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+</componentType>

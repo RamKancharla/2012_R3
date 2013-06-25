@@ -1,0 +1,41 @@
+<definitions
+     name="TTMG_Invoker"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TktRqst"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker" schemaLocation="TTMG_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TktRqst" schemaLocation="EAI.MSG.TT.MG.271_TeamTrackTicketRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TTMG_InvokerResponseMessage">
+        <part name="payload" element="client:TTMG_InvokerProcessResponse"/>
+    </message>
+    <message name="TTMG_InvokerRequestMessage">
+        <part name="ttTktRqst" element="ns1:MSTTeamTrackRequest"/>
+    </message>
+    <portType name="TTMG_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:TTMG_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="TTMG_Invoker">
+        <operation name="submitTicketToMST">
+            <input message="client:TTMG_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TTMG_Invoker">
+        <plnk:role name="TTMG_InvokerProvider">
+            <plnk:portType name="client:TTMG_Invoker"/>
+        </plnk:role>
+        <plnk:role name="TTMG_InvokerRequester">
+            <plnk:portType name="client:TTMG_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

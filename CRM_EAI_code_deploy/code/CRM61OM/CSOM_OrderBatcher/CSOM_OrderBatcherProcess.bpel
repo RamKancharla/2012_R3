@@ -1,0 +1,387 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+
+* Module:     {Name of the file CSOM_ORDERbATCHER.bpel}   
+* Type:        {BPEL FILE} 
+* Description: {ASynchronous BPEL Process that splits the order based on number of lines and CS order numbers} 
+* IDD Reference: -
+  Created: Thu Jul 19 14:41:03 BST 2007
+* Change History 
+* Version      Date         Author          Description Of Change 
+*  1.0         04/03/08     Sunil V         Initial Version 
+*  1.1         12/03/08     Sunil V         Changed the code for defectNo:12646
+*  1.2         13/03/08     Sunil V         Changed the number of lines to be passed in each order to 240.
+*  1.3         13/03/08     Sunil V         Changed the code according to the code review comments.
+*  1.4	       11/03/10     Sreeja P	    Added Perm Bill Flag to all the transformations as part of PBI-421 Part b of 6.3Sprint10
+*  1.5         26/04/10     Venkat A        Added installToSubscriber and installToItemNumber to all the transformations as part of PBI-537
+*  1.6         26/04/10     Venkat A        Added logic for 200 order line items as part of PBI-537.
+*  1.7         20/07/10     Sreeja          Added the logic in the action code,userId and QUID fields for the defect#39370 in TransOrderBatcherIVToExtendedOrder.xsl
+*  1.8         23/07/10     Sreeja          Added the logic for filtering the athena request for Non Us and Non CA countries for the defect#39370 by adding a new TransFilterAthenaManulPermReq.xsl and asigFilterOLI.
+*  1.9         29/07/10     Swapna          Added SwitchCase and added under Defect 40346
+*  2.0         20/08/10     Swapna          Modified the condition in TransOrderBatcherIVToExtendedOrder.xsl for the Defect 41373, 40346
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CSOM_OrderBatcherProcess" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.example.org" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns10="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher/correlationset" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="CSOM_OrderBatcher" partnerLinkType="client:CSOM_OrderBatcher" myRole="CSOM_OrderBatcherProvider" partnerRole="CSOM_OrderBatcherRequester"/>
+        <partnerLink myRole="CSOM_COMPASSOrderFulfilmentRequester" name="CSOM_COMPASSOrderFulfilment" partnerRole="CSOM_COMPASSOrderFulfilmentProvider" partnerLinkType="ns1:CSOM_COMPASSOrderFulfilment"/>
+        <partnerLink name="SequenceChecker" partnerRole="SequenceCheckerProvider" partnerLinkType="ns7:SequenceChecker"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="OrderBatcher_IV" messageType="client:CSOM_OrderBatcherRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CSOM_OrderBatcherResponseMessage"/>
+        <variable name="InvCOMPASSOrderFulfilmentIV" messageType="ns1:CSOM_COMPASSOrderFulfilmentRequestMessage"/>
+        <variable name="noOf240OrderLineSets" type="xsd:int"/>
+        <variable name="orderLineRestrictionIndex" type="xsd:int"/>
+        <variable name="presentCSOrderNumber" type="xsd:string"/>
+        <variable name="previousCSOrderNumber" type="xsd:string"/>
+        <variable name="index" type="xsd:nonNegativeInteger"/>
+        <variable name="noOfOrderLines" type="xsd:nonNegativeInteger"/>
+        <variable name="extendedOrderWithCSOrderNumber" messageType="client:ExtendedOrderWithCSOrderNumber"/>
+        <variable name="orderWithCSOrderNumberForAppending" messageType="client:ExtendedOrderWithCSOrderNumber"/>
+        <variable name="InvCOMPASSOrderFulfilmentForNonCreateIV" messageType="ns1:CSOM_COMPASSOrderFulfilmentRequestMessage"/>
+        <variable name="RcvOrderBatcherInIV" messageType="client:CSOM_OrderBatcherRequestMessage"/>
+        <variable name="InvSequenceCheckerIV" messageType="ns7:SequenceCheckerRequestMessage"/>
+        <variable name="InvSequenceCheckerOV" messageType="ns7:SequenceCheckerResponseMessage"/>
+        <variable name="uniqueID" type="xsd:string"/>
+        <variable name="releaseOrderBatcherIV" messageType="client:ReleaseSequenceMessage"/>
+        <variable name="noOfFilteredOLI" type="xsd:integer"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CSOM_OrderBatcher.wsdl) -->
+        <receive name="RcvOrderBatcherIn" partnerLink="CSOM_OrderBatcher" portType="client:CSOM_OrderBatcher" operation="batchOrderRequest" variable="RcvOrderBatcherInIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="ceiling(count(bpws:getVariableData('RcvOrderBatcherInIV','payload','/ns6:compassOrder/ns6:orderLineItem')) div 200)"/>
+                <to variable="noOf240OrderLineSets"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="orderLineRestrictionIndex"/>
+            </copy>
+            <copy>
+                <from expression="count(bpws:getVariableData('RcvOrderBatcherInIV','payload','/ns6:compassOrder/ns6:orderLineItem'))"/>
+                <to variable="noOfOrderLines"/>
+            </copy>
+            <copy>
+                <from expression="1"/>
+                <to variable="index"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String olid = ((oracle.xml.parser.v2.XMLElement)                                     
+                       getVariableData("RcvOrderBatcherInIV","payload","/ns6:compassOrder/ns6:orderHeader/ns4:CRMOrderNumber")).getFirstChild().getNodeValue();                                        
+setCompositeInstanceTitle(olid);]]>
+        </bpelx:exec>
+        <assign name="TransRcvOrderBatcherInIVToExtendedOrder">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransOrderBatcherIVToExtendedOrder.xsl',bpws:getVariableData('RcvOrderBatcherInIV','payload'))"/>
+                <to variable="extendedOrderWithCSOrderNumber" part="payload"/>
+            </copy>
+        </assign>
+        <assign name="TransFilterAthenaManulPermReq">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransFilterAthenaManulPermReq.xsl',bpws:getVariableData('extendedOrderWithCSOrderNumber','payload'))"/>
+                <to variable="extendedOrderWithCSOrderNumber" part="payload"/>
+            </copy>
+        </assign>
+        <empty/>
+        <assign name="AsgFilteredOLI">
+            <copy>
+                <from expression="count(bpws:getVariableData('extendedOrderWithCSOrderNumber','payload','/ns2:ExtendedCompassOrder/ns2:orderLineItem'))"/>
+                <to variable="noOfFilteredOLI"/>
+            </copy>
+        </assign>
+        <switch name="GenerateOrderLines">
+            <case condition="(bpws:getVariableData('RcvOrderBatcherInIV','payload','/ns6:compassOrder/ns6:messageHeader/ns4:actionCode') = 'OM30') or (bpws:getVariableData('RcvOrderBatcherInIV','payload','/ns6:compassOrder/ns6:messageHeader/ns4:actionCode') = 'OM25') or (bpws:getVariableData('RcvOrderBatcherInIV','payload','/ns6:compassOrder/ns6:messageHeader/ns4:actionCode') = 'OM38')">
+                <bpelx:annotation>
+                    <bpelx:pattern>ifActioncodeEquals0M25 or OM30</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqForCreateActionCode">
+                    <sequence name="SeqSplitOrderOnCSOrderNumbers">
+                        <assign name="TransSortExtendedOrderOnCSOrderNo">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransSortExtendedOrderOnCSOrderNo.xsl',bpws:getVariableData('extendedOrderWithCSOrderNumber','payload'))"/>
+                                <to variable="extendedOrderWithCSOrderNumber" part="payload"/>
+                            </copy>
+                        </assign>
+                        <assign name="AsgPresentAndPreviousCSOrderNumber">
+                            <!--  <copy>
+                            <from variable="extendedOrderWithCSOrderNumber"
+                                  query="/ns2:ExtendedCompassOrder/ns2:index"
+                                  part="payload"/>
+                            <to variable="previousCSOrderNumber"/>
+                        </copy> -->
+                            <copy>
+                                <from variable="extendedOrderWithCSOrderNumber" query="/ns2:ExtendedCompassOrder/ns2:orderLineItem[bpws:getVariableData('index')]/ns2:CSOrderNumber" part="payload"/>
+                                <to variable="presentCSOrderNumber"/>
+                            </copy>
+                            <copy>
+                                <from variable="extendedOrderWithCSOrderNumber" query="/ns2:ExtendedCompassOrder/ns2:orderLineItem[bpws:getVariableData('index')]/ns2:CSOrderNumber" part="payload"/>
+                                <to variable="previousCSOrderNumber"/>
+                            </copy>
+                        </assign>
+                        <assign name="TransExtendedOrderIVHeader">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransExtendedOrderIVHeader.xsl',bpws:getVariableData('extendedOrderWithCSOrderNumber','payload'))"/>
+                                <to variable="orderWithCSOrderNumberForAppending" part="payload"/>
+                            </copy>
+                        </assign>
+                        <while name="While_2" condition="bpws:getVariableData('noOfOrderLines')+1 >= bpws:getVariableData('index')">
+                            <sequence name="GenerateOrderlineResponseMsg">
+                                <switch name="GenerateOrdelineResponseMse">
+                                    <case condition="(bpws:getVariableData('presentCSOrderNumber') = bpws:getVariableData('previousCSOrderNumber')) and (bpws:getVariableData('index') &lt;= bpws:getVariableData('noOfOrderLines'))">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>ifPresentCSOrderNumberEqualsPreviousCSOrderNumber</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <assign name="AppendOrderLine">
+                                            <bpelx:append>
+                                                <bpelx:from variable="extendedOrderWithCSOrderNumber" part="payload" query="/ns2:ExtendedCompassOrder/ns2:orderLineItem[bpws:getVariableData('index')]"/>
+                                                <bpelx:to variable="orderWithCSOrderNumberForAppending" part="payload" query="/ns2:ExtendedCompassOrder"/>
+                                            </bpelx:append>
+                                        </assign>
+                                    </case>
+                                    <otherwise>
+                                        <sequence name="SeqRemoveorderlines">
+                                            <assign name="TransOrderWithCSOrderNumberForAppendingToCompassOrderFulfilmentIV">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransOrderWithCSOrderNumberForAppendingToCompassOrderFulfilmentIV.xsl',bpws:getVariableData('orderWithCSOrderNumberForAppending','payload'))"/>
+                                                    <to variable="InvCOMPASSOrderFulfilmentForNonCreateIV" part="orderRequest"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvCOMPASSOrderFulfilmentForNonCreate" partnerLink="CSOM_COMPASSOrderFulfilment" portType="ns1:CSOM_COMPASSOrderFulfilment" operation="transformOrder" inputVariable="InvCOMPASSOrderFulfilmentForNonCreateIV"/>
+                                            <switch name="GenerateRemovalOfOrderLines">
+                                                <case condition="bpws:getVariableData('noOfOrderLines') >= bpws:getVariableData('index')">
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>ifNoOfOrderlinesGtEqIndex</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <assign name="RemoveAllOrderLines">
+                                                        <bpelx:remove>
+                                                            <bpelx:target variable="orderWithCSOrderNumberForAppending" part="payload" query="/ns2:ExtendedCompassOrder/ns2:orderLineItem"/>
+                                                        </bpelx:remove>
+                                                        <copy>
+                                                            <from variable="presentCSOrderNumber"/>
+                                                            <to variable="previousCSOrderNumber"/>
+                                                        </copy>
+                                                        <bpelx:append>
+                                                            <bpelx:from variable="extendedOrderWithCSOrderNumber" part="payload" query="/ns2:ExtendedCompassOrder/ns2:orderLineItem[bpws:getVariableData('index')]"/>
+                                                            <bpelx:to variable="orderWithCSOrderNumberForAppending" part="payload" query="/ns2:ExtendedCompassOrder"/>
+                                                        </bpelx:append>
+                                                    </assign>
+                                                </case>
+                                                <otherwise>
+                                                    <empty name="DoNothing"/>
+                                                </otherwise>
+                                            </switch>
+                                        </sequence>
+                                    </otherwise>
+                                </switch>
+                                <assign name="AsgIncrementIndex">
+                                    <copy>
+                                        <from expression="bpws:getVariableData('index')+1"/>
+                                        <to variable="index"/>
+                                    </copy>
+                                </assign>
+                                <switch name="CheckNoOfOrderLines">
+                                    <case condition="bpws:getVariableData('noOfOrderLines')>=bpws:getVariableData('index')">
+                                        <assign name="AsgPresentCSOrderNumber">
+                                            <copy>
+                                                <from variable="extendedOrderWithCSOrderNumber" part="payload" query="/ns2:ExtendedCompassOrder/ns2:orderLineItem[bpws:getVariableData('index')]/ns2:CSOrderNumber"/>
+                                                <to variable="presentCSOrderNumber"/>
+                                            </copy>
+                                        </assign>
+                                    </case>
+                                    <otherwise>
+                                        <empty name="DoNothing"/>
+                                    </otherwise>
+                                </switch>
+                            </sequence>
+                        </while>
+                    </sequence>
+                </sequence>
+            </case>
+            <otherwise>
+                <sequence name="Sequence_1">
+                    <switch name="Switch_1">
+                        <case condition="bpws:getVariableData('noOf240OrderLineSets') > 0 and bpws:getVariableData('noOfFilteredOLI') > 0">
+                            <while name="While_1" condition="bpws:getVariableData('noOf240OrderLineSets') > 0 ">
+                                <sequence name="SeqSplitOrderOnNumberOfLines">
+                                    <scope name="SequenceAndInvokeCompassOrderFulfilment">
+                                        <correlationSets>
+                                            <correlationSet name="CorrelationSetSequenceChecker" properties="ns10:InvSequenceCheckerIV_prop"/>
+                                        </correlationSets>
+                                        <sequence name="SeqAndInvokeCompassOrderFulfilment">
+                                            <assign name="AsgSequenceCheckerIV">
+                                                <copy>
+                                                    <from expression="ora:generateGUID()"/>
+                                                    <to variable="uniqueID"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="'EAI'"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:eaiHeader/ns3:applicationId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:eaiHeader/ns3:transactionId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:eaiHeader/ns3:messageId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="'EAI;'"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:eaiHeader/ns3:messageHistory"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="uniqueID"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:eaiHeader/ns3:tracingId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCurrentDateTime()"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:eaiHeader/ns3:timeStamp"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="ora:getCompositeInstanceId()"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:eaiHeader/ns3:instanceId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="1"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:eaiHeader/ns3:timeToLive"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="'V'"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:eaiHeader/ns3:payloadVersion"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="'OrderManagement.OrderCreation'"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:seqRequestDetails/ns8:context"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="'Order.CRMOrderNumber'"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:seqRequestDetails/ns8:messageType"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="RcvOrderBatcherInIV" part="payload" query="/ns6:compassOrder/ns6:orderHeader/ns4:CRMOrderNumber"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:seqRequestDetails/ns8:contextId"/>
+                                                </copy>
+                                                <copy>
+                                                    <!--from expression="ora:getProcessId()"/-->
+													<from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;OrderBatcherBPELProcess&quot;,&quot;Value&quot;,&quot;CSOM_OrderBatcher&quot;)"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:seqRequestDetails/ns8:process"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="uniqueID"/>
+                                                    <to variable="InvSequenceCheckerIV" part="payload" query="/ns8:checkSequenceRequest/ns8:seqRequestDetails/ns8:correlationID"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgOrderLineSetIndexToOrder">
+                                                <copy>
+                                                    <from variable="orderLineRestrictionIndex"/>
+                                                    <to variable="extendedOrderWithCSOrderNumber" part="payload" query="/ns2:ExtendedCompassOrder/ns2:index"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="uniqueID"/>
+                                                    <to variable="extendedOrderWithCSOrderNumber" part="payload" query="/ns2:ExtendedCompassOrder/ns2:eaiHeader/ns3:tracingId"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvSequenceChecker" partnerLink="SequenceChecker" portType="ns7:SequenceChecker" operation="checkSequence" inputVariable="InvSequenceCheckerIV" outputVariable="InvSequenceCheckerOV">
+                                                <correlations>
+                                                    <correlation initiate="yes" set="CorrelationSetSequenceChecker" pattern="out"/>
+                                                </correlations>
+                                            </invoke>
+                                            <switch name="SwitchForSeqReleaseWait">
+                                                <case condition="bpws:getVariableData('InvSequenceCheckerOV','payload','/ns9:basicResponse/ns9:basicResponse/ns3:responseMessage') = 'WAIT'">
+                                                    <sequence name="SeqRelease">
+                                                        <receive name="RcvReleaseOrderBatcher" partnerLink="CSOM_OrderBatcher" portType="client:CSOM_OrderBatcher" operation="releaseOrderBatcher" variable="releaseOrderBatcherIV" createInstance="no">
+                                                            <correlations>
+                                                                <correlation initiate="no" set="CorrelationSetSequenceChecker"/>
+                                                            </correlations>
+                                                        </receive>
+                                                    </sequence>
+                                                </case>
+                                                <otherwise>
+                                                    <empty name="DoNothing"/>
+                                                </otherwise>
+                                            </switch>
+                                            <assign name="TransCompassOrderFulfilment">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransCompassOrderFulfilment.xsl',bpws:getVariableData('extendedOrderWithCSOrderNumber','payload'))"/>
+                                                    <to variable="InvCOMPASSOrderFulfilmentIV" part="orderRequest"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvCOMPASSOrderFulfilment" partnerLink="CSOM_COMPASSOrderFulfilment" portType="ns1:CSOM_COMPASSOrderFulfilment" operation="transformOrder" inputVariable="InvCOMPASSOrderFulfilmentIV"/>
+                                            <assign name="ChangeIndexVariables">
+                                                <copy>
+                                                    <from expression="bpws:getVariableData('noOf240OrderLineSets')-1"/>
+                                                    <to variable="noOf240OrderLineSets"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="bpws:getVariableData('orderLineRestrictionIndex') +1"/>
+                                                    <to variable="orderLineRestrictionIndex"/>
+                                                </copy>
+                                            </assign>
+                                        </sequence>
+                                    </scope>
+                                </sequence>
+                            </while>
+                        </case>
+                        <otherwise>
+                            <sequence name="Sequence_2">
+                                <empty name="DoNothingForNonCAUSAthenaOrders"/>
+                            </sequence>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	*****************************************************************************************************************
+	*   Module:        EAI.MSG.EXT.119_ElectronicFufilmentRequest.xsd					        
+	*   Type:          XSD Schema										         
+	*   Description:   The Schema used to request Electronic fufilment on Common Platform                           
+	*													        
+	*	Change History											        
+	*	Version      Date     	Author            			Description Of Change                   
+	*												                
+	*       0.1    29/01/07   Kevin Wood      	   Initial Version					        
+	*       0.2    29/01/07   Mark Flynn           Updated based on DACS & CEP API doc			        
+	*       0.3    29/01/07   Rob Billington	   Minor Changes to make it more Axis-friendly		        
+	*       0.4    26/02/07   Mark Flynn 		   Update to reference common schemas and new namespace         
+	*                                              conventions                                                  
+	*       0.5    02/03/07   R. Sivarajan		   Converted to standard format	                                
+	*       0.06   06/03/07   Rob Billington       Version scheme changed	                                
+	*       0.07   21/03/07	  Kevin Wood 		   Included EAI Header	                                        
+	*       0.08   23/03/07   Rob Billington       Namespace corrections                                        
+	*   	0.09   17/04/07   Kevin Wood 		   Changed name from EAI.MSG.EXT.104 to EAI.MSG.EXT.119, added   
+	*                                              actionCode, changed productCode to spn                       
+	*       0.10   24/04/07   Mark Flynn           Change name of request to electronicFulfilmentRequest        
+	*                                              Changed name of userPermission to assetChange                
+	*       0.11   25/04/07   Kevin Wood		   Added electronicFulfilmentRequestId and orderId elements     
+	*       0.12   26/04/07   Mark Flynn           Removed reference to orderId as no longer needed             
+	*       0.13   11/06/07	  Mark Flynn		   Updated to reflect new designs				
+	*       0.14   26/07/07	  Mark Flynn		   Updated to reflect new processes				
+	*       0.15   07/08/07	  Rob Billington       Changed ValueName to freeTextValue and made it a choice with 
+	*                                              ValueId.  Made max number of add-ons unbounded. Restructured 
+	*                                              productAttributeList and addOnList.  Re-formatted comments.
+	*       0.16   09/08/07	  Rob Billington       Removed choice between valueID and freeTextValue 
+	*****************************************************************************************************************
+-->
+<xsd:schema
+	xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+	xmlns:gcap-ut="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+	xmlns:gcap-at="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+	xmlns:gcap-pt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonProductTypes"
+	xmlns:gcap-mt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.16">
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+		schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+		schemaLocation="EAI.XSD.002_CommonUserTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+		schemaLocation="EAI.XSD.003_CommonAccountTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonProductTypes"
+		schemaLocation="EAI.XSD.007_CommonProductTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+		schemaLocation="EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:element name="electronicFulfilmentRequest"
+		type="local:ElectronicFulfilmentRequest" />
+	<xsd:complexType name="ElectronicFulfilmentRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-mt:EaiHeader" />
+			<xsd:element name="electronicFulfilmentRequestId"
+				type="xsd:string" />
+			<xsd:element name="UUID" type="gcap-ut:UUID" />
+			<xsd:element name="subscriberAccount"
+				type="gcap-at:SubscriberAccount" />
+			<xsd:element name="modifyUserEntitlements"
+				type="local:ModifyUserEntitlements" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ModifyUserEntitlements">
+		<xsd:sequence>
+			<xsd:element name="entitlement" type="local:Entitlement"
+				minOccurs="1" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Entitlement">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="gcap-mt:ActionCode" />
+			<xsd:element name="productID" type="gcap-pt:ProductID" />
+			<xsd:element name="freeTrialIndicator" type="xsd:boolean" />
+			<xsd:element name="freeTrialEndDate" type="xsd:date" />
+			<xsd:element name="productAttributeList"
+				type="local:ProductAttributeList" />
+			<xsd:element name="addOnList" type="local:AddOnList" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AttributeValuePair">
+		<xsd:sequence>
+			<xsd:element name="attributeID" type="gcap-pt:AttributeID" />
+			<xsd:element name="valueID" type="gcap-pt:ValueID" />
+			<xsd:element name="freeTextValue" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ProductAttributeList">
+		<xsd:sequence>
+			<xsd:element name="attributeValuePair"
+				type="local:AttributeValuePair" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+		<xsd:complexType name="AddOnList">
+		<xsd:sequence>
+			<xsd:element name="addOn"
+				type="local:Entitlement" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

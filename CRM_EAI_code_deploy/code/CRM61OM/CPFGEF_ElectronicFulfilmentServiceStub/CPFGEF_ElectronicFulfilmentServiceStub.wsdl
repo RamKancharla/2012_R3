@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CPFGEF_ElectronicFulfilmentServiceStub"
+             targetNamespace="http://xmlns.oracle.com/CPFGEF_ElectronicFulfilmentServiceStub"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://xmlns.oracle.com/CPFGEF_ElectronicFulfilmentServiceStub"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"
+             xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<types>
+	</types>
+        
+        <import location="xsd/EAI.MSG.EXT.111_BasicResponse.xsd" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common"/>
+        <import location="xsd/EAI.MSG.EXT.119_ElectronicFufilmentRequest.xsd" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"/>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<message name="CPFGEF_ElectronicFulfilmentServiceStubRequestMessage">
+		<part name="payload" element="ns1:electronicFulfilmentRequest" />
+	</message>
+	<message name="CPFGEF_ElectronicFulfilmentServiceStubResponseMessage">
+		<part name="payload" element="ns3:basicResponse"/>
+	</message>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	<!-- portType implemented by the CPFGEF_ElectronicFulfilmentServiceStub BPEL process -->
+	<portType name="CPFGEF_ElectronicFulfilmentServiceStub">
+		<operation name="process">
+			<input  message="client:CPFGEF_ElectronicFulfilmentServiceStubRequestMessage" />
+			<output message="client:CPFGEF_ElectronicFulfilmentServiceStubResponseMessage"/>
+		</operation>
+	</portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ --> 
+	<plnk:partnerLinkType name="CPFGEF_ElectronicFulfilmentServiceStub">
+		<plnk:role name="CPFGEF_ElectronicFulfilmentServiceStubProvider">
+			<plnk:portType name="client:CPFGEF_ElectronicFulfilmentServiceStub"/>
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,22 @@
+<?binding.jca DequeueOrderRequest_mq.jca?>
+<definitions name="DequeueOrderRequest" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOrderRequest/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/mq/header" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOrderRequest/" xmlns:imp1="http://www.siebel.com/xml/RCRM%20Order%20Entry" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="Dequeue_plt">
+        <plt:role name="Dequeue_role">
+            <plt:portType name="tns:Dequeue_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.siebel.com/xml/RCRM%20Order%20Entry" schemaLocation="EAI.MSG.CCRM.OM.148_OrderRequest.xsd"/>
+        </schema>
+    </types>
+    <message name="OrderRequest_msg">
+        <part name="OrderRequest" element="imp1:OrderRequest"/>
+    </message>
+    <portType name="Dequeue_ptt">
+        <operation name="Dequeue">
+            <input message="tns:OrderRequest_msg"/>
+        </operation>
+    </portType>
+</definitions>

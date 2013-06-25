@@ -1,0 +1,33 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://xmlns.oracle.com/InterfaceMessageManager"
+        xmlns:tns="http://xmlns.oracle.com/InterfaceMessageManager"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:db="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER">
+  <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER" schemaLocation="INTERFACEBUFFER_table.xsd"/>
+ <element name="request" type="tns:Request"/>
+  <complexType name="Request">
+   <sequence>
+    <element name="InterfaceMessageManagerProcessRequest"
+             type="db:InterfaceBufferCollection"/>
+    <element name="operation">
+     <simpleType>
+      <restriction base="string">
+       <enumeration value="getMessageByID"/>
+       <enumeration value="updateMessageStateByID"/>
+       <enumeration value="updateSendAttemptsByID"/>
+       <enumeration value="getMessageSummariesByInterfaceAndReferenceID"/>
+      </restriction>
+     </simpleType>
+    </element>
+    <element name="comments" type="string" minOccurs="0"/>
+   </sequence>
+  </complexType>
+ <element name="response" type="tns:Response"/>
+  <complexType name="Response">
+   <sequence>
+    <element name="InterfaceMessageManagerProcessResponse"
+             type="db:InterfaceBufferCollection"/>
+   </sequence>
+  </complexType>
+</schema>

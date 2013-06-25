@@ -1,0 +1,90 @@
+<definitions
+     name="TF_OrderDispatcher"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/TF/TOM"
+     xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher/correlationset"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher/correlationset"
+         location="TF_OrderDispatcher_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher"
+             xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/TF/TOM"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher/correlationset"
+             xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher"
+                 schemaLocation="TF_OrderDispatcher.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher"
+             xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/TF/TOM"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher/correlationset"
+             xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.TF.240_UpdateOrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/TF/TOM"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher/correlationset"
+             xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/TF/TOM"
+                 schemaLocation="EAI.MSG.OM.245_TOMOrderLineRequestFacts.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/TF/TOM"
+             xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher/correlationset"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.TOM.OM.237_PropagateOrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TF_OrderDispatcherResponseMessage">
+        <part name="payload" element="client:TF_OrderDispatcherProcessResponse"/>
+    </message>
+    <message name="TF_OrderDispatcherRequestMessage">
+        <part name="TOMOrderRequest" element="ns1:tfOrderRequest"/>
+    </message>
+    <message name="RuleFactsMessage">
+        <part name="Facts" element="ns3:orderLineRepository"/>
+    </message>
+    <portType name="TF_OrderDispatcherCallback">
+        <operation name="onResult">
+            <input message="client:TF_OrderDispatcherResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="TF_OrderDispatcher">
+        <operation name="dispatchOrderToTOM">
+            <input message="client:TF_OrderDispatcherRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TF_OrderDispatcher">
+        <plnk:role name="TF_OrderDispatcherProvider">
+            <plnk:portType name="client:TF_OrderDispatcher"/>
+        </plnk:role>
+        <plnk:role name="TF_OrderDispatcherRequester">
+            <plnk:portType name="client:TF_OrderDispatcherCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:OrderCorrelationProperty" messageType="client:ReleaseSequenceMessage"
+         part="relSequencePart" query="/ns4:basicResponse/ns4:eaiHeader/ns5:tracingId" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+    <bpws:propertyAlias propertyName="pns1:OrderCorrelationProperty" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns7:SequenceCheckerRequestMessage" part="payload" query="/ns5:checkSequenceRequest/ns5:eaiHeader/ns6:tracingId"
+         xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"/>
+</definitions>

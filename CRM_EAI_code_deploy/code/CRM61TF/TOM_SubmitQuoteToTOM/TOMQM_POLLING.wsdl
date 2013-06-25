@@ -1,0 +1,21 @@
+<?binding.jca TOMQM_POLLING_db.jca?>
+<definitions name="TOMQM_POLLING" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/TOMQM_POLLING/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/TOMQM_POLLING/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/TOMQMPOLLING">
+    <plt:partnerLinkType name="TOMQM_POLLING_plt">
+        <plt:role name="TOMQM_POLLING_role">
+            <plt:portType name="tns:TOMQM_POLLING_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/TOMQMPOLLING" schemaLocation="TOMQMPOLLING_table.xsd"/>
+        </schema>
+    </types>
+    <message name="TomqmPollingVCollection_msg">
+        <part name="TomqmPollingVCollection" element="top:TomqmPollingVCollection"/>
+    </message>
+    <portType name="TOMQM_POLLING_ptt">
+        <operation name="receive">
+            <input message="tns:TomqmPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

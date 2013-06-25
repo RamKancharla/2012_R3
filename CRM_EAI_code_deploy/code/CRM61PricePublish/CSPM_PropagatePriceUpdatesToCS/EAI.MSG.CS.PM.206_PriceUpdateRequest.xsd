@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************************************
+* Module:	EAI.MSG.CS.PM.206_PriceListRequest.xsd
+*				
+* Type:		XML Schema Document
+* Description:	Price Point request in CCRM Domain
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		28/03/07	Sreeja Prasad			Initial Version
+*  0.02         29/06/10        Sreeja                          Added a new element PLIId in _CSPriceUpdateReqLineItem.
+*************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:element name="CSPriceUpdate" type="xsdLocal:_CSPriceUpdate"/>
+	<xsd:complexType name="_CSPriceUpdate">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="xsdLocal:_CSEaiHeader"/>
+			<xsd:element name="country" type="xsdLocal:_CSCountry"/>
+			<xsd:element name="messageHeader" type="xsdLocal:_CSCompassMessageHeader"/>
+			<xsd:element name="priceUpdateReqHeader" type="xsdLocal:_CSPriceUpdateReqHeader"/>
+			<xsd:element name="priceUpdateReqLineItem" type="xsdLocal:_CSPriceUpdateReqLineItem" maxOccurs="400"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSEaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="xsdLocal:string10"/>
+			<xsd:element name="transactionId" type="xsdLocal:string30"/>
+			<xsd:element name="messageId" type="xsdLocal:string30"/>
+			<xsd:element name="messageHistory" type="xsdLocal:string100"/>
+			<xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSCompassMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="messageId" type="xsd:string"/>
+			<xsd:element name="transactionId" type="xsd:string"/>
+			<xsd:element name="messageHistory" type="xsd:string"/>
+			<xsd:element name="tracingId" type="xsd:string"/>
+			<xsd:element name="messageCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="userId" type="xsd:string"/>
+			<xsd:element name="objectSystem" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSPriceUpdateReqHeader">
+		<xsd:sequence>
+			<xsd:element name="priceListNumber" type="xsd:string"/>
+			<xsd:element name="CSInstance" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSPriceUpdateReqLineItem">
+		<xsd:sequence>
+			<xsd:element name="PLI" type="xsdLocal:GlobalPLI"/>
+			<xsd:element name="startDate" type="xsdLocal:StartDate"/>
+			<xsd:element name="value" type="xsdLocal:Value"/>
+			<xsd:element name="currency" type="xsdLocal:Currency"/>
+			<xsd:element name="comType" type="xsdLocal:ComType"/>
+                        <xsd:element name="pliId" type="xsdLocal:PLIId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="GlobalPLI">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[ATTRIBUTE PRICE ADJUSTMENT].[BILLING PLI CODE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>XTRDFPDF</content>
+					<comment>
+						The Global PLI for a product.
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StartDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Currency">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>FR</content>
+					<comment>Country code for France</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ComType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>France</content>
+					<comment>Country name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        <xsd:simpleType name="PLIId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>France</content>
+					<comment>Price list row id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceListItem">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>207.25</content>
+					<comment>Special price; special price can be either +ve or -ve</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:decimal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSCountry">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>France</content>
+					<comment>Country name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Value">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[SIEBEL LDM].[ATTRIBUTE VALID VALUE].[INTEGRATION ID]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>1-7ZXRMJ</content>
+					<comment>
+						Siebel integration ID for a configurable attribute value
+						of a product
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

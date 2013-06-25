@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMOM_PropagateOrderStatus.wsdl" name="anchorToPropagateOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatus)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="CSOrderUpdate.wsdl" name="CSOrderUpdate">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerCSOrderUpdate/#wsdl.interface(Enqueue_ptt)"/>
+    </reference>
+</componentType>

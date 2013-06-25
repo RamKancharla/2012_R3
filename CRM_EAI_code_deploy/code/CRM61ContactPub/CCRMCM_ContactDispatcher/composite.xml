@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMCM_ContactDispatcher" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="CCRMCM_ContactDispatcher.wsdl" namespace="http://xmlns.oracle.com/CCRMCM_ContactDispatcher"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMCM_ContactManager/TOMCM_ContactManager.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPCM_EventManager/SAPCM_EventManager.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CPFGCM_ContactManager"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGCM_ContactManager/CPFGCM_ContactManager.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CSCM_ContactManager"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSCM_ContactManager/CSCM_ContactManager.wsdl"
+            importType="wsdl"/>
+   <import namespace="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ELMCM_EventManager/ELMCM_EventManager.wsdl"
+            importType="wsdl"/>
+    <service name="CCRMCM_ContactDispatcher" ui:wsdlLocation="CCRMCM_ContactDispatcher.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcherCallback)" interface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcher)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.endpoint(CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher)"/>
+    </service>
+    <component name="CCRMCM_ContactDispatcherProcess">
+        <implementation.bpel src="CCRMCM_ContactDispatcherProcess.bpel"/>
+		<property name="preference.SFDCCMInterfaceStatus">ON</property>
+    </component>
+    <reference name="CPFGCM_ContactManager"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGCM_ContactManager/CPFGCM_ContactManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.interface(CPFGCM_ContactManager)"
+                        callbackInterface="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.interface(CPFGCM_ContactManagerCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.endpoint(CPFGCM_ContactManager/CPFGCM_ContactManager)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGCM_ContactManager/CPFGCM_ContactManager?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.endpoint(CPFGCM_ContactManager/CPFGCM_ContactManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CSCM_ContactManager"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSCM_ContactManager/CSCM_ContactManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.interface(CSCM_ContactManager)"
+                        callbackInterface="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.interface(CSCM_ContactManagerCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.endpoint(CSCM_ContactManager/CSCM_ContactManager)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSCM_ContactManager/CSCM_ContactManager?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.endpoint(CSCM_ContactManager/CSCM_ContactManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="TOMCM_ContactManager"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMCM_ContactManager/TOMCM_ContactManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager#wsdl.interface(TOMCM_ContactManager)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager#wsdl.interface(TOMCM_ContactManagerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager#wsdl.endpoint(TOMCM_ContactManager/TOMCM_ContactManager)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMCM_ContactManager/TOMCM_ContactManager?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager#wsdl.endpoint(TOMCM_ContactManager/TOMCM_ContactManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="SAPCM_EventManager"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPCM_EventManager/SAPCM_EventManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager#wsdl.interface(SAPCM_EventManager)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager#wsdl.interface(SAPCM_EventManagerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager#wsdl.endpoint(SAPCM_EventManager/SAPCM_EventManager)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPCM_EventManager/SAPCM_EventManager?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager#wsdl.endpoint(SAPCM_EventManager/SAPCM_EventManagerCallback_pt)"/>
+        </callback>
+    </reference>
+	<reference name="SFDCCM_ContactEventManager"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager#wsdl.interface(SFDCCM_ContactEventManager)"
+                        callbackInterface="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager#wsdl.interface(SFDCCM_ContactEventManagerCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager#wsdl.endpoint(sfdccm_contacteventmanager_client_ep/SFDCCM_ContactEventManager_pt)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/SFDCCM_ContactEventManager/sfdccm_contacteventmanager_client_ep?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager#wsdl.endpoint(sfdccm_contacteventmanager_client_ep/SFDCCM_ContactEventManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="ELMCM_EventManager"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ELMCM_EventManager/ELMCM_EventManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager#wsdl.interface(ELMCM_EventManager)"/>
+        <binding.ws port="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager#wsdl.endpoint(elmcm_eventmanager_client_ep/ELMCM_EventManager_pt)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ELMCM_EventManager/elmcm_eventmanager_client_ep?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CCRMCM_ContactDispatcher</source.uri>
+        <target.uri>CCRMCM_ContactDispatcherProcess/CCRMCM_ContactDispatcher</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMCM_ContactDispatcherProcess/CSCM_ContactManager</source.uri>
+        <target.uri>CSCM_ContactManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMCM_ContactDispatcherProcess/TOMCM_ContactManager</source.uri>
+        <target.uri>TOMCM_ContactManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMCM_ContactDispatcherProcess/SAPCM_EventManager</source.uri>
+        <target.uri>SAPCM_EventManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMCM_ContactDispatcherProcess/CPFGCM_ContactManager</source.uri>
+        <target.uri>CPFGCM_ContactManager</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+    <wire>
+        <source.uri>CCRMCM_ContactDispatcherProcess/SFDCCM_ContactEventManager</source.uri>
+        <target.uri>SFDCCM_ContactEventManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMCM_ContactDispatcherProcess/ELMCM_EventManager</source.uri>
+        <target.uri>ELMCM_EventManager</target.uri>
+    </wire>
+</composite>

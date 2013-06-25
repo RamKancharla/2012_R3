@@ -1,0 +1,43 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGAM_AccountManager" revision="1.0" state="on">
+    <import location="CPFGAM_AccountManager.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager"/>
+    <import location="WriteAccount.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteAccount/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" importType="wsdl"/>
+    <service name="CPFGAM_AccountManager" ui:wsdlLocation="CPFGAM_AccountManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager#wsdl.interface(CPFGAM_AccountManagerCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager#wsdl.interface(CPFGAM_AccountManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager#wsdl.endpoint(CPFGAM_AccountManager/CPFGAM_AccountManager)"/>
+    </service>
+    <component name="CPFGAM_AccountManagerProcess">
+        <implementation.bpel src="CPFGAM_AccountManagerProcess.bpel"/>
+        
+    </component>
+    <reference name="WriteAccount" ui:wsdlLocation="WriteAccount.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteAccount/#wsdl.interface(WriteAccount_ptt)"/>
+        <binding.jca config="WriteAccount_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="AsyncSequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>CPFGAM_AccountManager</source.uri>
+        <target.uri>CPFGAM_AccountManagerProcess/CPFGAM_AccountManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGAM_AccountManagerProcess/WriteAccount</source.uri>
+        <target.uri>WriteAccount</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGAM_AccountManagerProcess/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMQM_SubmitQuoteInRs" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import importType="wsdl" location="CCRMQM_SubmitQuoteInRs.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/QuoteManagementServices"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF"
+            location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMTF_QuoteRequestValidator/CCRMTF_QuoteRequestValidator.wsdl"
+            importType="wsdl"/>
+    <service name="CCRMQM.SubmitQuoteInRs_ep" ui:wsdlLocation="CCRMQM_SubmitQuoteInRs.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/QuoteManagementServices#wsdl.interface(execute_ppt)"/>
+        <binding.ws location="CCRMQM_SubmitQuoteInRs.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/QuoteManagementServices#wsdl.endpoint(execute_ppt/execute_ppt_pt)"/>
+    </service>
+    <component name="CCRMQM.SubmitQuoteInRs">
+        <implementation.mediator src="CCRMQM.SubmitQuoteInRs.mplan"/>
+    </component>
+    <reference name="CCRMQM.CCRMTF_QuoteRequestValidatorService"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMTF_QuoteRequestValidator/CCRMTF_QuoteRequestValidator.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF#wsdl.interface(CCRMTF_QuoteRequestValidator)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF#wsdl.endpoint(CCRMTF_QuoteRequestValidator/CCRMTF_QuoteRequestValidator)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMTF_QuoteRequestValidator/anchorToQuoteRequestValidator?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+       <wire>
+        <source.uri>CCRMQM.SubmitQuoteInRs_ep</source.uri>
+        <target.uri>CCRMQM.SubmitQuoteInRs/CCRMQM.SubmitQuoteInRs</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMQM.SubmitQuoteInRs/CCRMQM.CCRMTF_QuoteRequestValidatorService</source.uri>
+        <target.uri>CCRMQM.CCRMTF_QuoteRequestValidatorService</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+   
+</composite>

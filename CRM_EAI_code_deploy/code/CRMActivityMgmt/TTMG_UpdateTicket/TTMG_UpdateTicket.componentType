@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TTMG_UpdateTicket.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket#wsdl.interface(TTMG_UpdateTicket)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatus.wsdl" name="CCRMG_PropagateTicketStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatusCallback)"/>
+    </reference>
+</componentType>

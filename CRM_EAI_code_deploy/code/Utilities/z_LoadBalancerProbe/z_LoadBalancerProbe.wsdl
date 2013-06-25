@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Z_LoadBalancer_NodeHealthChk"
+                  targetNamespace="http://xmlns.oracle.com/CRM63Stubs_jws/Z_LoadBalancer_NodeHealthChk/Z_LoadBalancer_NodeHealthChk"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:client="http://xmlns.oracle.com/CRM63Stubs_jws/Z_LoadBalancer_NodeHealthChk/Z_LoadBalancer_NodeHealthChk"
+                  xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+ <wsdl:types>
+  <schema xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://xmlns.oracle.com/CRM63Stubs_jws/Z_LoadBalancer_NodeHealthChk/Z_LoadBalancer_NodeHealthChk"
+           schemaLocation="xsd/Z_LoadBalancer_NodeHealthChk.xsd"/>
+  </schema>
+ </wsdl:types>
+ <wsdl:message name="Z_LoadBalancer_NodeHealthChkRequestMessage">
+  <wsdl:part name="payload" element="client:process"/>
+ </wsdl:message>
+ <wsdl:message name="Z_LoadBalancer_NodeHealthChkResponseMessage">
+  <wsdl:part name="payload" element="client:processResponse"/>
+ </wsdl:message>
+ <wsdl:portType name="Z_LoadBalancer_NodeHealthChk">
+  <wsdl:operation name="process">
+   <wsdl:input message="client:Z_LoadBalancer_NodeHealthChkRequestMessage"/>
+   <wsdl:output message="client:Z_LoadBalancer_NodeHealthChkResponseMessage"/>
+  </wsdl:operation>
+ </wsdl:portType>
+ <plnk:partnerLinkType name="Z_LoadBalancer_NodeHealthChk">
+  <plnk:role name="Z_LoadBalancer_NodeHealthChkProvider">
+   <plnk:portType name="client:Z_LoadBalancer_NodeHealthChk"/>
+  </plnk:role>
+ </plnk:partnerLinkType>
+</wsdl:definitions>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="DequeuePriceStatus.wsdl" name="DequeuePriceStatus">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeuePriceStatus/#wsdl.interface(Dequeue_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus.wsdl" name="CCRMPM_PropagatePriceUpdateStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatus)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatusCallback)"/>
+    </reference>
+</componentType>

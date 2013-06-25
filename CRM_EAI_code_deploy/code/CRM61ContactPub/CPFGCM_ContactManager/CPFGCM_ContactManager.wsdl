@@ -1,0 +1,50 @@
+<definitions
+     name="CPFGCM_ContactManager"
+     targetNamespace="http://xmlns.oracle.com/CPFGCM_ContactManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://xmlns.oracle.com/CPFGCM_ContactManager"
+     xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:client="http://xmlns.oracle.com/CPFGCM_ContactManager" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish">
+            <import namespace="http://xmlns.oracle.com/CPFGCM_ContactManager" schemaLocation="CPFGCM_ContactManager.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:client="http://xmlns.oracle.com/CPFGCM_ContactManager" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.CM.197_ContactEvent.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:client="http://xmlns.oracle.com/CPFGCM_ContactManager" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/UserManagementServices"
+                 schemaLocation="EAI.MSG.EXT.226_StandalonePropagateUserRequest.xsd"/>
+        </schema>
+       
+    </types>
+    <message name="CPFGCM_ContactManagerResponseMessage">
+        <part name="payload" element="client:CPFGCM_ContactManagerProcessResponse"/>
+    </message>
+    <message name="CPFGCM_ContactManagerRequestMessage">
+        <part name="contactEvent" element="imp1:contactEvent"/>
+    </message>
+    <portType name="CPFGCM_ContactManagerCallback">
+        <operation name="onResult">
+            <input message="client:CPFGCM_ContactManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CPFGCM_ContactManager">
+        <operation name="initiate">
+            <input message="client:CPFGCM_ContactManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFGCM_ContactManager">
+        <plnk:role name="CPFGCM_ContactManagerProvider">
+            <plnk:portType name="client:CPFGCM_ContactManager"/>
+        </plnk:role>
+        <plnk:role name="CPFGCM_ContactManagerRequester">
+            <plnk:portType name="client:CPFGCM_ContactManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

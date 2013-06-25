@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="SAPOM_EventManager.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager#wsdl.interface(SAPOM_EventManager)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager#wsdl.interface(SAPOM_EventManagerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" name="AsyncSequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_UserCreation/SAPOM_UserCreation.wsdl" name="SAPOM_UserCreation">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.interface(SAPOM_UserCreation)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.interface(SAPOM_UserCreationCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="WriteContact.wsdl" name="WriteContact">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/#wsdl.interface(WriteContact_ptt)"/>
+    </reference>
+</componentType>

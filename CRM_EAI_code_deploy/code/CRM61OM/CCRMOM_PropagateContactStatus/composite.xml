@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOM_PropagateContactStatus" revision="1.0" state="on">
+    <import location="CCRMOM_PropagateContactStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus"/>
+    <import location="RCRMContactInboundRef.wsdl" namespace="http://www.reuters.com/2008/02/15/GCAP/RCRM"/>
+    <service name="anchorToCCRMOM_PropagateContactStatus" ui:wsdlLocation="CCRMOM_PropagateContactStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.interface(CCRMOM_PropagateContactStatusCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.interface(CCRMOM_PropagateContactStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.endpoint(CCRMOM_PropagateContactStatus/CCRMOM_PropagateContactStatus)"/>
+    </service>
+    <component name="CCRMOM_PropagateContactStatus">
+        <implementation.bpel src="CCRMOM_PropagateContactStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="SiebelRCRMContactInbound" ui:wsdlLocation="RCRMContactInboundRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/2008/02/15/GCAP/RCRM#wsdl.interface(RCRM_spcContact_spcInbound)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="RCRMContactInboundRef.wsdl" port="http://www.reuters.com/2008/02/15/GCAP/RCRM#wsdl.endpoint(RCRM_spcContact_spcInbound/RCRM_spcContact_spcInbound)"/>
+    </reference>
+    <wire>
+        <source.uri>anchorToCCRMOM_PropagateContactStatus</source.uri>
+        <target.uri>CCRMOM_PropagateContactStatus/anchorToCCRMOM_PropagateContactStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_PropagateContactStatus/SiebelRCRMContactInbound</source.uri>
+        <target.uri>SiebelRCRMContactInbound</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

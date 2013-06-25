@@ -1,0 +1,433 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Nov 10 17:23:21 GMT+05:30 2009
+  Author:  dk54958
+  Purpose: Asynchronous BPEL Process
+  
+  
+  Change History
+  ******************************************************************
+  
+  Date          Author          Comments
+  07/01/10      Surya           Added FTL Conditions and Otherwise to the switch before invoking CRM for the defect QC#34220
+  04/03/10      Meenal          Modified the partnerlink CPFGOM_UserOrderManager to remove myrole as per defect no.35284 
+  06/10/10      Swathi          Modified as a part of CR 9451 and added new TransUpdateTypeToPropagateContactStatus.xsl file
+  07/10/10      Swathi          defect 5054 changed for relase sequence part
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPF_UpdateProfile" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/2008/02/15/GCAP/RCRM" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns27="http://schemas.xmlsoap.org/ws/2003/03/addressing" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile/correlationset" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/Exception" xmlns:ns7="http://www.siebel.com/xml/ContactExternalIO" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns14="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="CPF_UserManagementService" partnerLinkType="client:CPF_UpdateProfile" myRole="CPF_UpdateProfileProvider"/>
+        <partnerLink name="GetWaitingInstances" partnerRole="GetWaitingInstances_role" partnerLinkType="ns5:GetWaitingInstances_plt"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns6:SequenceReleaser"/>
+        <partnerLink myRole="AsyncSequenceCheckerRequester" name="AsyncSequenceChecker" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns12:AsyncSequenceChecker"/>
+        <!-- 
+        <partnerLink myRole="CPFGOM_UserOrderManagerRequester"
+                     name="CPFGOM_UserOrderManager"
+                     partnerRole="CPFGOM_UserOrderManagerProvider"
+                     partnerLinkType="ns8:CPFGOM_UserOrderManager"/>
+                     
+                       -->
+        <partnerLink name="CPFGOM_UserOrderManager" partnerRole="CPFGOM_UserOrderManagerProvider" partnerLinkType="ns8:CPFGOM_UserOrderManager"/>
+        <partnerLink myRole="CCRMOM_PropagateContactStatusRequester" name="CCRMOM_PropagateContactStatus" partnerRole="CCRMOM_PropagateContactStatusProvider" partnerLinkType="ns14:CCRMOM_PropagateContactStatus"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="CPfGRequest" messageType="client:CPF_UpdateProfileRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_InputVariable" messageType="ns4:RCRM_spcContact_spcInbound_spcOperatiion_Input"/>
+        <variable name="FaultVar" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvSequenceReleaserIV" messageType="ns6:SequenceReleaserRequestMessage"/>
+        <variable name="GetWaitingInstances_GetWaitingInstances_InputVariable" messageType="ns5:GetWaitingInstancesInput_msg"/>
+        <variable name="GetWaitingInstances_GetWaitingInstances_OutputVariable" messageType="ns5:GetWaitingInstancesOutputCollection_msg"/>
+        <variable name="InvCPFGOM_UserOrderManager_updateUserProfile_InputVariable" messageType="ns8:UpdateProfileRequestMessage"/>
+        <variable name="InvAsyncSequenceChecker" messageType="ns12:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="RcvReleaseSeq" messageType="ns12:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="RcvReleaseSeq_onResult_InputVariable" messageType="ns12:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="bypassSequencer" type="xsd:boolean"/>
+        <variable name="CCRMOMPropagateContactStatus_Input" messageType="ns14:CCRMOM_PropagateContactStatusRequestMessage"/>
+        <variable name="receivePropagateIV" messageType="ns14:CCRMOM_PropagateContactStatusResponseMessage"/>
+        <variable name="FTLStatus" type="xsd:string"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <sequence name="CatchAll">
+                <bpelx:exec name="AsgFaultTitle" language="java" version="1.5">
+                    <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("CPfGRequest","payload","/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:UUID")).getFirstChild().getNodeValue();           
+setCompositeInstanceTitle("Fault: " + UUID);]]>
+                </bpelx:exec>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CPF_UpdateProfile.wsdl) -->
+        <receive name="CPfGRequest" partnerLink="CPF_UserManagementService" portType="client:CPF_UpdateProfile" operation="updateUserProfile" variable="CPfGRequest" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)                                    
+                        getVariableData("CPfGRequest","payload","/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:UUID")).getFirstChild().getNodeValue();             
+setCompositeInstanceTitle(UUID);]]>
+        </bpelx:exec>
+        <assign name="TransReqToInitVariables">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransReqToInitVariables.xsl',bpws:getVariableData('CPfGRequest','payload'))"/>
+                <to variable="CPfGRequest" part="payload"/>
+            </copy>
+        </assign>
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:timeToLive"/>
+            </copy>
+            <copy>
+                <from expression="'V'"/>
+                <to variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:payloadVersion"/>
+            </copy>
+            <copy>
+                <from expression="&quot;EAI&quot;"/>
+                <to variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:applicationId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:transactionId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:messageId"/>
+            </copy>
+            <copy>
+                <from expression="&quot;;EAI;&quot;"/>
+                <to variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:messageHistory"/>
+            </copy>
+            <copy>
+                <from expression="xp20:current-dateTime()"/>
+                <to variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:timeStamp"/>
+            </copy>
+            <copy>
+                <from expression="bpws:getVariableData('CPfGRequest','payload','/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:tracingId') = 'BYPASS_SEQUENCER'"/>
+                <to variable="bypassSequencer"/>
+            </copy>
+        </assign>
+        <switch name="BypassSequencer">
+            <case condition="bpws:getVariableData('bypassSequencer')='true'">
+                <bpelx:annotation>
+                    <bpelx:pattern>tracingId = 'BYPASS_SEQUENCER'</bpelx:pattern>
+                </bpelx:annotation>
+                <empty name="DoNothing"/>
+            </case>
+            <otherwise>
+                <sequence name="Sequence_7">
+                    <assign name="AsgTracingId">
+                        <copy>
+                            <from expression="ora:generateGUID()"/>
+                            <to variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader/ns3:tracingId"/>
+                        </copy>
+                    </assign>
+                    <scope name="CheckSequence">
+                        <sequence name="Sequence_6">
+                            <assign name="TransCPfGRequestToSequenceChecker">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransCPfGRequestToSequenceChecker.xsl',bpws:getVariableData('CPfGRequest','payload'))"/>
+                                    <to part="payload" variable="InvAsyncSequenceChecker"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvAsyncSequenceChecker" partnerLink="AsyncSequenceChecker" portType="ns12:AsyncSequenceChecker" operation="initiate" inputVariable="InvAsyncSequenceChecker"/>
+                            <receive name="RcvReleaseSeq" createInstance="no" partnerLink="AsyncSequenceChecker" portType="ns12:AsyncSequenceCheckerCallback" operation="onResult" variable="RcvReleaseSeq_onResult_InputVariable"/>
+                        </sequence>
+                    </scope>
+                </sequence>
+            </otherwise>
+        </switch>
+        <bpelx:exec name="checkpoint" language="java" version="1.3">
+            <![CDATA[checkpoint();]]>
+        </bpelx:exec>
+        <switch name="SwitchXMLValidation">
+            <bpelx:annotation>
+                <bpelx:documentation>Check action Code and assign schmas to call
+                                     XML validator Component to check XML
+                                     validation. If action code is not either
+                                     FTL or Update Profile throw invalid Action
+                                     code exception</bpelx:documentation>
+            </bpelx:annotation>
+            <case condition="bpws:getVariableData('CPfGRequest','payload','/ns1:UpdateProfileRequest/ns1:updateType')=ora:getPreference('FTL')">
+                <assign name="TransCPfGFTLInputToSiebelInput">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransCPfGFTLInputToSiebelInput.xsl',bpws:getVariableData('CPfGRequest','payload'))"/>
+                        <to variable="InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_InputVariable" part="RCRM_spcContact_spcInbound_spcOperatiion_Input"/>
+                    </copy>
+                </assign>
+            </case>
+            <case condition="bpws:getVariableData('CPfGRequest','payload','/ns1:UpdateProfileRequest/ns1:updateType')=ora:getPreference('UpdateCPfGTemporaryURL')">
+                <bpelx:annotation>
+                    <bpelx:pattern>UpdateCPfGTemporaryURL</bpelx:pattern>
+                </bpelx:annotation>
+                <assign name="TransCPfGTempURLUpdateToSiebelInput">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransCPfGTempURLUpdateToSiebelInput.xsl',bpws:getVariableData('CPfGRequest','payload'))"/>
+                        <to variable="InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_InputVariable" part="RCRM_spcContact_spcInbound_spcOperatiion_Input"/>
+                    </copy>
+                </assign>
+            </case>
+            <case condition="bpws:getVariableData('CPfGRequest','payload','/ns1:UpdateProfileRequest/ns1:updateType')=ora:getPreference('UpdateProfile')">
+                <bpelx:annotation>
+                    <bpelx:pattern>Case UpdateProfile</bpelx:pattern>
+                </bpelx:annotation>
+                <assign name="TransCPfGProfileUpdateToSiebelInput">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransCPfGProfileUpdateToSiebelInput.xsl',bpws:getVariableData('CPfGRequest','payload'))"/>
+                        <to variable="InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_InputVariable" part="RCRM_spcContact_spcInbound_spcOperatiion_Input"/>
+                    </copy>
+                </assign>
+            </case>
+            <!--Gets invoked when the Action code is other than FTL and UpdateProfile -->
+            <case condition="bpws:getVariableData('CPfGRequest','payload','/ns1:UpdateProfileRequest/ns1:updateType')=ora:getPreference('UpdateCPfGStatus')">
+                <bpelx:annotation>
+                    <bpelx:pattern>Update CPfG Status</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqCPFGOM_UserOrderManager">
+                    <assign name="AsgUpdateCPFGOM_UserOrderManager">
+                        <copy>
+                            <from variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader"/>
+                            <to part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader" variable="InvCPFGOM_UserOrderManager_updateUserProfile_InputVariable"/>
+                        </copy>
+                        <copy>
+                            <from variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:UUID"/>
+                            <to part="payload" query="/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:UUID" variable="InvCPFGOM_UserOrderManager_updateUserProfile_InputVariable"/>
+                        </copy>
+                        <copy>
+                            <from variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:_CPFGStatus"/>
+                            <to part="payload" query="/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:_CPFGStatus" variable="InvCPFGOM_UserOrderManager_updateUserProfile_InputVariable"/>
+                        </copy>
+                        <copy>
+                            <from variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:userID"/>
+                            <to part="payload" query="/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:userID" variable="InvCPFGOM_UserOrderManager_updateUserProfile_InputVariable"/>
+                        </copy>
+                        <copy>
+                            <from variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:_CPFGStatusReason"/>
+                            <to part="payload" query="/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:_CPFGStatusReason" variable="InvCPFGOM_UserOrderManager_updateUserProfile_InputVariable"/>
+                        </copy>
+                        <copy>
+                            <from variable="CPfGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:updateType"/>
+                            <to variable="InvCPFGOM_UserOrderManager_updateUserProfile_InputVariable" part="payload" query="/ns1:UpdateProfileRequest/ns1:updateType"/>
+                        </copy>
+                    </assign>
+                    <assign name="AsgCorrelationDBQueryString">
+                        <copy>
+                            <from expression="concat('%Corr_CPfG_prop=',bpws:getVariableData('InvCPFGOM_UserOrderManager_updateUserProfile_InputVariable','payload','/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:UUID'),'%')"/>
+                            <to variable="GetWaitingInstances_GetWaitingInstances_InputVariable" part="GetWaitingInstancesInput_msg" query="/ns9:GetWaitingInstancesInput/ns9:CorrelationString"/>
+                        </copy>
+                    </assign>
+                    <invoke name="GetWaitingInstances" partnerLink="GetWaitingInstances" portType="ns5:GetWaitingInstances_ptt" operation="GetWaitingInstances" inputVariable="GetWaitingInstances_GetWaitingInstances_InputVariable" outputVariable="GetWaitingInstances_GetWaitingInstances_OutputVariable"/>
+                    <switch name="SwitchWaitingInstanceFound">
+                        <case condition="count( bpws:getVariableData('GetWaitingInstances_GetWaitingInstances_OutputVariable','GetWaitingInstancesOutputCollection','/ns9:GetWaitingInstancesOutputCollection/ns9:GetWaitingInstancesOutput') ) > 0">
+                            <bpelx:annotation>
+                                <bpelx:pattern>CPFGOM_UserOrderManager Waiting</bpelx:pattern>
+                            </bpelx:annotation>
+                            <sequence name="SeqCPFGOM_UserOrderManager">
+                                <invoke name="InvCPFGOM_UserOrderManager" partnerLink="CPFGOM_UserOrderManager" portType="ns8:CPFGOM_UserOrderManager" operation="updateUserProfile" inputVariable="InvCPFGOM_UserOrderManager_updateUserProfile_InputVariable"/>
+                                <bpelx:exec name="checkpoint" language="java" version="1.3">
+                                    <![CDATA[checkpoint();]]>
+                                </bpelx:exec>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNotSendProfileUpdate"/>
+                        </otherwise>
+                    </switch>
+                    <assign name="TransCPfGStatusUpdateToSiebelInput">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransCPfGStatusUpdateToSiebelInput.xsl',bpws:getVariableData('CPfGRequest','payload'))"/>
+                            <to variable="InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_InputVariable" part="RCRM_spcContact_spcInbound_spcOperatiion_Input"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </case>
+            <otherwise>
+                <throw name="ThrowInvalidActionCodeException" faultName="ns13:InvalidActionCode" faultVariable="FaultVar"/>
+            </otherwise>
+        </switch>
+        <scope name="ScopeToCallSiebelService">
+            <bpelx:annotation>
+                <bpelx:documentation>Call Siebel FTL interface. Handles Remote
+                                     and All other Exceptions</bpelx:documentation>
+            </bpelx:annotation>
+            <!---Fault handler to catch exceptions raised during the invocation of the end point ESB Service-->
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="CatchAll">
+                        <bpelx:exec name="AsgFaultTitle" language="java" version="1.5">
+                            <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)                                     
+                        getVariableData("CPfGRequest","payload","/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:UUID")).getFirstChild().getNodeValue();              
+setCompositeInstanceTitle( UUID);]]>
+                        </bpelx:exec>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <!---This is to invoke the endpoint ESB-->
+            <sequence name="CallEndPointESB">
+                <assign name="TransUpdateTypeToPropagateContactStatus">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransUpdateTypeToPropagateContactStatus.xsl',bpws:getVariableData('InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_InputVariable','RCRM_spcContact_spcInbound_spcOperatiion_Input'))"/>
+                        <to variable="CCRMOMPropagateContactStatus_Input" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvCCRMOMPropagateContactStatus" partnerLink="CCRMOM_PropagateContactStatus" portType="ns14:CCRMOM_PropagateContactStatus" operation="initiate" inputVariable="CCRMOMPropagateContactStatus_Input"/>
+                <receive name="ReceivePropagateStatus" partnerLink="CCRMOM_PropagateContactStatus" portType="ns14:CCRMOM_PropagateContactStatusCallback" operation="onResult" variable="receivePropagateIV" createInstance="no"/>
+                <switch name="Switch_1">
+                    <case condition="bpws:getVariableData('receivePropagateIV','payload','/ns4:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns4:Error_spcCode') !=  '' ">
+                        <assign name="AsgErrorDetails">
+                            <copy>
+                                <from variable="receivePropagateIV" part="payload" query="/ns4:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns4:Error_spcCode"/>
+                                <to variable="FaultVar" part="code"/>
+                            </copy>
+                            <copy>
+                                <from variable="receivePropagateIV" part="payload" query="/ns4:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns4:Error_spcMessage"/>
+                                <to variable="FaultVar" part="summary"/>
+                            </copy>
+                            <copy>
+                                <from variable="receivePropagateIV" part="payload" query="/ns4:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns4:Error_spcMessage"/>
+                                <to variable="FaultVar" part="detail"/>
+                            </copy>
+                        </assign>
+                    </case>
+                    <otherwise>
+                        <sequence name="Sequence_8">
+                            <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+                                <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("CPfGRequest","payload","/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:UUID")).getFirstChild().getNodeValue();           
+setCompositeInstanceTitle(UUID);]]>
+                            </bpelx:exec>
+                            <switch name="Switch_2">
+                                <case condition="bpws:getVariableData('bypassSequencer')='true'">
+                                    <empty name="DoNothing"/>
+                                </case>
+                                <otherwise>
+                                    <scope name="ScpSequenceReleaser">
+                                        <sequence name="SeqSequenceReleaser">
+                                            <assign name="TransCPfGRequestToSequenceRel">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransCPfGRequestToSequenceRel.xsl',bpws:getVariableData('CPfGRequest','payload'))"/>
+                                                    <to variable="InvSequenceReleaserIV" part="payload"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns6:SequenceReleaser" operation="releaseSequence" inputVariable="InvSequenceReleaserIV"/>
+                                        </sequence>
+                                    </scope>
+                                </otherwise>
+                            </switch>
+                        </sequence>
+                    </otherwise>
+                </switch>
+                <!--<switch name="Switch_1">
+                    <case condition="bpws:getVariableData('InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_OutputVariable','RCRM_spcContact_spcInbound_spcOperatiion_Output','/ns4:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns4:Error_spcCode') !=  ''">
+                        <bpelx:annotation>
+                            <bpelx:pattern>Error Response from Siebel</bpelx:pattern>
+                        </bpelx:annotation>
+                        <sequence name="SeqErrorResponse">
+                            <assign name="AsgErrorDetails">
+                                <copy>
+                                    <from variable="InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_OutputVariable"
+                                          part="RCRM_spcContact_spcInbound_spcOperatiion_Output"
+                                          query="/ns4:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns4:Error_spcMessage"/>
+                                    <to variable="FaultVar" part="summary"/>
+                                </copy>
+                                <copy>
+                                    <from variable="InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_OutputVariable"
+                                          part="RCRM_spcContact_spcInbound_spcOperatiion_Output"
+                                          query="/ns4:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns4:Error_spcCode"/>
+                                    <to variable="FaultVar" part="code"/>
+                                </copy>
+                                <copy>
+                                    <from variable="InvRCRMContactInbound_RCRM_spcContact_spcInbound_spcOperatiion_OutputVariable"
+                                          part="RCRM_spcContact_spcInbound_spcOperatiion_Output"
+                                          query="/ns4:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns4:Error_spcMessage"/>
+                                    <to variable="FaultVar" part="detail"/>
+                                </copy>
+                            </assign>
+                            <throw name="ThrowSiebelError"
+                                   faultName="bpelx:remoteFault"
+                                   faultVariable="FaultVar"/>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <sequence name="Sequence_5">
+                            <bpelx:exec name="AsgCustomTitle" language="java"
+                                        version="1.3">
+                                <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("CPfGRequest","payload","/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:UUID")).getFirstChild().getNodeValue();          
+setCompositeInstanceTitle(UUID);]]>
+                            </bpelx:exec>
+                            <switch name="BypassSequencer">
+                                <case condition="bpws:getVariableData('bypassSequencer')='true'">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>tracingId = 'BYPASS_SEQUENCER'</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <empty name="DoNothing"/>
+                                </case>
+                                <otherwise/>
+                            </switch>
+                        </sequence>
+                    </otherwise>
+                </switch>-->
+            </sequence>
+        </scope>
+    </sequence>
+</process>

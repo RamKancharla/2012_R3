@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*****************************************************************************************************************
+*   Module:        EAI.MSG.EXT.137_PropagateAccountHierarchy.xsd					        *
+*   Type:          XSD Schema										        * 
+*   Description:   The Schema used to propagate the account hierarchy to Common Platform                        *
+*													        *
+*	Change History											        *
+*	Version      Date     	Author            			Description Of Change                   *
+*												                *
+*       0.1        26/07/07   Mark Flynn                                Initial Version                         *
+*       0.2        04/03/08   Rob Billington                            Removed imported types and created local*
+*                                                                       definitions instead.                    *
+*                                                                       Added account type                      *
+*****************************************************************************************************************
+-->
+<xsd:schema xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/AccountManagementServices"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/AccountManagementServices"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            version="0.2">
+  <xsd:element name="propagateAccountHierarchyRequest"
+               type="local:PropagateAccountHierarchyRequest"/>
+               
+  <xsd:complexType name="PropagateAccountHierarchyRequest">
+    <xsd:sequence>
+      <xsd:element name="eaiHeader" type="local:EaiHeader"/>
+      <xsd:element name="actionCode" type="local:ActionCode"/>
+      <xsd:element name="account" type="local:Account"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="Account">
+    <xsd:sequence>
+      <xsd:element name="accountID" type="local:AccountID"/>
+      <xsd:element name="parentAccountID" type="local:AccountID"
+                   nillable="true"/>
+      <xsd:element name="accountName" type="local:AccountName"/>
+      <xsd:element name="site" type="local:Site" nillable="true" />
+      <xsd:element name="address" type="local:StreetAddress"/>
+      <xsd:element name="city" type="local:City" nillable="true"/>
+      <xsd:element name="country" type="local:Country" nillable="true"/>
+      <xsd:element name="region" type="local:Region"/>
+      <xsd:element name="subregion" type="local:SubRegion"/>
+      <xsd:element name="organisationtype" type="local:OrganisationType" nillable="true"/>
+      <xsd:element name="mcccode" type="local:MCCCode" nillable="true"/>
+      <xsd:element name="accountType" type="local:AccountType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  	<xsd:complexType name="EaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="local:string10"/>
+			<xsd:element name="transactionId" type="local:string30"/>
+			<xsd:element name="messageId" type="local:string30"/>
+			<xsd:element name="messageHistory" type="local:string100"/>
+			<xsd:element name="tracingId" type="local:string50" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="local:string40" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="local:string3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="AccountID">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="AccountName">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+        	<xsd:simpleType name="Site">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="65"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="City">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="AccountType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="OrganisationType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="SubscriberNumber">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="7"/>
+			<xsd:maxLength value="7"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="Region">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="SubRegion">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="MCCCode">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="Country">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="StreetAddress">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="200"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+     
+     	<xsd:simpleType name="ActionCode">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+   
+</xsd:schema>

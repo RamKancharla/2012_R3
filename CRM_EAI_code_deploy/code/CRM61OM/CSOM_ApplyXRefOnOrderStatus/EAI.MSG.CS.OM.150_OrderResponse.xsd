@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.CS.OM.150_OrderResponse.xsd
+*						Order Management (Core Suite)
+* Type:				XML Schema Document
+* Description:  	Core Suite Order Status Schema with asset integration id in order line
+*
+*
+* Change History
+* Version		Date				Author									Description Of Change
+* =======	========	==================		===============================
+*  0.01			17/09/07		G PATCHIPULUSU				Initial Version
+*  0.02			17/09/07		GPATCHIPULUSU					Changed the common schema location
+*  0.03			17/09/07		Sunil V 						Changed the element name
+*
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" xmlns:comt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.03">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:element name="orderResponseStatus" type="xsdLocal:OrderResponse"/>
+	<xsd:complexType name="OrderResponse">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="parsingStatus" type="cmt:BasicResponse"/>
+			<xsd:element name="logicalCountry" type="comt:CountryCode"/>
+			<xsd:element name="messageHeader" type="comt:MessageHeader"/>
+			<xsd:element name="orderHeader" type="comt:ResponseOrderHeader"/>
+			<xsd:element name="orderLineItem" type="comt:AstResponseOLI" maxOccurs="250"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

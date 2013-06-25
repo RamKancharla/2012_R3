@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.XSD.017_CommonOpportunityTypes.xsd
+* Type:       	XSD Schema
+* Description: The schema used for Common Opportunity attributes
+*
+* Change History
+* Version     Date      Author             Description Of Change
+*
+*  0.1        21/02/07  Sudhir Tumu	   Initial Version
+*  0.2        21/02/07  Rob Billington	   Various Updates
+*  0.2        21/02/07  Rob Billington	   Various Updates for PBI 862
+*  0.3        05/03/09  Shanker Reddy     add ShortSFDCId,ExpectedRevenue,Email,FTOnceOffRevenue,FTRecurringRevenue
+*                                           CampaignSourceCode,ActiveQuote,ProductFamily,CurrenceCode
+*  0.4        09/03/09  Sreeja Prasad	   Added LastUpdatedBy , LastUpdated&FreeTrialFlag.	
+*  0.5        06/10/09  Sreeja  	   Added BlockedOpportunities for CRM_UTAH_PBI_22  
+*  0.6        22/03/10  Sreeja  	   Added IsPoRequired & PurchaseOrderNumber for CRM_PBI_478 
+*  0.7        15/09/10  Rijoy         Added RevenueMasterflag for R5-CR#6008
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOpportunityTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOpportunityTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.6">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd"/>
+        
+<xsd:simpleType name="Name">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[NAME]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+</xsd:simpleType>
+        
+<!--        
+<xsd:simpleType name="OpportunityRecordType">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+-->        
+        
+<xsd:simpleType name="Type">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[TYPE]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+        
+                
+ <xsd:simpleType name="SalesforceOpportunityID">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>123456</content>
+					<comment>The ID for this opportunity as held in Salesforce.com</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+ </xsd:simpleType>
+ 
+<xsd:simpleType name="OpportunityID">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[ID]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>1-23456CC</content>
+					<comment>The Siebel rowid for this opportunity</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+
+<xsd:simpleType name="OpportunityName">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[NAME]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Ippty Name</content>
+					<comment>The SFDC Name for this opportunity</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+
+<!--
+<xsd:simpleType name="OpportunityIntegrationID">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>2-34567AS</content>
+					<comment>The Siebel integration ID for this opportunity</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+-->
+
+<xsd:simpleType name="Probability">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[PERCENTAGE PROBABILITY OF SUCCESS]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>90</content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+              <xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+</xsd:simpleType>
+<!--
+<xsd:simpleType name="PrimaryRevenueType">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+-->
+<!--
+<xsd:simpleType name="PrimaryRevenueCloseDate">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:date"/>
+</xsd:simpleType>
+-->
+<!--
+<xsd:simpleType name="ExpectedDeliveryDate">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:date"/>
+</xsd:simpleType>
+-->
+
+<xsd:simpleType name="Description">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+
+
+<xsd:simpleType name="PrimaryRecurringRevenue">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[TOTAL RECURRING REVENUE]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+               <xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="PrimaryOnceOffRevenue">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[TOTAL ONCE-OFF REVENUE]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>9999.99</content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+               <xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="Quantity">
+               <xsd:annotation>
+                    <xsd:appinfo>
+                             <gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY LINE ITEM].[QUANTITY]</gcap-sa:EquivalentDataItem>
+                             <gcap-sa:Example>
+				<content>10</content>
+				<comment></comment>
+                                </gcap-sa:Example>
+                                </xsd:appinfo>
+                    </xsd:annotation>
+              <xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+</xsd:simpleType>
+
+
+ <xsd:simpleType name="ExpectedRevenueDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[EXPECTED REVENUE DATE]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>MM/YY</content>
+					<comment>Expected Revenue Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:date"/>
+</xsd:simpleType>
+
+
+<!--
+<xsd:simpleType name="PrimaryRevenueCloseDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>07//07/25</content>
+					<comment>Expected Revenue Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:date"/>
+</xsd:simpleType>
+-->
+
+<xsd:simpleType name="CloseDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[CLOSE DATE]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>07//07/25</content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:date"/>
+</xsd:simpleType>
+        
+<xsd:simpleType name="BillDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>07//07/25</content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:date"/>
+</xsd:simpleType>
+
+<!--
+<xsd:simpleType name="PositionCloseDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>07//07/25</content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:date"/>
+</xsd:simpleType>
+-->
+
+
+<xsd:simpleType name="SalesStage">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[SALES STAGE]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+
+<!--
+<xsd:simpleType name="SalesMethod">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+-->
+
+<xsd:simpleType name="WinLossReason">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[WIN/LOSS REASON]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+	<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="RevenueType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY LINE ITEM].[REVENUE TYPE]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+	<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="ShortSFDCId">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+ </xsd:simpleType>
+ <xsd:simpleType name="ExpectedRevenue">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="Email">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="FTOnceOffRevenue">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="FTRecurringRevenue">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+              <xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CampaignSourceCode">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="ActiveQuote">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="ProductFamily">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="CurrencyCode">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="LastUpdatedBy">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="LastUpdated">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="FreeTrialFlag">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="BlockedOpportunities">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[OPPORTUNITY].[BlockedOpportunities</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+	<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="IsPoRequired">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+	<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="PurchaseOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+	<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+
+<xsd:simpleType name="RevenueMasterflag">
+ 		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+                <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+
+</xsd:schema>

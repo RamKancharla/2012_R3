@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="ESOQM_PropagateQuoteSubmitStatus" revision="1.0" mode="active" state="on" xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <import location="ESOQM_PropagateQuoteSubmitStatus.wsdl" namespace="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus"/>
+    <import location="enterpriseRef.wsdl" namespace="urn:enterprise.soap.sforce.com"/>
+    <import location="EAI.SRV.EXT.ESO.314_PropagateESOQuoteStatusRef.wsdl" namespace="http://soap.sforce.com/schemas/class/EAItoESO"/>
+    <service ui:wsdlLocation="ESOQM_PropagateQuoteSubmitStatus.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus#wsdl.interface(ESOQM_PropagateQuoteSubmitStatus)" callbackInterface="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus#wsdl.interface(ESOQM_PropagateQuoteSubmitStatusCallback)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus#wsdl.endpoint(ESOQM_PropagateQuoteSubmitStatus/ESOQM_PropagateQuoteSubmitStatus)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+    </service>
+    <component name="ESOQM_PropagateQuoteSubmitStatus">
+        <implementation.bpel src="ESOQM_PropagateQuoteSubmitStatus.bpel"/>
+        <property name="preference.password">${mtr.trust.Password}</property>
+        <property name="preference.loginId">${mtr.trust.UserName}</property>
+    </component>
+    <reference ui:wsdlLocation="EAI.SRV.EXT.ESO.314_PropagateESOQuoteStatusRef.wsdl" name="ESO_QuoteStatusServ">
+  <!-- migration comment: <interface.wsdl callbackInterface="http://soap.sforce.com/schemas/class/EAItoESO#wsdl.interface(EAItoESOPortType)" interface="http://soap.sforce.com/schemas/class/EAItoESO#wsdl.interface(EAItoESOPortType)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/> -->
+        <interface.wsdl interface="http://soap.sforce.com/schemas/class/EAItoESO#wsdl.interface(EAItoESOPortType)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://soap.sforce.com/schemas/class/EAItoESO#wsdl.endpoint(EAItoESOService/EAItoESO)" location="EAI.SRV.EXT.ESO.314_PropagateESOQuoteStatusRef.wsdl" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+    </reference>
+    <reference ui:wsdlLocation="enterpriseRef.wsdl" name="ESO_SFDCLogin">
+   <!-- migration comment:  <interface.wsdl callbackInterface="urn:enterprise.soap.sforce.com#wsdl.interface(Soap)" interface="urn:enterprise.soap.sforce.com#wsdl.interface(Soap)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/> -->
+        <interface.wsdl interface="urn:enterprise.soap.sforce.com#wsdl.interface(Soap)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="urn:enterprise.soap.sforce.com#wsdl.endpoint(SforceService/Soap)" location="enterpriseRef.wsdl" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>ESOQM_PropagateQuoteSubmitStatus/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ESOQM_PropagateQuoteSubmitStatus/ESO_SFDCLogin</source.uri>
+        <target.uri>ESO_SFDCLogin</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ESOQM_PropagateQuoteSubmitStatus/ESO_QuoteStatusServ</source.uri>
+        <target.uri>ESO_QuoteStatusServ</target.uri>
+    </wire>
+</composite>

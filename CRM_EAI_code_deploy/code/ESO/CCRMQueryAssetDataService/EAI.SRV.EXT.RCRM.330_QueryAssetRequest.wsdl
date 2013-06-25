@@ -1,0 +1,153 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<?Siebel-Property-Set EscapeNames="false"?>
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2011/06/29/GCAP/RCRM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:tns="http://www.reuters.com/ns/2011/06/29/GCAP/RCRM"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:xsdLocal1="http://www.siebel.com/xml/RCRMGenericAssetDetails"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    >
+    <types>
+        <xsd:schema elementFormDefault="qualified" attributeFormDefault="unqualified" targetNamespace="http://www.siebel.com/xml/RCRMGenericAssetDetails">
+            <xsd:annotation>
+                <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights reserved. Siebel XSD Generation</xsd:documentation>
+            </xsd:annotation>
+            <xsd:element name="ListOfRcrmGenericAssetDetails" type="xsdLocal1:ListOfRcrmGenericAssetDetails"/>
+            <xsd:complexType name="ListOfRcrmGenericAssetDetailsTopElmt">
+                <xsd:sequence>
+                    <xsd:element name="ListOfRcrmGenericAssetDetails" maxOccurs="1" minOccurs="1" type="xsdLocal1:ListOfRcrmGenericAssetDetails"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ListOfRcrmGenericAssetDetails">
+                <xsd:sequence>
+                    <xsd:element name="Assets" maxOccurs="unbounded" minOccurs="0" type="xsdLocal1:Assets"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Assets">
+                <xsd:sequence>
+                    <xsd:element name="UnInstallDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="Status" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="StartDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="SearchSpec" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RootIntegrationId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMSpecialPriceDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMSpecialPriceCurrency" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMSpecialPrice" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMServiceAccount" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMSAPPPLId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMRevenueType" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMRenewalTerm" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMRenewalNotificationTerm" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMRenewalDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMRenewalCancellationTerm" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMPermissioningSystem" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMNetPriceCurrencyCode" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMLatestContractNumber" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMLatestAgreementType" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMLatestAgreementTermStatus" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMLastBillPriceCurrencyCode" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMLastBillPrice" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMInitialTerm" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMInflightQuoteOrderCalc" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMFreeTrialFlag" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMFreeTrialEndDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMFixedTermEndDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMContractNumber" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMContactUserId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMContactUUID" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMClientRenewByDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMBillingAccountSite" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMBillingAccountNum" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMAssetSoldToAccountNum" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMAssetLocationAccount" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="RCRMAssetInstallAccountNum" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ProductPartNumber" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ProductName" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ProductId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ParentAssetId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="OwnerLastName" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="OwnerFirstName" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="OwnerContactId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="NetPrice" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="IntegrationId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="InstallDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="Id" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="EmailAddress" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="EffectiveEndDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="AssetNumber" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ActionCode" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="Attributes" maxOccurs="unbounded" minOccurs="0" type="xsdLocal1:Attributes"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Attributes">
+                <xsd:sequence>
+                    <xsd:element name="TextValue" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ProductId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ObjectId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="Name" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ConfigurationModelId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+        <xsd:schema elementFormDefault="qualified" attributeFormDefault="unqualified" targetNamespace="http://www.reuters.com/ns/2011/06/29/GCAP/RCRM">
+            <xsd:import namespace="http://www.siebel.com/xml/RCRMGenericAssetDetails"/>
+            <xsd:element name="RCRMAssetData_Input">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Process_spcInstance_spcId" type="xsd:string"/>
+                        <xsd:element name="Object_spcId" type="xsd:string"/>
+                        <xsd:element name="Siebel_spcOperation_spcObject_spcId" type="xsd:string"/>
+                        <xsd:element ref="xsdLocal1:ListOfRcrmGenericAssetDetails"/>
+                        <xsd:element name="Error_spcCode" type="xsd:string"/>
+                        <xsd:element name="Error_spcMessage" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="RCRMAssetData_Output">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Error_spcCode" type="xsd:string"/>
+                        <xsd:element name="Error_spcMessage" type="xsd:string"/>
+                        <xsd:element name="Object_spcId" type="xsd:string"/>
+                        <xsd:element name="Process_spcInstance_spcId" type="xsd:string"/>
+                        <xsd:element name="Siebel_spcOperation_spcObject_spcId" type="xsd:string"/>
+                        <xsd:element ref="xsdLocal1:ListOfRcrmGenericAssetDetails"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="RCRMAssetData_Input">
+        <part name="RCRMAssetData_Input" element="tns:RCRMAssetData_Input"/>
+    </message>
+    <message name="RCRMAssetData_Output">
+        <part name="RCRMAssetData_Output" element="tns:RCRMAssetData_Output"/>
+    </message>
+    <portType name="RCRM_spcESE_spcAsset_spcRequest">
+        <operation name="RCRMAssetData">
+            <input message="tns:RCRMAssetData_Input"/>
+            <output message="tns:RCRMAssetData_Output"/>
+        </operation>
+    </portType>
+    <binding name="RCRM_spcESE_spcAsset_spcRequest" type="tns:RCRM_spcESE_spcAsset_spcRequest">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="RCRMAssetData">
+            <soap:operation soapAction="document/http://www.reuters.com/ns/2011/06/29/GCAP/RCRM:RCRMAssetData"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="RCRM_spcESE_spcAsset_spcRequest">
+        <port name="RCRM_spcESE_spcAsset_spcRequest" binding="tns:RCRM_spcESE_spcAsset_spcRequest">
+         <!--   <soap:address location="http://10.136.164.32/eai_enu/start.swe?SWEExtSource=WebService&amp;SWEExtCmd=Execute&amp;UserName=R_RAJU&amp;Password=R_RAJU"/> -->
+          <soap:address location="${siebel.protocol}://${siebel.host}/eai_enu/start.swe?SWEExtSource=WebService&amp;SWEExtCmd=Execute&amp;UserName=${siebel.UserName}&amp;Password=${siebel.Password}"/>
+        </port>
+    </service>
+</definitions>

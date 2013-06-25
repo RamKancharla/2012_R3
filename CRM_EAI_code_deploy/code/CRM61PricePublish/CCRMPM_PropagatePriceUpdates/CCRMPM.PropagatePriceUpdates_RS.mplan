@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CCRMPM.PropagatePriceUpdates_RS" wsdlTargetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="propagatePriceUpdate">
+      <switch>
+         <case name="Case_1_CCRMPM.PropagatePriceUpdates_RS.propagatePriceUpdate" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TranCRMPricePublishToEAIPriceUpdateRequest.xsl,$in.PricePublish)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="CCRMPM.PriceRequestValidatorSyncSOAPAdp" operation="validatePricingUpdateRequest">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/TranCSpriceReqUpdateSubmissionStatusToSeiblePricePublish.xsl,$in.payload)" name="$out.PricePublish"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

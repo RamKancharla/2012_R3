@@ -1,0 +1,21 @@
+<?binding.jca ELMOrderPolling_db.jca?>
+<definitions name="ELMOrderPolling" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/ELMOrderPolling/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/ELMOrderPolling/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/ELMOrderPolling">
+    <plt:partnerLinkType name="ELMOrderPolling_plt">
+        <plt:role name="ELMOrderPolling_role">
+            <plt:portType name="tns:ELMOrderPolling_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/ELMOrderPolling" schemaLocation="ELMOrderPolling_table.xsd"/>
+        </schema>
+    </types>
+    <message name="ElmomPollingVCollection_msg">
+        <part name="ElmomPollingVCollection" element="top:ElmomPollingVCollection"/>
+    </message>
+    <portType name="ELMOrderPolling_ptt">
+        <operation name="receive">
+            <input message="tns:ElmomPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

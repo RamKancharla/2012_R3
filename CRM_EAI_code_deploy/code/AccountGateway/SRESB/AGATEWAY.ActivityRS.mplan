@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="AGATEWAY.ActivityRS" wsdlTargetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/AccountAction/TRUSTAccountActivity" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="GetActivityHistory">
+      <switch>
+         <case name="Case_1_AGATEWAY.ActivityRS.GetActivityHistory" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TransRCRMAccoutActionData_Input.xsl,$in.parameters)" name="$out.RCRMAccoutActionData_Input"/>
+               </transform>
+               <assign/>
+               <invoke reference="AGATEWAY.ActivitySOAP" operation="RCRMAccoutActionData">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/TransRCRMAccoutActionData_Output.xsl,$in.RCRMAccoutActionData_Output)" name="$out.parameters"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

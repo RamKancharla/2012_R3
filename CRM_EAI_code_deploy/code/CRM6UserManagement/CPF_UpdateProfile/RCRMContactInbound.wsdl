@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?Siebel-Property-Set EscapeNames="false"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsdLocal1="http://www.siebel.com/xml/ContactExternalIO"
+             targetNamespace="http://www.reuters.com/2008/02/15/GCAP/RCRM"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="http://www.reuters.com/2008/02/15/GCAP/RCRM">
+  <types>
+    <xsd:schema elementFormDefault="qualified"
+                attributeFormDefault="unqualified"
+                targetNamespace="http://www.reuters.com/2008/02/15/GCAP/RCRM"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="http://www.siebel.com/xml/ContactExternalIO"></xsd:import>
+      <xsd:element name="RCRM_spcContact_spcInbound_spcOperatiion_Input">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="RCRM_spcMessage_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Process_spcInstance_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcSource_spcSystem" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcInterface_spcStatus" type="xsd:string"></xsd:element>
+            <xsd:element name="RetryCount" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcTarget_spcSystem" type="xsd:string"></xsd:element>
+            <xsd:element name="Object_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Siebel_spcOperation_spcObject_spcId"
+                         type="xsd:string"></xsd:element>
+            <xsd:element name="RCRMActionCode" type="xsd:string"></xsd:element>
+            <xsd:element name="GetContactId" type="xsd:string"></xsd:element>
+            <xsd:element name="ContactId" type="xsd:string"></xsd:element>
+            <xsd:element ref="xsdLocal1:ContactExternalIO"></xsd:element>
+            <xsd:element name="Error_spcCode" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRMResponseCode" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcStatus" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcMessage" type="xsd:string"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="RCRM_spcContact_spcInbound_spcOperatiion_Output">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="xsdLocal1:ContactExternalIO"></xsd:element>
+            <xsd:element name="ContactId" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcCode" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcMessage" type="xsd:string"></xsd:element>
+            <xsd:element name="GetContactId" type="xsd:string"></xsd:element>
+            <xsd:element name="Object_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Process_spcInstance_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcInterface_spcStatus" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcMessage_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcSource_spcSystem" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcStatus" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcTarget_spcSystem" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRMActionCode" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRMResponseCode" type="xsd:string"></xsd:element>
+            <xsd:element name="RetryCount" type="xsd:string"></xsd:element>
+            <xsd:element name="Siebel_spcOperation_spcObject_spcId"
+                         type="xsd:string"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+    <xsd:schema elementFormDefault="qualified"
+                attributeFormDefault="unqualified"
+                xmlns:xsdLocal1="http://www.siebel.com/xml/ContactExternalIO"
+                targetNamespace="http://www.siebel.com/xml/ContactExternalIO"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:annotation>
+        <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All
+                           rights reserved. Siebel XSD Generation</xsd:documentation>
+      </xsd:annotation>
+      <xsd:element name="ContactExternalIO" type="xsdLocal1:ContactExternalIO"></xsd:element>
+      <xsd:complexType name="ContactExternalIOTopElmt">
+        <xsd:sequence>
+          <xsd:element name="ContactExternalIO" maxOccurs="1" minOccurs="1"
+                       type="xsdLocal1:ContactExternalIO"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ContactExternalIO">
+        <xsd:sequence>
+          <xsd:element name="Header" maxOccurs="1" minOccurs="1"
+                       type="xsdLocal1:Header"></xsd:element>
+          <xsd:element name="Response" maxOccurs="1" minOccurs="1"
+                       type="xsdLocal1:Response"></xsd:element>
+          <xsd:element name="Contact" maxOccurs="1" minOccurs="1"
+                       type="xsdLocal1:Contact"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="Header">
+        <xsd:sequence>
+          <xsd:element name="MsgId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="applicationId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string20"></xsd:element>
+          <xsd:element name="instanceId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string20"></xsd:element>
+          <xsd:element name="messageHistory" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string40"></xsd:element>
+          <xsd:element name="timeStamp" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="timeToLive" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="tracingId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="transactionId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="PayloadVersion" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string40"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="Response">
+        <xsd:sequence>
+          <xsd:element name="DownstreamStatusCode" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string20"></xsd:element>
+          <xsd:element name="RCRMErrorCode" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string20"></xsd:element>
+          <xsd:element name="RCRMErrorMessage" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string4000"></xsd:element>
+          <xsd:element name="ResponseCode" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string20"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="Contact">
+        <xsd:sequence>
+          <xsd:element name="RCRMMarketFocus" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="RCRMePlatformId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="RCRMRegionalFocus" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="RCRMLocalDACSId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string100"></xsd:element>
+          <xsd:element name="Id" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="ModId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="AccountId" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="EmailAddress" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string100"></xsd:element>
+          <xsd:element name="FirstName" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="LastName" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="MM" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="RCRMDirectMarketing" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="RCRMFTLCompleteFlag" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="RCRMFTLFlagSetDate" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMLastUpdatedProfileDate" maxOccurs="1"
+                       minOccurs="0" type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMLegalConsent" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="RCRMLegalConsentSetDate" maxOccurs="1"
+                       minOccurs="0" type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMLocalFirstName" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="RCRMLocalLastName" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="RCRMMarketingConsentSetDate" maxOccurs="1"
+                       minOccurs="0" type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMSegGrpEndUserActivity" maxOccurs="1"
+                       minOccurs="0" type="xsdLocal1:string255"></xsd:element>
+          <xsd:element name="WorkPhone" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMAAAUpdatedProfileDate" maxOccurs="1"
+                       minOccurs="0" type="xsd:string"></xsd:element>
+          <xsd:element name="RcrmContactLoginId" maxOccurs="unbounded"
+                       minOccurs="1" type="xsdLocal1:RcrmContactLoginId"></xsd:element>
+          <xsd:element name="RCRMSupportLanguage" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="RcrmContactLoginId">
+        <xsd:sequence>
+          <xsd:element name="RCRMLocalDACSId" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMFTLFlagSetDate" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMFTLCompleteFlag" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMField5" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="RCRMField4" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="RCRMField3" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string100"></xsd:element>
+          <xsd:element name="RCRMField2" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string100"></xsd:element>
+          <xsd:element name="RCRMField1" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string100"></xsd:element>
+          <xsd:element name="RCRMCPfGStatusReason" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMCPfGStatus" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="Id" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="RCRMErrorCode" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="ResponseCode" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string20"></xsd:element>
+          <xsd:element name="RCRMActionCode" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="RCRMErrorContext" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string2000"></xsd:element>
+          <xsd:element name="RCRMCPfGTempURL" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string2000"></xsd:element>
+          <xsd:element name="RCRMUserId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string100"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:simpleType name="string2000">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="2000"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string4000">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="4000"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string50">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="50"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string255">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="255"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string15">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="15"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string40">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="40"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string30">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="30"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string100">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="100"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string20">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="20"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:schema>
+  </types>
+  <message name="RCRM_spcContact_spcInbound_spcOperatiion_Input">
+    <part name="RCRM_spcContact_spcInbound_spcOperatiion_Input"
+          element="tns:RCRM_spcContact_spcInbound_spcOperatiion_Input"></part>
+  </message>
+  <message name="RCRM_spcContact_spcInbound_spcOperatiion_Output">
+    <part name="RCRM_spcContact_spcInbound_spcOperatiion_Output"
+          element="tns:RCRM_spcContact_spcInbound_spcOperatiion_Output"></part>
+  </message>
+  <portType name="RCRM_spcContact_spcInbound">
+    <operation name="RCRM_spcContact_spcInbound_spcOperatiion">
+      <input message="tns:RCRM_spcContact_spcInbound_spcOperatiion_Input"></input>
+      <output message="tns:RCRM_spcContact_spcInbound_spcOperatiion_Output"></output>
+    </operation>
+  </portType>
+  <binding name="RCRM_spcContact_spcInbound"
+           type="tns:RCRM_spcContact_spcInbound">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+                  style="document"></soap:binding>
+    <operation name="RCRM_spcContact_spcInbound_spcOperatiion">
+      <soap:operation soapAction="document/http://www.reuters.com/2008/02/15/GCAP/RCRM:RCRM_spcContact_spcInbound_spcOperatiion"></soap:operation>
+      <input>
+        <soap:body use="literal"></soap:body>
+      </input>
+      <output>
+        <soap:body use="literal"></soap:body>
+      </output>
+    </operation>
+  </binding>
+  <service name="RCRM_spcContact_spcInbound">
+    <port binding="tns:RCRM_spcContact_spcInbound"
+          name="RCRM_spcContact_spcInbound">
+      <soap:address location="http://10.18.196.200/eai_enu/start.swe?SWEExtSource=WebService&amp;SWEExtCmd=Execute&amp;UserName=sadmin&amp;Password=sadmin"></soap:address>
+    </port>
+  </service>
+</definitions>

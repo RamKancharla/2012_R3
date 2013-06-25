@@ -1,0 +1,260 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Apr 18 18:02:10 BST 2008
+  Author:  Surya.Gannavarapu
+  Purpose: Asynchronous BPEL Process
+  CHANGE HISTORY
+
+  Date		Author				Comments
+  **********************************************************
+
+  14/07/2010	Surya G				Added the version value in TransGetOrderDetailsOVToManageOrderLineStatusIV.xsl for defect 39554.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFGEF_PropagateFulfillmentStatus" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/Exception" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheServ/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CPFGEF_PropagateFulfillmentStatus" myRole="CPFGEF_PropagateFulfillmentStatusProvider" partnerRole="CPFGEF_PropagateFulfillmentStatusRequester"/>
+        <partnerLink name="CrossRefService" partnerRole="CrossRefServicePortType_Role" partnerLinkType="ns1:CrossRefServicePortType_PL"/>
+        <partnerLink myRole="OM_ManageOrderLineStatusRequester" name="OM_ManageOrderLineStatus" partnerRole="OM_ManageOrderLineStatusProvider" partnerLinkType="ns3:OM_ManageOrderLineStatus"/>
+        <partnerLink name="AdpOrderCacheServ" partnerRole="AdpOrderCacheServ_role" partnerLinkType="ns5:AdpOrderCacheServ_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="PropagateFulfilmentStatusIV" messageType="client:CPFGEF_PropagateFulfillmentStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="GetOrderDetailsIV" messageType="ns1:CrossRefGetOrderDetailsRequest"/>
+        <variable name="GetOrderDetailsOV" messageType="ns1:CrossRefGetOrderDetailsResponse"/>
+        <variable name="index" type="xsd:nonNegativeInteger"/>
+        <variable name="SucessStatus" type="xsd:string"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="FailureStatus" type="xsd:string"/>
+        <variable name="ManageOrderLineStatusIV" messageType="ns3:OM_ManageOrderLineStatusRequestMessage"/>
+       <!-- <variable name="InvOrderCachetoUpdateAutoPermCompltStatus"
+                  messageType="ns5:OrderCacheCollection_msg"/> -->
+        <variable name="InvOrderCachetoUpdateAutoPermCompltStatusVar" messageType="ns5:OrderCacheCollection_msg"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="ns4:CrossRefServiceRemoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnCrossRefServiceRemoteFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node EFRId = ((oracle.xml.parser.v2.XMLElement)                          
+                        getVariableData("PropagateFulfilmentStatusIV", "processStatus", "/ns2:PropagateCPFGStatusUpdateRequest/ns2:electronicFulfilmentRequestId"));                             
+                 
+                                         
+ String Title=(EFRId!=null ? ("EFRId: "+EFRId.getFirstChild().getNodeValue()) : ".;")+" Fault";          
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.3">
+                <![CDATA[org.w3c.dom.Node EFRId = ((oracle.xml.parser.v2.XMLElement)                           
+                        getVariableData("PropagateFulfilmentStatusIV", "processStatus", "/ns2:PropagateCPFGStatusUpdateRequest/ns2:electronicFulfilmentRequestId"));                              
+                  
+                                          
+ String Title=(EFRId!=null ? ("EFRId: "+EFRId.getFirstChild().getNodeValue()) : ".;")+" Fault";           
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node EFRId = ((oracle.xml.parser.v2.XMLElement)                             
+                        getVariableData("PropagateFulfilmentStatusIV", "processStatus", "/ns2:PropagateCPFGStatusUpdateRequest/ns2:electronicFulfilmentRequestId"));                                
+                    
+                                            
+ String Title=(EFRId!=null ? ("EFRId: "+EFRId.getFirstChild().getNodeValue()) : ".;")+" Fault";             
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node EFRId = ((oracle.xml.parser.v2.XMLElement)                              
+                        getVariableData("PropagateFulfilmentStatusIV", "processStatus", "/ns2:PropagateCPFGStatusUpdateRequest/ns2:electronicFulfilmentRequestId"));                                 
+                     
+                                             
+ String Title=(EFRId!=null ? ("EFRId: "+EFRId.getFirstChild().getNodeValue()) : ".;")+" Fault";              
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="ns4:ManageOrderLineStatusRemoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnManageOrderLineStatusRemoteFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node EFRId = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("PropagateFulfilmentStatusIV", "processStatus", "/ns2:PropagateCPFGStatusUpdateRequest/ns2:electronicFulfilmentRequestId"));                                  
+                      
+                                              
+ String Title=(EFRId!=null ? ("EFRId: "+EFRId.getFirstChild().getNodeValue()) : ".;")+" Fault";               
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnCatchAll" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node EFRId = ((oracle.xml.parser.v2.XMLElement)                           
+                        getVariableData("PropagateFulfilmentStatusIV", "processStatus", "/ns2:PropagateCPFGStatusUpdateRequest/ns2:electronicFulfilmentRequestId"));                              
+                  
+                                          
+ String Title=(EFRId!=null ? ("EFRId: "+EFRId.getFirstChild().getNodeValue()) : ".;")+" Fault";           
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CPFGEF_PropagateFulfillmentStatus.wsdl) -->
+        <receive name="RcvFulfilmentStatus" partnerLink="client" portType="client:CPFGEF_PropagateFulfillmentStatus" operation="processStatus" variable="PropagateFulfilmentStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessStatusFromCPFG','Value', 'COMPLETE')"/>
+                <to variable="SucessStatus"/>
+            </copy>
+            <copy>
+                <from expression="1"/>
+                <to variable="index"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','FailureStatusFromCPFG','Value', 'ERROR')"/>
+                <to variable="FailureStatus"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node EFRId = ((oracle.xml.parser.v2.XMLElement)                        
+                        getVariableData("PropagateFulfilmentStatusIV", "processStatus", "/ns2:PropagateCPFGStatusUpdateRequest/ns2:electronicFulfilmentRequestId"));                           
+               
+                                       
+ String Title=(EFRId!=null ? ("EFRId: "+EFRId.getFirstChild().getNodeValue()) : ".;");        
+ setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <scope name="ScpCrossRefService">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                    <throw name="ThrCrossRefServiceRemoteFault" faultName="ns4:CrossRefServiceRemoteFault" faultVariable="runTimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqCrossRefService">
+                <assign name="TransCrossRefRequestVariables">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:doXSLTransformForDoc('xsl/TransformCrossRefRequestVariables.xsl', $PropagateFulfilmentStatusIV.processStatus)"/>
+                        <to variable="GetOrderDetailsIV" part="parameters"/>
+                    </copy>
+                </assign>
+                <invoke name="InvCrossRefServiceTRogetOrderDetails" partnerLink="CrossRefService" portType="ns1:CrossRefServicePortType" operation="getOrderDetails" inputVariable="GetOrderDetailsIV" outputVariable="GetOrderDetailsOV"/>
+            </sequence>
+        </scope>
+        <bpelx:exec name="AddCRMOrderNumberToCustomTitle" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)                          
+                        getVariableData("GetOrderDetailsOV", "parameters", "/ns1:getOrderDetailsResponse/ns1:crmOrder/ns1:orderHeader/ns1:CRMOrderNumber"));                             
+                           
+                           
+ org.w3c.dom.Node EFRId = ((oracle.xml.parser.v2.XMLElement)                          
+                        getVariableData("PropagateFulfilmentStatusIV", "processStatus", "/ns2:PropagateCPFGStatusUpdateRequest/ns2:electronicFulfilmentRequestId"));                 
+                           
+                           
+                                         
+ String SEFRId=(EFRId!=null ? (EFRId.getFirstChild().getNodeValue()) : ".;");  
+   
+ String orderNumber = (orderNumberNode!=null ? (orderNumberNode.getFirstChild().getNodeValue()) : ".;");  
+   
+ String Title = "ORD: "+orderNumber+" EFRId: "+SEFRId ;  
+ setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <while name="While_1" condition="bpws:getVariableData('index')&lt;=count(bpws:getVariableData('GetOrderDetailsOV','parameters','/ns1:getOrderDetailsResponse/ns1:crmOrder/ns1:orderLineItem'))">
+            <sequence name="SeqAsgFulfilmentStatus">
+                <switch name="CheckFulfilmentStatus">
+                    <case condition="bpws:getVariableData('PropagateFulfilmentStatusIV','processStatus','/ns2:PropagateCPFGStatusUpdateRequest/ns2:status') = bpws:getVariableData('SucessStatus')">
+                        <bpelx:annotation>
+                            <bpelx:pattern>When Fulfilment Status is succesful from CPfG</bpelx:pattern>
+                        </bpelx:annotation>
+                        <assign name="AsgSucessResponseToGetOrderLineStatusOV">
+                            <copy>
+                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/OrderPermissioningStatus.dvm&quot;,&quot;CPFGPermissioningStatus&quot;,bpws:getVariableData('SucessStatus'),&quot;EAIPermissioningStatus&quot;,&quot;Permissioned&quot;)"/>
+                                <to variable="GetOrderDetailsOV" part="parameters" query="/ns1:getOrderDetailsResponse/ns1:crmOrder/ns1:orderLineItem[bpws:getVariableData('index')]/ns1:permissioningStatus"/>
+                            </copy>
+                            <copy>
+                                <from expression="''"/>
+                                <to variable="GetOrderDetailsOV" part="parameters" query="/ns1:getOrderDetailsResponse/ns1:crmOrder/ns1:orderLineItem[bpws:getVariableData('index')]/ns1:billingNote"/>
+                            </copy>
+                        </assign>
+                    </case>
+                    <otherwise>
+                        <assign name="AsgFailureResponseToGetOrderLineStatusOV">
+                            <copy>
+                                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/OrderPermissioningStatus.dvm&quot;,&quot;CPFGPermissioningStatus&quot;,bpws:getVariableData('FailureStatus'),&quot;EAIPermissioningStatus&quot;,&quot;Permissioning Error&quot;)"/>
+                                <to variable="GetOrderDetailsOV" part="parameters" query="/ns1:getOrderDetailsResponse/ns1:crmOrder/ns1:orderLineItem[bpws:getVariableData('index')]/ns1:permissioningStatus"/>
+                            </copy>
+                            <copy>
+                                <from variable="PropagateFulfilmentStatusIV" part="processStatus" query="/ns2:PropagateCPFGStatusUpdateRequest/ns2:statusReasonCode"/>
+                                <to variable="GetOrderDetailsOV" part="parameters" query="/ns1:getOrderDetailsResponse/ns1:crmOrder/ns1:orderLineItem[bpws:getVariableData('index')]/ns1:billingNote"/>
+                            </copy>
+                        </assign>
+                    </otherwise>
+                </switch>
+                <assign name="AsgIncrementIndex">
+                    <copy>
+                        <from expression="bpws:getVariableData('index')+1"/>
+                        <to variable="index"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <scope name="ScpManageOrderLineStatus">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                    <throw name="ThrManageOrderLineStatusRemoteFault" faultName="ns4:ManageOrderLineStatusRemoteFault" faultVariable="runTimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqManageOrderLineStatus">
+                <assign name="TransGetOrderDetailsOVToManageOrderLineStatusIV">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransGetOrderDetailsOVToManageOrderLineStatusIV.xsl',bpws:getVariableData('GetOrderDetailsOV','parameters'))"/>
+                        <to variable="ManageOrderLineStatusIV" part="payload"/>
+                    </copy>
+                </assign>
+                <assign name="TransGetOrderDetailsOVToOrderCacheServ">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransOrderDetailPermStatusToOrderCacheMapper.xsl',bpws:getVariableData('GetOrderDetailsOV','parameters'))"/>
+                        <to variable="InvOrderCachetoUpdateAutoPermCompltStatusVar" part="OrderCacheCollection"/>
+                    </copy>
+                </assign>
+                <invoke name="InvOrderCacheUpdAutoPermCompltStatus" partnerLink="AdpOrderCacheServ" portType="ns5:AdpOrderCacheServ_ptt" operation="update" inputVariable="InvOrderCachetoUpdateAutoPermCompltStatusVar"/>
+                <invoke name="InvManageOrderLineStatus" partnerLink="OM_ManageOrderLineStatus" portType="ns3:OM_ManageOrderLineStatus" operation="manageOrderLineStatus" inputVariable="ManageOrderLineStatusIV"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

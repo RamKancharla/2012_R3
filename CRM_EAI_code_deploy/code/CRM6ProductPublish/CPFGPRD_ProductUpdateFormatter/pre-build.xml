@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<project name="bpel.pre-build" default="pre-build" basedir=".">
+    <property environment="env"/>
+    <property name="java.src.dir" value="${basedir}/src"/>
+    <property name="java.test.dir" value="${basedir}/test"/>
+    <property name="reports.tests" value="${basedir}/output"/>
+    <property name="output.class.dir" value="${basedir}/bpel/BPEL-INF/classes"/>
+    <property name="custom.jar" value="custom.jar"/>
+    
+    <!-- Set bpel.home using env variable BPEL_HOME, if set by developer prompt -->
+    <condition property="bpel.home" value="${env.BPEL_HOME}">
+        <available file="${env.BPEL_HOME}/utilities/ant-orabpel.xml"/>
+    </condition>
+    <!-- Set bpel.home using ant property oracle.home, if set by JDev -->
+    <condition property="bpel.home" value="${oracle.home}/integration/bpel">
+        <available file="${oracle.home}/integration/bpel/utilities/ant-orabpel.xml"/>
+    </condition>
+
+    <target name="clean">
+        <delete dir="generated-src"/>
+        <mkdir dir="generated-src"/>
+        <delete dir="${output.class.dir}"/>
+        <mkdir dir="${output.class.dir}"/>
+    </target>
+    
+    <target name="compile" depends="schemac,javac">
+    </target>
+    
+    <target name="javac" depends="schemac">
+        <javac srcdir="${java.src.dir}"
+               destdir="${output.class.dir}" classpath="${output.class.dir}"/>
+</target>
+
+    <target name="createJar">
+        <mkdir dir="${basedir}/lib"/>
+            <jar destfile="${basedir}/lib/${custom.jar}">
+                <fileset dir="${output.class.dir}"/>
+            </jar>
+    </target>
+    
+    <target name="schemac" depends="clean">
+        <schemac input="${basedir}/bpel/StandaloneProductReferenceDataUpdate.xsd"
+                 sourceout="${basedir}/generated-src" binding="type"
+                 noCompile="false" verbose="true"
+                 out="${output.class.dir}"/>
+</target>
+
+   
+    <target name="pre-build" depends="compile"/>
+    
+</project>

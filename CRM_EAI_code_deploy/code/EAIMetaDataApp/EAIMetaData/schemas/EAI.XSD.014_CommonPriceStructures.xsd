@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************************************
+* Module:	EAI.XSD.014_CommonPriceTypes
+*				
+* Type:		XML Schema Document
+* Description:	Schema Used for Common Price request
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		03/04/08	Sreeja Prasad			Initial Version
+*  0.02		10/04/08	Geratayya P			Changed the schemas to follow new pattern
+*  0.03		17/04/08	Sunil Vuppala			Added CRMPLHId in _CCRMPriceUpdateSubmissionStatus
+*  0.04		17/07/08	Sreeja Prasad			Added elements from season till volumeDiscountId in _CCRMPriceUpdateReqHeader and 
+*								from margin till RCRMHQNodePublish in _CCRMPriceUpdateReqItem.
+*  0.05         29/07/08        Sreeja Prasad			Added CRMPLIId,rcrmHQNodePublish and rcrmCompassMessage in PriceUpdateLineItemStatus and CRMPLHId,rcrmDummyField3 and
+								rcrmMessage in PriceUpdateHeaderStatus.
+*  0.06		05/08/08	Surya Gannavarapu		Added enddate in _CCRMPriceUpdateReqHeader.
+*  0.07         16/07/09        Sreeja Prasad			Added the elements  PriceListStartDate,PriceListType,ListPriceTypeCode & CoresuiteStartDate
+*  0.08         29/06/10        Sreeja Prasad			Added the elements pliId in _CSPriceUpdateReqLineItem and _CCRMPriceUpdateLineItemStatus.
+*************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:gcap-cpt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" xmlns:gcap-cnpt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonNillablePriceTypes" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.08">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="./EAI.XSD.001_SchemaAnnotations.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" schemaLocation="./EAI.XSD.012_CommonPriceTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonNillablePriceTypes" schemaLocation="./EAI.XSD.013_CommonNillablePriceTypes.xsd"/>
+	<xsd:complexType name="CompassMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="messageId" type="xsd:string"/>
+			<xsd:element name="transactionId" type="xsd:string"/>
+			<xsd:element name="messageHistory" type="xsd:string"/>
+			<xsd:element name="tracingId" type="xsd:string"/>
+			<xsd:element name="messageCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="userId" type="xsd:string"/>
+			<xsd:element name="objectSystem" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSPriceUpdateReqHeader">
+		<xsd:sequence>
+			<xsd:element name="CSInstance" type="xsdLocal:string2"/>
+			<xsd:element name="priceListNumber" type="xsdLocal:string2"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- New Changed End -->
+	<xsd:complexType name="_CCRMPriceUpdateReqHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMPLHId" type="gcap-cpt:_CRMPLHId"/>
+			<xsd:element name="actionCode" type="gcap-cnpt:CCRMActionCode"/>
+			<xsd:element name="currencyCode" type="gcap-cnpt:CurrencyCode"/>
+			<xsd:element name="integrationId" type="gcap-cnpt:IntegrationId"/>
+			<xsd:element name="loginName" type="gcap-cnpt:LoginName"/>
+			<xsd:element name="name" type="gcap-cnpt:Name"/>
+			<xsd:element name="rcrmCompassPriceListNumber" type="gcap-cnpt:RCRMCompassPriceListNumber"/>
+			<xsd:element name="rcrmCountry" type="gcap-cpt:RCRMCountry"/>
+			<xsd:element name="rcrmMessage" type="gcap-cnpt:RCRMMessage"/>
+			<xsd:element name="rcrmPriceListType" type="gcap-cnpt:RCRMPriceListType"/>
+			<xsd:element name="rcrmRevenueType" type="gcap-cnpt:RCRMRevenueType"/>
+			<xsd:element name="rcrmStatus" type="gcap-cnpt:RCRMStatus"/>
+			<xsd:element name="startDate" type="gcap-cnpt:StartDate"/>
+			<xsd:element name="endDate" type="gcap-cnpt:EndDate"/>
+			<xsd:element name="type" type="gcap-cnpt:Type"/>
+			<xsd:element name="season" type="gcap-cnpt:Season"/>
+			<xsd:element name="rcrmLastParentRefreshDate" type="gcap-cnpt:RCRMLastParentRefreshDate"/>
+			<xsd:element name="costList" type="gcap-cnpt:CostList"/>
+			<xsd:element name="description" type="gcap-cnpt:Description"/>
+			<xsd:element name="updated" type="gcap-cnpt:Updated"/>
+			<xsd:element name="rcrmPropagationSelected" type="gcap-cnpt:RCRMPropagationSelected"/>
+			<xsd:element name="rcrmApplyRulesFlag" type="gcap-cnpt:RCRMApplyRulesFlag"/>
+			<xsd:element name="rcrmAllowOrder" type="gcap-cnpt:RCRMAllowOrder"/>
+			<xsd:element name="RCRMAllowDraftReportFlag" type="gcap-cnpt:RCRMAllowDraftReportFlag"/>
+			<xsd:element name="primaryOrganizationId" type="gcap-cnpt:PrimaryOrganizationId"/>
+			<xsd:element name="pricingProcedure" type="gcap-cnpt:PricingProcedure"/>
+			<xsd:element name="lastName" type="gcap-cnpt:LastName"/>
+			<xsd:element name="rcrmPricePublish" type="gcap-cnpt:RCRMPricePublish"/>
+			<xsd:element name="isAdminMode" type="gcap-cnpt:IsAdminMode"/>
+			<xsd:element name="UpdatedDate" type="gcap-cnpt:UpdatedDate"/>
+			<xsd:element name="rcrmDummyField1" type="gcap-cnpt:RCRMDummyField1"/>
+			<xsd:element name="rcrmDummyField2" type="gcap-cnpt:RCRMDummyField2"/>
+			<xsd:element name="rcrmDummyField3" type="gcap-cnpt:RCRMDummyField3"/>
+			<xsd:element name="paymentIntegrationId" type="gcap-cnpt:PaymentIntegrationId"/>
+			<xsd:element name="volumeDiscount" type="gcap-cnpt:VolumeDiscount"/>
+			<xsd:element name="paymentTerm" type="gcap-cnpt:PaymentTerm"/>
+			<xsd:element name="priceBookName" type="gcap-cnpt:PriceBookName"/>
+			<xsd:element name="primaryOrganization" type="gcap-cnpt:PrimaryOrganization"/>
+			<xsd:element name="costListId" type="gcap-cnpt:CostListId"/>
+			<xsd:element name="paymentTermId" type="gcap-cnpt:PaymentTermId"/>
+			<xsd:element name="priceBookId" type="gcap-cnpt:PriceBookId"/>
+			<xsd:element name="xaClassId" type="gcap-cnpt:XAClassId"/>
+			<xsd:element name="periodId" type="gcap-cnpt:PeriodId"/>
+			<xsd:element name="volumeDiscountId" type="gcap-cnpt:VolumeDiscountId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CCRMPriceUpdateReqItem">
+		<xsd:sequence>
+			<xsd:element name="rcrmProductExchangeFlag" type="gcap-cnpt:RCRMProductExchangeFlag"/>
+			<xsd:element name="rcrmLocalStatus" type="gcap-cnpt:RCRMLocalStatus"/>
+			<xsd:element name="rcrmGlobalStatus" type="gcap-cnpt:RCRMGlobalStatus"/>
+			<xsd:element name="CRMPLIId" type="gcap-cnpt:_CRMPLIId"/>
+			<xsd:element name="endDate" type="gcap-cnpt:EndDate"/>
+			<xsd:element name="integrationId" type="gcap-cnpt:IntegrationId"/>
+			<xsd:element name="originalListPrice" type="gcap-cnpt:OriginalListPrice"/>
+			<xsd:element name="priceAdjustmentType" type="gcap-cnpt:PriceAdjustmentType"/>
+			<xsd:element name="priceListId" type="gcap-cnpt:PriceListId"/>
+			<xsd:element name="priceType" type="gcap-cnpt:PriceType"/>
+			<xsd:element name="pricingMethod" type="gcap-cnpt:PricingMethod"/>
+			<xsd:element name="primaryProductLineId" type="gcap-cnpt:PrimaryProductLineId"/>
+			<xsd:element name="productId" type="gcap-cnpt:ProductId"/>
+			<xsd:element name="productName" type="gcap-cnpt:ProductName"/>
+			<xsd:element name="rcrmCompassMessage" type="gcap-cnpt:RCRMCompassMessage"/>
+			<xsd:element name="rcrmCurrencyCode" type="gcap-cnpt:RCRMCurrencyCode"/>
+			<xsd:element name="rcrmDateLastPropChange" type="gcap-cnpt:RCRMDateLastPropChange"/>
+			<xsd:element name="rcrmExchangeDate" type="gcap-cnpt:RCRMExchangeDate"/>
+			<xsd:element name="rcrmInactiveFlag" type="gcap-cnpt:RCRMInactiveFlag"/>
+			<xsd:element name="rcrmLocalPLI" type="gcap-cnpt:RCRMLocalPLI"/>
+			<xsd:element name="rcrmNativeCurrencyCode" type="gcap-cnpt:RCRMNativeCurrencyCode"/>
+			<xsd:element name="rcrmNativePrice" type="gcap-cnpt:RCRMNativePrice"/>
+			<xsd:element name="rcrmPLIQuoteType" type="gcap-cnpt:RCRMPLIQuoteType"/>
+			<xsd:element name="rcrmPLIRevenueType" type="gcap-cnpt:RCRMPLIRevenueType"/>
+			<xsd:element name="rcrmPriceListItemStatus" type="gcap-cnpt:RCRMPriceListItemStatus"/>
+			<xsd:element name="startDate" type="gcap-cnpt:StartDate"/>
+			<xsd:element name="margin" type="gcap-cnpt:Margin"/>
+			<xsd:element name="referencePrice" type="gcap-cnpt:ReferencePrice"/>
+			<xsd:element name="rcrmSupplierExchRate" type="gcap-cnpt:RCRMSupplierExchRate"/>
+			<xsd:element name="rcrmSupplierCurrencyCode" type="gcap-cnpt:RCRMSupplierCurrencyCode"/>
+			<xsd:element name="rcrmSellingPrice" type="gcap-cnpt:RCRMSellingPrice"/>
+			<xsd:element name="rcrmProductOperatingSystem" type="gcap-cnpt:RCRMProductOperatingSystem"/>
+			<xsd:element name="rcrmPLIRIN" type="gcap-cnpt:RCRMPLIRIN"/>
+			<xsd:element name="rcrmPLIMaintPercent" type="gcap-cnpt:RCRMPLIMaintPercent"/>
+			<xsd:element name="rcrmPLILocalLanguageName" type="gcap-cnpt:RCRMPLILocalLanguageName"/>
+			<xsd:element name="rcrmPLILocalDescription" type="gcap-cnpt:RCRMPLILocalDescription"/>
+			<xsd:element name="rcrmLocal" type="gcap-cnpt:RCRMLocal"/>
+			<xsd:element name="rcrmIgnoreUpdateFlag" type="gcap-cnpt:RCRMIgnoreUpdateFlag"/>
+			<xsd:element name="rcrmGlobal" type="gcap-cnpt:RCRMGlobal"/>
+			<xsd:element name="rcrmCoresuiteUpdated" type="gcap-cnpt:RCRMCoresuiteUpdated"/>
+			<xsd:element name="servicePricePercent" type="gcap-cnpt:ServicePricePercent"/>
+			<xsd:element name="priceListSubtypeCode" type="gcap-cnpt:PriceListSubtypeCode"/>
+			<xsd:element name="priceListName" type="gcap-cnpt:PriceListName"/>
+			<xsd:element name="rcrmActiveFlag" type="gcap-cnpt:RCRMActiveFlag"/>
+			<xsd:element name="isAdminMode" type="gcap-cnpt:IsAdminMode"/>
+			<xsd:element name="isComplexProductBundle" type="gcap-cnpt:IsComplexProductBundle"/>
+			<xsd:element name="isComplexProductNotBundle" type="gcap-cnpt:IsComplexProductNotBundle"/>
+			<xsd:element name="dynamicMatrixId" type="gcap-cnpt:DynamicMatrixId"/>
+			<xsd:element name="listPrice" type="gcap-cnpt:ListPrice"/>
+			<xsd:element name="dynamicMatrix" type="gcap-cnpt:DynamicMatrix"/>
+			<xsd:element name="maxSalePrice" type="gcap-cnpt:MaxSalePrice"/>
+			<xsd:element name="costListItemCurrencyCode" type="gcap-cnpt:CostListItemCurrencyCode"/>
+			<xsd:element name="CfgLatestReleasedFlag" type="gcap-cnpt:CfgLatestReleasedFlag"/>
+			<xsd:element name="BundleSequenceReadOnlyFlag" type="gcap-cnpt:BundleSequenceReadOnlyFlag"/>
+			<xsd:element name="BonusThreshold" type="gcap-cnpt:BonusThreshold"/>
+			<xsd:element name="MinSalePrice" type="gcap-cnpt:MinSalePrice"/>
+			<xsd:element name="Part" type="gcap-cnpt:Part"/>
+			<xsd:element name="Cost" type="gcap-cnpt:Cost"/>
+			<xsd:element name="rcrmDummyField1" type="gcap-cnpt:RCRMDummyField1"/>
+			<xsd:element name="rcrmDummyField2" type="gcap-cnpt:RCRMDummyField2"/>
+			<xsd:element name="rcrmDummyField3" type="gcap-cnpt:RCRMDummyField3"/>
+			<xsd:element name="rcrmDummyField4" type="gcap-cnpt:RCRMDummyField4"/>
+			<xsd:element name="ComplexProductPricingModelName" type="gcap-cnpt:ComplexProductPricingModelName"/>
+			<xsd:element name="name" type="gcap-cnpt:Name"/>
+			<xsd:element name="VolumeDiscount" type="gcap-cnpt:VolumeDiscount"/>
+			<xsd:element name="RCRMHQNodePublish" type="gcap-cnpt:RCRMHQNodePublish"/>
+			<xsd:element name="priceListStartDate" type="gcap-cnpt:PriceListStartDate"/>
+			<xsd:element name="priceListType" type="gcap-cnpt:PriceListType"/>
+			<xsd:element name="coresuiteStartDate" type="gcap-cnpt:CoresuiteStartDate"/>
+			<xsd:element name="listPriceTypeCode" type="gcap-cnpt:ListPriceTypeCode"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--
+	<xsd:complexType name="CSPriceMaintRequestHeader">??
+		<xsd:sequence>
+			<xsd:element name="CSInstance" type="xsdLocal:string2"/>
+			<xsd:element name="priceListNumber" type="xsdLocal:string2"/>
+		</xsd:sequence>
+	</xsd:complexType>
+-->
+	<xsd:complexType name="_CSPriceUpdateReqLineItem">
+		<xsd:sequence>
+			<xsd:element name="PLI" type="gcap-cnpt:_CSPLI"/>
+			<xsd:element name="startDate" type="gcap-cnpt:_CSStartDate"/>
+			<xsd:element name="value" type="gcap-cnpt:_CSValue"/>
+			<xsd:element name="currency" type="gcap-cnpt:_CSCurrency"/>
+			<xsd:element name="comType" type="gcap-cnpt:_CSComType"/>
+			<xsd:element name="pliId" type="gcap-cnpt:PLIId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CCRMMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="gcap-cnpt:CCRMActionCode"/>
+			<xsd:element name="version" type="gcap-cnpt:NillableMessageVersion"/>
+			<xsd:element name="userId" type="gcap-cnpt:NillableApplicationUserID"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CCRMPriceUpdateSubmissionStatus">
+		<xsd:sequence>
+			<xsd:element name="response" type="gcap-cnpt:Response"/>
+			<xsd:element name="requestStatus" type="gcap-cnpt:RequestStatus"/>
+			<xsd:element name="CRMPLHId" type="gcap-cpt:_CRMPLHId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PriceUpdateHeaderStatus">
+		<xsd:sequence>
+			<xsd:element name="messageStatus" type="gcap-cnpt:Response"/>
+			<xsd:element name="messageResponseCode" type="gcap-cnpt:RequestStatus"/>
+			<xsd:element name="priceListNumber" type="gcap-cnpt:_CSPriceListNumber"/>
+			<xsd:element name="CRMPLHId" type="gcap-cpt:_CRMPLHId"/>
+			<xsd:element name="rcrmDummyField3" type="gcap-cnpt:RCRMDummyField3"/>
+			<xsd:element name="rcrmMessage" type="gcap-cnpt:RCRMMessage"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PriceUpdateLineItemStatus">
+		<xsd:sequence>
+			<xsd:element name="PLI" type="gcap-cnpt:_CRMPLI"/>
+			<xsd:element name="startDate" type="gcap-cnpt:_CSStartDate"/>
+			<xsd:element name="priceLineStatus" type="gcap-cnpt:Response"/>
+			<xsd:element name="priceLineResponseCode" type="gcap-cnpt:RequestStatus"/>
+			<xsd:element name="CRMPLIId" type="gcap-cnpt:_CRMPLIId"/>
+			<xsd:element name="rcrmHQNodePublish" type="gcap-cnpt:RCRMHQNodePublish"/>
+			<xsd:element name="rcrmCompassMessage" type="gcap-cnpt:RCRMCompassMessage"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CCRMPriceUpdateHeaderStatus">
+		<xsd:sequence>
+			<xsd:element name="messageStatus" type="gcap-cnpt:Response"/>
+			<xsd:element name="messageResponseCode" type="gcap-cnpt:RequestStatus"/>
+			<xsd:element name="priceListNumber" type="gcap-cnpt:_CSPriceListNumber"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CCRMPriceUpdateLineItemStatus">
+		<xsd:sequence>
+			<xsd:element name="PLI" type="gcap-cnpt:_CRMPLI"/>
+			<xsd:element name="startDate" type="gcap-cnpt:_CSStartDate"/>
+			<xsd:element name="priceLineStatus" type="gcap-cnpt:Response"/>
+			<xsd:element name="priceLineResponseCode" type="gcap-cnpt:RequestStatus"/>
+			<xsd:element name="pliId" type="gcap-cnpt:PLIId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="MessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="gcap-cnpt:_CSActionCode"/>
+			<xsd:element name="version" type="gcap-cnpt:MessageVersion"/>
+			<xsd:element name="userId" type="gcap-cnpt:ApplicationUserID"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="string2">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

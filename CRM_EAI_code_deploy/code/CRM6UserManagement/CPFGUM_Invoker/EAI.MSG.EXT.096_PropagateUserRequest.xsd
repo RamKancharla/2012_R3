@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.EXT.096_PropagateUserRequest.xsd
+	* Type:        XSD Schema
+	* Description: The schema used in EAI for Update User Request To CPfG.
+	*
+	* Change History
+	* Version     	Date      Author              			Description Of Change
+	*
+	*  0.1        	16/02/07  Siva (Detica)   			Initial Version
+	*  0.2        	21/02/07  Geratayya Patchipulusu   	   	Added ActionCode and GenerateTempPassword
+	*  0.03       	06/03/07  Rob Billington		   	Version scheme changed
+	*  0.04		    22/03/07  Kevin Wood				Various updates
+	*  0.06        	27/03/07  Kevin Wood				Namespaces corrected
+	*  0.07		    27/03/07  Kevin Wood				Previous changes reversed
+	*  0.08		    18/05/07  Mark Flynn				Removed reference to SSO and UDS in description.
+	*  1.0          16/05/08  Andrew Humphreys          Changed namespaces to be AAA owned
+	*								
+	**********************************************************************************-->
+<xsd:schema
+	xmlns:local="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementServices"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:ns="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes"
+	xmlns:gcap-mt="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+	targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementServices"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.07">
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes"
+		schemaLocation="EAI.XSD.002_CommonUserTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+		schemaLocation="EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:complexType name="PropagateUser">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-mt:EaiHeader" />
+			<xsd:element name="actionCode" type="gcap-mt:ActionCode" />
+			<xsd:element name="userDetails" type="ns:UserDetails" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="propagateUserRequest" type="local:PropagateUser" />
+</xsd:schema>

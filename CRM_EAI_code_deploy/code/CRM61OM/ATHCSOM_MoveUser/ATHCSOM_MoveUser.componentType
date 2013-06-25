@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ATHCSOM_MoveUser.wsdl" name="anchorToATHCSOMMoveUser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.interface(ATHCSOM_MoveUser)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.interface(ATHCSOM_MoveUserCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSRef.wsdl" name="SubmitOrderToCOMPASS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+    </reference>
+    <reference ui:wsdlLocation="TransformMoveUserToCSFormatRef.wsdl" name="TransformMoveUserToCSFormat">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement#wsdl.interface(TransformMoveUserToCSFormatRequest)"/>
+    </reference>
+</componentType>

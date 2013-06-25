@@ -1,0 +1,30 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<definitions
+     name="CSZQueryDetails"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ"
+     xmlns:out1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/ServiceRequest"
+     xmlns:inp1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/ServiceRequest"
+    >
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/ServiceRequest" schemaLocation="EAI.MSG.EXT.CSZ.244_CSZServiceRequest.xsd" />
+      </schema>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/ServiceRequest" schemaLocation="EAI.MSG.EXT.CSZ.249_CSZServiceResponse.xsd" />
+      </schema>
+    </types>
+    <message name="CSZServiceRequest_request">
+        <part name="CSZServiceRequest" element="out1:CSZServiceRequest"/>
+    </message>
+    <message name="CSZServiceResponse_reply">
+        <part name="CSZServiceResponse" element="out1:CSZServiceResponse"/>
+    </message>
+    <portType name="getSRDetails_ppt">
+        <operation name="getSRDetails">
+            <input message="tns:CSZServiceRequest_request"/>
+            <output message="tns:CSZServiceResponse_reply"/>
+        </operation>
+    </portType>
+</definitions>

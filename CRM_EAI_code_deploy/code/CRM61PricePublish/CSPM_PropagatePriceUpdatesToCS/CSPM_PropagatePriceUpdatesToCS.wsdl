@@ -1,0 +1,56 @@
+<definitions
+     name="CSPM_PropagatePriceUpdatesToCS"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/ExtendedPriceUpdateRequest"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS"
+    >
+     <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/ExtendedPriceUpdateRequest">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS" schemaLocation="CSPM_PropagatePriceUpdatesToCS.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/ExtendedPriceUpdateRequest"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/ExtendedPriceUpdateRequest"
+                 schemaLocation="EAI.MSG.CS.PM.213_ExtendedCSPriceUpdateRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.CS.PM.212_CSPriceUpdateRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CSPM_PropagatePriceUpdatesToCSResponseMessage">
+        <part name="priceUpdateResponse" element="client:CSPM_PropagatePriceUpdatesToCSProcessResponse"/>
+    </message>
+    <message name="CSPM_PropagatePriceUpdatesToCSRequestMessage">
+        <part name="priceUpdateRequest" element="ns1:priceUpdateRequest"/>
+    </message>
+    <message name="ExtendedPriceUpdateRequestMessage">
+        <part name="extendedPriceUpdate" element="ns2:priceUpdateRequest"/>
+    </message>
+    <portType name="CSPM_PropagatePriceUpdatesToCSCallback">
+        <operation name="onResult">
+            <input message="client:CSPM_PropagatePriceUpdatesToCSResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CSPM_PropagatePriceUpdatesToCS">
+        <operation name="updatePrice">
+            <input message="client:CSPM_PropagatePriceUpdatesToCSRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CSPM_PropagatePriceUpdatesToCS">
+        <plnk:role name="CSPM_PropagatePriceUpdatesToCSProvider">
+            <plnk:portType name="client:CSPM_PropagatePriceUpdatesToCS"/>
+        </plnk:role>
+        <plnk:role name="CSPM_PropagatePriceUpdatesToCSRequester">
+            <plnk:portType name="client:CSPM_PropagatePriceUpdatesToCSCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TRUSTOP_OpportunityManager.wsdl" name="anchorToTRUSTOP_OpportunityManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager#wsdl.interface(TRUSTOP_OpportunityManager)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager#wsdl.interface(TRUSTOP_OpportunityManagerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_SubmitOpportunity/CCRMOP_SubmitOpportunity.wsdl" name="CCRMOP_SubmitOpportunity">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.interface(CCRMOP_SubmitOpportunity)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.interface(CCRMOP_SubmitOpportunityCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" name="SequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+    </reference>
+    <property name="preference.noOfRetries" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

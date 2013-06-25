@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CCRMCM.CCRMCM_ContactPublishStatusRS" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/GenericContactStatus" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="genericContactPublishStatus">
+      <switch>
+         <case name="Case_1_CCRMCM.CCRMCM_ContactPublishStatusRS.genericContactPublishStatus" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/ContactPublishStatus_To_PublishContactRequestReponse.xsl,$in.contactStatus)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="CCRMCM.PropagateContactErrorStatusService" operation="initiate"/>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

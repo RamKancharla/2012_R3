@@ -1,0 +1,53 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSCM_ContactManager" revision="1.0" state="on">
+    <import location="XREF_DATA.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/XREF_DATA/"/>
+    <import location="CSCM_ContactManager.wsdl" namespace="http://xmlns.oracle.com/CSCM_ContactManager"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter" location="TransformToCSFormatAccountContactPublish.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" location="CSOM_SubmitOrderToCOMPASSRSRef.wsdl" importType="wsdl"/>
+    <service name="CSCM_ContactManager" ui:wsdlLocation="CSCM_ContactManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.interface(CSCM_ContactManagerCallback)" interface="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.interface(CSCM_ContactManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.endpoint(CSCM_ContactManager/CSCM_ContactManager)"/>
+    </service>
+    <component name="CSCM_ContactManagerProcess">
+        <implementation.bpel src="CSCM_ContactManagerProcess.bpel"/>
+        
+        
+        <property many="false" name="partnerLink.SubmitOrderToCOMPASS.validateXML" type="xs:string">true</property>
+    </component>
+    <reference name="TransformToCSFormatAccountContactPublish" ui:wsdlLocation="TransformToCSFormatAccountContactPublish.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter#wsdl.interface(TransformAccountContactRequest)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter#wsdl.endpoint(TransformAccountContactToCSFormat/AccountContactRequest)" location="TransformToCSFormatAccountContactPublish.wsdl" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="SubmitOrderToCOMPASS" ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSRef.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.endpoint(submitOrder_ppt/submitOrder_ppt_pt)" location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CSOM_SubmitOrderToCOMPASS/CSOM.SubmitOrderToCOMPASSRS_ep?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="XREF_DATA" ui:wsdlLocation="XREF_DATA.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/XREF_DATA/#wsdl.interface(XREF_DATA_ptt)"/>
+        <binding.jca config="XREF_DATA_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>CSCM_ContactManager</source.uri>
+        <target.uri>CSCM_ContactManagerProcess/CSCM_ContactManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSCM_ContactManagerProcess/SubmitOrderToCOMPASS</source.uri>
+        <target.uri>SubmitOrderToCOMPASS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSCM_ContactManagerProcess/XREF_DATA</source.uri>
+        <target.uri>XREF_DATA</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSCM_ContactManagerProcess/TransformToCSFormatAccountContactPublish</source.uri>
+        <target.uri>TransformToCSFormatAccountContactPublish</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

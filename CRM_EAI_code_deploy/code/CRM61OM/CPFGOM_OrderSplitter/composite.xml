@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGOM_OrderSplitter" revision="1.0" state="on">
+    <import location="CPFGOM_OrderSplitter.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_OrderManager/CPFGOM_OrderManager.wsdl" importType="wsdl"/>
+    <service name="anchorToCPFGOMOrderSplitter" ui:wsdlLocation="CPFGOM_OrderSplitter.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter#wsdl.interface(CPFGOM_OrderSplitterCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter#wsdl.interface(CPFGOM_OrderSplitter)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter#wsdl.endpoint(CPFGOM_OrderSplitter/CPFGOM_OrderSplitter)"/>
+    </service>
+    <component name="CPFGOM_OrderSplitter">
+        <implementation.bpel src="CPFGOM_OrderSplitter.bpel"/>
+    </component>
+    <reference name="CPFGOM_OrderManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_OrderManager/CPFGOM_OrderManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager#wsdl.interface(CPFGOM_OrderManager)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager#wsdl.endpoint(anchorToCPFGOMOrderManager/CPFGOM_OrderManager_pt)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_OrderManager/anchorToCPFGOMOrderManager?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>anchorToCPFGOMOrderSplitter</source.uri>
+        <target.uri>CPFGOM_OrderSplitter/anchorToCPFGOMOrderSplitter</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGOM_OrderSplitter/CPFGOM_OrderManager</source.uri>
+        <target.uri>CPFGOM_OrderManager</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

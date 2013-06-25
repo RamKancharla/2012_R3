@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSOM_UserFulfilment.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.interface(CSOM_UserFulfilment)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.interface(CSOM_UserFulfilmentCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSRef.wsdl" name="CSOM_SubmitOrderToCOMPASS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+    </reference>
+    <reference ui:wsdlLocation="TransformUserToCSFormat.wsdl" name="TransformUserToCSFormat">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter#wsdl.interface(TransformUserRequest)"/>
+    </reference>
+</componentType>

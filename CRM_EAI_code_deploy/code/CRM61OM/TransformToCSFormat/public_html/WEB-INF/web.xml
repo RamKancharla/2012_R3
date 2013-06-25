@@ -1,0 +1,15 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+     version="2.5">
+    <servlet>
+        <description>Web Service OrderRequest</description>
+        <display-name>Web Service OrderRequest</display-name>
+        <servlet-name>OrderRequest</servlet-name>
+        <servlet-class>com.reuters.eai.cc.om.TransformOrderRequest</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderRequest</servlet-name>
+        <url-pattern>OrderRequest</url-pattern>
+    </servlet-mapping>
+</web-app>

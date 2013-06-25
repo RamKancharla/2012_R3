@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.UTL.120_XMLValidationReqest.xsd
+* Type:        Schema to request the XML validation
+*
+* Change History
+* Version     	Date      Author              			Description Of Change
+*
+*	0.01	24/04/07  Geratayya Patchipulusu		Initial Version
+**********************************************************************************-->
+<xsd:schema xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/XMLValidator" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/XMLValidator" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:complexType name="ValidationRequest">
+		<xsd:sequence>
+			<xsd:element name="request" type="xsd:string"/>
+			<xsd:element name="schema" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="validationRequest" type="local:ValidationRequest"/>
+</xsd:schema>

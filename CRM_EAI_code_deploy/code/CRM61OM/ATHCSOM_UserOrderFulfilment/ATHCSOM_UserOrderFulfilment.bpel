@@ -1,0 +1,211 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Jun 16 15:12:16 GMT+05:30 2009
+  Author:  SP41293
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHCSOM_UserOrderFulfilment" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CS/UOM/Exception" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToATHCSOMUserOrderFulfilment" partnerLinkType="client:ATHCSOM_UserOrderFulfilment" myRole="ATHCSOM_UserOrderFulfilmentProvider" partnerRole="ATHCSOM_UserOrderFulfilmentRequester"/>
+        <partnerLink name="TransformToCSUserRequest" partnerRole="TransformToCSUserRequest_Role" partnerLinkType="ns1:TransformToCSUserRequest_PL"/>
+        <!--<partnerLink name="CSOM_SubmitOrderToCOMPASS"
+                     partnerLinkType="ns3:submitOrder_pptLT"/>-->
+        <partnerLink name="SubmitOrderToCompass" partnerRole="submitOrder_pptProvider" partnerLinkType="ns3:submitOrder_pptLT"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="rcvOrderFulfilmentIV" messageType="client:ATHCSOM_UserOrderFulfilmentRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:ATHCSOM_UserOrderFulfilmentResponseMessage"/>
+        <variable name="runtimeFaultVar" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="SuccessResponse" type="xsd:string"/>
+        <variable name="InvTransformToCSUserRequestIV" messageType="ns1:UserRequest"/>
+        <variable name="InvTransformToCSUserRequestOV" messageType="ns1:FLUserRequest"/>
+        <variable name="InvSubmitOrderToCompassIV" messageType="ns3:fixedLengthOrderRequest_request"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFaultVar">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.          
+	System.out.println("Hello, World");         
+*/        
+org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvOrderFulfilmentIV", "AthOrderRequest", "/ns1:CSUserOrderRequest/ns1:userOrderHeader/ns1:transactionId"));                                 
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();              
+setCompositeInstanceTitle(Title+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFaultVar">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.         
+	System.out.println("Hello, World");        
+*/        
+org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvOrderFulfilmentIV", "AthOrderRequest", "/ns1:CSUserOrderRequest/ns1:userOrderHeader/ns1:transactionId"));                                 
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();              
+setCompositeInstanceTitle(Title+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFaultVar">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.         
+	System.out.println("Hello, World");        
+*/        
+org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvOrderFulfilmentIV", "AthOrderRequest", "/ns1:CSUserOrderRequest/ns1:userOrderHeader/ns1:transactionId"));                                 
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();              
+setCompositeInstanceTitle(Title+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFlt" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.          
+	System.out.println("Hello, World");         
+*/         
+org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvOrderFulfilmentIV", "AthOrderRequest", "/ns1:CSUserOrderRequest/ns1:userOrderHeader/ns1:transactionId"));                                 
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();              
+setCompositeInstanceTitle(Title+" Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ATHCSOM_UserOrderFulfilment.wsdl) -->
+        <receive name="rcvOrderFulfilment" partnerLink="anchorToATHCSOMUserOrderFulfilment" portType="client:ATHCSOM_UserOrderFulfilment" operation="transformAthOrder" variable="rcvOrderFulfilmentIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariable">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="SuccessResponse"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[/*Write your java code below e.g.         
+	System.out.println("Hello, World");        
+*/ 
+String Title=""; 
+try{ 
+String transId = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("rcvOrderFulfilmentIV", "AthOrderRequest", "/ns1:CSUserOrderRequest/ns1:userOrderHeader/ns1:transactionId")).getFirstChild().getNodeValue();                               
+Title=(transId!=null ? transId : "null");            
+setCompositeInstanceTitle(Title); 
+} 
+catch (Exception e)      
+{      
+Title = "null";  
+setCompositeInstanceTitle(Title);   
+}]]>
+        </bpelx:exec>
+        <switch name="SwitchOnActionCode">
+            <case condition="(bpws:getVariableData('rcvOrderFulfilmentIV','AthOrderRequest','/ns1:CSUserOrderRequest/ns1:userOrderHeader/ns1:actionCode') = 'MODIFY')  and (bpws:getVariableData('rcvOrderFulfilmentIV','AthOrderRequest','/ns1:CSUserOrderRequest/ns1:userOrderHeader/ns1:siebelOrderNumber')!='')">
+                <empty name="DoNothing"/>
+            </case>
+            <otherwise>
+                <sequence name="SeqTransformToCSFormat">
+                    <scope name="ScpTransformToCSFormat">
+                        <faultHandlers>
+                            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFaultVar">
+                                <throw name="ThrTransformToCSFormatFault" faultName="bpelx:remoteFault" faultVariable="runtimeFaultVar"/>
+                            </catch>
+                        </faultHandlers>
+                        <sequence name="SeqTransformToCSFormat">
+                            <assign name="TransAthOrderReqToCSFormat">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransAthOrderReqToCSFormat.xsl',bpws:getVariableData('rcvOrderFulfilmentIV','AthOrderRequest'))"/>
+                                    <to variable="InvTransformToCSUserRequestIV" part="parameter"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvTransformToCSUserRequest" partnerLink="TransformToCSUserRequest" portType="ns1:TransformToCSUserRequest" inputVariable="InvTransformToCSUserRequestIV" outputVariable="InvTransformToCSUserRequestOV" operation="transform"/>
+                        </sequence>
+                    </scope>
+                    <switch name="SwitchOnResponse">
+                        <case condition="bpws:getVariableData('InvTransformToCSUserRequestOV','parameter','/ns1:fixedLengthUserOrderRequest/ns1:basicResponse/ns1:response')=bpws:getVariableData('SuccessResponse')">
+                            <bpelx:annotation>
+                                <bpelx:pattern>Success Response</bpelx:pattern>
+                            </bpelx:annotation>
+                            <scope name="ScpSubmitOrderToCompass">
+                                <faultHandlers>
+                                    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFaultVar">
+                                        <throw name="ThrowRemoteFault" faultName="bpelx:remoteFault" faultVariable="runtimeFaultVar"/>
+                                    </catch>
+                                </faultHandlers>
+                                <sequence name="SeqSubmitOrderToCompass">
+                                    <assign name="TransTansformCSFormatToSubmitToCS">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransTansformCSFormatToSubmitToCS.xsl',bpws:getVariableData('InvTransformToCSUserRequestOV','parameter'))"/>
+                                            <to variable="InvSubmitOrderToCompassIV" part="fixedLengthOrderRequest"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvSubmitOrderToCompass" partnerLink="SubmitOrderToCompass" portType="ns3:submitOrder_ppt" inputVariable="InvSubmitOrderToCompassIV" operation="submitOrder"/>
+                                </sequence>
+                            </scope>
+                        </case>
+                        <otherwise>
+                            <bpelx:exec name="AsgCustomTitleFault" language="java" version="1.5">
+                                <![CDATA[/*Write your java code below e.g.        
+	System.out.println("Hello, World");       
+*/       
+org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvOrderFulfilmentIV", "AthOrderRequest", "/ns1:CSUserOrderRequest/ns1:userOrderHeader/ns1:transactionId"));                                
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();             
+setCompositeInstanceTitle(Title+" Fault");]]>
+                            </bpelx:exec>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </otherwise>
+        </switch>
+        <!--<switch name="SwitchOnResponsefrmTransformToCS">
+            <bpelx:annotation>
+                <bpelx:documentation>Success</bpelx:documentation>
+            </bpelx:annotation>
+            <case condition="bpws:getVariableData('InvTransformToCSFormatOV','parameter','/ns1:fixedLengthUserOrderRequest/ns1:basicResponse/ns1:response')=bpws:getVariableData('SuccessResponse')">
+                <sequence name="SeqSubmitOrderToCompass">
+                    <scope name="ScpSubmitOrderToCompass">
+                        <sequence name="Sequence_2"/>
+                    </scope>
+                </sequence>
+            </case>
+            <otherwise>
+                <bpelx:exec name="AsgFaultCustomTitle" language="java"
+                            version="1.5">
+                    <![CDATA[/*Write your java code below e.g.  
+	System.out.println("Hello, World"); 
+*/]]>
+                </bpelx:exec>
+            </otherwise>
+        </switch> -->
+        <invoke name="callbackClient" partnerLink="anchorToATHCSOMUserOrderFulfilment" portType="client:ATHCSOM_UserOrderFulfilmentCallback" operation="onResult" inputVariable="outputVariable"/>
+    </sequence>
+</process>

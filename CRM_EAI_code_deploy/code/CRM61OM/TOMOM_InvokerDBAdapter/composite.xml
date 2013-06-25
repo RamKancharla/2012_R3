@@ -1,0 +1,32 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TOMOM_InvokerDBAdapter" revision="1.0" state="on">
+    <import location="TOMOM_POLLING_V.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/TOMOM_POLLING_V/"/>
+    <import location="INTERFACE_BUFFER.wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMOMInvoker/TOMOMInvoker.wsdl" importType="wsdl"/>
+    <service name="TOMOM_POLLING_V" ui:wsdlLocation="TOMOM_POLLING_V.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/TOMOM_POLLING_V/#wsdl.interface(TOMOM_POLLING_V_ptt)"/>
+        <binding.jca config="TOMOM_POLLING_V_db.jca"/>
+    </service>
+    <component name="TOMOM_InvokerDBAdapter">
+        <implementation.bpel src="TOMOM_InvokerDBAdapter.bpel"/>
+    </component>
+    <reference name="TOMOMInvoker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMOMInvoker/TOMOMInvoker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvoker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvokerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.endpoint(TOMOMInvoker/TOMOMInvoker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMOMInvoker/TOMOMInvoker?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.endpoint(TOMOMInvoker/TOMOMInvokerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>TOMOM_POLLING_V</source.uri>
+        <target.uri>TOMOM_InvokerDBAdapter/TOMOM_POLLING_V</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMOM_InvokerDBAdapter/TOMOMInvoker</source.uri>
+        <target.uri>TOMOMInvoker</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

@@ -1,0 +1,20 @@
+<adapter-config name="SFDCCM_PollingServ" adapter="Database Adapter" wsdlLocation="SFDCCM_PollingServ.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="Dev-1_SOA_EAIOWNER" adapterRef=""/>
+  <endpoint-activation portType="SFDCCM_PollingServ_ptt" operation="receive">
+    <activation-spec className="oracle.tip.adapter.db.DBActivationSpec">
+      <property name="DescriptorName" value="SFDCCM_PollingServ.SfdccmPollingV"/>
+      <property name="QueryName" value="SFDCCM_PollingServSelect"/>
+      <property name="MappingsMetaDataURL" value="SFDCCM_PollingServ-or-mappings.xml"/>
+      <property name="PollingStrategy" value="LogicalDeletePollingStrategy"/>
+      <property name="MarkReadColumn" value="STATE"/>
+      <property name="MarkReadValue" value="P"/>
+      <property name="PollingInterval" value="5"/>
+      <property name="MaxRaiseSize" value="1"/>
+      <property name="MaxTransactionSize" value="10"/>
+      <property name="NumberOfThreads" value="1"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+    </activation-spec>
+  </endpoint-activation>
+
+</adapter-config>

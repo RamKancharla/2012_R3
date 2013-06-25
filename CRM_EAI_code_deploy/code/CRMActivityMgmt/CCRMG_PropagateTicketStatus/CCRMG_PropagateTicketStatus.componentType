@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMG_PropagateTicketStatus.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="EAI.SRV.CCRM.058_PropagateMigrationStatusServiceRef.wsdl" name="CRMMigrationStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2009/26/03/GCAP/RCRM#wsdl.interface(RCRMMSTInboundWF)"/>
+    </reference>
+</componentType>

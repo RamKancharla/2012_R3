@@ -1,0 +1,21 @@
+<?binding.jca WriteTOMAccount_db.jca?>
+<wsdl:definitions name="WriteTOMAccount" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteTOMAccount/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/WriteTOMAccount/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/WriteTOMAccount">
+    <plt:partnerLinkType name="WriteTOMAccount_plt">
+        <plt:role name="WriteTOMAccount_role">
+            <plt:portType name="tns:WriteTOMAccount_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/WriteTOMAccount" schemaLocation="WriteTOMAccount_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="InterfaceBufferCollection_msg">
+        <wsdl:part name="InterfaceBufferCollection" element="top:InterfaceBufferCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="WriteTOMAccount_ptt">
+        <wsdl:operation name="insert">
+            <wsdl:input message="tns:InterfaceBufferCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

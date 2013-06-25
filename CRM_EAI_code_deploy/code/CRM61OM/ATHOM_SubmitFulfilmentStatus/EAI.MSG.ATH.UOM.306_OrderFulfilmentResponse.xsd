@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.ATH.UOM.306_UserOrderRequest.xsd
+	* Type:        XSD Schema
+	* Description: The Athena schema used for asynchronous response from SEA for transactions and entitilements. 
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 1.0         03/08/10  Sreeja			Initial version
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+    xmlns:tns="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+    elementFormDefault="qualified">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <metadata>
+                <Creator>ThomsonReuters MIS Group</Creator>
+                <Author Href="mailto:alex.berenshtein@thomson.com">Alex Berenshtein</Author>
+                <Contributor/>
+                <Created>07-19-2010</Created>
+                <Modified/>
+                <Description>Siebel User Response</Description>
+                <Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+                <Language codeListID="ISO639-2">eng</Language>
+                <ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+                <Requires/>
+                <Copyright/>
+                <Status>Draft</Status>
+                <StatusDescription>Awaiting approval</StatusDescription>
+                <Version>1.0</Version>
+                <Project>SEA Siebel Integration</Project>
+                <Title>UserProvisionResponse</Title>
+            </metadata>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:include schemaLocation="SEACommonType.xsd"/>
+    <xsd:element name="UserProvisionResponse">
+       <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="MessageHeader" type="tns:ResponseHeaderStructure"></xsd:element>
+    <xsd:element name="MessageBody">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="UserInfo" type="tns:ResponseDetailStructure" maxOccurs="unbounded"></xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+            </xsd:sequence>
+             </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

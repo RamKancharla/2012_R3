@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGOM_UserOrderManager.wsdl" name="CPFGOM_UserOrderManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager#wsdl.interface(CPFGOM_UserOrderManager)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl" name="OM_ManageOrderLineStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatusCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestManager/CPFGEF_FulfilmentRequestManager.wsdl" name="CPFGEF_FulfilmentRequestManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.interface(CPFGEF_FulfilmentRequestManager)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.interface(CPFGEF_FulfilmentRequestManagerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher.wsdl" name="CCRMCM_ContactDispatcher">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcher)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcherCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" name="SequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+    </reference>
+</componentType>

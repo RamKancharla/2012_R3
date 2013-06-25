@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="ELMOM_EventManager" revision="1.0" mode="active" state="on" xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="ELMOM_EventManager.wsdl" namespace="http://xmlns.oracle.com/ELMOM_EventManager"/>
+    <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61OM/ELMOM_EventManager/InsertIntoInterfaceBuffer"
+            location="InsertIntoInterfaceBuffer.wsdl" importType="wsdl"/>
+    <service ui:wsdlLocation="ELMOM_EventManager.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/ELMOM_EventManager#wsdl.interface(ELMOM_EventManager)" callbackInterface="http://xmlns.oracle.com/ELMOM_EventManager#wsdl.interface(ELMOM_EventManagerCallback)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://xmlns.oracle.com/ELMOM_EventManager#wsdl.endpoint(ELMOM_EventManager/ELMOM_EventManager)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+    </service>
+    <component name="ELMOM_EventManager">
+        <implementation.bpel src="ELMOM_EventManager.bpel"/>
+    </component>
+    <reference name="InsertIntoInterfaceBuffer"
+               ui:wsdlLocation="InsertIntoInterfaceBuffer.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61OM/ELMOM_EventManager/InsertIntoInterfaceBuffer#wsdl.interface(InsertIntoInterfaceBuffer_ptt)"/>
+        <binding.jca config="InsertIntoInterfaceBuffer_db.jca"/>
+        <property name="jca.retry.count" type="xs:int" many="false"
+                  override="may">4</property>
+        <property name="jca.retry.interval" type="xs:int" many="false"
+                  override="may">1</property>
+        <property name="jca.retry.backoff" type="xs:int" many="false"
+                  override="may">2</property>
+        <property name="jca.retry.maxInterval" type="xs:string" many="false"
+                  override="may">120</property>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>ELMOM_EventManager/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ELMOM_EventManager/InsertIntoInterfaceBuffer</source.uri>
+        <target.uri>InsertIntoInterfaceBuffer</target.uri>
+    </wire>
+</composite>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPF_UpdateProfile" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="CPF_UpdateProfile.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile"/>
+    <import location="GetWaitingInstances.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+            location="http://eaidev2:8000/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"
+            location="http://eaidev2:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus"
+            location="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CCRMOM_PropagateContactStatus/CCRMOM_PropagateContactStatus.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager"
+            location="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager.wsdl"
+            importType="wsdl"/>
+    <service name="CPF_UserManagementService" ui:wsdlLocation="CPF_UpdateProfile.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.interface(CPF_UpdateProfile)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.endpoint(CPF_UpdateProfile/CPF_UpdateProfile)"/>
+    </service>
+    <component name="CPF_UpdateProfile">
+        <implementation.bpel src="CPF_UpdateProfile.bpel"/>
+        <property name="bpel.partnerLink.AsyncSequenceChecker.nonBlockingInvoke">true</property>
+        <property name="preference.EAI">EAI</property>
+        <property name="preference.Success_Response">0</property>
+        <property name="preference.UpdateCPfGTemporaryURL">UpdateCPfGTemporaryURL</property>
+        <property name="preference.UpdateProfile">EAI.SRV.EXT.010.ACT002</property>
+        <property name="preference.Failure_Response">1</property>
+        <property name="preference.validationStatus">0</property>
+        <property name="preference.UpdateProfileSchema">EAI.MSG.CCRM.118_SyncCPfGUserDetailsRequest.xsd</property>
+        <property name="preference.variableStatus_1">1</property>
+        <property name="preference.FTL">EAI.SRV.EXT.010.ACT001</property>
+        <property name="preference.BPELProcessName">CPF_UpdateProfile</property>
+        <property name="preference.FTLSchema">EAI.MSG.CCRM.117_FTLRequest.xsd</property>
+        <property name="preference.UpdateCPfGStatus">UpdateCPfGStatus</property>
+        <property name="preference.InputSchema">EAI.MSG.CCRM.124_UpdateProfileRequest.xsd</property>
+    </component>
+    <reference name="GetWaitingInstances" ui:wsdlLocation="GetWaitingInstances.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances/#wsdl.interface(GetWaitingInstances_ptt)"/>
+        <binding.jca config="GetWaitingInstances_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="CPFGOM_UserOrderManager"
+               ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager#wsdl.interface(CPFGOM_UserOrderManager)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager#wsdl.endpoint(CPFGOM_UserOrderManager/CPFGOM_UserOrderManager)"
+                    location="http://eaidev2:8000/soa-infra/services/CRMASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="SequenceReleaser"
+               ui:wsdlLocation="http://eaidev2:8000/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)"
+                    location="http://eaidev2:8000/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CCRMOM_PropagateContactStatus"
+               ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CCRMOM_PropagateContactStatus/CCRMOM_PropagateContactStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.interface(CCRMOM_PropagateContactStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.interface(CCRMOM_PropagateContactStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.endpoint(CCRMOM_PropagateContactStatus/CCRMOM_PropagateContactStatus)"
+                    location="http://eaidev2:8000/soa-infra/services/CRMASYNC/CCRMOM_PropagateContactStatus/anchorToCCRMOM_PropagateContactStatus?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.endpoint(CCRMOM_PropagateContactStatus/CCRMOM_PropagateContactStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="AsyncSequenceChecker"
+               ui:wsdlLocation="http://eaidev2:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)"
+                    location="http://eaidev2:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>CPF_UserManagementService</source.uri>
+        <target.uri>CPF_UpdateProfile/CPF_UserManagementService</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPF_UpdateProfile/CPFGOM_UserOrderManager</source.uri>
+        <target.uri>CPFGOM_UserOrderManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPF_UpdateProfile/GetWaitingInstances</source.uri>
+        <target.uri>GetWaitingInstances</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPF_UpdateProfile/CCRMOM_PropagateContactStatus</source.uri>
+        <target.uri>CCRMOM_PropagateContactStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPF_UpdateProfile/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPF_UpdateProfile/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

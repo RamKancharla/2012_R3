@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************************************
+* File Name:	EAI.XSD.013_CommonPriceTypes.xsd
+*				
+* Type:		XML Schema Document
+* Description:	Schema Used for Common Price request
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		10/04/08	Geratayya P			Initial Version
+*  0.02		17/07/08	Sreeja Prasad			Added from Season to Cost type for PBI-718.
+*  0.03         16/07/09        Sreeja Prasad			Added the simpleType PriceListType & CoresuiteStartDate
+*  0.04         29/06/10        Sreeja Prasad			Added the simpleType PLIId for CR 6474
+**************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/CommonNillablePriceTypes" xmlns:gcap-cpt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonNillablePriceTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.04">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="./EAI.XSD.001_SchemaAnnotations.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" schemaLocation="./EAI.XSD.012_CommonPriceTypes.xsd"/>
+	<xsd:simpleType name="CountryCode">
+		<xsd:union memberTypes="gcap-cpt:CountryCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSPLI">
+		<xsd:union memberTypes="gcap-cpt:_CSPLI xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSStartDate">
+		<xsd:union memberTypes="gcap-cpt:_CSStartDate xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSCurrency">
+		<xsd:union memberTypes="gcap-cpt:_CSCurrency xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSValue">
+		<xsd:union memberTypes="gcap-cpt:_CSValue xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSComType">
+		<xsd:union memberTypes="gcap-cpt:_CSComType xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMProductExchangeFlag">
+		<xsd:union memberTypes="gcap-cpt:RCRMProductExchangeFlag xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMLocalStatus">
+		<xsd:union memberTypes="gcap-cpt:RCRMLocalStatus xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMGlobalStatus">
+		<xsd:union memberTypes="gcap-cpt:RCRMGlobalStatus xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Response">
+		<xsd:union memberTypes="gcap-cpt:Response xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RequestStatus">
+		<xsd:union memberTypes="gcap-cpt:RequestStatus xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableMessageVersion">
+		<xsd:union memberTypes="gcap-cpt:NillableMessageVersion xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableApplicationUserID">
+		<xsd:union memberTypes="gcap-cpt:NillableApplicationUserID xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMPLI">
+		<xsd:union memberTypes="gcap-cpt:_CRMPLI xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMPLHId">
+		<xsd:union memberTypes="gcap-cpt:_CRMPLHId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CCRMActionCode">
+		<xsd:union memberTypes="gcap-cpt:CCRMActionCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMPLIId">
+		<xsd:union memberTypes="gcap-cpt:_CRMPLIId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CurrencyCode">
+		<xsd:union memberTypes="gcap-cpt:CurrencyCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductId">
+		<xsd:union memberTypes="gcap-cpt:ProductId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="IntegrationId">
+		<xsd:union memberTypes="gcap-cpt:IntegrationId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="LoginName">
+		<xsd:union memberTypes="gcap-cpt:LoginName xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Name">
+		<xsd:union memberTypes="gcap-cpt:Name xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMCompassPriceListNumber">
+		<xsd:union memberTypes="gcap-cpt:RCRMCompassPriceListNumber xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMCountry">
+		<xsd:union memberTypes="gcap-cpt:RCRMCountry xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMMessage">
+		<xsd:union memberTypes="gcap-cpt:RCRMMessage xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPriceListType">
+		<xsd:union memberTypes="gcap-cpt:RCRMPriceListType xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMRevenueType">
+		<xsd:union memberTypes="gcap-cpt:RCRMRevenueType xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMStatus">
+		<xsd:union memberTypes="gcap-cpt:RCRMStatus xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="StartDate">
+		<xsd:union memberTypes="gcap-cpt:StartDate xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Type">
+		<xsd:union memberTypes="gcap-cpt:Type xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="EndDate">
+		<xsd:union memberTypes="gcap-cpt:EndDate xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="OriginalListPrice">
+		<xsd:union memberTypes="gcap-cpt:OriginalListPrice xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceAdjustmentType">
+		<xsd:union memberTypes="gcap-cpt:PriceAdjustmentType xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceListId">
+		<xsd:union memberTypes="gcap-cpt:PriceListId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceType">
+		<xsd:union memberTypes="gcap-cpt:PriceType xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PricingMethod">
+		<xsd:union memberTypes="gcap-cpt:PricingMethod xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PrimaryProductLineId">
+		<xsd:union memberTypes="gcap-cpt:PrimaryProductLineId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductName">
+		<xsd:union memberTypes="gcap-cpt:ProductName xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMCompassMessage">
+		<xsd:union memberTypes="gcap-cpt:RCRMCompassMessage xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMCurrencyCode">
+		<xsd:union memberTypes="gcap-cpt:RCRMCurrencyCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDateLastPropChange">
+		<xsd:union memberTypes="gcap-cpt:RCRMDateLastPropChange xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMExchangeDate">
+		<xsd:union memberTypes="gcap-cpt:RCRMExchangeDate xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMInactiveFlag">
+		<xsd:union memberTypes="gcap-cpt:RCRMInactiveFlag xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMLocalPLI">
+		<xsd:union memberTypes="gcap-cpt:RCRMLocalPLI xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMNativeCurrencyCode">
+		<xsd:union memberTypes="gcap-cpt:RCRMNativeCurrencyCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMNativePrice">
+		<xsd:union memberTypes="gcap-cpt:RCRMNativePrice xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPLIQuoteType">
+		<xsd:union memberTypes="gcap-cpt:RCRMPLIQuoteType xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPLIRevenueType">
+		<xsd:union memberTypes="gcap-cpt:RCRMPLIRevenueType xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPriceListItemStatus">
+		<xsd:union memberTypes="gcap-cpt:RCRMPriceListItemStatus xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSPriceListNumber">
+		<xsd:union memberTypes="gcap-cpt:_CSPriceListNumber xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSActionCode">
+		<xsd:union memberTypes="gcap-cpt:_CSActionCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessageVersion">
+		<xsd:union memberTypes="gcap-cpt:MessageVersion xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ApplicationUserID">
+		<xsd:union memberTypes="gcap-cpt:ApplicationUserID xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="Season">
+		<xsd:union memberTypes="gcap-cpt:Season xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMLastParentRefreshDate">
+		<xsd:union memberTypes="gcap-cpt:RCRMLastParentRefreshDate xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CostList">
+		<xsd:union memberTypes="gcap-cpt:CostList xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Description">
+		<xsd:union memberTypes="gcap-cpt:Description xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Updated">
+		<xsd:union memberTypes="gcap-cpt:Updated xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPropagationSelected">
+		<xsd:union memberTypes="gcap-cpt:RCRMPropagationSelected xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMApplyRulesFlag">
+		<xsd:union memberTypes="gcap-cpt:RCRMApplyRulesFlag xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMAllowOrder">
+		<xsd:union memberTypes="gcap-cpt:RCRMAllowOrder xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMAllowDraftReportFlag">
+		<xsd:union memberTypes="gcap-cpt:RCRMAllowDraftReportFlag xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PrimaryOrganizationId">
+		<xsd:union memberTypes="gcap-cpt:PrimaryOrganizationId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PricingProcedure">
+		<xsd:union memberTypes="gcap-cpt:PricingProcedure xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="LastName">
+		<xsd:union memberTypes="gcap-cpt:LastName xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPricePublish">
+		<xsd:union memberTypes="gcap-cpt:RCRMPricePublish xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="IsAdminMode">
+		<xsd:union memberTypes="gcap-cpt:IsAdminMode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="UpdatedDate">
+		<xsd:union memberTypes="gcap-cpt:UpdatedDate xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDummyField1">
+		<xsd:union memberTypes="gcap-cpt:RCRMDummyField1 xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDummyField2">
+		<xsd:union memberTypes="gcap-cpt:RCRMDummyField2 xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDummyField3">
+		<xsd:union memberTypes="gcap-cpt:RCRMDummyField3 xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDummyField4">
+		<xsd:union memberTypes="gcap-cpt:RCRMDummyField4 xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMHQNodePublish">
+		<xsd:union memberTypes="gcap-cpt:RCRMHQNodePublish xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ComplexProductPricingModelName">
+		<xsd:union memberTypes="gcap-cpt:ComplexProductPricingModelName xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="VolumeDiscount">
+		<xsd:union memberTypes="gcap-cpt:VolumeDiscount xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceListStartDate">
+		<xsd:union memberTypes="gcap-cpt:PriceListStartDate xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PaymentIntegrationId">
+		<xsd:union memberTypes="gcap-cpt:PaymentIntegrationId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PaymentTerm">
+		<xsd:union memberTypes="gcap-cpt:PaymentTerm xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceBookName">
+		<xsd:union memberTypes="gcap-cpt:PriceBookName xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PrimaryOrganization">
+		<xsd:union memberTypes="gcap-cpt:PrimaryOrganization xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CostListId">
+		<xsd:union memberTypes="gcap-cpt:CostListId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PaymentTermId">
+		<xsd:union memberTypes="gcap-cpt:PaymentTermId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceBookId">
+		<xsd:union memberTypes="gcap-cpt:PriceBookId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="XAClassId">
+		<xsd:union memberTypes="gcap-cpt:XAClassId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PeriodId">
+		<xsd:union memberTypes="gcap-cpt:PeriodId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="VolumeDiscountId">
+		<xsd:union memberTypes="gcap-cpt:VolumeDiscountId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Margin">
+		<xsd:union memberTypes="gcap-cpt:Margin xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ReferencePrice">
+		<xsd:union memberTypes="gcap-cpt:ReferencePrice xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMSupplierExchRate">
+		<xsd:union memberTypes="gcap-cpt:RCRMSupplierExchRate xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMSupplierCurrencyCode">
+		<xsd:union memberTypes="gcap-cpt:RCRMSupplierCurrencyCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMSellingPrice">
+		<xsd:union memberTypes="gcap-cpt:RCRMSellingPrice xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMProductOperatingSystem">
+		<xsd:union memberTypes="gcap-cpt:RCRMProductOperatingSystem xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPLIRIN">
+		<xsd:union memberTypes="gcap-cpt:RCRMPLIRIN xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPLIMaintPercent">
+		<xsd:union memberTypes="gcap-cpt:RCRMPLIMaintPercent xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPLILocalLanguageName">
+		<xsd:union memberTypes="gcap-cpt:RCRMPLILocalLanguageName xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPLILocalDescription">
+		<xsd:union memberTypes="gcap-cpt:RCRMPLILocalDescription xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMLocal">
+		<xsd:union memberTypes="gcap-cpt:RCRMLocal xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMIgnoreUpdateFlag">
+		<xsd:union memberTypes="gcap-cpt:RCRMIgnoreUpdateFlag xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMGlobal">
+		<xsd:union memberTypes="gcap-cpt:RCRMGlobal xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMCoresuiteUpdated">
+		<xsd:union memberTypes="gcap-cpt:RCRMCoresuiteUpdated xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ServicePricePercent">
+		<xsd:union memberTypes="gcap-cpt:ServicePricePercent xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceListSubtypeCode">
+		<xsd:union memberTypes="gcap-cpt:PriceListSubtypeCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceListName">
+		<xsd:union memberTypes="gcap-cpt:PriceListName xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMActiveFlag">
+		<xsd:union memberTypes="gcap-cpt:RCRMActiveFlag xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="IsComplexProductBundle">
+		<xsd:union memberTypes="gcap-cpt:IsComplexProductBundle xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="IsComplexProductNotBundle">
+		<xsd:union memberTypes="gcap-cpt:IsComplexProductNotBundle xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="DynamicMatrixId">
+		<xsd:union memberTypes="gcap-cpt:DynamicMatrixId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ListPrice">
+		<xsd:union memberTypes="gcap-cpt:ListPrice xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="DynamicMatrix">
+		<xsd:union memberTypes="gcap-cpt:DynamicMatrix xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="MaxSalePrice">
+		<xsd:union memberTypes="gcap-cpt:MaxSalePrice xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CostListItemCurrencyCode">
+		<xsd:union memberTypes="gcap-cpt:CostListItemCurrencyCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ListPriceTypeCode">
+		<xsd:union memberTypes="gcap-cpt:ListPriceTypeCode xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CfgLatestReleasedFlag">
+		<xsd:union memberTypes="gcap-cpt:CfgLatestReleasedFlag xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="BundleSequenceReadOnlyFlag">
+		<xsd:union memberTypes="gcap-cpt:BundleSequenceReadOnlyFlag xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="BonusThreshold">
+		<xsd:union memberTypes="gcap-cpt:BonusThreshold xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="MinSalePrice">
+		<xsd:union memberTypes="gcap-cpt:MinSalePrice xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Part">
+		<xsd:union memberTypes="gcap-cpt:Part xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Cost">
+		<xsd:union memberTypes="gcap-cpt:Cost xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceListType">
+		<xsd:union memberTypes="gcap-cpt:PriceListType xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CoresuiteStartDate">
+		<xsd:union memberTypes="gcap-cpt:CoresuiteStartDate xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PLIId">
+		<xsd:union memberTypes="gcap-cpt:PLIId xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="EmptyString">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="EAI.SRV.EXT.012_PropagateStatusUpdateInterface.wsdl" name="CPFG.StatusUpdateService_RS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices#wsdl.interface(PropagateStatusUpdateInterface)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidator.wsdl" name="CPFG.StatusUpdateValidatorSOAPAdp">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.interface(CPFG_StatusUpdateValidator)"/>
+    </reference>
+</componentType>

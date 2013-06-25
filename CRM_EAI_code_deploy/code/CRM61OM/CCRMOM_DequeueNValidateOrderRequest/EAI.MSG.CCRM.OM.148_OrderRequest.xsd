@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.siebel.com/xml/RCRM%20Order%20Entry"
+            xmlns:xsdLocal="http://www.siebel.com/xml/RCRM%20Order%20Entry"
+            attributeFormDefault="unqualified" elementFormDefault="qualified"
+            xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd"
+            nxsd:encoding="UTF-8">
+ <xsd:annotation>
+  <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights
+                     reserved. Siebel XSD Generation</xsd:documentation>
+ </xsd:annotation>
+ <xsd:element name="OrderRequest" type="xsdLocal:OrderRequest"/>
+ <xsd:complexType name="OrderRequestTopElmt">
+  <xsd:sequence>
+   <xsd:element name="OrderRequest" type="xsdLocal:OrderRequest" minOccurs="1"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="OrderRequest">
+  <xsd:sequence>
+   <xsd:element name="MessageId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="OrderEntry-Orders" type="xsdLocal:OrderEntry-Orders"
+                minOccurs="1" maxOccurs="1"/>
+   <xsd:element name="ActionCode" type="xsdLocal:string4" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MessageHistory" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Timestamp" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="UserId" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SourceSystem" type="xsdLocal:string60" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="TargetSystem" type="xsdLocal:string70" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+  <xsd:attribute name="MessageType" type="xsd:string"/>
+  <xsd:attribute name="IntObjectName" type="xsd:string"/>
+  <xsd:attribute name="IntObjectFormat" type="xsd:string"/>
+ </xsd:complexType>
+ <xsd:complexType name="OrderEntry-Orders">
+  <xsd:sequence>
+   <xsd:element name="SalesSpecialist" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+    <xsd:element name="RCRMTransactionId" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSoldToAccountNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSAPConCountry" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMOMSPhone" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMOMSLastName" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMOMSFirstName" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMOMSEmail" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField7" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField6" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField5" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField4" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField3" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField2" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField1" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMExpectedTRTMDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMBusinessCase" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMAssignedOMS" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMAccountLocId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMTechnicalOrderNo" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMTechOrderOwner" type="xsdLocal:string200"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMTechFulfillmentStatusReason" type="xsdLocal:string150"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMTechFulfillmentStatus" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMPlannedInstallDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPONumber" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCustRequiredDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMActualInstallationDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="OrderOwner" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CurrencyCode" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AccountManager" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="OrderNumber" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PrimaryAccountCountry" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMInstallDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLIInstallDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLIRemovalDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLegacyOrderNumber" type="xsdLocal:string100"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Status" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Account" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="OrderEntry-LineItems" type="xsdLocal:OrderEntry-LineItems"
+                minOccurs="0" maxOccurs="unbounded"/>
+   <xsd:element name="AccountLocation" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMNewOrderType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="QuoteNote" type="xsdLocal:QuoteNote" minOccurs="0"
+                maxOccurs="unbounded"/>
+   <xsd:element name="QuoteNumber" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMQuoteRevisionNumber" type="xsdLocal:string22"
+                minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="OrderEntry-LineItems">
+  <xsd:sequence>
+   <xsd:element name="SAPBillable" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ResponseCode" type="xsdLocal:string20" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ReqLicenceType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMUserGroup" type="xsdLocal:string128" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMUserDomain" type="xsdLocal:string128" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMUmbrellaProdIntId" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMTechnicalFulfilmentReq" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMTechnicalFulfillmentStatus" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMTechnicalApprovalReq" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMServerId" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSTB" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSAPOrderNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSAPItemNumber" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSAPCountry" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSAPBusinessCase" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSAPActionCode" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMRecurringBillingNoteFlag" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMPublishContactToSAP" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMProductLoginType" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMProdIntegrationId" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMPermissioningSystem" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMPermissioningStatus" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMPPLId" type="xsdLocal:string10" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPONumber" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMOldContactUserId" type="xsdLocal:string320"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMManualPermissionedFlag" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMLastUpdateDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLIRemovalDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLIInstallDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMInstallDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMFulfilmentStatus" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMFulfilmentIntegrationFlag" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMField9" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField8" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField7" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField6" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField5" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField4" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField3" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField2" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField10" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField1" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMErrorContext" type="xsdLocal:string2000" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMErrorCode" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDiscountReason" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCreditDebit" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCpfgErrorMessage" type="xsdLocal:string100"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactePlatformId" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactSupportLanguage" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactStatus" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMContactSegGrpEndUserActivity"
+                type="xsdLocal:string255" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactReutersMessagingId" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactRegionalFocus" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactMarketingConsentSetDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactMarketFocus" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactLocalLastName" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactLocalFirstName" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactLocalDACSId" type="xsdLocal:string100"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactLegalConsentSetDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactLegalConsent" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactLastUpdatedProfileDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactJobFunction" type="xsdLocal:string100"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactFTLFlagSetDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMContactFTLCompleteFlag" type="xsdLocal:string15"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactDirectMarketing" type="xsdLocal:string15"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactCPfGTempURL" type="xsdLocal:string2000"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactAnonymityReason" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactAnonymityFlag" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactActionCode" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactAAAUpdatedProfileDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMCalculatedListPrice" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMBusinessCase" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMBillingPeriod" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMBillingIntegrationFlag" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMBillingAccount" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMTechnicalVettingFlag" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMTechnicalFulfilmentFlag" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMSID" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPlannedInstallationDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMMandatoryTechFulfilmentFlag" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMActualInstallationDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Quantity" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Product" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ParentOrderItemId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ModId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ListPrice" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="InstallSubscriberNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="InstallSubscriberAccountId" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="InstallSubAccountNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="InstallLocationAccountNumber" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="InstallLocationAccountId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ContactWorkPhone" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ContactPrimaryAccountId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ContactMM" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ContactEmailAddress" type="xsdLocal:string100"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="BillToAccountNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AltInstalBillingId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RootId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="OrderEntry-LineItemsAttribute"
+                type="xsdLocal:OrderEntry-LineItemsAttribute" minOccurs="1"
+                maxOccurs="unbounded"/>
+   <xsd:element name="RCRMContactUserNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMContactLastName" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactIsNewUser" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactFirstName" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactBirthDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMILA" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMErrorMessage" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMContactUserId" type="xsdLocal:string320" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Status" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ActionCode" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DiscountAmount" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="OrderNumber" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PartNumber" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMAKR" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMBillingNote" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMBillingStartStopDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCompassItemNumber" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMDiscount" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMFreeTrialDuration" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMFreeTrialEndDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMFreeTrialFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMFreeTrialStartDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPriceListRevenueType" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMSpecialPrice" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSpecialPriceCurrencyCode" type="xsdLocal:string20"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMSpecialPriceRestrictionDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMSubAccountNumber" type="xsdLocal:string3"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMSubscriberNumber" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="AssetIntegrationId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSalesReasonCode" type="xsdLocal:string200"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMBillingPlatform" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMMxPDBName" type="xsdLocal:string320"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMPrimaryContactUUID" type="xsdLocal:string50" minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="QuoteNote">
+  <xsd:sequence>
+   <xsd:element name="RCRMType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NoteId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="InstallationNotes" type="xsdLocal:string16383"
+                minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="OrderEntry-LineItemsAttribute">
+  <xsd:sequence>
+   <xsd:element name="XAId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Value" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ParentId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Name" type="xsdLocal:string75" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ActionCode" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:simpleType name="string3">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="3"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string128">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="128"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string2000">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="2000"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string50">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="50"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string60">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="60"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string255">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="255"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string10">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="10"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string75">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="75"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string15">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="15"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string320">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="320"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string30">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="30"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string16383">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="16383"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string150">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="150"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string1">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="1"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string22">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="22"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string200">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="200"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string100">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="100"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string70">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="70"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string20">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="20"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string4">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="4"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,62 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSOM_TransformOrderStatus" revision="1.0" state="on">
+    <import location="AdpOrderCacheService.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheService/"/>
+    <import location="ParseOrderStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser"/>
+    <import location="CSOM_TransformOrderStatus.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" location="CSOM_ApplyXRefOnOrderStatusInRSWrapper.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" importType="wsdl"/>
+    <service name="CSOM_TransformOrderStatus" ui:wsdlLocation="CSOM_TransformOrderStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus#wsdl.interface(CSOM_TransformOrderStatusCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus#wsdl.interface(CSOM_TransformOrderStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus#wsdl.endpoint(CSOM_TransformOrderStatus/CSOM_TransformOrderStatus)"/>
+    </service>
+    <component name="CSOM_TransformOrderStatusProcess">
+        <implementation.bpel src="CSOM_TransformOrderStatusProcess.bpel"/>
+        
+        
+        <property many="false" name="partnerLink.applyXRefOnOrderStatus.validateXML" type="xs:string">true</property>
+    </component>
+    <reference name="ParseOrderStatus" ui:wsdlLocation="ParseOrderStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser#wsdl.interface(ParseCSOrderStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="ParseOrderStatus.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser#wsdl.endpoint(ParseCSOrderStatus/parseOrderStatus)"/>
+    </reference>
+    <reference name="AdpOrderCacheService" ui:wsdlLocation="AdpOrderCacheService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheService/#wsdl.interface(AdpOrderCacheService_ptt)"/>
+        <binding.jca config="AdpOrderCacheService_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="applyXRefOnOrderStatus" ui:wsdlLocation="CSOM_ApplyXRefOnOrderStatusInRSWrapper.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(applyStaticXRefData_ppt)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.endpoint(applyStaticXRefData_ppt/applyStaticXRefData_ppt_pt)" location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CSOM_ApplyXRefOnOrderStatus/CSOM.ApplyXRefOnOrderStatusInRS_ep?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="SequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceChecker/SequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/anchorToSequencer?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CSOM_TransformOrderStatus</source.uri>
+        <target.uri>CSOM_TransformOrderStatusProcess/CSOM_TransformOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_TransformOrderStatusProcess/SequenceChecker</source.uri>
+        <target.uri>SequenceChecker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_TransformOrderStatusProcess/ParseOrderStatus</source.uri>
+        <target.uri>ParseOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_TransformOrderStatusProcess/applyXRefOnOrderStatus</source.uri>
+        <target.uri>applyXRefOnOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_TransformOrderStatusProcess/AdpOrderCacheService</source.uri>
+        <target.uri>AdpOrderCacheService</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

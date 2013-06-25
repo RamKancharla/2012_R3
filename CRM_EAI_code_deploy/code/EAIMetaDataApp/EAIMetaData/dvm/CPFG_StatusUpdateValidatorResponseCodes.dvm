@@ -1,0 +1,42 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="CPFG_StatusUpdateValidatorResponseCodes" xmlns="http://xmlns.oracle.com/dvm">
+<description>Determines the response codes in the CPFG_StatusUpdateValidator</description>
+<columns>
+	<column name="Reference"/>
+	<column name="Response"/>
+	<column name="ResponseCode"/>
+	<column name="ResponseMessage"/>
+</columns>
+<rows>
+	<row>
+		<cell>Success</cell>
+		<cell>0</cell>
+		<cell>00101-EAI-MESSAGE SUCCESSFULLY RECEIVED</cell>
+		<cell/>
+	</row>
+	<row>
+		<cell>InvalidMessageVersion</cell>
+		<cell>1</cell>
+		<cell>00201-EAI-INVALID MESSAGE VERSION</cell>
+		<cell/>
+	</row>
+	<row>
+		<cell>InvalidMessageContent</cell>
+		<cell>1</cell>
+		<cell>00202-EAI-INVALID MESSAGE CONTENT</cell>
+		<cell/>
+	</row>
+	<row>
+		<cell>EntityTypeUnknown</cell>
+		<cell>1</cell>
+		<cell>00205-EAI-ENTITY TYPE UNKNOWN</cell>
+		<cell/>
+	</row>
+	<row>
+		<cell>InternalError</cell>
+		<cell>1</cell>
+		<cell>00300-EAI-UNKNOWN INTERNAL SERVICE ERROR</cell>
+		<cell/>
+	</row>
+</rows>
+</dvm>

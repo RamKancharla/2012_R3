@@ -1,0 +1,221 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ * Module:      CSACM_TransformAccountContactPublishStatus.bpel 
+* Type:        BPEL FILE 
+* Description: Asynchronous BPEL Process that calls Webservice, transforms the String into XML format and 
+*              invokes CCRMACM_PropagateAccountContactPublishStatus service. 
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         28/05/08     Shanker Reddy                  Initial
+*  1.1         02/12/08	    Surya Gannavarapu	    Changed Custom title to add error message.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CSACM_TransformAccountContactPublishStatusProcess" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish" xmlns:ns7="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/Exception" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ns2="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="CSACM_TransformAccountContactPublishStatus" partnerLinkType="client:CSACM_TransformAccountContactPublishStatus" myRole="CSACM_TransformAccountContactPublishStatusProvider" partnerRole="CSACM_TransformAccountContactPublishStatusRequester"/>
+        <partnerLink myRole="CCRMACM_PropagateAccountContactPublishStatusRequester" name="CCRMACM_PropagateAccountContactPublishStatus" partnerRole="CCRMACM_PropagateAccountContactPublishStatusProvider" partnerLinkType="ns7:CCRMACM_PropagateAccountContactPublishStatus"/>
+        <partnerLink name="ParseCSAccountContactPublishStatus" partnerRole="ParseCSAccountContactPublishStatus_Role" partnerLinkType="ns1:ParseCSAccountContactPublishStatus_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="TransformAccountContactPublishStatusIV" messageType="client:CSACM_TransformAccountContactPublishStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="Success_Response" type="xsd:string"/>
+        <variable name="UnknownError" type="xsd:string"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="AccountID" type="xsd:string"/>
+        <variable name="PropagateAccountContactPublishStatusIV" messageType="ns7:CCRMACM_PropagateAccountContactPublishStatusRequestMessage"/>
+        <variable name="ParseCSAccountContactPublishStatusIV" messageType="ns1:FLAccountContactPublishStatus"/>
+        <variable name="ParseCSAccountContactPublishStatusOV" messageType="ns1:AccountContactPublishStatus"/>
+        <variable name="SubscriberNumber" type="xsd:string"/>
+        <variable name="messageCode" type="xsd:string"/>
+        <variable name="ErrorMsg" type="xsd:string"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleForBindingFault" language="java" version="1.5">
+                <![CDATA[String accountID = (String)getVariableData("AccountID");                            
+accountID=(accountID!=null ? ("AccountID: "+accountID+" ;Fault") : ".;");        
+   setCompositeInstanceTitle(accountID);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleSelectionFailure" language="java" version="1.5">
+                <![CDATA[String accountID = (String)getVariableData("AccountID");                           
+accountID=(accountID!=null ? ("AccountID: "+accountID+" ;Fault") : ".;");       
+   setCompositeInstanceTitle(accountID);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleForRemoteFault" language="java" version="1.5">
+                <![CDATA[String accountID = (String)getVariableData("AccountID");                           
+accountID=(accountID!=null ? ("AccountID: "+accountID+" ;Fault") : ".;");       
+   setCompositeInstanceTitle(accountID);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqCustomTitleGenericFault">
+                <bpelx:exec name="AsgCustomTitleForGenericFault" language="java" version="1.5">
+                    <![CDATA[String accountID = (String)getVariableData("AccountID");                            
+accountID=(accountID!=null ? ("AccountID: "+accountID+" ;Fault") : ".;");        
+   setCompositeInstanceTitle(accountID);]]>
+                </bpelx:exec>
+                <assign name="AsgUnknownError">
+                    <copy>
+                        <from expression="&quot;Unknown Error&quot;"/>
+                        <to variable="UnknownError"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CSACM_TransformAccountContactPublishStatus.wsdl) -->
+        <receive name="RcvParsePublishStatus" partnerLink="CSACM_TransformAccountContactPublishStatus" portType="client:CSACM_TransformAccountContactPublishStatus" operation="transformAccountContactPublishStatus" variable="TransformAccountContactPublishStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="Success_Response"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformAccountContactPublishStatusIV','payload','/ns8:EBCDICMessage/ns8:message'),356,30)"/>
+                <to variable="AccountID"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformAccountContactPublishStatusIV','payload','/ns8:EBCDICMessage/ns8:message'),352,4)"/>
+                <to variable="ErrorMsg"/>
+            </copy>
+        </assign>
+        <!--<switch name="CheckAccountId">
+            <case condition="string-length(bpws:getVariableData('AccountID'))>0">
+                <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+                    <![CDATA[String accountID = (String)getVariableData("AccountID");                                  
+accountID=(accountID!=null ? (accountID) : ".;");             
+                          
+String Title = "AccountId: "+accountID;          
+       
+                 
+setCompositeInstanceTitle(Title);]]>
+                </bpelx:exec>
+            </case>
+            <otherwise>
+                <bpelx:exec name="AsgCustomTitleForContactAmend" language="java"
+                            version="1.5">
+                    <![CDATA[setCompositeInstanceTitle("Amend Contact");]]>
+                </bpelx:exec>
+            </otherwise>
+        </switch>-->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String AccountID = (String)getVariableData("AccountID");     
+String ErrorMsg = (String)getVariableData("ErrorMsg");  
+String Title=(AccountID!="" ? ( "AccountId: "+AccountID+";ST; "+ErrorMsg) : "Amend Contact");                   
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <scope name="ParseCSAccountContactPublishStatus">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrParseCSAccountContactPublishStatusRemoteFault" faultName="ns5:ParseCSAccountContactPublishStatusRemoteFault" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqParseCSAccountContactPublishStatus">
+                <assign name="TransAccountContactPublishStatusToParseCSAccountContactPublishStatus">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransformAccountContactPublishStatusIVToParseCSAccountContactPublishStatusIV.xsl',bpws:getVariableData('TransformAccountContactPublishStatusIV','payload'))"/>
+                        <to variable="ParseCSAccountContactPublishStatusIV" part="parameter"/>
+                    </copy>
+                </assign>
+                <invoke name="InvParseCSAccountContactPublishStatus" portType="ns1:ParseCSAccountContactPublishStatus" inputVariable="ParseCSAccountContactPublishStatusIV" outputVariable="ParseCSAccountContactPublishStatusOV" partnerLink="ParseCSAccountContactPublishStatus" operation="ParseAccountContactPublishStatus"/>
+            </sequence>
+        </scope>
+        <switch name="SwitchPropagateAccountContactPublishStatus">
+            <case condition="bpws:getVariableData('ParseCSAccountContactPublishStatusOV','parameter','/ns1:CSAccountContactPublish/ns1:accountContactPublishStatus/ns1:response')=bpws:getVariableData('Success_Response')">
+                <bpelx:annotation>
+                    <bpelx:pattern>Success Response from ParseCSAccountContactPublishStatus</bpelx:pattern>
+                </bpelx:annotation>
+                <switch name="SwitchPropagateAccountContactPublishStatusSuccess">
+                    <case condition="bpws:getVariableData('ParseCSAccountContactPublishStatusOV','parameter','/ns1:CSAccountContactPublish/ns1:subRowId')=&quot;&quot;">
+                        <!-- <bpelx:annotation>
+                            <bpelx:pattern>Success Response from SwitchPropagateAccountContactPublishStatusSuccess</bpelx:pattern>
+                        </bpelx:annotation>
+                         <bpelx:exec name="AsgCustomTitle" language="java"
+                                    version="1.5">
+                            <![CDATA[setCompositeInstanceTitle("Amend Contact");]]>
+                        </bpelx:exec>-->
+                        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+                            <![CDATA[setCompositeInstanceTitle("Amend Contact");]]>
+                        </bpelx:exec>
+                    </case>
+                    <otherwise>
+                        <scope name="PropagateAccountContactPublishStatus">
+                            <faultHandlers>
+                                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                    <throw name="ThrPropagateAccountContactPublishStatusRemoteFault" faultName="ns5:PropagateAccountContactPublishStatusRemoteFault" faultVariable="runtimeFault"/>
+                                </catch>
+                            </faultHandlers>
+                            <sequence name="SeqPropagateAccountContactPublishStatus">
+                                <assign name="TransParseCSAccountContactPublishStatusToPropagateAccountContactPublishStatus">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransformParseCSAccountContactPublishStatusToPropagateAccountContactPublishStatus.xsl',bpws:getVariableData('ParseCSAccountContactPublishStatusOV','parameter'))"/>
+                                        <to variable="PropagateAccountContactPublishStatusIV" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <assign name="AsgInstanceIdToPropagateAccountContactPublishStatus">
+                                    <copy>
+                                        <from expression="ora:getCompositeInstanceId()"/>
+                                        <to variable="PropagateAccountContactPublishStatusIV" part="payload" query="/ns4:CSAccountContactStatus/ns4:eaiHeader/ns6:instanceId"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="ora:getCurrentDateTime()"/>
+                                        <to variable="PropagateAccountContactPublishStatusIV" part="payload" query="/ns4:CSAccountContactStatus/ns4:eaiHeader/ns6:timeStamp"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvPropagateAccountContactPublishStatus" inputVariable="PropagateAccountContactPublishStatusIV" partnerLink="CCRMACM_PropagateAccountContactPublishStatus" portType="ns7:CCRMACM_PropagateAccountContactPublishStatus" operation="sendAccountContactStatus"/>
+                            </sequence>
+                        </scope>
+                    </otherwise>
+                </switch>
+            </case>
+            <otherwise>
+                <bpelx:exec name="AsgCustomTitleOnParsingFailure" language="java" version="1.5">
+                    <![CDATA[String AccountID = (String)getVariableData("AccountID");                                       
+String Title=(AccountID!="" ? ( "AccountId: "+AccountID+"; Fault") : "Amend Contact");                  
+setCompositeInstanceTitle(Title);]]>
+                </bpelx:exec>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

@@ -1,0 +1,1820 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************************************
+* File Name:	EAI.XSD.012_CommonPriceTypes.xsd
+*				
+* Type:		XML Schema Document
+* Description:	Schema Used for Common Price request
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		03/04/08	Sreeja Prasad			Initial Version
+*  0.02		22/05/08	Rob Billington			Updated LDM Mapping
+*  0.03		17/07/08	Sreeja Prasad			Added from Season to Cost type for PBI-718.
+*  0.04         16/07/09	Sreeja Prasad			Added the simpleTypes PriceListType & CoresuiteStartDate.
+*  0.05         29/06/10        Sreeja Prasad			Added the simpleType PLIId for CR 6474
+*************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.04">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="./EAI.XSD.001_SchemaAnnotations.xsd"/>
+	<xsd:simpleType name="CountryCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>FR</content>
+					<comment>Country code for France</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="2"/>
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSPLI">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>XK3INTD1</content>
+					<comment>Price list item</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSStartDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSCurrency">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>FR</content>
+					<comment>Country code for France</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSValue">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSComType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMProductExchangeFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMLocalStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMGlobalStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Response">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>0</content>
+					<comment>Success</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>1</content>
+					<comment>Failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="0"/>
+			<xsd:enumeration value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RequestStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A000</content>
+					<comment>Success</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Ennn</content>
+					<comment>Error or failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>UNKNOWN ERROR</content>
+					<comment>Error or failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableMessageVersion">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A</content>
+					<comment>Message Version</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableApplicationUserID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>User id, who initiated the change</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMPLI">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string2">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMPLHId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CCRMActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>OM05</content>
+					<comment>Order Create</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMPLIId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CurrencyCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[PRODUCT].[INTEGRATION ID]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>1-7CFGTY34</content>
+					<comment>Unique ID for a product generated from the ROW ID.</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IntegrationId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM integration id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LoginName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM integration id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Name">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM integration id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMCompassPriceListNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM Compass PriceListNumber</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSPriceListNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>07</content>
+					<comment>Compass PriceListNumber</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMCountry">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM Country</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMMessage">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM Country</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPriceListType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM message</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMRevenueType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM message</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM message</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StartDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Type">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="EndDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="OriginalListPrice">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM message</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceAdjustmentType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM message</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceListId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>Price List Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>Price List Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PricingMethod">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>Pricing method</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PrimaryProductLineId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM message</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[PRODUCT].[NAME]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Reuters 3000 Xtra v6</content>
+					<comment>
+						The product name for Reuters 3000 Xtra Version 6
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMCompassMessage">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[MESSAGE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMCurrencyCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[MESSAGE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDateLastPropChange">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMExchangeDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMInactiveFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[MESSAGE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMLocalPLI">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[MESSAGE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMNativeCurrencyCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[MESSAGE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMNativePrice">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>[LDM].[PRICE LIST ITEM].[NATIVE PRICE]</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>207.25</content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:decimal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPLIQuoteType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[MESSAGE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPLIRevenueType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[MESSAGE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPriceListItemStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[MESSAGE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>OM05</content>
+					<comment>Order Create</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="4"/>
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessageVersion">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A</content>
+					<comment>Message Version</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ApplicationUserID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Brian.Knights@reuters.com</content>
+					<comment>User id, who initiated the change</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+               		<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Season">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMLastParentRefreshDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>RCRMLastParentRefresh date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CostList">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Description">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="225"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Updated">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPropagationSelected">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMApplyRulesFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMAllowOrder">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMAllowDraftReportFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PrimaryOrganizationId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PricingProcedure">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LastName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMPricePublish">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="IsAdminMode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="UpdatedDate">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content>2007-04-25</content>
+                                    <comment>RCRMLastParentRefresh date</comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:union memberTypes="xsd:date">
+                    <xsd:simpleType>
+                            <xsd:restriction base="xsd:token">
+                                    <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                    </xsd:simpleType>
+            </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDummyField1">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="1"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDummyField2">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDummyField3">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="50"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RCRMDummyField4">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="50"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMHQNodePublish">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="30"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ComplexProductPricingModelName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="75"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        <xsd:simpleType name="VolumeDiscount">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="50"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceListStartDate">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content>2007-04-25</content>
+                                    <comment>RCRMLastParentRefresh date</comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:union memberTypes="xsd:date">
+                    <xsd:simpleType>
+                            <xsd:restriction base="xsd:token">
+                                    <xsd:enumeration value=""/>
+                            </xsd:restriction>
+                    </xsd:simpleType>
+            </xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="PaymentIntegrationId">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="30"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PaymentTerm">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        <xsd:simpleType name="PriceBookName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PrimaryOrganization">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="50"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CostListId">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PaymentTermId">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PriceBookId">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="XAClassId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PeriodId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="VolumeDiscountId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="Margin">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="ReferencePrice">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMSupplierExchRate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMSupplierCurrencyCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMSellingPrice">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMProductOperatingSystem">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMPLIRIN">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+                        <xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMPLIMaintPercent">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMPLILocalLanguageName">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="30"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMPLILocalDescription">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="30"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMLocal">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMIgnoreUpdateFlag">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMGlobal">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="RCRMCoresuiteUpdated">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="ServicePricePercent">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="PriceListSubtypeCode">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="30"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+         <xsd:simpleType name="PriceListName">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="50"/>
+            </xsd:restriction>
+	</xsd:simpleType>
+         <xsd:simpleType name="RCRMActiveFlag">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+         <xsd:simpleType name="IsComplexProductBundle">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+        <xsd:simpleType name="IsComplexProductNotBundle">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+        <xsd:simpleType name="DynamicMatrixId">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+        <xsd:simpleType name="ListPrice">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+        <xsd:simpleType name="DynamicMatrix">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="50"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+        <xsd:simpleType name="MaxSalePrice">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+        <xsd:simpleType name="CostListItemCurrencyCode">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="20"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+         <xsd:simpleType name="ListPriceTypeCode">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="30"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+        <xsd:simpleType name="CfgLatestReleasedFlag">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+         <xsd:simpleType name="BundleSequenceReadOnlyFlag">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+         <xsd:simpleType name="BonusThreshold">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+         <xsd:simpleType name="MinSalePrice">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+        <xsd:simpleType name="Part">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+          <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="50"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+        <xsd:simpleType name="Cost">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+	<xsd:simpleType name="PriceListType">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="30"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+	<xsd:simpleType name="CoresuiteStartDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="PLIId">
+            <xsd:annotation>
+                    <xsd:appinfo>
+                            <gcap-sa:EquivalentDataItem/>
+                            <gcap-sa:Example>
+                                    <content></content>
+                                    <comment></comment>
+                            </gcap-sa:Example>
+                    </xsd:appinfo>
+            </xsd:annotation>
+           <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="0"/>
+                    <xsd:maxLength value="15"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+ </xsd:schema>

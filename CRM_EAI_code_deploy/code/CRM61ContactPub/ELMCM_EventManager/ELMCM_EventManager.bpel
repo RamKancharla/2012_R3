@@ -1,0 +1,154 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Mar 01 13:47:30 IST 2012
+  Author:  Ramanjana.Reddy
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ELMCM_EventManager"
+         targetNamespace="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager"
+         xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:client="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager"
+         xmlns:ora="http://schemas.oracle.com/xpath/extension"
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/ELMCM_EventManager/InsertIntoInterfaceBuffer"
+         xmlns:ns2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:ns3="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+         xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/top/InsertIntoInterfaceBuffer"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:ns8="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions">
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    --> 
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="InsertIntoInterfaceBuffer"
+                     partnerRole="InsertIntoInterfaceBuffer_role"
+                     partnerLinkType="ns1:InsertIntoInterfaceBuffer_plt"/>
+        <partnerLink myRole="ELMCM_EventManagerProvider"
+                     name="elmcm_eventmanager_client_ep"
+                     partnerLinkType="client:ELMCM_EventManager"/>
+    </partnerLinks>
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:ELMCM_EventManagerRequestMessage"/>
+
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:ELMCM_EventManagerResponseMessage"/>
+        <variable name="varContextId" type="xsd:string"/>
+        <variable name="insertToBuffer"
+                  messageType="ns1:InterfaceBufferCollection_msg"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="AsgFaultTitle" version="1.5" language="java">
+                <![CDATA[setCompositeInstanceTitle("Contact:" + getVariableData("varContextId")+"Faulted");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ELMCM_EventManager.wsdl) -->
+        <receive name="receiveInput" variable="inputVariable" createInstance="yes"
+                 partnerLink="elmcm_eventmanager_client_ep"
+                 portType="client:ELMCM_EventManager" operation="initiate"/>
+
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsnData">
+            <copy>
+                <from expression="ora:getInstanceId()"/>
+                <to variable="inputVariable" part="payload"
+                    query="/ns6:contactEvent/ns6:eaiHeader/ns5:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="inputVariable" part="payload"
+                    query="/ns6:contactEvent/ns6:eaiHeader/ns5:tracingId"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload"
+                      query="/ns6:contactEvent/ns6:contact/ns6:UUID"/>
+                <to variable="varContextId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="setContextId" version="1.5" language="java">
+            <![CDATA[setCompositeInstanceTitle("Contact: " + getVariableData("varContextId"));]]>
+        </bpelx:exec>
+        <assign name="TransToELMCM">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('xsl/TransToELMCM.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="outputVariable" part="payload"/>
+            </copy>
+        </assign>
+        <assign name="AsnInsertBufferData">
+            <copy>
+                <from expression="'N'"/>
+                <to variable="insertToBuffer" part="InterfaceBufferCollection"
+                    query="/ns7:InterfaceBufferCollection/ns7:InterfaceBuffer/ns7:state"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload"
+                      query="/ns6:contactEvent/ns6:contact/ns6:UUID"/>
+                <to variable="insertToBuffer" part="InterfaceBufferCollection"
+                    query="/ns7:InterfaceBufferCollection/ns7:InterfaceBuffer/ns7:referenceId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getContentAsString(bpws:getVariableData('outputVariable','payload','/ns8:ContactRequest'))"/>
+                <to variable="insertToBuffer" part="InterfaceBufferCollection"
+                    query="/ns7:InterfaceBufferCollection/ns7:InterfaceBuffer/ns7:payload"/>
+            </copy>
+            <copy>
+                <from expression="'ELMCM'"/>
+                <to variable="insertToBuffer" part="InterfaceBufferCollection"
+                    query="/ns7:InterfaceBufferCollection/ns7:InterfaceBuffer/ns7:interfaceId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getComponentInstanceId()"/>
+                <to variable="insertToBuffer" part="InterfaceBufferCollection"
+                    query="/ns7:InterfaceBufferCollection/ns7:InterfaceBuffer/ns7:createdBy"/>
+            </copy>
+        </assign>
+        <invoke name="InsertToBuffer" inputVariable="insertToBuffer"
+                partnerLink="InsertIntoInterfaceBuffer"
+                portType="ns1:InsertIntoInterfaceBuffer_ptt"
+                operation="insert"/>
+    </sequence>
+</process>

@@ -1,0 +1,53 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="AM_DqTRUSTAcctUpdateNUpdateTRUSTID" revision="1.0" state="on">
+    <import location="enterpriseRef.wsdl" namespace="urn:enterprise.soap.sforce.com"/>
+    <import location="DequeueTRUSTAccountUpdate.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTAccountUpdate/"/>
+    <import location="EAI.SRV.EXT.SFDC.049_SendAccountToSFDCServiceRef.wsdl" namespace="http://soap.sforce.com/schemas/class/AccountManagement"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccount.wsdl" importType="wsdl"/>
+    <service name="DequeueTRUSTAccountUpdate" ui:wsdlLocation="DequeueTRUSTAccountUpdate.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTAccountUpdate/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeueTRUSTAccountUpdate_mq.jca"/>
+    </service>
+    <component name="AM_DqTRUSTAcctUpdateNUpdateTRUSTID">
+        <implementation.bpel src="AM_DqTRUSTAcctUpdateNUpdateTRUSTID.bpel"/>
+        <property name="preference.password">${trust.Password}</property>
+        <property name="preference.loginId">${trust.UserName}</property>
+        
+        
+    </component>
+    <reference name="SalesForce" ui:wsdlLocation="enterpriseRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="urn:enterprise.soap.sforce.com#wsdl.interface(Soap)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="enterpriseRef.wsdl" port="urn:enterprise.soap.sforce.com#wsdl.endpoint(SforceService/Soap)"/>
+    </reference>
+    <reference name="TRUSTAcountUpdate" ui:wsdlLocation="EAI.SRV.EXT.SFDC.049_SendAccountToSFDCServiceRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://soap.sforce.com/schemas/class/AccountManagement#wsdl.interface(AccountManagementPortType)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="EAI.SRV.EXT.SFDC.049_SendAccountToSFDCServiceRef.wsdl" port="http://soap.sforce.com/schemas/class/AccountManagement#wsdl.endpoint(AccountManagementService/AccountManagement)"/>
+    </reference>
+    <reference name="CCRMAM_PropagateTRUSTAccount" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccount.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccount)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccountCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.endpoint(CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccount)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMAM_PropagateTRUSTAccount/anchorToCCRMAM_PropagateTRUSTAccount?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.endpoint(CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccountCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>DequeueTRUSTAccountUpdate</source.uri>
+        <target.uri>AM_DqTRUSTAcctUpdateNUpdateTRUSTID/DequeueTRUSTAccountUpdate</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AM_DqTRUSTAcctUpdateNUpdateTRUSTID/TRUSTAcountUpdate</source.uri>
+        <target.uri>TRUSTAcountUpdate</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AM_DqTRUSTAcctUpdateNUpdateTRUSTID/CCRMAM_PropagateTRUSTAccount</source.uri>
+        <target.uri>CCRMAM_PropagateTRUSTAccount</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AM_DqTRUSTAcctUpdateNUpdateTRUSTID/SalesForce</source.uri>
+        <target.uri>SalesForce</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

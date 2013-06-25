@@ -1,0 +1,44 @@
+<definitions
+     name="SFDCAM_Invoker"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_Invoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_Invoker"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_Invoker"
+                 schemaLocation="SFDCAM_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" schemaLocation="EAI.MSG.SFDC.AM.236_PublishAccountEventRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SFDCAM_InvokerRequestMessage">
+        <part name="payload" element="client:SFDCAM_InvokerProcessRequest"/>
+    </message>
+    <message name="SFDCAM_InvokerResponseMessage">
+        <part name="payload" element="client:SFDCAM_InvokerProcessResponse"/>
+    </message>
+    <portType name="SFDCAM_Invoker">
+        <operation name="initiate">
+            <input message="client:SFDCAM_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="SFDCAM_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:SFDCAM_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SFDCAM_Invoker">
+        <plnk:role name="SFDCAM_InvokerProvider">
+            <plnk:portType name="client:SFDCAM_Invoker"/>
+        </plnk:role>
+        <plnk:role name="SFDCAM_InvokerRequester">
+            <plnk:portType name="client:SFDCAM_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

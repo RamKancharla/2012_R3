@@ -1,0 +1,49 @@
+<definitions
+     name="TOMAM_AccountManager"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager"
+      xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager"
+                 schemaLocation="TOMAM_AccountManager.xsd"/>
+        </schema>
+        
+         <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.AM.176_AccountEvent.xsd" />
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish" schemaLocation="EAI.MSG.TOM.AM.179_PublishAccountEventRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TOMAM_AccountManagerResponseMessage">
+        <part name="payload" element="client:TOMAM_AccountManagerProcessResponse"/>
+    </message>
+    <message name="TOMAM_AccountManagerRequestMessage">
+       <part name="accountEvent" element="imp1:accountEvent"/>
+    </message>
+    <portType name="TOMAM_AccountManager">
+        <operation name="initiate">
+            <input message="client:TOMAM_AccountManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="TOMAM_AccountManagerCallback">
+        <operation name="onResult">
+            <input message="client:TOMAM_AccountManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TOMAM_AccountManager">
+        <plnk:role name="TOMAM_AccountManagerProvider">
+            <plnk:portType name="client:TOMAM_AccountManager"/>
+        </plnk:role>
+        <plnk:role name="TOMAM_AccountManagerRequester">
+            <plnk:portType name="client:TOMAM_AccountManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

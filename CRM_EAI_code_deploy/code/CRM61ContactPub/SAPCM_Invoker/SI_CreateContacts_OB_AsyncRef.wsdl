@@ -1,0 +1,16 @@
+<definitions
+     name="SI_CreateContacts_OB_Async"
+     targetNamespace="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:p1="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <import namespace="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation" location="SI_CreateContacts_OB_Async.wsdl"/>
+    <plnk:partnerLinkType name="SI_CreateContacts_OB_Async_PL">
+        <plnk:role name="SI_CreateContacts_OB_Async_Role">
+            <plnk:portType name="p1:SI_CreateContacts_OB_Async"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

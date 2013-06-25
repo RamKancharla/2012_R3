@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CCRMCM_PropagateContactErrorStatus"
+             targetNamespace="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus"
+             xmlns:ns1="http://www.siebel.com/xml/RCRMContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus" schemaLocation="CCRMCM_PropagateContactErrorStatus.xsd" />
+		</schema>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://www.siebel.com/xml/RCRMContactPublish" schemaLocation="EAI.MSG.CCRM.194_PublishContactRequestResponse.xsd" />
+		</schema>
+	</types>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<message name="CCRMCM_PropagateContactErrorStatusRequestMessage">
+		<part name="payload" element="ns1:PublishContactRequestReponse" />
+	</message>
+
+	<message name="CCRMCM_PropagateContactErrorStatusResponseMessage">
+		<part name="payload" element="client:CCRMCM_PropagateContactErrorStatusProcessResponse"/>
+	</message>
+
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- portType implemented by the SAPCM_PropagateContactStatus BPEL process -->
+	<portType name="CCRMCM_PropagateContactErrorStatus">
+		<operation name="initiate">
+			<input message="client:CCRMCM_PropagateContactErrorStatusRequestMessage"/>
+		</operation>
+	</portType>
+
+	<!-- portType implemented by the requester of CCRMCM_PropagateContactErrorStatus BPEL process
+	for asynchronous callback purposes
+	-->
+	<portType name="CCRMCM_PropagateContactErrorStatusCallback">
+		<operation name="onResult">
+			<input message="client:CCRMCM_PropagateContactErrorStatusResponseMessage"/>
+		</operation>
+	</portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	the SAPCM_PropagateContactStatus partnerLinkType binds the provider and
+	requester portType into an asynchronous conversation.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<plnk:partnerLinkType name="CCRMCM_PropagateContactErrorStatus">
+		<plnk:role name="CCRMCM_PropagateContactErrorStatusProvider">
+			<plnk:portType name="client:CCRMCM_PropagateContactErrorStatus"/>
+		</plnk:role>
+		<plnk:role name="CCRMCM_PropagateContactErrorStatusRequester">
+			<plnk:portType name="client:CCRMCM_PropagateContactErrorStatusCallback"/>
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

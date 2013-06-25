@@ -1,0 +1,76 @@
+<definitions
+     name="CCRMOP_PublishOpportunity"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity/correlationset"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity/correlationset"
+         location="CCRMOP_PublishOpportunity_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <!--schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity/correlationset">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity"
+                 schemaLocation="CCRMOP_PublishOpportunity.xsd"/>
+        </schema-->
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+                 schemaLocation="EAI.MSG.OP.232_OpportunityEvent.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ReleaseSequenceMessage">
+        <part name="releaseSequence" element="ns2:basicResponse"/>
+    </message>
+    <message name="CCRMOP_PublishOpportunityResponseMessage">
+        <part name="payload" element="ns1:opportunityEvent"/>
+    </message>
+    <message name="CCRMOP_PublishOpportunityRequestMessage">
+        <part name="payload" element="ns1:opportunityEvent"/>
+    </message>
+    <portType name="CCRMOP_PublishOpportunity">
+        <operation name="initiate">
+            <input message="client:CCRMOP_PublishOpportunityRequestMessage"/>
+        </operation>
+        <operation name="updateReleaseStatus">
+            <input name="input" message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMOP_PublishOpportunityCallback">
+        <operation name="onResult">
+            <input message="client:CCRMOP_PublishOpportunityResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOP_PublishOpportunity">
+        <plnk:role name="CCRMOP_PublishOpportunityProvider">
+            <plnk:portType name="client:CCRMOP_PublishOpportunity"/>
+        </plnk:role>
+        <plnk:role name="CCRMOP_PublishOpportunityRequester">
+            <plnk:portType name="client:CCRMOP_PublishOpportunityCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:CRMCorrProp" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns6:SequenceCheckerRequestMessage" part="payload" query="/ns4:checkSequenceRequest/ns4:eaiHeader/ns5:tracingId"
+         xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"/>
+    <bpws:propertyAlias propertyName="pns1:CRMCorrProp" messageType="client:ReleaseSequenceMessage" part="releaseSequence"
+         query="/ns2:basicResponse/ns2:eaiHeader/ns4:tracingId" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+</definitions>

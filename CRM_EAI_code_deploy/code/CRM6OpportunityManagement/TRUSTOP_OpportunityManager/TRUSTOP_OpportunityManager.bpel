@@ -1,0 +1,344 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Mar 16 16:53:10 GMT+05:30 2009
+  Author:  SP41293
+  Purpose: Asynchronous BPEL Process
+
+  Change History
+
+  Date		Author		Comments
+
+  10-09-2009	Sreeja Prasad	Modified the mappings of the revenue type in the xsl TransOpptyRequestToCCRMSubmitOppty.xsl as per the defect 26488
+  07-10-2009	Surya G		Added XRef fault to the title when mapping for the SF AcctId is not found in EAI XRef table
+  21-10-2009	Damodar  	Modified the mappings of the oppurtunity description in the xsl TransOpptyRequestToCCRMSubmitOppty.xsl as per the defect 32696
+  08-01-2010    Sreeja          Changed the ScpSequenceChecker before XrefLookup
+  23-03-2010    Swathi          Added IsPoRequired & PurchaseOrderNumber for CRM_PBI_0478 and mapped in TransOpptyRequestToCCRMSubmitOppty.xsl
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TRUSTOP_OpportunityManager" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OP/Exception" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager/correlationset" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9=" http://schemas.oracle.com/bpel/extension" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/Exception" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToTRUSTOP_OpportunityManager" partnerLinkType="client:TRUSTOP_OpportunityManager" myRole="TRUSTOP_OpportunityManagerProvider" partnerRole="TRUSTOP_OpportunityManagerRequester"/>
+        <partnerLink name="SequenceChecker" partnerLinkType="ns4:SequenceChecker" partnerRole="SequenceCheckerProvider"/>
+        <partnerLink myRole="CCRMOP_SubmitOpportunityRequester" name="CCRMOP_SubmitOpportunity" partnerRole="CCRMOP_SubmitOpportunityProvider" partnerLinkType="ns8:CCRMOP_SubmitOpportunity"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns4:SequenceReleaser"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="rcvOpptyRequestIV" messageType="client:TRUSTOP_OpportunityManagerRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="InvSequenceCheckerIV" messageType="ns4:SequenceCheckerRequestMessage"/>
+        <variable name="InvSequenceCheckerOV" messageType="ns4:SequenceCheckerResponseMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvCCRMOP_SubmitOpportunityIV" messageType="ns8:CCRMOP_SubmitOpportunityRequestMessage"/>
+        <variable name="rcvReleaseSequenceIV" messageType="client:ReleaseSequenceMessage"/>
+        <variable name="retryIncrement" type="xsd:int"/>
+        <variable name="SFDCAccountId" type="xsd:string"/>
+        <variable name="waitTime" type="xsd:string"/>
+        <variable name="noOfretries" type="xsd:int"/>
+        <variable name="waitTime1" type="xsd:string"/>
+        <variable name="waitTime2" type="xsd:string"/>
+        <variable name="waitTime3" type="xsd:string"/>
+        <variable name="InstallAccountID" type="xsd:string"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet" properties="ns6:OptyManagerCorrProp"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="ns7:SequenceCheckerError" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSequenceFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.      
+	System.out.println("Hello, World");     
+*/     
+String SFDCOptyID = ((oracle.xml.parser.v2.XMLElement)           
+                    getVariableData("rcvOpptyRequestIV","manageOpportunity","/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID")).getFirstChild().getNodeValue();           
+String Title=(SFDCOptyID!=null ? ("SFDCOptyID: "+SFDCOptyID) : ";Fault");                 
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.      
+	System.out.println("Hello, World");     
+*/     
+String SFDCOptyID = ((oracle.xml.parser.v2.XMLElement)           
+                    getVariableData("rcvOpptyRequestIV","manageOpportunity","/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID")).getFirstChild().getNodeValue();           
+String Title=(SFDCOptyID!=null ? ("SFDCOptyID: "+SFDCOptyID) : ";Fault");                 
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.      
+	System.out.println("Hello, World");     
+*/     
+String SFDCOptyID = ((oracle.xml.parser.v2.XMLElement)           
+                    getVariableData("rcvOpptyRequestIV","manageOpportunity","/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID")).getFirstChild().getNodeValue();           
+String Title=(SFDCOptyID!=null ? ("SFDCOptyID: "+SFDCOptyID) : ";Fault");                 
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.      
+	System.out.println("Hello, World");     
+*/     
+String SFDCOptyID = ((oracle.xml.parser.v2.XMLElement)           
+                    getVariableData("rcvOpptyRequestIV","manageOpportunity","/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID")).getFirstChild().getNodeValue();           
+String Title=(SFDCOptyID!=null ? ("SFDCOptyID: "+SFDCOptyID) : ";Fault");                 
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="ns10:InvalidAccountIdException" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSiebelTRUSTException" language="java" version="1.5">
+                <![CDATA[String SFDCOptyID = ((oracle.xml.parser.v2.XMLElement)               
+                    getVariableData("rcvOpptyRequestIV","manageOpportunity","/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID")).getFirstChild().getNodeValue();               
+String Title=(SFDCOptyID!=null ? ("SFDCOptyID: "+ SFDCOptyID+ " ;SBL-OP-XRef Fault") : ".;");    
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TRUSTOP_OpportunityManager.wsdl) -->
+        <receive name="rcvOptyRequest" partnerLink="anchorToTRUSTOP_OpportunityManager" portType="client:TRUSTOP_OpportunityManager" operation="manageOppty" variable="rcvOpptyRequestIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[/*Write your java code below e.g.     
+	System.out.println("Hello, World");    
+*/    
+String SFDCOptyID = ((oracle.xml.parser.v2.XMLElement)        
+                    getVariableData("rcvOpptyRequestIV","manageOpportunity","/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID")).getFirstChild().getNodeValue();        
+String Title=(SFDCOptyID!=null ? ("SFDCOptyID: "+SFDCOptyID) : ".;");              
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="rcvOpptyRequestIV" part="manageOpportunity" query="/ns1:SFDCOpportunityEvent/ns1:eaiHeader/ns2:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="rcvOpptyRequestIV" part="manageOpportunity" query="/ns1:SFDCOpportunityEvent/ns1:eaiHeader/ns2:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="rcvOpptyRequestIV" part="manageOpportunity" query="/ns1:SFDCOpportunityEvent/ns1:eaiHeader/ns2:timeToLive"/>
+            </copy>
+            <copy>
+                <from expression="'V'"/>
+                <to variable="rcvOpptyRequestIV" part="manageOpportunity" query="/ns1:SFDCOpportunityEvent/ns1:eaiHeader/ns2:payloadVersion"/>
+            </copy>
+            <copy>
+                <from expression="1"/>
+                <to variable="retryIncrement"/>
+            </copy>
+            <copy>
+                <from expression="'PT'"/>
+                <to variable="waitTime1"/>
+            </copy>
+            <copy>
+                <from expression="ora:getPreference('noOfRetries')"/>
+                <to variable="noOfretries"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="waitTime2"/>
+            </copy>
+            <copy>
+                <from expression="'M'"/>
+                <to variable="waitTime3"/>
+            </copy>
+        </assign>
+        <scope name="ScpSequenceChecker">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrSequenceCheckerFault" faultName="ns7:SequenceCheckerError" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SequenceChecker">
+                <assign name="TranOpptyManageToSequenceChecker">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TranOpptyManageToSequenceChecker.xsl',bpws:getVariableData('rcvOpptyRequestIV','manageOpportunity'))"/>
+                        <to variable="InvSequenceCheckerIV" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvSequenceChecker" partnerLink="SequenceChecker" portType="ns4:SequenceChecker" operation="checkSequence" inputVariable="InvSequenceCheckerIV" outputVariable="InvSequenceCheckerOV">
+                    <correlations>
+                        <correlation initiate="yes" set="CorrelationSet" pattern="out"/>
+                    </correlations>
+                </invoke>
+            </sequence>
+        </scope>
+        <scope name="ScpXrefLookUP">
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="SeqRetryXref">
+                        <assign name="AsgIncrementRetry">
+                            <copy>
+                                <from expression="bpws:getVariableData('retryIncrement')+1"/>
+                                <to variable="retryIncrement"/>
+                            </copy>
+                            <copy>
+                                <from expression="bpws:getVariableData('waitTime2')+15"/>
+                                <to variable="waitTime2"/>
+                            </copy>
+                            <copy>
+                                <from expression="concat(bpws:getVariableData('waitTime1'),bpws:getVariableData('waitTime2'),bpws:getVariableData('waitTime3'))"/>
+                                <to variable="waitTime"/>
+                            </copy>
+                        </assign>
+                        <switch name="Switch_1">
+                            <case condition="bpws:getVariableData('retryIncrement')&lt;=bpws:getVariableData('noOfretries')">
+                                <sequence name="SeqRetry">
+                                    <wait name="WaitForRetry" for="bpws:getVariableData('waitTime')"/>
+                                    <throw name="Retry" faultName="bpelx:replay" faultVariable="runtimeFault"/>
+                                </sequence>
+                            </case>
+                            <otherwise>
+                                <scope name="Scope_1">
+                                    <variables>
+                                        <variable name="ReleaseSequence_InputVariable" messageType="ns4:SequenceReleaserRequestMessage"/>
+                                    </variables>
+                                    <sequence name="SeqRetryError">
+                                        <switch name="Switch_2">
+                                            <case condition="bpws:getVariableData('InvSequenceCheckerOV','payload','/ns3:basicResponse/ns3:basicResponse/ns2:responseMessage')= 'CONTINUE'">
+                                                <sequence name="Sequence_1">
+                                                    <assign name="Assign_ReleaseSequence">
+                                                        <copy>
+                                                            <from expression="'EAI'"/>
+                                                            <to variable="ReleaseSequence_InputVariable" part="payload" query="/ns5:releaseSequenceRequest/ns5:eaiHeader/ns2:applicationId"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="ora:getCompositeInstanceId()"/>
+                                                            <to variable="ReleaseSequence_InputVariable" part="payload" query="/ns5:releaseSequenceRequest/ns5:eaiHeader/ns2:transactionId"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="'EAI;'"/>
+                                                            <to variable="ReleaseSequence_InputVariable" part="payload" query="/ns5:releaseSequenceRequest/ns5:eaiHeader/ns2:messageHistory"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="xp20:current-dateTime()"/>
+                                                            <to variable="ReleaseSequence_InputVariable" part="payload" query="/ns5:releaseSequenceRequest/ns5:eaiHeader/ns2:timeStamp"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="ora:getCompositeInstanceId()"/>
+                                                            <to variable="ReleaseSequence_InputVariable" part="payload" query="/ns5:releaseSequenceRequest/ns5:eaiHeader/ns2:instanceId"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="&quot;1&quot;"/>
+                                                            <to variable="ReleaseSequence_InputVariable" part="payload" query="/ns5:releaseSequenceRequest/ns5:eaiHeader/ns2:timeToLive"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="'V'"/>
+                                                            <to variable="ReleaseSequence_InputVariable" part="payload" query="/ns5:releaseSequenceRequest/ns5:eaiHeader/ns2:payloadVersion"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from variable="InvSequenceCheckerIV" part="payload" query="/ns5:checkSequenceRequest/ns5:seqRequestDetails/ns5:correlationID"/>
+                                                            <to variable="ReleaseSequence_InputVariable" part="payload" query="/ns5:releaseSequenceRequest/ns5:correlationID"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from variable="InvSequenceCheckerIV" part="payload" query="/ns5:checkSequenceRequest/ns5:eaiHeader/ns2:tracingId"/>
+                                                            <to variable="ReleaseSequence_InputVariable" part="payload" query="/ns5:releaseSequenceRequest/ns5:eaiHeader/ns2:tracingId"/>
+                                                        </copy>
+                                                    </assign>
+                                                    <invoke name="ReleaseSequence" partnerLink="SequenceReleaser" portType="ns4:SequenceReleaser" operation="releaseSequence" inputVariable="ReleaseSequence_InputVariable"/>
+                                                </sequence>
+                                            </case>
+                                            <otherwise>
+                                                <empty name="DoNothing"/>
+                                            </otherwise>
+                                        </switch>
+                                        <throw name="ThrInvalidAccountIdException" faultName="ns10:InvalidAccountIdException" faultVariable="runtimeFault"/>
+                                    </sequence>
+                                </scope>
+                            </otherwise>
+                        </switch>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="SeqXrefLookUp">
+                <assign name="AsgXrefLookUp">
+                    <copy>
+                        <from variable="rcvOpptyRequestIV" part="manageOpportunity" query="/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCAccountID"/>
+                        <to variable="SFDCAccountId"/>
+                    </copy>
+                    <copy>
+                        <from expression="xref:lookupXRef(&quot;oramds:/apps/EAIMetaData/Xref/CRM_SFDC_ACCTXREF.xref&quot;,&quot;SFDCID&quot;,bpws:getVariableData('SFDCAccountId'),&quot;SIEBELID&quot;,true())"/>
+                        <to variable="rcvOpptyRequestIV" part="manageOpportunity" query="/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:siebelAccountID"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+        <switch name="CheckerOutCome">
+            <case condition="bpws:getVariableData('InvSequenceCheckerOV','payload','/ns3:basicResponse/ns3:basicResponse/ns2:responseMessage')= 'CONTINUE'">
+                <bpelx:annotation>
+                    <bpelx:pattern>CONTINUE</bpelx:pattern>
+                </bpelx:annotation>
+                <empty name="DoNothing"/>
+            </case>
+            <case condition="bpws:getVariableData('InvSequenceCheckerOV','payload','/ns3:basicResponse/ns3:basicResponse/ns2:responseMessage')= 'WAIT'">
+                <bpelx:annotation>
+                    <bpelx:pattern>WAIT</bpelx:pattern>
+                </bpelx:annotation>
+                <receive name="rcvReleaseSequence" createInstance="no" partnerLink="anchorToTRUSTOP_OpportunityManager" portType="client:TRUSTOP_OpportunityManager" operation="updateReleaseStatus" variable="rcvReleaseSequenceIV">
+                    <correlations>
+                        <correlation initiate="no" set="CorrelationSet"/>
+                    </correlations>
+                </receive>
+            </case>
+            <otherwise>
+                <throw name="ThrSequenceCheckerFault" faultName="ns7:SequenceCheckerError" faultVariable="runtimeFault"/>
+            </otherwise>
+        </switch>
+        <scope name="ScpPropagateOpptyToCCRM">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrRemoteFault" faultName="bpelx:remoteFault" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqCCRMSubmitOppty">
+                <assign name="TransOpptyRequestToCCRMSubmitOppty">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransOpptyRequestToCCRMSubmitOppty.xsl',bpws:getVariableData('rcvOpptyRequestIV','manageOpportunity'))"/>
+                        <to variable="InvCCRMOP_SubmitOpportunityIV" part="OpportunityStatus"/>
+                    </copy>
+                </assign>
+                <invoke name="InvCCRMOP_SubmitOpportunity" partnerLink="CCRMOP_SubmitOpportunity" portType="ns8:CCRMOP_SubmitOpportunity" operation="sendOpportunity" inputVariable="InvCCRMOP_SubmitOpportunityIV"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

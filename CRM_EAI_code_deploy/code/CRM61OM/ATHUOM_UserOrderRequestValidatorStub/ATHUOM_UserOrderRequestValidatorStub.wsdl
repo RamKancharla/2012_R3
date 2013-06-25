@@ -1,0 +1,34 @@
+<definitions
+     name="ATHUOM_UserOrderRequestValidatorStub"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub"
+                 schemaLocation="ATHUOM_UserOrderRequestValidatorStub.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.ATH.UOM.277_UserOrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHUOM_UserOrderRequestValidatorStubRequestMessage">
+        <part name="payload" element="ns1:UserOrderRequest"/>
+    </message>
+    <portType name="ATHUOM_UserOrderRequestValidatorStub">
+        <operation name="validateUserOrder">
+            <input message="client:ATHUOM_UserOrderRequestValidatorStubRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHUOM_UserOrderRequestValidatorStub">
+        <plnk:role name="ATHUOM_UserOrderRequestValidatorStubProvider">
+            <plnk:portType name="client:ATHUOM_UserOrderRequestValidatorStub"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

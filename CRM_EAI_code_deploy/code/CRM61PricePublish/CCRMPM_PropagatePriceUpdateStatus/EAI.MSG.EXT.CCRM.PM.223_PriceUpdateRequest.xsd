@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.siebel.com/xml/Price%20List"
+            xmlns:xsdLocal="http://www.siebel.com/xml/Price%20List"
+            xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd"
+	    nxsd:encoding="UTF-8"
+            attributeFormDefault="unqualified" elementFormDefault="qualified">
+ <xsd:annotation>
+  <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights
+                     reserved. Siebel XSD Generation</xsd:documentation>
+ </xsd:annotation>
+ <xsd:element name="PricePublish" type="xsdLocal:PricePublish"/>
+ <xsd:complexType name="PricePublishTopElmt">
+  <xsd:sequence>
+   <xsd:element name="PricePublish" type="xsdLocal:PricePublish" minOccurs="1"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PricePublish">
+  <xsd:sequence>
+   <xsd:element name="PriceList" type="xsdLocal:PriceList" minOccurs="1"
+                maxOccurs="1"/>
+   <xsd:element name="ActionCode" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Timestamp" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="SourceSystem" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="TargetSystem" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+  <xsd:attribute name="MessageType" type="xsd:string"/>
+  <xsd:attribute name="MessageId" type="xsd:string"/>
+  <xsd:attribute name="IntObjectName" type="xsd:string"/>
+  <xsd:attribute name="IntObjectFormat" type="xsd:string"/>
+ </xsd:complexType>
+ <xsd:complexType name="PriceList">
+  <xsd:sequence>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="CurrencyCode" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="IntegrationId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LoginName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Name" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCompassPriceListNumber" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMCountry" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMMessage" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPriceListType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMRevenueType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMStatus" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="StartDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Type" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Season" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PriceListItem" type="xsdLocal:PriceListItem" minOccurs="0"
+                maxOccurs="unbounded"/>
+   <xsd:element name="RCRMLastParentRefreshDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CostList" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Description" type="xsdLocal:string255" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="EndDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMActionCode" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Updated" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPropagationSelected" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMApplyRulesFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMAllowOrder" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMAllowDraftReportFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PrimaryOrganizationId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PricingProcedure" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LastName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPricePublish" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="IsAdminMode" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="UpdatedDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDummyField1" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDummyField2" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDummyField3" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PaymentIntegrationId" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="VolumeDiscount" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PaymentTerm" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PriceBookName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PrimaryOrganization" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="CostListId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PaymentTermId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PriceBookId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="XAClassId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="PeriodId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="VolumeDiscountId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PriceListItem">
+  <xsd:sequence>
+   <xsd:element name="RCRMProductExchangeFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLocalStatus" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMGlobalStatus" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="EndDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="IntegrationId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="OriginalListPrice" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PriceAdjustmentType" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PriceListId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PriceType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PricingMethod" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PrimaryProductLineId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ProductId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ProductName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCompassMessage" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCurrencyCode" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDateLastPropChange" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMExchangeDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMInactiveFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLocalPLI" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMNativeCurrencyCode" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMNativePrice" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPLIQuoteType" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPLIRevenueType" type="xsdLocal:string100"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMPriceListItemStatus" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StartDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Margin" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ReferencePrice" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSupplierExchRate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSupplierCurrencyCode" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMStatus" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSellingPrice" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMProductOperatingSystem" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMPLIRIN" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPLIMaintPercent" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPLILocalLanguageName" type="xsdLocal:string100"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMPLILocalDescription" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMLocal" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMIgnoreUpdateFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMGlobal" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCoresuiteUpdated" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCoresuiteStartDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ServicePricePercent" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PriceListType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PriceListSubtypeCode" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="PriceListName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMActiveFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="IsAdminMode" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="IsComplexProductBundle" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="IsComplexProductNotBundle" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DynamicMatrixId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ListPrice" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="DynamicMatrix" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MaxSalePrice" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CostListItemCurrencyCode" type="xsdLocal:string20"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ListPriceTypeCode" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgLatestReleasedFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BundleSequenceReadOnlyFlag" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="BonusThreshold" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MinSalePrice" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Part" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Cost" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMDummyField1" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDummyField2" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDummyField3" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDummyField4" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMHQNodePublish" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ComplexProductPricingModelName" type="xsdLocal:string75"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Name" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="VolumeDiscount" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PriceListStartDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:simpleType name="string250">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="250"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string50">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="50"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string255">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="255"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string75">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="75"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string15">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="15"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string30">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="30"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string1">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="1"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string100">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="100"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string20">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="20"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+</xsd:schema>

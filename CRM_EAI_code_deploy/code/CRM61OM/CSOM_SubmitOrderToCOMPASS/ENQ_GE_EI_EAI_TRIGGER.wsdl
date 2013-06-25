@@ -1,0 +1,21 @@
+<?binding.jca ENQ_GE_EI_EAI_TRIGGER_mq.jca?>
+<definitions name="ENQ_GE_EI_EAI_TRIGGER" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerENQ_GE_EI_EAI_TRIGGER/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/mq/header" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/headerENQ_GE_EI_EAI_TRIGGER/" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="submitOrder_plt">
+        <plt:role name="submitOrder_role">
+            <plt:portType name="tns:submitOrder_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" schemaLocation="EAI.MSG.CS.OM.127_FixedLengthUTF8Message.xsd"/>
+        </schema>
+    </types>
+    <message name="UTF8Message_msg">
+        <part name="UTF8Message" element="imp1:UTF8Message"/>
+    </message>
+    <portType name="submitOrder_ptt">
+        <operation name="submitOrder">
+            <input message="tns:UTF8Message_msg"/>
+        </operation>
+    </portType>
+</definitions>

@@ -1,0 +1,44 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TOM_ValidateQuoteStatus" revision="1.0" state="on">
+    <import location="TOM_ValidateQuoteStatus.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ProcessQuoteStatus/TF_ProcessQuoteStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOM_ValidateQuoteStatusStub/TOM_ValidateQuoteStatusStub.wsdl" importType="wsdl"/>
+    <service name="anchorToValidateQuoteStatus" ui:wsdlLocation="TOM_ValidateQuoteStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus#wsdl.interface(TOM_ValidateQuoteStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus#wsdl.endpoint(TOM_ValidateQuoteStatus/TOM_ValidateQuoteStatus)"/>
+    </service>
+    <component name="TOM_ValidateQuoteStatus">
+        <implementation.bpel src="TOM_ValidateQuoteStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="TF_ProcessQuoteStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ProcessQuoteStatus/TF_ProcessQuoteStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.interface(TF_ProcessQuoteStatus)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.interface(TF_ProcessQuoteStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.endpoint(TF_ProcessQuoteStatus/TF_ProcessQuoteStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ProcessQuoteStatus/anchorToProcessQuoteStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.endpoint(TF_ProcessQuoteStatus/TF_ProcessQuoteStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="TOM_ValidateQuoteStatusStub" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOM_ValidateQuoteStatusStub/TOM_ValidateQuoteStatusStub.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub#wsdl.interface(TOM_ValidateQuoteStatusStub)"/>
+        <binding.ws port="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub#wsdl.endpoint(TOM_ValidateQuoteStatusStub/TOM_ValidateQuoteStatusStub)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOM_ValidateQuoteStatusStub/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>anchorToValidateQuoteStatus</source.uri>
+        <target.uri>TOM_ValidateQuoteStatus/anchorToValidateQuoteStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOM_ValidateQuoteStatus/TF_ProcessQuoteStatus</source.uri>
+        <target.uri>TF_ProcessQuoteStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOM_ValidateQuoteStatus/TOM_ValidateQuoteStatusStub</source.uri>
+        <target.uri>TOM_ValidateQuoteStatusStub</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

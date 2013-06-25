@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions 
+    name="ELMOMPolling"
+    targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/ELMOMPolling/"
+    xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/ELMOMPolling/"
+    xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+    xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+    xmlns:pc="http://xmlns.oracle.com/pcbpel/"
+    xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/ELMOMPolling"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/ELMOMPolling"
+                schemaLocation="ELMOMPolling_table.xsd"/>
+        </schema>
+    </types>
+
+    <message name="ElmomPollingVCollection_msg">
+        <part name="ElmomPollingVCollection" element="top:ElmomPollingVCollection"/>
+    </message>
+
+    <portType name="ELMOMPolling_ptt">
+        <operation name="receive">
+            <input message="tns:ElmomPollingVCollection_msg"/>
+        </operation>
+    </portType>
+
+    <binding name="ELMOMPolling_binding" type="tns:ELMOMPolling_ptt">
+        <pc:inbound_binding/>
+        <operation name="receive">
+            <jca:operation
+                ActivationSpec="oracle.tip.adapter.db.DBActivationSpec"
+
+                DescriptorName="ELMOMPolling.ElmomPollingV"
+                QueryName="ELMOMPolling"
+                PollingStrategyName="LogicalDeletePollingStrategy"
+                MarkReadFieldName="STATE"
+                MarkReadValue="P"
+                SequencingFieldName="ID"
+                MaxRaiseSize="1"
+                MaxTransactionSize="unlimited"
+                PollingInterval="5"
+                NumberOfThreads="1"
+                UseBatchDestroy="false"
+                ReturnSingleResultSet="false"
+                MappingsMetaDataURL="ELMOMPolling_toplink_mappings.xml" />
+        <input/>
+        </operation>
+    </binding>
+
+    <!-- Your runtime connection is declared in
+        J2EE_HOME/application-deployments/default/DbAdapter/oc4j-ra.xml
+        These 'mcf' properties here are from your design time connection and 
+        save you from having to edit that file and restart the application server
+        if eis/DB/BangDevEAIOwner is missing.
+        These 'mcf' properties are safe to remove.
+    -->
+    <service name="ELMOMPolling">
+        <port name="ELMOMPolling_pt" binding="tns:ELMOMPolling_binding">
+            <jca:address location="eis/DB/BangDevEAIOwner"
+                UIConnectionName="BangDevEAIOwner"
+                ManagedConnectionFactory="oracle.tip.adapter.db.DBManagedConnectionFactory"
+                mcf.DriverClassName="oracle.jdbc.OracleDriver"
+                mcf.PlatformClassName="oracle.toplink.platform.database.oracle.Oracle10Platform"
+                mcf.ConnectionString="jdbc:oracle:thin:@//10.136.164.152:1521/EAIDEV"
+                mcf.UserName="EAIOWNER"
+                mcf.Password="52A6748D527438D7E4D51970AAD5C6BC"
+            />
+        </port>
+    </service>
+
+    <plt:partnerLinkType name="ELMOMPolling_plt" >
+        <plt:role name="ELMOMPolling_role" >
+            <plt:portType name="tns:ELMOMPolling_ptt" />
+        </plt:role>
+    </plt:partnerLinkType>
+
+</definitions>

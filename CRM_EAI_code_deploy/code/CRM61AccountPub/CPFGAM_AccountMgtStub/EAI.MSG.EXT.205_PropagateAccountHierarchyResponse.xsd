@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.EXT.111_BasicResponse.xsd
+* Type:        XSD Schema
+*
+* Description: Generic Basic response for all interface calls
+*
+* Change History
+* Version            Date       Author              		Description Of Change
+*
+*  	0.01       23/03/07     Rob Billington   		Initial Version
+*  	0.02	   18/04/07	Kevin Wood			Added Eai Header
+*  	0.03	   04/03/08	Rob Billington			Removed references to GCAP Common Types and defined all types locally
+**********************************************************************************-->
+<xsd:schema xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/AccountManagementServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/AccountManagementServices" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.03">
+	<xsd:complexType name="BasicResponse">
+		<xsd:sequence>
+   <xsd:element name="eaiHeader" type="local:EaiHeader"/>
+   <xsd:element name="response" type="local:Response"/>
+			<xsd:element name="responseCode" type="local:ResponseCode"/>
+			<xsd:element name="responseMessage" type="local:Message"/>
+  </xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="ActionCode">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableActionCode">
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="UpdateType">
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="EntityStatusCode">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="12"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ResponseCode">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="250"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ErrorCode">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Message">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+        
+	<xsd:element name="eaiHeader" type="local:EaiHeader"/>
+	<xsd:complexType name="EaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="local:string10"/>
+			<xsd:element name="transactionId" type="local:string30"/>
+			<xsd:element name="messageId" type="local:string30"/>
+			<xsd:element name="messageHistory" type="local:string100"/>
+			<xsd:element name="tracingId" type="local:string50" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="local:string40" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="local:string3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="Response">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="0"/>
+			<xsd:enumeration value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string15">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+<xsd:element name="basicResponse" type="local:BasicResponse"/>
+</xsd:schema>

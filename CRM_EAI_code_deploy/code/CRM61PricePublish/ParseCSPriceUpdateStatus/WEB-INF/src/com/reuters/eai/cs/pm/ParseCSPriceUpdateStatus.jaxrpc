@@ -1,0 +1,89 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<jdevws:WebService xmlns:jdevws="http://xmlns.oracle.com/jdeveloper/10130/webservice">
+   <list n="CHILD_NODES">
+      <url path="../../../../../../../public_html/WEB-INF/wsdl/ParseCSPriceUpdateStatus.wsdl"/>
+      <url path="ParseCSPriceUpdateStatus_PortType.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/pm/priceupdate/Response.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/fixedlengthresponse/FixedLengthMessage.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/pm/priceupdate/_CSPriceUpdateStatus.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/pm/priceupdate/_CSEaiHeader.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/pm/priceupdate/_CSBasicResponse.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/pm/priceupdate/_CSCompassMessageHeader.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/pm/priceupdate/_CSPriceUpdateReqHeader.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/pm/priceupdate/_CSPriceUpdateReqLineItem.java"/>
+      <url path="../../../../../../../public_html/WEB-INF/ParseCSPriceUpdateStatus-java-wsdl-mapping.xml"/>
+      <url path="ParseCSPriceUpdateStatus.java"/>
+   </list>
+   <hash n="DATA_MODEL">
+      <value n="ATTACHMENT_ENCODING" v="ATTACHMENT_MIME"/>
+      <list n="BD_">
+         <hash>
+            <value n="BD_DEFAULT_DOCUMENT_WRAPPED" v="false"/>
+            <value n="BOUND_PORT_TYPE" v="{http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser}ParseCSPriceUpdateStatus"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPBinding"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser}ParseCSPriceUpdateStatusSOAP"/>
+            <list n="OP_BINDINGS">
+               <hash>
+                  <value n="BD_SOAP_ACTION" v="urn:#NewOperation"/>
+                  <value n="BD_SOAP_INPUT_USE" v="1"/>
+                  <value n="BD_SOAP_OUTPUT_USE" v="1"/>
+                  <value n="BD_SOAP_STYLE" v="1"/>
+                  <value n="BOUND_OPERATION" v="com.reuters.ns._2007._09._01.gcap.eai.cs.pm.priceupdate._CSPriceUpdateStatus.parsePriceUpdateStatus.com.reuters.ns._2007._09._01.gcap.eai.cs.fixedlengthresponse.FixedLengthMessage"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPOperationBinding"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+         </hash>
+      </list>
+      <list n="custom_schema_urls">
+         <url path="../../../../../../../../files/EAI.MSG.CS.PM.210_PriceUpdateStatus.xsd"/>
+         <url path="../../../../../../../../../files/EAI.MSG.CS.209_FixedLengthEBCDICMessage.xsd"/>
+      </list>
+      <value n="GUID" v="4d344921-0119-1000-801e-0a0288f51487"/>
+      <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaWebService"/>
+      <list n="PO_">
+         <hash>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPPort"/>
+            <value n="NAME" v="parsePriceUpdateStatus"/>
+            <value n="PORT_BINDING_NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser}ParseCSPriceUpdateStatusSOAP"/>
+            <list n="PORT_OPS">
+               <hash>
+                  <value n="EXPOSED_BD_OPERATION" v="com.reuters.ns._2007._09._01.gcap.eai.cs.pm.priceupdate._CSPriceUpdateStatus.parsePriceUpdateStatus.com.reuters.ns._2007._09._01.gcap.eai.cs.fixedlengthresponse.FixedLengthMessage"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.PortOperation"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+         </hash>
+      </list>
+      <hash n="PROPERTY_GROUPS">
+         <hash n="WSDL_TO_JAVA_PROPERTIES">
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.WSDLToJavaProperties"/>
+            <value n="WSDL2JAVA_DEFAULT_PACKAGE" v="com.reuters.eai.cs.pm"/>
+            <value n="WSDL2JAVA_UNWRAP_PARAMETERS" v="false"/>
+         </hash>
+      </hash>
+      <list n="PT_">
+         <hash>
+            <value n="AUTO_SERVICE_INTERFACE"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaPortType"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser}ParseCSPriceUpdateStatus"/>
+            <hash n="PROPERTY_GROUPS"/>
+            <value n="PT_CLASS" v="com.reuters.eai.cs.pm.ParseCSPriceUpdateStatus"/>
+            <value n="PT_SERVICE_INTERFACE" v="com.reuters.eai.cs.pm.ParseCSPriceUpdateStatus_PortType"/>
+         </hash>
+      </list>
+      <url n="TARGET_PROJECT" path="../../../../../../../ParseCSPriceUpdateStatus.jpr"/>
+      <url n="WS_MAPPING_FILE" path="../../../../../../../public_html/WEB-INF/ParseCSPriceUpdateStatus-java-wsdl-mapping.xml"/>
+      <value n="WS_TARGET_NAMESPACE" v="http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser"/>
+      <value n="WS_URI" v="ParseCSPriceUpdateStatus"/>
+      <list n="WSDL_DEPENDENT_FILES">
+         <url path="../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CS.PM.210_PriceUpdateStatus.xsd"/>
+         <url path="../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CS.209_FixedLengthEBCDICMessage.xsd"/>
+      </list>
+   </hash>
+</jdevws:WebService>

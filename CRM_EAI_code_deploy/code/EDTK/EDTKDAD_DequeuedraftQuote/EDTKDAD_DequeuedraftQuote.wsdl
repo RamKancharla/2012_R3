@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="EDTKDAD_DequeuedraftQuote"
+             targetNamespace="http://xmlns.oracle.com/EDTKDAD_DequeuedraftQuote"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://xmlns.oracle.com/EDTKDAD_DequeuedraftQuote"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://xmlns.oracle.com/EDTKDAD_DequeuedraftQuote" schemaLocation="EDTKDAD_DequeuedraftQuote.xsd" />
+		</schema>
+	</types>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<message name="EDTKDAD_DequeuedraftQuoteRequestMessage">
+		<part name="payload" element="client:EDTKDAD_DequeuedraftQuoteProcessRequest"/>
+	</message>
+
+	<message name="EDTKDAD_DequeuedraftQuoteResponseMessage">
+		<part name="payload" element="client:EDTKDAD_DequeuedraftQuoteProcessResponse"/>
+	</message>
+
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- portType implemented by the EDTKDAD_DequeuedraftQuote BPEL process -->
+	<portType name="EDTKDAD_DequeuedraftQuote">
+		<operation name="initiate">
+			<input message="client:EDTKDAD_DequeuedraftQuoteRequestMessage"/>
+		</operation>
+	</portType>
+
+	<!-- portType implemented by the requester of EDTKDAD_DequeuedraftQuote BPEL process
+	for asynchronous callback purposes
+	-->
+	<portType name="EDTKDAD_DequeuedraftQuoteCallback">
+		<operation name="onResult">
+			<input message="client:EDTKDAD_DequeuedraftQuoteResponseMessage"/>
+		</operation>
+	</portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	the EDTKDAD_DequeuedraftQuote partnerLinkType binds the provider and
+	requester portType into an asynchronous conversation.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<plnk:partnerLinkType name="EDTKDAD_DequeuedraftQuote">
+		<plnk:role name="EDTKDAD_DequeuedraftQuoteProvider">
+			<plnk:portType name="client:EDTKDAD_DequeuedraftQuote"/>
+		</plnk:role>
+		<plnk:role name="EDTKDAD_DequeuedraftQuoteRequester">
+			<plnk:portType name="client:EDTKDAD_DequeuedraftQuoteCallback"/>
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

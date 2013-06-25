@@ -1,0 +1,14 @@
+<adapter-config name="InsertIntoInterfaceBuffer" adapter="Database Adapter" wsdlLocation="InsertIntoInterfaceBuffer.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="Connection1" adapterRef=""/>
+  <endpoint-interaction portType="InsertIntoInterfaceBuffer_ptt" operation="insert">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="InsertIntoInterfaceBuffer.InterfaceBuffer"/>
+      <property name="DmlType" value="insert"/>
+      <property name="MappingsMetaDataURL" value="InsertIntoInterfaceBuffer-or-mappings.xml"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="GetActiveUnitOfWork" value="false"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

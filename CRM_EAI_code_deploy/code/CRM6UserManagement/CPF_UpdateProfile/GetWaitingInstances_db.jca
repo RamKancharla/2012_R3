@@ -1,0 +1,21 @@
+<adapter-config name="GetWaitingInstances" adapter="Database Adapter" wsdlLocation="GetWaitingInstances.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/XRef" UIConnectionName="BPELDBEAIDEV2" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.internal.databaseaccess.Oracle9Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//ukcq-eaidev2:1521/EAIDEV2"/>
+      <property name="UserName" value="ORABPEL"/>
+      <property name="Password" value="8C235AE69AF16FA3FF4A0F9962A941B9"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="GetWaitingInstances_ptt" operation="GetWaitingInstances">
+    <interaction-spec className="oracle.tip.adapter.db.DBPureSQLInteractionSpec">
+      <property name="SqlString" value="select conv_id from SOA_SOAINFRA.dlv_subscription  where composite_name = 'CPFGOM_UserOrderManager' and operation_name = 'updateUserProfile' and state = 0 and properties like #CorrelationString and rownum &lt; 2"/>
+    </interaction-spec>
+    <input/>
+    <output/>
+  </endpoint-interaction>
+
+</adapter-config>

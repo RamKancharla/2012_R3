@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TRUSTAM_PropagateAccount.wsdl" name="anchorToTRUSTAM_PropagateAccount">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount#wsdl.interface(TRUSTAM_PropagateAccount)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTAM_AccountManager/TRUSTAM_AccountManager.wsdl" name="TRUSTAM_AccountManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.interface(TRUSTAM_AccountManager)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.interface(TRUSTAM_AccountManagerCallback)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="OrderLineStatus" xmlns="http://xmlns.oracle.com/dvm">
+<description>DVM description</description><columns><column name="CSOrdeLineStatus"/><column name="SiebelOrderLineStatus"/><column name="Description"/><column name="EAIOrderLineStatus"/><column name="SAPOrderLineStatus"/></columns>
+<rows><row><cell>UC</cell><cell>User Created</cell><cell>User created order line status</cell><cell>User Created</cell><cell/></row>
+<row><cell>RFB - NA</cell><cell>Ready for Billing</cell><cell>Ready for Billing - NA for CS Status</cell><cell>Ready for Billing</cell><cell/></row>
+<row><cell>P</cell><cell>Permissioned</cell><cell>Permissioning / De-permissioning complete</cell><cell>Permissioned</cell><cell/></row>
+<row><cell>PMC - NA</cell><cell>Pending Manual Permissioning</cell><cell>Pending Manual Permissioning - NA for CS Status</cell><cell>Pending Manual Permissioning</cell><cell/></row>
+<row><cell>PAC - NA</cell><cell>Pending Auto Permissioning</cell><cell>Pending Auto Permissioning - NA for CS Status</cell><cell>Pending Auto Permissioning</cell><cell/></row>
+<row><cell>PAB-NA</cell><cell>Pending Auto Billing</cell><cell>Pending Auto Billing - NA for CS</cell><cell>Pending Auto Billing</cell><cell/></row>
+<row><cell>C</cell><cell>Pending Auto Permissioning</cell><cell>Contract Signed - Submitted for Automatic billing if applicable</cell><cell>Contract Signed</cell><cell/></row>
+<row><cell>S</cell><cell>NA</cell><cell>Billing Released Twice from Siebe;- need to suppress this message in EAI</cell><cell>Billing Released Twice</cell><cell/></row>
+<row><cell>F</cell><cell>Release to Bill Error</cell><cell>Billing Faliure, Permissioning/De-permissioning complete</cell><cell>Billing Failure (P)</cell><cell/></row>
+<row><cell>G</cell><cell>BF</cell><cell>Billing Failure</cell><cell>Billing Failure</cell><cell/></row>
+<row><cell>B</cell><cell>Complete</cell><cell>Billing Released</cell><cell>Billed</cell><cell>0</cell></row>
+<row><cell>F</cell><cell>Release to Bill Error</cell><cell>Billing Faliure, Permissioning/De-permissioning complete</cell><cell>Release to Bill Error</cell><cell>1</cell></row>
+</rows></dvm>

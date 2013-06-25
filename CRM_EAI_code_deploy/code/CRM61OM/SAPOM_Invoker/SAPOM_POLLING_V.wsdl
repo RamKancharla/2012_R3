@@ -1,0 +1,21 @@
+<?binding.jca SAPOM_POLLING_V_db.jca?>
+<definitions name="SAPOM_POLLING_V" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/SAPOM_POLLING_V/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/SAPOM_POLLING_V/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/SAPOMPOLLINGV">
+    <plt:partnerLinkType name="SAPOM_POLLING_V_plt">
+        <plt:role name="SAPOM_POLLING_V_role">
+            <plt:portType name="tns:SAPOM_POLLING_V_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/SAPOMPOLLINGV" schemaLocation="SAPOMPOLLINGV_table.xsd"/>
+        </schema>
+    </types>
+    <message name="SapomPollingVCollection_msg">
+        <part name="SapomPollingVCollection" element="top:SapomPollingVCollection"/>
+    </message>
+    <portType name="SAPOM_POLLING_V_ptt">
+        <operation name="receive">
+            <input message="tns:SapomPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

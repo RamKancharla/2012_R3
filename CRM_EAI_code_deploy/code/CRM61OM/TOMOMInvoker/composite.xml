@@ -1,0 +1,67 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy" xmlns:ui="http://xmlns.oracle.com/soa/designer/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" mode="active" name="TOMOMInvoker" revision="1.0" state="on">
+    <import location="TOMOMInvoker.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker"/>
+    <import location="TOMRef.wsdl" namespace="http://schemas.hp.com/SM/7"/>
+    <import location="INTERFACE_BUFFER.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/InterfaceManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" importType="wsdl"/>
+    <service name="TOMOMInvoker" ui:wsdlLocation="TOMOMInvoker.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvokerCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvoker)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.endpoint(TOMOMInvoker/TOMOMInvoker)"/>
+    </service>
+    <component name="TOMOMInvokerProcess">
+        <implementation.bpel src="TOMOMInvokerProcess.bpel"/>
+        <property name="preference.maxTimeoutOnCreateQuoteProductsAsyncResponse">P0Y0M0DT1H0M0S</property>
+        <property name="preference.maxTimeoutOnCreateQuoteAsyncResponse">P0Y0M0DT1H0M0S</property>
+        
+        
+    </component>
+    <reference name="SequenceReleaser" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="InterfaceManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+        <binding.ws port="http://xmlns.oracle.com/InterfaceManager#wsdl.endpoint(InterfaceManager/InterfaceManager)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="TOM" ui:wsdlLocation="TOMRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://schemas.hp.com/SM/7#wsdl.interface(TOM)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="TOMRef.wsdl" port="http://schemas.hp.com/SM/7#wsdl.endpoint(TOM/TOM)">
+            <wsp:PolicyReference  orawsp:category="security"  orawsp:status="enabled"  URI="oracle/wss_http_token_client_policy"/>
+			<property name="oracle.webservices.auth.password">${tom.Password}</property>
+            <property name="oracle.webservices.auth.username">${tom.iuserorders}</property>
+        </binding.ws>
+    </reference>
+    <reference name="INTERFACE_BUFFER" ui:wsdlLocation="INTERFACE_BUFFER.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/#wsdl.interface(INTERFACE_BUFFER_ptt)"/>
+        <binding.jca config="INTERFACE_BUFFER_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>TOMOMInvoker</source.uri>
+        <target.uri>TOMOMInvokerProcess/TOMOMInvoker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMOMInvokerProcess/InterfaceManager</source.uri>
+        <target.uri>InterfaceManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMOMInvokerProcess/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMOMInvokerProcess/INTERFACE_BUFFER</source.uri>
+        <target.uri>INTERFACE_BUFFER</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMOMInvokerProcess/TOM</source.uri>
+        <target.uri>TOM</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

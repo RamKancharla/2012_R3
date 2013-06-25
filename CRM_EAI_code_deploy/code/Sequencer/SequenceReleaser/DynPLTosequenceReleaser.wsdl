@@ -1,0 +1,168 @@
+<definitions
+     name="DynPLToSequenceReleaser"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/DynPLToSequenceReleaser"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/DynPLToSequenceReleaser"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" schemaLocation="EAI.MSG.UTL.187_ReleaseSequenceRequest.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </schema>
+    </types>
+
+    <message name="DynPLToSequenceReleaserRequestMessage">
+        <part name="orderStatus" element="ns1:EBCDICMessage"/>
+    </message>
+    <message name="ReleaseSequenceMessage">
+        <part name="releaseSequence" element="ns4:basicResponse"/>
+    </message>
+        <message name="ReleaseSequenceMessageType">
+        <part name="relSequencePart" element="ns4:basicResponse"/>
+    </message>
+
+    <portType name="DynPLToSequenceReleaser">
+        <operation name="releaseSequence">
+            <input name="input" message="client:ReleaseSequenceMessageType"/>
+        </operation>
+        <operation name="updateReleaseStatus">
+            <input name="input" message="client:ReleaseSequenceMessage"/>
+        </operation>
+         <operation name="releaseTOMOrderStatus">
+            <input name="input" message="client:ReleaseSequenceMessage"/>
+        </operation>
+         <operation name="releaseOrderBatcher">
+            <input name="input" message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+
+    <plnk:partnerLinkType name="DynPLToSequenceReleaser">
+        <plnk:role name="DynPLToSequenceReleaserProvider">
+            <plnk:portType name="client:DynPLToSequenceReleaser"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <binding name="DynPLToSequenceReleaserSOAP" type="client:DynPLToSequenceReleaser">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="updateReleaseStatus">
+            <soap:operation soapAction="updateReleaseStatus"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+         <operation name="releaseTOMOrderStatus">
+            <soap:operation soapAction="releaseTOMOrderStatus"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+	         <operation name="releaseSequence">
+            <soap:operation soapAction="releaseSequence"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+	         <operation name="releaseOrderBatcher">
+            <soap:operation soapAction="releaseOrderBatcher"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="CCRMOM_SubmitUserOrderRequest">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_SubmitUserOrderRequest/anchorToCCRMOM_SubmitUserOrderRequest"/>
+        </port>
+    </service>
+    <service name="CSOM_TransformOrderStatus">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformOrderStatus/CSOM_TransformOrderStatus"/>
+        </port>
+    </service>
+    <service name="CCRMOP_PublishOpportunity">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_PublishOpportunity/anchorToCCRMOP_PublishOpportunity"/>
+        </port>
+    </service>
+    <service name="TRUSTAM_AccountManager">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTAM_AccountManager/TRUSTAM_AccountManager"/>
+        </port>
+    </service>
+        <service name="TF_ManageOrderLineStatus">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/anchorToTF_ManageOrderLineStatus"/>
+        </port>
+    </service>
+     <service name="CPF_UpdateProfile">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UserManagementService"/>            
+        </port>
+    </service>
+     <service name="CPFGAM_AccountManager">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGAM_AccountManager/CPFGAM_AccountManager"/>            
+        </port>
+    </service>
+     <service name="SFDCAM_AccountEventManager">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SFDCAM_AccountEventManager/SFDCAM_AccountEventManager"/>            
+        </port>
+    </service>
+    <service name="TRUSTOP_OpportunityManager">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTOP_OpportunityManager/anchorToTRUSTOP_OpportunityManager"/>            
+        </port>
+    </service>
+     <service name="TOMCM_ContactManager">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMCM_ContactManager/TOMCM_ContactManager"/>            
+        </port>
+    </service> 
+    <service name="CCRMOM_ProxyPropagateOrderStatus">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/anchorToProxyPropagateOrderStatus"/>            
+        </port>
+    </service>
+     <service name="CPFGOM_UserOrderManager">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager"/>            
+        </port>
+    </service>
+      <service name="TF_OrderDispatcher">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_OrderDispatcher/anchorToTFDispatcher"/>            
+        </port>
+    </service>
+     <service name="CSOM_OrderBatcher">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderBatcher/CSOM_OrderBatcher"/>            
+        </port>
+    </service>
+    <service name="TOMAM_AccountManager">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMAM_AccountManager/TOMAM_AccountManager"/>            
+        </port>
+    </service>
+        <service name="CCRMPM_PropagatePriceUpdateStatus">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UserManagementService"/>            
+        </port>
+    </service>
+    <service name="AsyncSequenceChecker">
+        <port name="DynPLToSequenceReleaser" binding="client:DynPLToSequenceReleaserSOAP">
+            <soap:address location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client"/>            
+        </port>
+    </service>
+    </definitions>

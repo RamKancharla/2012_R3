@@ -1,0 +1,19 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="CCRMMG_SubmitTicketProcessRequest">
+		<complexType>
+			<sequence>
+				<element name="input" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="CCRMMG_SubmitTicketProcessResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

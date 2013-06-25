@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:	EAI.MSG.TT.MG.272_MigrationStatus.xsd
+*				
+* Type:		XML Schema Document
+* Description:	Schema for Migration Status from MST Team Track
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		02/04/2009	S GANNAVARAPU			Initial Version
+*
+*
+*************************************************************************/-->
+
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	    xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigrationUpdate"	    
+	    xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+	    xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+	    targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigrationUpdate"
+	    elementFormDefault="qualified" attributeFormDefault="unqualified"
+            version="0.01">
+<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+              schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	      <xsd:element name="migrationStatus" type="xsdLocal:MigrationStatus"/>
+			<xsd:complexType name="MigrationStatus">
+				<xsd:sequence>
+					<xsd:element name="eaiHeader" minOccurs="0" type="cmt:EaiHeader" nillable="true"/>
+					<xsd:element name="Status" minOccurs="0" type="xsd:string" nillable="true"/>
+					<xsd:element name="UUID" minOccurs="0" type="xsd:string" nillable="true"/>
+					<xsd:element name="ProductName" minOccurs="0" type="xsd:string" nillable="true"/>
+					<xsd:element name="CRMActivityID" minOccurs="0" type="xsd:string" nillable="true"/>
+					<xsd:element name="Field1" minOccurs="0" type="xsd:string" nillable="true"/>
+					<xsd:element name="Field2" minOccurs="0" type="xsd:string" nillable="true"/>
+					<xsd:element name="Field3" minOccurs="0" type="xsd:string" nillable="true"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			
+			
+		</xsd:schema>

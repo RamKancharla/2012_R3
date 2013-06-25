@@ -1,0 +1,73 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules"
+     elementFormDefault="qualified" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance"
+     xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules"
+     version="1.0">
+    <xsd:element name="orderLineRepository" type="xsdLocal:OrderLineRepositoryType"/>
+    <xsd:complexType name="OrderLineRepositoryType">
+        <xsd:sequence>
+            <xsd:element name="OrderLineStatusFacts" type="xsdLocal:OrderLineStatusFactsType" minOccurs="0"
+                 maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OrderLineStatusFactsType">
+        <xsd:sequence>
+            <xsd:element name="messageHeaderActionCode" type="xsd:string"/>
+            <xsd:element name="CRMOLIId" type="xsd:string"/>
+            <xsd:element name="businessCase" type="xsd:string"/>
+            <xsd:element name="actionCode" type="xsd:string"/>
+            <xsd:element name="rootItemId" type="xsd:string"/>
+            <xsd:element name="itemNumber" type="xsd:string"/>
+            <xsd:element name="ILA" type="xsd:string"/>
+            <xsd:element name="userNumber" type="xsd:string"/>
+            <xsd:element name="userId" type="xsd:string"/>
+            <xsd:element name="QUID" type="xsd:string"/>
+            <xsd:element name="orderLinestatus" type="xsd:string"/>
+            <xsd:element name="orderPermissionStatus" type="xsd:string"/>
+            <xsd:element name="requestStatus" type="xsd:string"/>
+            <xsd:element name="assetIntegrationId" type="xsd:string"/>
+            <xsd:element name="billingIntegrationFlag" type="xsd:string"/>
+            <xsd:element name="permissioningIntegrationFlag" type="xsd:string"/>
+            <xsd:element name="permissioningSystem" type="xsd:string"/>
+            <xsd:element name="manualPermissioningRequired" type="xsd:string"/>
+            <xsd:element name="STB" type="xsd:string"/>
+            <xsd:element name="freeTrailFlag" type="xsd:string"/>
+            <xsd:element name="manualPermissioningComplete" type="xsd:string"/>
+            <xsd:element name="autoPermissioningComplete" type="xsd:string"/>
+            <xsd:element name="nextAction1" type="xsd:string"/>
+            <xsd:element name="nextAction2" type="xsd:string"/>
+            <xsd:element name="billingStatusToBeSent" type="xsd:string"/>
+            <xsd:element name="orderPermissionStatusToBeSent" type="xsd:string"/>
+            <xsd:element name="SID" type="xsd:string"/>
+            <xsd:element name="userIdType" type="xsd:string"/>
+            <xsd:element name="billingPlatform" type="xsd:string"/>
+            <xsd:element name="field1" type="xsd:string"/>
+            <xsd:element name="field2" type="xsd:string"/>
+            <xsd:element name="field3" type="xsd:string"/>
+            <xsd:element name="SAPItemNumber" type="xsd:string"/>
+            <xsd:element name="SAPOrderNumber" type="xsd:string"/>
+            <xsd:element name="serverId" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
+<!--********************************************************************************
+    * Module:      EAI.MSG.OM.191_OrderLineStatusFacts.xsd
+    * Type:        XSD Schema
+    * Description: Schema used to define the facts for rule engine
+    *
+    * Change History
+    * Version           Date      Author                Description Of Change
+    *
+    * 0.1               03/12/07  Surya Gannavarapu     Initial Version
+    * 0.2               21/01/08  Sunil Vuppala             Added orderPermissionStatusToBeSent and changed statusToBeSent to orderLineStatusToBeSent
+    * 0.3               25/01/08  Surya Gannavarapu     Added BillingIntegrationFlag and  PermissioningIntegrationFlag
+    * 0.4               04/02/08  Surya Gannavarapu     Added orderLineActionCode and messageHeaderActionCode as part of State model changes.
+    * 0.5               20/02/08  Surya Gannavarapu	 Added permissioningSystem,maualPermissioningRequired,manualPermissioningComplete and autoPermissioningComplete,nextAction1,nextAction2 and removed nextAction
+    * 0.6               10/03/08  Surya Gannavarapu     Made all the facts array
+    * 0.7               12/03/08  Surya Gannavarapu     Added Business Case field
+    * 0.8               18/08/08  Sreeja		Added SID in OrderLineStatusFactsType
+    * 0.9		20/08/08  Surya Gananvarapu	Modified SID type to String and added userIdType field
+    * 1.0		14/10/08  Surya Gannavarapu     Added Billing Platform and 3 buffer fields for the defect 19646.
+    * 1.1		22/07/10  Mallesh               Added SAPItemNumber and SAPOrderNumber for the defect 149.
+    * 1.2		06/10/10  Ramanjana             Added serverId as part of CR 5862
+    **********************************************************************************-->

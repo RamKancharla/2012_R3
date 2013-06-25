@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"  targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:element name="distinctNextActions" type="xsdLocal:DistinctNextActions"/>
+	<xsd:complexType name="DistinctNextActions">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="xsd:string"/>
+			<xsd:element name="nextAction" type="xsdLocal:NextAction" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="NextAction">
+		<xsd:sequence>
+			<xsd:element name="nextAction1" type="xsdLocal:NextAction1" maxOccurs="unbounded"/>
+			<xsd:element name="nextAction2" type="xsdLocal:NextAction2" maxOccurs="unbounded"/>
+			<xsd:element name="nextAction3" type="xsdLocal:NextAction3" maxOccurs="unbounded"/>
+			<xsd:element name="nextAction4" type="xsdLocal:NextAction4" maxOccurs="unbounded"/>
+			<xsd:element name="nextAction5" type="xsdLocal:NextAction5" maxOccurs="unbounded"/>
+            	</xsd:sequence>
+        </xsd:complexType>
+        <xsd:complexType name="NextAction1">
+			<xsd:sequence>
+				<xsd:element name="value" type="xsd:string"/>
+	            	</xsd:sequence>
+        </xsd:complexType>
+        <xsd:complexType name="NextAction2">
+			<xsd:sequence>
+				<xsd:element name="value" type="xsd:string"/>
+	            	</xsd:sequence>
+        </xsd:complexType>
+        <xsd:complexType name="NextAction3">
+			<xsd:sequence>
+				<xsd:element name="value" type="xsd:string"/>
+	            	</xsd:sequence>
+        </xsd:complexType>
+        <xsd:complexType name="NextAction4">
+			<xsd:sequence>
+				<xsd:element name="value" type="xsd:string"/>
+	            	</xsd:sequence>
+        </xsd:complexType>
+        <xsd:complexType name="NextAction5">
+			<xsd:sequence>
+				<xsd:element name="value" type="xsd:string"/>
+	            	</xsd:sequence>
+        </xsd:complexType>
+</xsd:schema>

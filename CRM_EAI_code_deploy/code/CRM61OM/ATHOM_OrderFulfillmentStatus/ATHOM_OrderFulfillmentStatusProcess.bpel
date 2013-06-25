@@ -1,0 +1,377 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ Oracle JDeveloper BPEL Designer 
+* Module:      ATHOM_OrderFulfillmentstatus.bpel
+* Description: Synchronous BPEL Process that validates the xml
+* Change History
+* Version      Date         Author                      Description Of Change 
+*  0.1        20/08/10      Swapna Pampana              IntialVersion (Created as per CR 5862 ,Athena Asynchronous Response Flow)
+*  0.2        06/10/10      Ramanjana                   Modified TransOrderFulfillStatusToManageOrderLineStatus.xsl and TransOrderFulFillmentStatusToOrderFulFillmentStub.xsl to map serverId        
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHOM_OrderFulfillmentStatusProcess" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" xmlns:ns7="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheServ/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ns8="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="ATHOM_OrderFulfillmentStatus" partnerLinkType="client:ATHOM_OrderFulfillmentStatus" myRole="ATHOM_OrderFulfillmentStatusProvider"/>
+        <partnerLink name="ATHOM_OrderFulfillmentStatusStub" partnerRole="ATHOM_OrderFulfillmentStatusStubProvider" partnerLinkType="ns3:ATHOM_OrderFulfillmentStatusStub"/>
+        <partnerLink myRole="OM_ManageOrderLineStatusRequester" name="OM_ManageOrderLineStatus" partnerRole="OM_ManageOrderLineStatusProvider" partnerLinkType="ns4:OM_ManageOrderLineStatus"/>
+        <partnerLink name="AdpOrderCacheServ" partnerRole="AdpOrderCacheServ_role" partnerLinkType="ns5:AdpOrderCacheServ_plt"/>
+        <partnerLink myRole="CSOM_COMPASSOrderFulfilmentRequester" name="CSOM_COMPASSOrderFulfilment" partnerRole="CSOM_COMPASSOrderFulfilmentProvider" partnerLinkType="ns8:CSOM_COMPASSOrderFulfilment"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="rcvOrderFulfillmentStatus" messageType="client:ATHOM_OrderFulfillmentStatusRequestMessage"/>
+        <variable name="outputVariable" messageType="client:ATHOM_OrderFulfillmentStatusResponseMessage"/>
+        <variable name="InvOrderFulfillment" messageType="ns3:ATHOM_OrderFulfillmentStatusStubRequestMessage"/>
+        <variable name="Index" type="xsd:nonNegativeInteger"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvManageOrderLineStatusIV" messageType="ns4:OM_ManageOrderLineStatusRequestMessage"/>
+        <variable name="InvOrderCacheUpdAutoPermCompltStatusIV" messageType="ns5:OrderCacheCollection_msg"/>
+        <variable name="ReplyOrderFulfillmentStatusOV" messageType="client:ATHOM_OrderFulfillmentStatusResponseMessage"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ATHOM_OrderFulfillmentStatus.wsdl) -->
+        <scope name="ScpOrderFulfillment">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <bpelx:exec name="AsgRemotFault" language="java" version="1.5">
+                        <![CDATA[String orderNo ="";             
+String title="";           
+try             
+{             
+orderNo = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("rcvOrderFulfillmentStatus", "payload", "/ns1:userProvisionResponse/ns1:userMessageHeader/ns1:orderNumber")).getFirstChild().getNodeValue();                                   
+title=(orderNo!=null ? orderNo+ "Fault" : "null");                     
+setCompositeInstanceTitle(title);             
+           
+}             
+catch(Exception e)             
+{             
+setCompositeInstanceTitle("null");             
+}]]>
+                    </bpelx:exec>
+                </catch>
+                <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+                    <bpelx:exec name="AsgSelectingFailure" language="java" version="1.5">
+                        <![CDATA[String orderNo ="";              
+String title="";            
+try              
+{              
+orderNo = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("rcvOrderFulfillmentStatus", "payload", "/ns1:userProvisionResponse/ns1:userMessageHeader/ns1:orderNumber")).getFirstChild().getNodeValue();                                    
+title=(orderNo!=null ? orderNo+ "Fault" : "null");                  
+setCompositeInstanceTitle(title);              
+            
+}              
+catch(Exception e)              
+{              
+setCompositeInstanceTitle("null");              
+}]]>
+                    </bpelx:exec>
+                </catch>
+                <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+                    <sequence name="Sequence_3">
+                        <assign name="TransRcvOrderStatusToReplyOrderStatus">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransRcvOrderStatusToReplyOrderStatus.xsl',bpws:getVariableData('rcvOrderFulfillmentStatus','payload'))"/>
+                                <to variable="ReplyOrderFulfillmentStatusOV" part="payload"/>
+                            </copy>
+                        </assign>
+                        <assign name="AssignErrorMsg">
+                            <copy>
+                                <from variable="runtimeFault" part="summary"/>
+                                <to part="payload" query="/ns1:userInfoMessage/ns1:messageBody/ns1:ErrorMsg" variable="ReplyOrderFulfillmentStatusOV"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catch>
+                <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+                    <bpelx:exec name="AsgBindingFault" language="java" version="1.5">
+                        <![CDATA[String orderNo ="";               
+String title="";             
+try               
+{               
+orderNo = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("rcvOrderFulfillmentStatus", "payload", "/ns1:userProvisionResponse/ns1:userMessageHeader/ns1:orderNumber")).getFirstChild().getNodeValue();                                     
+title=(orderNo!=null ? orderNo+ "Fault" : "null");                   
+setCompositeInstanceTitle(title);               
+             
+}               
+catch(Exception e)               
+{               
+setCompositeInstanceTitle("null");               
+}]]>
+                    </bpelx:exec>
+                </catch>
+                <catchAll>
+                    <bpelx:exec name="AsgGenericFault" language="java" version="1.5">
+                        <![CDATA[String orderNo ="";                
+String title="";              
+try                
+{                
+orderNo = ((oracle.xml.parser.v2.XMLElement)                                   
+                        getVariableData("rcvOrderFulfillmentStatus", "payload", "/ns1:userProvisionResponse/ns1:userMessageHeader/ns1:orderNumber")).getFirstChild().getNodeValue();                                      
+title=(orderNo!=null ? orderNo+ "Fault" : "null");                    
+setCompositeInstanceTitle(title);                
+              
+}                
+catch(Exception e)                
+{                
+setCompositeInstanceTitle("null");                
+}]]>
+                    </bpelx:exec>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="SeqSplitter">
+                <receive name="RcvOrderStatus" partnerLink="ATHOM_OrderFulfillmentStatus" portType="client:ATHOM_OrderFulfillmentStatus" operation="validateFulfillment" variable="rcvOrderFulfillmentStatus" createInstance="yes"/>
+                <assign name="AsgInitialVariables">
+                    <copy>
+                        <from expression="ora:generateGUID()"/>
+                        <to variable="rcvOrderFulfillmentStatus" part="payload" query="/ns1:userProvisionResponse/ns1:eaiHeader/ns2:tracingId"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getCompositeInstanceId()"/>
+                        <to variable="rcvOrderFulfillmentStatus" part="payload" query="/ns1:userProvisionResponse/ns1:eaiHeader/ns2:messageId"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getCompositeInstanceId()"/>
+                        <to variable="rcvOrderFulfillmentStatus" part="payload" query="/ns1:userProvisionResponse/ns1:eaiHeader/ns2:instanceId"/>
+                    </copy>
+                    <copy>
+                        <from expression="1"/>
+                        <to variable="Index"/>
+                    </copy>
+                </assign>
+                <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+                    <![CDATA[try{    
+    
+String orderNumber = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("rcvOrderFulfillmentStatus", "payload", "/ns1:userProvisionResponse/ns1:userMessageHeader/ns1:orderNumber")).getFirstChild().getNodeValue();                                   
+String Title=(orderNumber!=null ? ("orderNumber: "+ orderNumber) : ".;");                                          
+setCompositeInstanceTitle(Title);    
+}    
+catch(Exception e){    
+setCompositeInstanceTitle("orderNumber: ");    
+}]]>
+                </bpelx:exec>
+                <scope name="ValidateXML">
+                    <faultHandlers>
+                        <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+                            <throw name="ThrowinvalidVariables" faultName="bpelx:invalidVariables" faultVariable="runtimeFault"/>
+                        </catch>
+                    </faultHandlers>
+                    <sequence name="Sequence_1">
+                        <assign name="TransOrderFulFillmentStatusToOrderFulFillmentStub">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransOrderFulFillmentStatusToOrderFulFillmentStub.xsl',bpws:getVariableData('rcvOrderFulfillmentStatus','payload'))"/>
+                                <to variable="InvOrderFulfillment" part="payload"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvATHOM_OrderFulfillmentStub" partnerLink="ATHOM_OrderFulfillmentStatusStub" portType="ns3:ATHOM_OrderFulfillmentStatusStub" operation="validateUserProvision" inputVariable="InvOrderFulfillment"/>
+                    </sequence>
+                </scope>
+                <scope name="InvOMManageOrderLineStatus">
+                    <variables>
+                        <variable name="varManageOrderLineStatusRequest" messageType="ns4:OM_ManageOrderLineStatusRequestMessage"/>
+                        <variable name="varMessageBodyCount" type="xsd:int"/>
+                        <variable name="varPLICount" type="xsd:int"/>
+                        <variable name="varFirstOLI" type="xsd:int"/>
+                        <variable name="varNewUserRequest" messageType="ns4:ExtendedOrderStatusMessage"/>
+                        <variable name="varCompassOrder" messageType="ns8:CSOM_COMPASSOrderFulfilmentRequestMessage"/>
+                    </variables>
+                    <switch name="Switch_1">
+                        <case condition="bpws:getVariableData('rcvOrderFulfillmentStatus','payload','/ns1:userProvisionResponse/ns1:userMessageHeader/ns1:RequestStage')='COMPLETION' or (bpws:getVariableData('rcvOrderFulfillmentStatus','payload','/ns1:userProvisionResponse/ns1:userMessageBody/ns1:TransactionStatus')='FAILED')">
+                            <sequence name="SeqTransUserProvRespToManageOrderLineStatus">
+                                <!--assign name="AsgMessageBodyCount">
+                                    <copy>
+                                        <from expression="1"/>
+                                        <to variable="varMessageBodyCount"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="1"/>
+                                        <to variable="varFirstOLI"/>
+                                    </copy>
+                                </assign>
+                                <while name="While_MessageBody"
+                                       condition="bpws:getVariableData('varMessageBodyCount')&lt;=count(bpws:getVariableData('rcvOrderFulfillmentStatus','payload','/ns1:userProvisionResponse/ns1:userMessageBody'))">
+                                    <sequence name="SeqMessageBody">
+                                        <assign name="AsgPLICount">
+                                            <copy>
+                                                <from expression="1"/>
+                                                <to variable="varPLICount"/>
+                                            </copy>
+                                        </assign>
+                                        <while name="While_PortfolioList"
+                                               condition="bpws:getVariableData('varPLICount')&lt;=bpws:getVariableData('rcvOrderFulfillmentStatus','payload','/ns1:userProvisionResponse/ns1:userMessageBody[$varMessageBodyCount]/ns1:portfolioList')">
+                                            <sequence name="SeqPLI">
+                                                <switch name="ChkFirstOLI">
+                                                    <case condition="bpws:getVariableData('varFirstOLI')=1">
+                                                        <assign name="CopyUserDetailsToOLI">
+                                                            <copy>
+                                                                <from variable="rcvOrderFulfillmentStatus"
+                                                                      part="payload"
+                                                                      query="/ns1:userProvisionResponse/ns1:userMessageBody[$varMessageBodyCount]/ns1:ReferenceSystemUserId"/>
+                                                                <to variable="varManageOrderLineStatusRequest"
+                                                                    part="payload"
+                                                                    query="/ns7:orderStatus/ns7:orderLineItem/ns7:CRMOLIId"/>
+                                                            </copy>
+                                                            <copy>
+                                                                <from variable="rcvOrderFulfillmentStatus"
+                                                                      part="payload"
+                                                                      query="/ns1:userProvisionResponse/ns1:userMessageBody[$varMessageBodyCount]/ns1:portfolioList[$varPLICount]/ns1:productLineReferenceNumber"/>
+                                                                <to variable="varManageOrderLineStatusRequest"
+                                                                    part="payload"
+                                                                    query="/ns7:orderStatus/ns7:orderLineItem/ns7:CRMOLIId"/>
+                                                            </copy>
+                                                            <copy>
+                                                                <from expression="0"/>
+                                                                <to variable="varFirstOLI"/>
+                                                            </copy>
+                                                        </assign>
+                                                    </case>
+                                                    <otherwise>
+                                                        <assign name="InsertUserDetailsToOLI">
+                                                            <bpelx:insertAfter>
+                                                                <bpelx:from variable="rcvOrderFulfillmentStatus"
+                                                                            part="payload"
+                                                                            query="/ns1:userProvisionResponse/ns1:userMessageBody[$varMessageBodyCount]/ns1:portfolioList[$varPLICount]/ns1:productLineReferenceNumber"/>
+                                                                <bpelx:to variable="varManageOrderLineStatusRequest"
+                                                                          part="payload"
+                                                                          query="/ns7:orderStatus/ns7:orderLineItem/ns7:CRMOLIId"/>
+                                                            </bpelx:insertAfter>
+                                                        </assign>
+                                                    </otherwise>
+                                                </switch>
+                                                <assign name="AsgIncrementPLICount">
+                                                    <copy>
+                                                        <from expression="bpws:getVariableData('varPLICount')+1"/>
+                                                        <to variable="varPLICount"/>
+                                                    </copy>
+                                                </assign>
+                                            </sequence>
+                                        </while>
+                                        <assign name="AsgIncrementMessageBodyCount">
+                                            <copy>
+                                                <from expression="bpws:getVariableData('varMessageBodyCount')+1"/>
+                                                <to variable="varMessageBodyCount"/>
+                                            </copy>
+                                        </assign>
+                                    </sequence>
+                                </while-->
+                                <assign name="TransOrderFulfillStatusToManageOrderLineStatus">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransOrderFulfillStatusToManageOrderLineStatus.xsl',bpws:getVariableData('rcvOrderFulfillmentStatus','payload'))"/>
+                                        <to variable="InvManageOrderLineStatusIV" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransOrderStatusToOrderCacheCollection">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransOrderfulfillStatusToOrderCacheCollection.xsl',bpws:getVariableData('rcvOrderFulfillmentStatus','payload'))"/>
+                                        <to variable="InvOrderCacheUpdAutoPermCompltStatusIV" part="OrderCacheCollection"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransOrderFulfillmentToNewUserRequest">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransOrderFulfillmentToNewUserRequest.xsl',bpws:getVariableData('InvManageOrderLineStatusIV','payload'))"/>
+                                        <to variable="varNewUserRequest" part="extendedOrderStatus"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransNewUserRequestToCompassOrder">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransNewUserRequestToCompassOrder.xsl',bpws:getVariableData('varNewUserRequest','extendedOrderStatus'))"/>
+                                        <to variable="varCompassOrder" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvOrderCacheUpdAutoPermCompltStatus" partnerLink="AdpOrderCacheServ" portType="ns5:AdpOrderCacheServ_ptt" operation="update" inputVariable="InvOrderCacheUpdAutoPermCompltStatusIV"/>
+                                <scope name="ScpNewUserRequestToCompassOrderFulfillment">
+                                    
+                                    <sequence name="SeqNewUserRequestToCompassOrder">
+                                        <switch name="IfNewUser">
+                                            <case condition="count(bpws:getVariableData('varCompassOrder','orderRequest','/ns9:compassOrder/ns9:orderLineItem'))>0">
+                                                <sequence name="SeqInvCompassOrderFulfillment">
+                                                    <invoke name="InvCompassOrderFulfillment" partnerLink="CSOM_COMPASSOrderFulfilment" portType="ns8:CSOM_COMPASSOrderFulfilment" operation="transformOrder" inputVariable="varCompassOrder"/>
+                                                </sequence>
+                                            </case>
+                                            <otherwise>
+                                                <empty name="DoNothing"/>
+                                            </otherwise>
+                                        </switch>
+                                    </sequence>
+                                </scope>
+                                <assign name="TransSetNullData">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransSetNullData.xsl',bpws:getVariableData('InvManageOrderLineStatusIV','payload'))"/>
+                                        <to variable="InvManageOrderLineStatusIV" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvManageOrderLineStatus" partnerLink="OM_ManageOrderLineStatus" portType="ns4:OM_ManageOrderLineStatus" operation="manageOrderLineStatus" inputVariable="InvManageOrderLineStatusIV"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>
+                </scope>
+                <assign name="TransOrderFulfillReqToOrderFulfillRes">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransOrderFulfillReqToOrderFulfillRes.xsl',bpws:getVariableData('rcvOrderFulfillmentStatus','payload'))"/>
+                        <to variable="ReplyOrderFulfillmentStatusOV" part="payload"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <reply name="RplOrderFulfillmentStatusOut" partnerLink="ATHOM_OrderFulfillmentStatus" portType="client:ATHOM_OrderFulfillmentStatus" operation="validateFulfillment" variable="ReplyOrderFulfillmentStatusOV"/>
+    </sequence>
+</process>

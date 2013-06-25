@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="MQServiceStatusCheck" revision="1.0" mode="active" state="on" xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <import location="MQServiceStatusCheck.wsdl" namespace="http://xmlns.oracle.com/MQServiceStatusCheck"/>
+    <import location="SuccessDatabseUpdateAdapter.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/SuccessDatabseUpdateAdapter/"/>
+    <import location="QueueDownDatabseUpdateAdapter.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/QueueDownDatabseUpdateAdapter/"/>
+    <import location="MQAdapterToCheckQueueStatus.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerMQAdapterToCheckQueueStatus/"/>
+    <service ui:wsdlLocation="MQServiceStatusCheck.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/MQServiceStatusCheck#wsdl.interface(MQServiceStatusCheck)" callbackInterface="http://xmlns.oracle.com/MQServiceStatusCheck#wsdl.interface(MQServiceStatusCheckCallback)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://xmlns.oracle.com/MQServiceStatusCheck#wsdl.endpoint(MQServiceStatusCheck/MQServiceStatusCheck)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+    </service>
+    <component name="MQServiceStatusCheck">
+        <implementation.bpel src="MQServiceStatusCheck.bpel"/>
+    </component>
+    <reference ui:wsdlLocation="QueueDownDatabseUpdateAdapter.wsdl" name="QueueDownDatabseUpdateAdapter">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/QueueDownDatabseUpdateAdapter/#wsdl.interface(QueueDownDatabseUpdateAdapter_ptt)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="QueueDownDatabseUpdateAdapter_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference ui:wsdlLocation="MQAdapterToCheckQueueStatus.wsdl" name="MQAdapterToCheckQueueStatus">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerMQAdapterToCheckQueueStatus/#wsdl.interface(Enqueue_ptt)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="MQAdapterToCheckQueueStatus_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference ui:wsdlLocation="SuccessDatabseUpdateAdapter.wsdl" name="SuccessDatabseUpdateAdapter">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/SuccessDatabseUpdateAdapter/#wsdl.interface(SuccessDatabseUpdateAdapter_ptt)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="SuccessDatabseUpdateAdapter_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>MQServiceStatusCheck/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>MQServiceStatusCheck/MQAdapterToCheckQueueStatus</source.uri>
+        <target.uri>MQAdapterToCheckQueueStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>MQServiceStatusCheck/QueueDownDatabseUpdateAdapter</source.uri>
+        <target.uri>QueueDownDatabseUpdateAdapter</target.uri>
+    </wire>
+    <wire>
+        <source.uri>MQServiceStatusCheck/SuccessDatabseUpdateAdapter</source.uri>
+        <target.uri>SuccessDatabseUpdateAdapter</target.uri>
+    </wire>
+</composite>

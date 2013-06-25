@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://license.thomsonreuters.com/AccountEntry" xmlns:tns="http://license.thomsonreuters.com/AccountEntry" elementFormDefault="qualified">
+
+    <complexType name="AccountEntry">
+    	<sequence>
+    		<element name="Account" type="string"></element>
+    		<element name="Site" type="string"></element>
+    		<element name="SiebelAccountRowId" type="string"></element>
+    		<element name="Address" type="string"></element>
+    		<element name="City" type="string"></element>
+    		<element name="SubscriberNo" type="string"></element>
+    		<element name="State" type="string"></element>
+    		<element name="Country" type="string"></element>
+    		<element name="AccountNumber" type="string"></element>
+    		<element name="AccountHeirachyType" type="string"></element>
+    		<element name="AccountFamily" type="string"></element>
+    		<element name="Status" type="string"></element>
+    		<element name="Region" type="string"></element>
+    		<element name="InternalAccountFlag" type="boolean"></element>
+    	</sequence>
+    </complexType>
+</schema>

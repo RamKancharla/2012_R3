@@ -1,0 +1,15 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xs:schema targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/DBService" xmlns="http://xmlns.oracle.com/pcbpel/adapter/db/DBService" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="DBServiceInput" type="DBServiceInput"/>
+   <xs:complexType name="DBServiceInput">
+      <xs:sequence>
+         <xs:element name="ELECTRONICFULFIL_REQ_ID" type="xs:decimal" nillable="true"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:element name="DBServiceOutput" type="DBServiceOutput"/>
+   <xs:complexType name="DBServiceOutput">
+      <xs:sequence>
+         <xs:element name="COUNT___" type="xs:decimal" nillable="true"/>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>

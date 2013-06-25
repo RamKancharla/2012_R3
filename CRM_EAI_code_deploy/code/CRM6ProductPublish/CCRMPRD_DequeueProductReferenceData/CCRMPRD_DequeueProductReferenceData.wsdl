@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CCRMPRD_DequeueProductReferenceData"
+             targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_DequeueProductReferenceData"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_DequeueProductReferenceData"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<types>
+	</types>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<message name="CCRMPRD_DequeueProductReferenceDataRequestMessage">
+		<part name="payload" element="client:CCRMPRD_DequeueProductReferenceDataProcessRequest"/>
+	</message>
+
+	<message name="CCRMPRD_DequeueProductReferenceDataResponseMessage">
+		<part name="payload" element="client:CCRMPRD_DequeueProductReferenceDataProcessResponse"/>
+	</message>
+
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- portType implemented by the CCRMPRD_DequeueProductReferenceData BPEL process -->
+	<portType name="CCRMPRD_DequeueProductReferenceData">
+		<operation name="initiate">
+			<input message="client:CCRMPRD_DequeueProductReferenceDataRequestMessage"/>
+		</operation>
+	</portType>
+
+	<!-- portType implemented by the requester of CCRMPRD_DequeueProductReferenceData BPEL process
+	for asynchronous callback purposes
+	-->
+	<portType name="CCRMPRD_DequeueProductReferenceDataCallback">
+		<operation name="onResult">
+			<input message="client:CCRMPRD_DequeueProductReferenceDataResponseMessage"/>
+		</operation>
+	</portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	the CCRMPRD_DequeueProductReferenceData partnerLinkType binds the provider and
+	requester portType into an asynchronous conversation.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<plnk:partnerLinkType name="CCRMPRD_DequeueProductReferenceData">
+		<plnk:role name="CCRMPRD_DequeueProductReferenceDataProvider">
+			<plnk:portType name="client:CCRMPRD_DequeueProductReferenceData"/>
+		</plnk:role>
+		<plnk:role name="CCRMPRD_DequeueProductReferenceDataRequester">
+			<plnk:portType name="client:CCRMPRD_DequeueProductReferenceDataCallback"/>
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service name="CSACM_AccountContactManager"
+             ui:wsdlLocation="CSACM_AccountContactManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_AccountContactManager#wsdl.interface(CSACM_AccountContactManager)"/>
+    </service>
+    <reference ui:wsdlLocation="TransformAccountContactPublishToCSFormat.wsdl" name="TransAccountContactPublishToCSFormat">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter#wsdl.interface(TransformAccountContactRequest)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMAM_PublishAccountRequestValidatorStub/CCRMAM_PublishAccountRequestValidatorStub.wsdl" name="CCRMAM_PublishAccountRequestValidatorStub">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CCRMAM_PublishAccountRequestValidatorStub#wsdl.interface(CCRMAM_PublishAccountRequestValidatorStub)"/>
+    </reference>
+    <reference ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSWrapper.wsdl" name="SubmitOrderToCOMPASSRS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMACM_PropagateAccountContactPublishStatus/CCRMACM_PropagateAccountContactPublishStatus.wsdl" name="CCRMACM_PropagateAccountContactPublishStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatus)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatusCallback)"/>
+    </reference>
+</componentType>

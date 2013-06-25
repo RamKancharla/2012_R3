@@ -1,0 +1,133 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMTF_PropogateQuoteStatus.bpel 
+* Type:        BPEL FILE 
+* Description: ASynchronous BPEL Process that invokes the SIEBEL web service to send quote status.
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         29/10/07     ANVV Sharma             Initial Version 
+*  1.1         31/10/07     Sunil V                 Added exception handling and sensors.
+*  1.2         03/01/08     sunil V                 Added titles as part of Christmas work
+*  1.3         07/02/08     Raju V                  Implimented schema changes as part of PBI 244
+*  1.4         20/08/08     anvv sharma             Implimented wsdl changes 'allocatedIndividualCRMContactId' as part of PBI-872
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMTF_PropagateQuoteStatus" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonQuoteTypes" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul" xmlns:ns3="http://www.siebel.com/xml/RCRM%20Quote%20External" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToPropogateQuoteStatus" partnerLinkType="client:CCRMTF_PropagateQuoteStatus" myRole="CCRMTF_PropagateQuoteStatusProvider" partnerRole="CCRMTF_PropagateQuoteStatusRequester"/>
+        <partnerLink name="RCRMReceiveQuoteApproval" partnerRole="RCRMReceiveQuoteApproval_Role" partnerLinkType="ns2:RCRMReceiveQuoteApproval_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="propagateQuoteStatusRequest" messageType="client:CCRMTF_PropagateQuoteStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CCRMTF_PropagateQuoteStatusResponseMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="errorMessage" type="xsd:string"/>
+        <variable name="RCRMReceiveQuoteApprovalIV" messageType="ns2:RCRMReceiveQuoteApproval_Input"/>
+        <variable name="RCRMReceiveQuoteApprovalOV" messageType="ns2:RCRMReceiveQuoteApproval_Output"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[String quoteNo = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:quoteNumber")).getFirstChild().getNodeValue();        
+String status = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:vettingStatus")).getFirstChild().getNodeValue();        
+setCompositeInstanceTitle("Q: " + quoteNo + "; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String quoteNo = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:quoteNumber")).getFirstChild().getNodeValue();        
+String status = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:vettingStatus")).getFirstChild().getNodeValue();        
+setCompositeInstanceTitle("Q: " + quoteNo + "; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String quoteNo = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:quoteNumber")).getFirstChild().getNodeValue();        
+String status = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:vettingStatus")).getFirstChild().getNodeValue();        
+setCompositeInstanceTitle("Q: " + quoteNo + "; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericError" language="java" version="1.5">
+                <![CDATA[String quoteNo = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:quoteNumber")).getFirstChild().getNodeValue();        
+String status = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:vettingStatus")).getFirstChild().getNodeValue();        
+setCompositeInstanceTitle("Q: " + quoteNo + "; Fault");]]>
+            </bpelx:exec>
+            <assign name="AsgGenericErrorMessage">
+                <copy>
+                    <from expression="'UnKnownError'"/>
+                    <to variable="errorMessage"/>
+                </copy>
+            </assign>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMTF_PropagateQuoteStatus.wsdl) -->
+        <receive name="rcvPropagateQuoteRequest" partnerLink="anchorToPropogateQuoteStatus" portType="client:CCRMTF_PropagateQuoteStatus" operation="sendVettingStatus" variable="propagateQuoteStatusRequest" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <scope name="ScopePropogateStatus">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrPropogateStatusRemoteFault" faultName="bpelx:PropogateStatusRemoteFault" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqPropogateStatus">
+                <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+                    <![CDATA[String quoteNo = ((oracle.xml.parser.v2.XMLElement)                           
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:quoteNumber")).getFirstChild().getNodeValue();       
+String status = ((oracle.xml.parser.v2.XMLElement)                           
+                        getVariableData("propagateQuoteStatusRequest","PropagateQuoteStatusRequest","/ns1:vettingStatus/ns1:response/ns5:vettingStatus")).getFirstChild().getNodeValue();       
+    
+setCompositeInstanceTitle("Q: " + quoteNo + "; ST: " + status);]]>
+                </bpelx:exec>
+                <assign name="TransPropagateQuoteTOCCRM">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransPropagateQuoteTOCCRM.xsl',bpws:getVariableData('propagateQuoteStatusRequest','PropagateQuoteStatusRequest'))"/>
+                        <to part="RCRMReceiveQuoteApproval_Input" variable="RCRMReceiveQuoteApprovalIV"/>
+                    </copy>
+                </assign>
+                <invoke name="InvRCRMReceiveQuoteApproval" partnerLink="RCRMReceiveQuoteApproval" portType="ns2:RCRMReceiveQuoteApproval" operation="RCRMReceiveQuoteApproval" inputVariable="RCRMReceiveQuoteApprovalIV" outputVariable="RCRMReceiveQuoteApprovalOV"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

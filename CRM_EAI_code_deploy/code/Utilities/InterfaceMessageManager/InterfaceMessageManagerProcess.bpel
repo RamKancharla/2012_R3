@@ -1,0 +1,149 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Nov 06 17:55:35 GMT 2009
+  Author:  rob.billington
+  Purpose: Synchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="InterfaceMessageManagerProcess" targetNamespace="http://xmlns.oracle.com/InterfaceMessageManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFERSelectByInterfaceIDAndReferenceID" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://xmlns.oracle.com/InterfaceMessageManager" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID/" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="INTERFACE_BUFFER" partnerRole="INTERFACE_BUFFER_role" partnerLinkType="ns1:INTERFACE_BUFFER_plt"/>
+    <partnerLink myRole="InterfaceMessageManagerProvider" name="InterfaceMessageManager" partnerLinkType="client:InterfaceMessageManager"/>
+    <partnerLink name="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID" partnerRole="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID_role" partnerLinkType="ns3:INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID_plt"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="InvSelectByID_IV" messageType="ns1:INTERFACE_BUFFERSelect_ID_inparameters"/>
+    <variable name="InvSelectByID_OV" messageType="ns1:InterfaceBufferCollection_msg"/>
+    <variable name="merge_InputVariable" messageType="ns1:InterfaceBufferCollection_msg"/>
+    <variable name="outputVariable" messageType="client:responseMessage"/>
+    <variable name="InputVariable" messageType="client:requestMessage"/>
+    <variable name="SelectByInterfaceIDAndReferenceID_InputVariable" messageType="ns3:INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceIDSelect_InterfaceID_ReferenceID_inparameters"/>
+    <variable name="SelectByInterfaceIDAndReferenceID_OutputVariable" messageType="ns3:InterfaceBufferCollection_msg"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in InterfaceMessageManager.wsdl) -->
+    <receive name="receiveInput" partnerLink="InterfaceMessageManager" portType="client:InterfaceMessageManager" operation="process" variable="InputVariable" createInstance="yes"/>
+    <!-- Generate reply to synchronous request -->
+    <assign name="AsgUpdatedBy">
+      <copy>
+        <from expression="ora:getCompositeInstanceId()"/>
+        <to variable="merge_InputVariable" part="InterfaceBufferCollection" query="/ns2:InterfaceBufferCollection/ns2:InterfaceBuffer/ns2:updatedBy"/>
+      </copy>
+    </assign>
+    <switch name="SwitchOnOperation">
+      <case condition="bpws:getVariableData('InputVariable','payload','/client:request/client:operation') = 'getMessageSummariesByInterfaceAndReferenceID'">
+        <sequence name="Sequence_4">
+          <assign name="AsgGetByInterfaceAndReferenceID">
+            <copy>
+              <from variable="InputVariable" part="payload" query="/client:request/client:InterfaceMessageManagerProcessRequest/ns2:InterfaceBuffer/ns2:interfaceId"/>
+              <to variable="SelectByInterfaceIDAndReferenceID_InputVariable" part="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceIDSelect_InterfaceID_ReferenceID_inparameters" query="/ns4:INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceIDSelect_InterfaceID_ReferenceIDInputParameters/ns4:InterfaceID"/>
+            </copy>
+            <copy>
+              <from variable="InputVariable" part="payload" query="/client:request/client:InterfaceMessageManagerProcessRequest/ns2:InterfaceBuffer/ns2:referenceId"/>
+              <to variable="SelectByInterfaceIDAndReferenceID_InputVariable" part="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceIDSelect_InterfaceID_ReferenceID_inparameters" query="/ns4:INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceIDSelect_InterfaceID_ReferenceIDInputParameters/ns4:ReferenceID"/>
+            </copy>
+          </assign>
+          <invoke name="InvSelectByInterfaceIDAndReferenceID" partnerLink="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID" portType="ns3:INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID_ptt" operation="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceIDSelect_InterfaceID_ReferenceID" inputVariable="SelectByInterfaceIDAndReferenceID_InputVariable" outputVariable="SelectByInterfaceIDAndReferenceID_OutputVariable"/>
+          <assign name="TransSelectByInterfaceAndReferenceID">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:processXSLT('TransSelectByInterfaceAndReferenceID.xsl',bpws:getVariableData('SelectByInterfaceIDAndReferenceID_OutputVariable','InterfaceBufferCollection'))"/>
+              <to variable="outputVariable" part="payload"/>
+            </copy>
+          </assign>
+        </sequence>
+      </case>
+      <case condition="bpws:getVariableData('InputVariable','payload','/client:request/client:operation') = 'updateSendAttemptsByID'">
+        <bpelx:annotation>
+          <bpelx:pattern>updateSendAttemptsByID</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_3">
+          <assign name="AsgUpdateSendAttempts">
+            <copy>
+              <from variable="InputVariable" part="payload" query="/client:request/client:InterfaceMessageManagerProcessRequest/ns2:InterfaceBuffer/ns2:sendAttempts"/>
+              <to variable="merge_InputVariable" part="InterfaceBufferCollection" query="/ns2:InterfaceBufferCollection/ns2:InterfaceBuffer/ns2:sendAttempts"/>
+            </copy>
+            <copy>
+              <from variable="InputVariable" part="payload" query="/client:request/client:InterfaceMessageManagerProcessRequest/ns2:InterfaceBuffer/ns2:id"/>
+              <to variable="merge_InputVariable" part="InterfaceBufferCollection" query="/ns2:InterfaceBufferCollection/ns2:InterfaceBuffer/ns2:id"/>
+            </copy>
+          </assign>
+          <invoke name="InvMerge" partnerLink="INTERFACE_BUFFER" portType="ns1:INTERFACE_BUFFER_ptt" operation="merge" inputVariable="merge_InputVariable"/>
+        </sequence>
+      </case>
+      <case condition="bpws:getVariableData('InputVariable','payload','/client:request/client:operation') = 'updateMessageStateByID'">
+        <bpelx:annotation>
+          <bpelx:pattern>setMessagestatusByID</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_2">
+          <assign name="AsgUpdateState">
+            <copy>
+              <from variable="InputVariable" query="/client:request/client:InterfaceMessageManagerProcessRequest/ns2:InterfaceBuffer/ns2:id" part="payload"/>
+              <to variable="merge_InputVariable" part="InterfaceBufferCollection" query="/ns2:InterfaceBufferCollection/ns2:InterfaceBuffer/ns2:id"/>
+            </copy>
+            <copy>
+              <from variable="InputVariable" query="/client:request/client:InterfaceMessageManagerProcessRequest/ns2:InterfaceBuffer/ns2:state" part="payload"/>
+              <to variable="merge_InputVariable" part="InterfaceBufferCollection" query="/ns2:InterfaceBufferCollection/ns2:InterfaceBuffer/ns2:state"/>
+            </copy>
+          </assign>
+          <invoke name="InvMerge" partnerLink="INTERFACE_BUFFER" portType="ns1:INTERFACE_BUFFER_ptt" operation="merge" inputVariable="merge_InputVariable"/>
+        </sequence>
+      </case>
+      <case condition="bpws:getVariableData('InputVariable','payload','/client:request/client:operation') = 'getMessageByID'">
+        <bpelx:annotation>
+          <bpelx:pattern>getMessageByID</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_1">
+          <assign name="AsgSelectByIDInput">
+            <copy>
+              <from variable="InputVariable" query="/client:request/client:InterfaceMessageManagerProcessRequest/ns2:InterfaceBuffer/ns2:id" part="payload"/>
+              <to variable="InvSelectByID_IV" part="INTERFACE_BUFFERSelect_ID_inparameters" query="/ns2:INTERFACE_BUFFERSelect_IDInputParameters/ns2:ID"/>
+            </copy>
+          </assign>
+          <invoke name="InvSelectByID" partnerLink="INTERFACE_BUFFER" portType="ns1:INTERFACE_BUFFER_ptt" operation="INTERFACE_BUFFERSelect_ID" inputVariable="InvSelectByID_IV" outputVariable="InvSelectByID_OV"/>
+          <assign name="AsgResponse">
+            <copy>
+              <from variable="InvSelectByID_OV" part="InterfaceBufferCollection" query="/ns2:InterfaceBufferCollection"/>
+              <to variable="outputVariable" query="/client:response/client:InterfaceMessageManagerProcessResponse" part="payload"/>
+            </copy>
+          </assign>
+        </sequence>
+      </case>
+      <otherwise>
+        <terminate name="UnknownOperation"/>
+      </otherwise>
+    </switch>
+    <reply name="replyOutput" partnerLink="InterfaceMessageManager" portType="client:InterfaceMessageManager" operation="process" variable="outputVariable"/>
+  </sequence>
+</process>

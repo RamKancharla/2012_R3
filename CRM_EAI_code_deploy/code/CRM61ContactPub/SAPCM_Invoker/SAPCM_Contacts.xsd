@@ -1,0 +1,9 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xs:schema targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/SAPCM_Contacts" xmlns="http://xmlns.oracle.com/pcbpel/adapter/db/SAPCM_Contacts" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="SAPCM_ContactsInput" type="SAPCM_ContactsInput"/>
+   <xs:complexType name="SAPCM_ContactsInput">
+      <xs:sequence>
+         <xs:element name="ID" type="xs:decimal" nillable="true"/>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>

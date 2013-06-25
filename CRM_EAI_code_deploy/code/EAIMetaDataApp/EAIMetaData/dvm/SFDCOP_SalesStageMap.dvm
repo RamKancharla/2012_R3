@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="SFDCOP_SalesStageMap" xmlns="http://xmlns.oracle.com/dvm">
+<description>Map of Siebel Sales Stage values to those used in Salesforce.com.
+
+Used by:
+- SFDCOP_Invoker
+- CCRMOP_Invoker-TRUSTOP_PublishOpportunity</description><columns><column name="Siebel"/><column name="SFDC"/></columns>
+<rows>
+<row><cell>01 - Identify</cell><cell>1. Qualification</cell></row>
+<row><cell>02 - Qualify</cell><cell>2. Sales Presentation</cell></row>
+<row><cell>03 - Demonstrate/Trial</cell><cell>3. Trial / Pilot</cell></row>
+<row><cell>04 - Proposal/Expected Cancel</cell><cell>4. Proposal / Expected Cancel</cell></row>
+<row><cell>05 - Negotiate/Await Signature</cell><cell>5. Negotiate</cell></row>
+<row><cell>06 - Order Placed</cell><cell>6. Order Placed</cell></row>
+<row><cell>07 - Order Completed</cell><cell>7. Order Complete</cell></row>
+<row><cell>08 - Closed - No Order</cell><cell>8. Closed / No Order</cell></row>
+</rows></dvm>

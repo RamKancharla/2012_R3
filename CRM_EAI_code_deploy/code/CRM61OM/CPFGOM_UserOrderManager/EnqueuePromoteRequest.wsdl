@@ -1,0 +1,65 @@
+<definitions
+     name="EnqueuePromoteRequest"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/jms/EnqueuePromoteRequest/"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/jms/EnqueuePromoteRequest/"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+     xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+     xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/jms/"
+    >
+    <import namespace="http://xmlns.oracle.com/pcbpel/adapter/jms/" location="jmsAdapterOutboundHeader.wsdl"/>
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish" schemaLocation="EAI.MSG.CM.197_ContactEvent.xsd" />
+      </schema>
+    </types>
+    <message name="contactEvent_msg">
+        <part name="contactEvent" element="imp1:contactEvent"/>
+    </message>
+    <portType name="Produce_Message_ptt">
+        <operation name="Produce_Message">
+            <input message="tns:contactEvent_msg"/>
+        </operation>
+    </portType>
+    <binding name="Produce_Message_binding" type="tns:Produce_Message_ptt">
+    <jca:binding  />
+        <operation name="Produce_Message">
+      <jca:operation
+          InteractionSpec="oracle.tip.adapter.jms.outbound.JmsProduceInteractionSpec"
+          DestinationName="java:comp/resource/JMSAQ/Topics/JMSUSER.JMS_CONTACT_TOPIC"
+          DeliveryMode="Persistent"
+          TimeToLive="0"
+          PayloadType="TextMessage"
+          OpaqueSchema="false" >
+      </jca:operation>
+      <input>
+        <jca:header message="hdr:OutboundHeader_msg" part="outboundHeader"/>
+      </input>
+        </operation>
+    </binding>
+    <service name="EnqueuePromoteRequest">
+        <port name="Produce_Message_pt" binding="tns:Produce_Message_binding">
+<!--Your runtime connection is declared in 
+J2EE_HOME/application-deployments/default/JMSAdapter/oc4j-ra.xml 
+These mcf properties here are from your design time connection and 
+save you from having to edit that file and restart the application server 
+if eis/Jms/JMSAQ is missing. 
+These mcf properties are safe to remove.-->
+      <jca:address location="eis/Jms/JMSAQ" UIConnectionName="eaidev2JMSUSER"
+          ManagedConnectionFactory="oracle.tip.adapter.jms.JmsManagedConnectionFactory"
+          mcf.ConnectionFactoryLocation="java:comp/resource/JMSAQ/TopicConnectionFactories/TCF"
+          mcf.IsTopic="true"
+          mcf.IsTransacted="true"
+          mcf.FactoryProperties=""
+          mcf.Username="jmsuser"
+          mcf.Password="BE49B84750434652C21A27623F0F412D"
+          UIJmsProvider="OJMS" />
+        </port>
+    </service>
+  <plt:partnerLinkType name="Produce_Message_plt" >
+    <plt:role name="Produce_Message_role" >
+      <plt:portType name="tns:Produce_Message_ptt" />
+    </plt:role>
+  </plt:partnerLinkType>
+</definitions>

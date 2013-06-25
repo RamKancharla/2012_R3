@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSPM_TransformPriceUpdateStatus.wsdl" name="anchorToCSPM_TransformPriceUpdateStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus#wsdl.interface(CSPM_TransformPriceUpdateStatus)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus#wsdl.interface(CSPM_TransformPriceUpdateStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="ParsePriceUpdateStatus.wsdl" name="ParsePriceUpdateStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser#wsdl.interface(ParseCSPriceUpdateStatus)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus.wsdl" name="CCRMPM_PropagatePriceUpdateStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatus)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatusCallback)"/>
+    </reference>
+</componentType>

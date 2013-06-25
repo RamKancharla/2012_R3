@@ -1,0 +1,118 @@
+<!--* Module:      EAI.MSG.SFDC.CM.401_ContactRequest.xsd
+    * Type:        XSD Schema
+    * Description: Schema used to publish contacts, from CRM to an internal EAI BUFFER TABLE.
+    * Change History
+    * Version           Date      Author             Description Of Change
+    * 0.1               11/01/11  Rijoy Purayil        Initial version created for TRUST contacts sync-->
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest" 
+elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.5" 
+xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:local="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest">
+   <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+      schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+   
+   <xsd:element name="Contacts" type="local:Contacts"/>
+   
+   <xsd:complexType name="Contacts">
+      <xsd:sequence>
+         <xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+         <xsd:element name="actioncode" type="gcap-cmt:ActionCode"/>
+         <xsd:element name="contact" type="local:ContactRequest"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="ContactRequest">
+      <xsd:sequence>
+         <xsd:element name="ActionCode" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="AssetFocus1" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="AssetFocus2" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="AssetFocus3" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="BuySellCorpSide" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="ComplianceJobRole" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="ContactAccountData" minOccurs="0" maxOccurs="unbounded" type="local:ContactAccount" nillable="true"/>
+         <xsd:element name="ContactFunctionData" minOccurs="0" maxOccurs="unbounded" type="local:ContactFunction" nillable="true"/>
+         <xsd:element name="ContactUniqueNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="Department" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="DirectMarketing" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="EmailAddress" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="EndUserActivity" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="FaxNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="FirstName" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="Floor" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="FTLDate" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="FTLFlag" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="JobTitle" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="KNLastTrained" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="Language" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="LastName" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="LastUpdatedBy" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="LastUpdatedDate" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="LegalConsent" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="LocalFirstName" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="LocalLastName" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="LocalSalutation" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="MobileNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="PrimaryAccountANumber" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="Salutation" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="SFDCId" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="SourceSystem" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="Status" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="VIPFlag" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="WorkPhoneNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ContactAccount">
+      <xsd:sequence>
+         <xsd:element name="AccountANumber" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="ActionCode" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="PrimaryFlag" minOccurs="0" type="xsd:string" nillable="true"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ContactFunction">
+      <xsd:sequence>
+         <xsd:element name="AccountANumber" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="ActionCode" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="FunctionValue" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="PrimaryFlag" minOccurs="0" type="xsd:string" nillable="true"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ContactIdUpdateandResponse">
+      <xsd:sequence>
+         <xsd:element name="ContactUniqueNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="SFDCId" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="SourceSystem" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="StatusCode" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="StatusDescription" minOccurs="0" type="xsd:string" nillable="true"/>
+         <xsd:element name="TransactionId" minOccurs="0" type="xsd:string" nillable="true"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="CNumberUpdate">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element name="ConRequest" type="local:ContactIdUpdateandResponse" nillable="true"/>
+         </xsd:sequence>
+      </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="CNumberUpdateResponse">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element name="result" type="local:ContactIdUpdateandResponse" nillable="true"/>
+         </xsd:sequence>
+      </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="TRUSTInboundContact">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element name="ConRequest" type="local:ContactRequest" nillable="true"/>
+         </xsd:sequence>
+      </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="TRUSTInboundContactResponse">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element name="result" type="local:ContactIdUpdateandResponse" nillable="true"/>
+         </xsd:sequence>
+      </xsd:complexType>
+   </xsd:element>
+</xsd:schema>

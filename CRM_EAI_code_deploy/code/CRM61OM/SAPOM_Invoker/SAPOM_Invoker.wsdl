@@ -1,0 +1,50 @@
+<definitions
+     name="SAPOM_Invoker"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2010/03/22/B2CC/EAI/SAP/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/03/22/B2CC/EAI/SAP/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+                 schemaLocation="SAPOM_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/03/22/B2CC/EAI/SAP/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/03/22/B2CC/EAI/SAP/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.SAP.OM.287_PublishOrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/03/22/B2CC/EAI/SAP/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+                 schemaLocation="EAI.MSG.SAP.OM.286_OrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SAPOM_InvokerResponseMessage">
+        <part name="payload" element="client:SAPOM_InvokerProcessResponse"/>
+    </message>
+    <message name="SAPOM_InvokerRequestMessage">
+        <part name="payload" element="client:SAPOM_InvokerProcessRequest"/>
+    </message>
+    <portType name="SAPOM_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:SAPOM_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="SAPOM_Invoker">
+        <operation name="initiate">
+            <input message="client:SAPOM_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SAPOM_Invoker">
+        <plnk:role name="SAPOM_InvokerProvider">
+            <plnk:portType name="client:SAPOM_Invoker"/>
+        </plnk:role>
+        <plnk:role name="SAPOM_InvokerRequester">
+            <plnk:portType name="client:SAPOM_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

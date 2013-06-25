@@ -1,0 +1,149 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Nov 30 17:39:56 GMT+05:30 2009
+  Author:  DM75953
+  Purpose: Empty BPEL Process
+  Change History 
+  Version      Date         Author          Description Of Change 
+  1.4         22/02/10       Veni           Made tranformations for AnonymousFlagReason, AnonymousFlag & WorkPhone for PBI-433 in TransDequeueATHOrderAckToPropagateUserOrderStatus.xsl file.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOM_DequeueATHOrderUpdateStatus" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_DequeueATHOrderUpdateStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_DequeueATHOrderUpdateStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueATHOrderAck/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/CCRMOM_DequeueATHOrderUpdateStatus/correlationset" xmlns:ns2="http://www.siebel.com/xml/AthenaRequest" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink myRole="Dequeue_role" name="DequeueATHOrderAck" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink myRole="CCRMOM_PropagateUserOrderRequestRequester" name="CCRMOM_PropagateUserOrderRequest" partnerRole="CCRMOM_PropagateUserOrderRequestProvider" partnerLinkType="ns4:CCRMOM_PropagateUserOrderRequest"/>
+  </partnerLinks>
+  <variables>
+    <variable name="ReceiveATHOrderAckIV" messageType="ns1:AthenaRequest_msg"/>
+    <variable name="InvCCRMOM_PropagateUserOrderRequestIV" messageType="ns4:CRMUpdateStatusMsg"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+  </variables>
+  <faultHandlers>
+    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+        <![CDATA[String quoteId ="";      
+String title="";      
+String transId ="";    
+try {    
+    quoteId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:QuoteId")).getFirstChild().getNodeValue();      
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();      
+    title=(quoteId!=null ? (transId+" ; "+"Q: "+quoteId+";Fault") : "Fault.;");      
+    setCompositeInstanceTitle(title);      
+} catch(Exception e) {      
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();      
+    title=(transId!=null ? (transId+";Fault") : "Fault.;");  
+    setCompositeInstanceTitle(title);  
+}]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+        <![CDATA[String quoteId ="";      
+String title="";      
+String transId ="";    
+try {    
+    quoteId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:QuoteId")).getFirstChild().getNodeValue();      
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();      
+    title=(quoteId!=null ? (transId+" ; "+"Q: "+quoteId+";Fault") : "Fault.;");      
+    setCompositeInstanceTitle(title);      
+} catch(Exception e) {      
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();      
+    title=(transId!=null ? (transId+";Fault") : "Fault.;");  
+    setCompositeInstanceTitle(title);  
+}]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+        <![CDATA[String quoteId ="";      
+String title="";      
+String transId ="";    
+try {    
+    quoteId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:QuoteId")).getFirstChild().getNodeValue();      
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();      
+    title=(quoteId!=null ? (transId+" ; "+"Q: "+quoteId+";Fault") : "Fault.;");      
+    setCompositeInstanceTitle(title);      
+} catch(Exception e) {      
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();      
+    title=(transId!=null ? (transId+";Fault") : "Fault.;");  
+    setCompositeInstanceTitle(title);  
+}]]>
+      </bpelx:exec>
+    </catch>
+    <catchAll>
+      <sequence name="GenericFaultSeq">
+        <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+          <![CDATA[String quoteId ="";      
+String title="";      
+String transId ="";    
+try {    
+    quoteId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:QuoteId")).getFirstChild().getNodeValue();      
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();      
+    title=(quoteId!=null ? (transId+" ; "+"Q: "+quoteId+";Fault") : "Fault.;");      
+    setCompositeInstanceTitle(title);      
+} catch(Exception e) {      
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();      
+    title=(transId!=null ? (transId+";Fault") : "Fault.;");  
+    setCompositeInstanceTitle(title);  
+}]]>
+        </bpelx:exec>
+        <assign name="AsgUnknownError">
+          <copy>
+            <from expression="'Unknown Error'"/>
+            <to variable="runtimeFault" part="code"/>
+          </copy>
+        </assign>
+      </sequence>
+    </catchAll>
+  </faultHandlers>
+  <sequence name="main">
+    <receive name="ReceiveATHOrderAck" createInstance="yes" partnerLink="DequeueATHOrderAck" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="ReceiveATHOrderAckIV"/>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[String quoteId ="";        
+String title="";        
+String transId ="";      
+try {      
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();        
+    quoteId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:QuoteId")).getFirstChild().getNodeValue();        
+    title=(quoteId!=null ? (transId+" ; "+"Q: "+quoteId) : ".;");        
+    setCompositeInstanceTitle(title);        
+} catch(Exception e) {        
+    transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("ReceiveATHOrderAckIV","AthenaRequest","/ns2:AthenaRequest/ns2:HeaderSubscriber/ns2:TransactionId")).getFirstChild().getNodeValue();     
+    title=(transId!=null ? (transId) : ".;");     
+    setCompositeInstanceTitle(title);     
+}]]>
+    </bpelx:exec>
+    <assign name="TransDequeueATHOrderAckToPropagateUserOrderStatus">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:processXSLT('TransDequeueATHOrderAckToPropagateUserOrderStatus.xsl',bpws:getVariableData('ReceiveATHOrderAckIV','AthenaRequest'))"/>
+        <to variable="InvCCRMOM_PropagateUserOrderRequestIV" part="payload"/>
+      </copy>
+    </assign>
+    <invoke name="InvCCRMOM_PropagateUserOrderRequest" portType="ns4:CCRMOM_PropagateUserOrderRequest" inputVariable="InvCCRMOM_PropagateUserOrderRequestIV" partnerLink="CCRMOM_PropagateUserOrderRequest" operation="rcvOrderStatus"/>
+  </sequence>
+</process>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+    * Module:      EAI.MSG.TOM.CM.199_PublishContactEventResponse.xsd
+    * Type:        XSD Schema
+    * Description: The schema used in the TOM adapter to indicate success or failure of publishing a contact.
+    *
+    * Change History
+    * Version           Date      Author             Description Of Change
+    *
+    * 0.1               22/01/07  Rob Billington     Initial version
+    *
+    **********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish" xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.1">
+    <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+    <xsd:element name="contactPubResponse" type="local:_TOMContactPubResponse"/>
+    <xsd:complexType name="_TOMContactPubResponse">
+        <xsd:sequence>
+            <xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+            <xsd:element name="response" type="gcap-cmt:BasicResponse"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,69 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="OM_ManageOrderLineStatus" revision="1.0" state="on">
+      <import location="OM_ManageOrderLineStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM"/>    
+    
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment" location="http://eaidev2:8000/soa-infra/services/CRMASYNC/CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilment.wsdl" importType="wsdl"/>
+    <!--import namespace="http://xmlns.oracle.com/OrderLineStatusDictionary141008/OrderLineStatusDictionary141008_DecisionService_1" location="OrderLineStatusDictionary141008_DecisionService_1Ref.wsdl" importType="wsdl"/-->
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus" location="http://eaidev2:8000/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/OrderLineStatusDictionary141008/OrderLineStatusDictionary141008_DecisionService_1"
+            location="http://eaidev2:8000/soa-infra/services/CRMASYNC/OrderStatusRule/OrderLineStatusDictionary141008_DecisionService_1.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/OrderLineStatusDictionary141008/OrderLineStatusDictionary141008_DecisionService_1"
+            location="OrderLineStatusDictionary_DecisionServiceRef.wsdl"
+            importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="OM_ManageOrderLineStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatusCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatus)"/>
+    </service>
+    <component name="OM_ManageOrderLineStatus">
+        <implementation.bpel src="OM_ManageOrderLineStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="CSOM_COMPASSOrderFulfilment" ui:wsdlLocation="http://eaidev2:8000/soa-infra/services/CRMASYNC/CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilment.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilment)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilmentCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.endpoint(CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilment)" location="http://eaidev2:8000/soa-infra/services/CRMASYNC/CSOM_COMPASSOrderFulfilment/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.endpoint(CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilmentCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CCRMOM_ProxyPropagateOrderStatus" ui:wsdlLocation="http://eaidev2:8000/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.endpoint(CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus)"
+                    location="http://eaidev2:8000/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/anchorToProxyPropagateOrderStatus?WSDL"
+                    soapVersion="1.1"/>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.endpoint(CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="OrderLineStatusRule" ui:wsdlLocation="http://eaidev2:8000/soa-infra/services/CRMASYNC/OrderStatusRule/OrderLineStatusDictionary141008_DecisionService_1.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/OrderLineStatusDictionary141008/OrderLineStatusDictionary141008_DecisionService_1#wsdl.interface(IDecisionService)"/>
+        <binding.ws port="http://xmlns.oracle.com/OrderLineStatusDictionary141008/OrderLineStatusDictionary141008_DecisionService_1#wsdl.endpoint(OrderLineStatusDictionary141008_DecisionService_1_ep/IDecisionService_pt)"
+                    location="http://eaidev2:8000/soa-infra/services/CRMASYNC/OrderStatusRule/OrderLineStatusDictionary141008_DecisionService_1_ep?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>OM_ManageOrderLineStatus/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>OM_ManageOrderLineStatus/CCRMOM_ProxyPropagateOrderStatus</source.uri>
+        <target.uri>CCRMOM_ProxyPropagateOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>OM_ManageOrderLineStatus/CSOM_COMPASSOrderFulfilment</source.uri>
+        <target.uri>CSOM_COMPASSOrderFulfilment</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds:/apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds:/apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>OM_ManageOrderLineStatus/OrderLineStatusDictionary141008_DecisionService_1</source.uri>
+        <target.uri>OrderLineStatusRule</target.uri>
+    </wire>
+</composite>

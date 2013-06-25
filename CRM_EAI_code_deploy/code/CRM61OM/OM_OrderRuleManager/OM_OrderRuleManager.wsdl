@@ -1,0 +1,49 @@
+<definitions
+     name="OM_OrderRuleManager"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/correlationset"
+     xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM">
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+	<types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement">
+        	<xsd:include schemaLocation="EAI.MSG.OM.125_OrderRequest.xsd"/>
+        	<xsd:include schemaLocation="EAI.MSG.OM.193_ExtendedOrderRequest.xsd"/>         
+	</schema>
+    	</types>
+    <message name="OM_OrderRuleManagerRequestMessage">
+        <part name="orderRequest" element="ns1:orderRequest"/>
+    </message>
+    <message name="OM_OrderRuleManagerResponseMessage">
+        <part name="payload" element="ns1:orderRequest"/>
+    </message>
+    <message name="ExtendedOrderRequestMessageType">
+        <part name="extendedOrderRequest" element="ns1:extendedOrderRequest"/>
+    </message>
+    <portType name="OM_OrderRuleManager">
+        <operation name="dispatchOrder">
+            <input message="client:OM_OrderRuleManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="OM_OrderRuleManagerCallback">
+        <operation name="onResult">
+            <input message="client:OM_OrderRuleManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="OM_OrderRuleManager">
+        <plnk:role name="OM_OrderRuleManagerProvider">
+            <plnk:portType name="client:OM_OrderRuleManager"/>
+        </plnk:role>
+        <plnk:role name="OM_OrderRuleManagerRequester">
+            <plnk:portType name="client:OM_OrderRuleManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

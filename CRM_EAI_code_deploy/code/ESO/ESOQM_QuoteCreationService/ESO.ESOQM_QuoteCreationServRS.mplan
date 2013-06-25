@@ -1,0 +1,30 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="ESO.ESOQM_QuoteCreationServRS" wsdlTargetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/ESO/QM/ESOQuotePublish" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="GenerateQuote">
+      <switch>
+         <case name="Case_1_ESO.ESOQM_QuoteCreationServRS.GenerateQuote" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/GenerateQuote_To_GenerateQuote.xsl,$in.parameters)" name="$out.payload"/>
+               </transform>
+               <assign>
+                  <copy target="$out.property.tracking.compositeInstanceTitle"
+                        expression='med:setCompositeInstanceTitle(concat("",$in.parameters/tns:GenerateQuote/tns:quote/tns:TransactionId))'
+                        xmlns:med="http://schemas.oracle.com/mediator/xpath"
+                        xmlns:tns="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/ESO/QM/ESOQuotePublish"
+                        xmlns:s="http://www.w3.org/2001/XMLSchema"/>
+               </assign>
+               <invoke reference="ESO.PropagateQuoteRequestSoapService" operation="process">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/GenerateQuoteResponse_To_GenerateQuoteResponse.xsl,$in.payload)" name="$out.parameters"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

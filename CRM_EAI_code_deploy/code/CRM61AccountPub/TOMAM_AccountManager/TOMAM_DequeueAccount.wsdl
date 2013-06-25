@@ -1,0 +1,94 @@
+<definitions
+     name="TOMAM_DequeueAccount"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/jms/TOMAM_DequeueAccount/"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/jms/TOMAM_DequeueAccount/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+     xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager/correlationset"
+     xmlns:pc="http://xmlns.oracle.com/pcbpel/"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://xmlns.oracle.com/pcbpel/adapter/jms/TOMAM_DequeueAccount/"
+     xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+     xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/jms/"
+    >
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager/correlationset"
+         location="TOMAM_AccountManager_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="RuntimeFault.wsdl"/>
+    <import namespace="http://xmlns.oracle.com/pcbpel/adapter/jms/" location="jmsAdapterInboundHeader.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.AM.176_AccountEvent.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish" schemaLocation="EAI.MSG.TOM.AM.179_PublishAccountEventRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="accountEvent_msg">
+        <part name="accountEvent" element="imp1:accountEvent"/>
+    </message>
+    <message name="ReleaseSequenceMessage">
+        <part name="relSequencePart" element="ns2:basicResponse"/>
+    </message>
+    <message name="TOMAMAccountRequestMessage">
+        <part name="RequestMessage" element="ns1:accountPubRequest"/>
+    </message>
+    <portType name="Consume_Message_ptt">
+        <operation name="Consume_Message">
+            <input message="tns:accountEvent_msg"/>
+        </operation>
+        <operation name="releaseSequence">
+            <input message="tns:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <binding name="Release_Sequence_binding" type="tns:Consume_Message_ptt">
+        <operation name="releaseSequence">
+            <input>
+                <jca:header message="tns:ReleaseSequenceMessage" part="relSequencePart"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="Consume_Message_binding" type="tns:Consume_Message_ptt">
+        <pc:inbound_binding/>
+        <operation name="Consume_Message">
+            <jca:operation ActivationSpec="oracle.tip.adapter.jms.inbound.JmsConsumeActivationSpec" DestinationName="java:comp/resource/JMSAQ/Topics/JMSUSER.JMS_ACCOUNT_TOPIC"
+                 UseMessageListener="true" DurableSubscriber="TOMAM_AccountManager" PayloadType="TextMessage"
+                 OpaqueSchema="false"/>
+            <input>
+                <jca:header message="hdr:InboundHeader_msg" part="inboundHeader"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="TOMAM_DequeueAccount">
+        <port name="Consume_Message_pt" binding="tns:Consume_Message_binding">
+            <jca:address location="eis/Jms/JMSAQ" UIConnectionName="JMSTopicEAI05" ManagedConnectionFactory="oracle.tip.adapter.jms.JmsManagedConnectionFactory"
+                 mcf.ConnectionFactoryLocation="java:comp/resource/JMSAQ/TopicConnectionFactories/TCF"
+                 mcf.IsTopic="true" mcf.IsTransacted="true" mcf.FactoryProperties="" mcf.Username="jmsuser"
+                 mcf.Password="BE49B84750434652C21A27623F0F412D" UIJmsProvider="OJMS"/>
+        </port>
+    </service>
+    <service name="ReleaseSequence">
+        <port name="releaseSequence" binding="tns:Release_Sequence_binding">
+            <jca:address/>
+        </port>
+    </service>
+    <plt:partnerLinkType name="Consume_Message_plt">
+        <plt:role name="TOMAM_AccountManagerProvider">
+            <plt:portType name="client:TOMAM_AccountManager"/>
+        </plt:role>
+        <plt:role name="Consume_Message_role">
+            <plt:portType name="tns:Consume_Message_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:releaseProp" messageType="tns:ReleaseSequenceMessage" part="relSequencePart"
+         query="/ns2:basicResponse/ns2:eaiHeader/ns3:tracingId" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+    <bpws:propertyAlias propertyName="pns1:releaseProp" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns5:SequenceCheckerRequestMessage" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:tracingId"
+         xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"/>
+</definitions>

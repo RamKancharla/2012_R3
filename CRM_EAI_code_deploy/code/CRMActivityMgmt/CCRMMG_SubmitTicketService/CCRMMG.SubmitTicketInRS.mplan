@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CCRMMG.SubmitTicketInRS" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/MigrationTicketServices" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="submitTicket">
+      <switch>
+         <case name="Case_1_CCRMMG.SubmitTicketInRS.submitTicket" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/RCRMTeamTrack_To_ticketRequest.xsl,$in.RCRMTeamTrack)" name="$out.tktRqst"/>
+               </transform>
+               <assign/>
+               <invoke reference="CCRMMG.SubmitTicketSOAPAdp" operation="submitTicketRequest">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/ticketRequestResponse_To_RCRMTeamTrackResponse.xsl,$in.tktResponse)" name="$out.RCRMTeamTrack"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

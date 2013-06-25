@@ -1,0 +1,21 @@
+<?binding.jca DequeueTRUSTOptyUpdate_mq.jca?>
+<definitions name="DequeueTRUSTOptyUpdate" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTOptyUpdate/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/mq/header" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTOptyUpdate/" xmlns:imp1="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="Dequeue_plt">
+        <plt:role name="Dequeue_role">
+            <plt:portType name="tns:Dequeue_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound" schemaLocation="EAI.MSG.CCRM.OP.226_PublishOpportunityRequestResponse.xsd"/>
+        </schema>
+    </types>
+    <message name="RCRMOpportunityPublish_msg">
+        <part name="RCRMOpportunityPublish" element="imp1:RCRMOpportunityPublish"/>
+    </message>
+    <portType name="Dequeue_ptt">
+        <operation name="Dequeue">
+            <input message="tns:RCRMOpportunityPublish_msg"/>
+        </operation>
+    </portType>
+</definitions>

@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.CS.OM.170_OrderStatus.xsd
+*						Order Management (Core Suite)
+* Type:				XML Schema Document
+* Description:  	Core Suite Order Status Schema document including message header
+*
+*
+* Change History
+* Version	Date			Author			Description Of Change
+* =======	========	==================		===============================
+*  0.01		05/07/07	GSURYANARAYANA 			Initial Version                                                              
+*  0.02		18/08/08	Sreeja Prasad 			Added SID in the _CSResponseOLI
+*  0.03         18/08/08        Chandrasekhr Reddy              Changed the restriction property fro SID
+*  0.04         10/02/09        Sreeja Prasad                   Added PermBillFlag in _CSResponseOLI for PBI-421
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.04">
+	<xsd:element name="CSorderStatus" type="xsdLocal:_CSOrderStatus"/>
+	<xsd:complexType name="_CSOrderStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="xsdLocal:_CSEaiHeader"/>
+			<xsd:element name="parsingStatus" type="xsdLocal:_CSBasicResponse"/>
+			<xsd:element name="logicalCountry" type="xsdLocal:_CSCountryCode"/>
+			<xsd:element name="messageHeader" type="xsdLocal:_CSMessageHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:_CSResponseOrderHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:_CSResponseOLI" maxOccurs="250"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSEaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="xsdLocal:string10"/>
+			<xsd:element name="transactionId" type="xsdLocal:string30"/>
+			<xsd:element name="messageId" type="xsdLocal:string30"/>
+			<xsd:element name="messageHistory" type="xsdLocal:string100"/>
+			<xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSBasicResponse">	
+		<xsd:sequence>
+			<xsd:element name="response" type="xsdLocal:Response"/>
+			<xsd:element name="responseCode" type="xsdLocal:ResponseCode"/>
+			<xsd:element name="responseMessage" type="xsdLocal:Message"/>
+		</xsd:sequence>	          
+	</xsd:complexType>
+	<xsd:simpleType name="ResponseCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>00203-EAI-INVALID ACTION CODE</content>
+					<comment>In valid action code</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>00202-EAI-INVALID MESSAGE CONTENT</content>
+					<comment>Invalid message content provided by service client</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>00401-EAI-TIMEOUT ERROR</content>
+					<comment>Timeout error returned if the service cannot respond within a specified time.</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="250"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Message">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSCountryCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>FR</content>
+					<comment>Country code for France</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="2"/>
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="_CSMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsdLocal:CSActionCode"/>
+			<xsd:element name="version" type="xsdLocal:MessageVersion"/>
+			<xsd:element name="userId" type="xsdLocal:ApplicationUserID"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="CSActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>OM05</content>
+					<comment>Order Create</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="4"/>
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessageVersion">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A</content>
+					<comment>Message Version</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+		<xsd:simpleType name="ApplicationUserID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Brian.Knights@reuters.com</content>
+					<comment>User id, who initiated the change</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="_CSResponseOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="response" type="xsdLocal:Response"/>
+			<xsd:element name="requestStatus" type="xsdLocal:RequestStatus"/>
+			<xsd:element name="CRMOrderNumber" type="xsdLocal:_CRMOrderNumber"/>
+			<xsd:element name="orderNumber" type="xsdLocal:CSOrderNumber"/>
+			<xsd:element name="entrepriseCode" type="xsdLocal:EnterpriseCode"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="Response">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>0</content>
+					<comment>Success</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>1</content>
+					<comment>Failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="0"/>
+			<xsd:enumeration value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RequestStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A000</content>
+					<comment>Success</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Ennn</content>
+					<comment>Error or failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>UNKNOWN ERROR</content>
+					<comment>Error or failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CSOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="EnterpriseCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:complexType name="_CSResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="itemNumber" type="xsdLocal:ItemNumber"/>
+			<xsd:element name="ILA" type="xsdLocal:_ILA"/>
+			<xsd:element name="userNumber" type="xsdLocal:UserNumber"/>
+			<xsd:element name="userId" type="xsdLocal:UserID"/>
+			<xsd:element name="QUID" type="xsdLocal:_QUID"/>
+			<xsd:element name="orderLinestatus" type="xsdLocal:OrderLinestatus"/>
+			<xsd:element name="SID" type="xsdLocal:_SID"/>
+			<xsd:element name="requestStatus" type="xsdLocal:RequestStatus"/>
+			<xsd:element name="permBillFlag" type="xsdLocal:PermBillFlag"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="_CRMOLIId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ItemNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2678</content>
+					<comment>Item number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="_ILA">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>00AB71</content>
+					<comment>IDN Logical Address</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="UserNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2678</content>
+					<comment>User number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="UserID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2678</content>
+					<comment>User IDr</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+		<xsd:simpleType name="_QUID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2678</content>
+					<comment>QUID for Reuters + products</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+		<xsd:simpleType name="OrderLinestatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>R</content>
+					<comment>Status of the order line, R - for bill released</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PermBillFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>P</content>
+					<comment>P or B</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+		<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_SID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>001</content>
+					<comment>SID</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+</xsd:schema>

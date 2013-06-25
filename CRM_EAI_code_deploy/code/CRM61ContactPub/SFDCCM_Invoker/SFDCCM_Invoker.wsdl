@@ -1,0 +1,53 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="SFDCCM_Invoker"
+     targetNamespace="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_Invoker"
+     xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest"
+     xmlns:ns1="urn:enterprise.soap.sforce.com"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://soap.sforce.com/schemas/class/ContactManagement"
+     xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_Invoker"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <plnk:partnerLinkType name="SFDCCM_Invoker">
+        <plnk:role name="SFDCCM_InvokerProvider">
+            <plnk:portType name="client:SFDCCM_Invoker"/>
+        </plnk:role>
+        <plnk:role name="SFDCCM_InvokerRequester">
+            <plnk:portType name="client:SFDCCM_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <wsdl:import namespace="http://soap.sforce.com/schemas/class/ContactManagement" location="EAI.SRV.EXT.SFDC.071_SendContactToSFDCService.wsdl"/>
+    <wsdl:import namespace="urn:enterprise.soap.sforce.com" location="enterprise.wsdl"/>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:enterprise.soap.sforce.com"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_Invoker"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest">
+            <import namespace="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_Invoker"
+                 schemaLocation="xsd/SFDCCM_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest"
+             xmlns:ns1="urn:enterprise.soap.sforce.com" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_Invoker"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SFDC/ContactSyncRequest"
+                 schemaLocation="xsd/EAI.MSG.SFDC.CM.401_ContactRequest.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="SFDCCM_InvokerRequestMessage">
+        <wsdl:part name="payload" element="client:process"/>
+    </wsdl:message>
+    <wsdl:message name="SFDCCM_InvokerResponseMessage">
+        <wsdl:part name="payload" element="client:processResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="SFDCCM_Invoker">
+        <wsdl:operation name="process">
+            <wsdl:input message="client:SFDCCM_InvokerRequestMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="SFDCCM_InvokerCallback">
+        <wsdl:operation name="processResponse">
+            <wsdl:input message="client:SFDCCM_InvokerResponseMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

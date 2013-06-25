@@ -1,0 +1,33 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOP_DequeueOpportunity" revision="1.0" state="on">
+    <import location="DequeueOpportunity.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOpportunity/"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_PublishOpportunity/CCRMOP_PublishOpportunity.wsdl" importType="wsdl"/>
+    <service name="DequeueOpportunity" ui:wsdlLocation="DequeueOpportunity.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOpportunity/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeueOpportunity_mq.jca"/>
+    </service>
+    <component name="CCRMOP_DequeueOpportunity">
+        <implementation.bpel src="CCRMOP_DequeueOpportunity.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMOP_PublishOpportunity" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_PublishOpportunity/CCRMOP_PublishOpportunity.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.interface(CCRMOP_PublishOpportunity)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.interface(CCRMOP_PublishOpportunityCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.endpoint(CCRMOP_PublishOpportunity/CCRMOP_PublishOpportunity)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_PublishOpportunity/anchorToCCRMOP_PublishOpportunity?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.endpoint(CCRMOP_PublishOpportunity/CCRMOP_PublishOpportunityCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>DequeueOpportunity</source.uri>
+        <target.uri>CCRMOP_DequeueOpportunity/DequeueOpportunity</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOP_DequeueOpportunity/CCRMOP_PublishOpportunity</source.uri>
+        <target.uri>CCRMOP_PublishOpportunity</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

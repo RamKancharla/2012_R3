@@ -1,0 +1,21 @@
+<?binding.jca ATHOM_POLLING_VW_db.jca?>
+<definitions name="ATHOM_POLLING_VW" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/ATHOM_POLLING_VW/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/ATHOM_POLLING_VW/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/ATHOMPOLLINGVW">
+    <plt:partnerLinkType name="ATHOM_POLLING_VW_plt">
+        <plt:role name="ATHOM_POLLING_VW_role">
+            <plt:portType name="tns:ATHOM_POLLING_VW_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/ATHOMPOLLINGVW" schemaLocation="ATHOMPOLLINGVW_table.xsd"/>
+        </schema>
+    </types>
+    <message name="AthomPollingVCollection_msg">
+        <part name="AthomPollingVCollection" element="top:AthomPollingVCollection"/>
+    </message>
+    <portType name="ATHOM_POLLING_VW_ptt">
+        <operation name="receive">
+            <input message="tns:AthomPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

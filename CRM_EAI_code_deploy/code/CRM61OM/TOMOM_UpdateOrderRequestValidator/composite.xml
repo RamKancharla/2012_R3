@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TOMOM_UpdateOrderRequestValidator" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="TOMOM_UpdateOrderRequestValidator.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub"
+            location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOMOM_UpdateOrderRequestValidatorStub/TOMOM_UpdateOrderRequestValidatorStub.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMOMInvoker/TOMOMInvoker.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/TF_ManageOrderLineStatus.wsdl"
+            importType="wsdl"/>
+    <service name="anchorToTOMOM_UpdateOrderRequestValidator" ui:wsdlLocation="TOMOM_UpdateOrderRequestValidator.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator#wsdl.interface(TOMOM_UpdateOrderRequestValidator)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator#wsdl.endpoint(TOMOM_UpdateOrderRequestValidator/TOMOM_UpdateOrderRequestValidator)"/>
+    </service>
+    <component name="TOMOM_UpdateOrderRequestValidator">
+        <implementation.bpel src="TOMOM_UpdateOrderRequestValidator.bpel"/>
+        <property name="partnerLink.TOMOM_UpdateOrderRequestValidatorStub.validateXML"
+                  type="xs:string" many="false">true</property>
+    </component>
+    <reference name="TOMOMInvoker"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMOMInvoker/TOMOMInvoker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvoker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvokerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.endpoint(TOMOMInvoker/TOMOMInvoker)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMOMInvoker/TOMOMInvoker?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.endpoint(TOMOMInvoker/TOMOMInvokerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="TF_ManageOrderLineStatus"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/TF_ManageOrderLineStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus#wsdl.interface(TF_ManageOrderLineStatus)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus#wsdl.endpoint(TF_ManageOrderLineStatus/TF_ManageOrderLineStatus)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/anchorToTF_ManageOrderLineStatus?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="TOMOM_UpdateOrderRequestValidatorStub"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOMOM_UpdateOrderRequestValidatorStub/TOMOM_UpdateOrderRequestValidatorStub.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub#wsdl.interface(TOMOM_UpdateOrderRequestValidatorStub)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub#wsdl.endpoint(TOMOM_UpdateOrderRequestValidatorStub/TOMOM_UpdateOrderRequestValidatorStub)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOMOM_UpdateOrderRequestValidatorStub/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>anchorToTOMOM_UpdateOrderRequestValidator</source.uri>
+        <target.uri>TOMOM_UpdateOrderRequestValidator/anchorToTOMOM_UpdateOrderRequestValidator</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMOM_UpdateOrderRequestValidator/TF_ManageOrderLineStatus</source.uri>
+        <target.uri>TF_ManageOrderLineStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMOM_UpdateOrderRequestValidator/TOMOMInvoker</source.uri>
+        <target.uri>TOMOMInvoker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMOM_UpdateOrderRequestValidator/TOMOM_UpdateOrderRequestValidatorStub</source.uri>
+        <target.uri>TOMOM_UpdateOrderRequestValidatorStub</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

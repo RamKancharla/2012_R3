@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:       EAI.MSG.CCRM.OM.132_COMPASSOrderRequest.xsd
+*               CompassOrderFullFillment
+* Type:         XML Schema Document
+* Description:  Compass Order Schema document including message header
+*               which is required by Compass. The helps in generating the fixed length message
+*
+* Change History
+* Version       Date        Author                  Description Of Change
+* =======       ========    ==================      ===============================
+*  0.1          25/01/07    VKRISHNA (Satyam)       Initial Version
+*  0.2          29/01/07    GPATCHIPULUSU (Satyam)  Converted in to Camel case and
+*                                                   removed length & type attributes
+*  0.3          30/01/07    VKRISHNA(Satyam)        Changed the name of the file from
+*                                                   "CompassOrderWithMSGHeader.xsd" to
+*                                                   "CompassOrder.xsd"
+*  0.4          21/05/07    G Patchipulusu        Update the elements based on the changes done 
+*                                                   			to the Core Suite interface
+*  0.05         21/07/07    G Patchipulusu        Changed the name of the file and changed version to 0.05, add CommonOrderTypes.
+*  0.06         23/07/07    G Patchipulusu        Changed the name of the file 130 has been already used
+*  0.07         07/09/07    G Patchipulusu        In the order line Removed user number which is length 4 and added User ID which is of length 6
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:comt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.07">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="compassOrder" type="xsdLocal:CompassOrder"/>
+	<xsd:complexType name="CompassOrder">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="logicalCountry" type="comt:CountryCode"/>
+			<xsd:element name="messageHeader" type="comt:CompassMessageHeader"/>
+			<xsd:element name="orderHeader" type="comt:CompassOrderHeader"/>
+			<xsd:element name="orderLineItem" type="comt:CompassOLI" maxOccurs="200"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

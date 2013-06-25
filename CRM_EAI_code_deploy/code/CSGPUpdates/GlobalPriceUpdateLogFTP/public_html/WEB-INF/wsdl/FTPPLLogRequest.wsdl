@@ -1,0 +1,44 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:plms="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/GPM/PriceManagement"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/GPM/PriceManagement" location="EAI.MSG.CSGPM.243_PropagateGPStatus.xsd"/>
+    <message name="PLLogFTPRequest">
+        <part name="parameter" element="plms:PropagateGPStatusRequest"/>
+    </message>
+    <message name="PLLogFTPStatus">
+        <part name="parameter" element="plms:PropagateGPStatusResponse"/>
+    </message>
+    <portType name="FTPPLLogRequest">
+        <operation name="FTPLogRequest">
+            <input message="tns:PLLogFTPRequest"/>
+            <output message="tns:PLLogFTPStatus"/>
+        </operation>
+    </portType>
+    <binding name="FTPPLLogSOAP" type="tns:FTPPLLogRequest">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="FTPLogRequest">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="FTPPLLogRequest">
+        <port name="FTPLogRequest" binding="tns:FTPPLLogSOAP">
+            <soap:address location="http://10.15.61.120:8888/Application1-GlobalPriceUpdateLogFTP-context-root/FTPLogRequest"/>
+        </port>
+    </service>
+</definitions>

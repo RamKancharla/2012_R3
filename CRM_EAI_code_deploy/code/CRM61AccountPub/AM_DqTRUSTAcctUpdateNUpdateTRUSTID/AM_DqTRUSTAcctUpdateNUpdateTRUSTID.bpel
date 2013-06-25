@@ -1,0 +1,296 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Feb 24 12:03:18 GMT+05:30 2009
+  Author:  sp41293
+  Purpose: Empty BPEL Process
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  **************************************************************************/
+* Module:      AM_DqTRUSTAcctUpdateNUpdateTRUSTID.bpel
+* Type:        BPEL FILE 
+* Description: Empty BPEL Process 
+* IDD Reference: 
+* Change History 
+* Version      Date         Author             Description Of Change 
+*  1.0         24/02/09     Sreeja             Initial Version 
+
+*  1.1         10/09/09     Surya              Added a condition to update the Siebel Id to TRUST , filtering the updates to TRUST
+                                               when Siebel sends TCId in acknowledgment or if mapping already exists in EAI. (while TRUST UAT)
+ *  1.2        24/09/2009   Surya              Modified the logic for TCId    
+ *  1.3        08/10/2009   Surya	       Added CRMId to the Title for new accounts
+ *  1.4        22/02/2010   Veni               Made transformations for CustomerReferenceNumber in TransPopulateSiebelIDintoXref.xsl, TransTRUSTAccntUpdToPropagateAccntStatus.xsl, TransCreateAccountToSFDC.xsl, TransTRUSTAcntUpdOnPopulateXrefError.xsl as part of PBI-413.
+ *  2.0         23/03/10     Swathi             Modified the TransTRUSTAccntUpdToPropagateAccntStatus.xsl,TransPopulateSiebelIDintoXref.xsl for PBI-0483, mapped  RCRMNOMCustGroup  .
+-->
+<process name="AM_DqTRUSTAcctUpdateNUpdateTRUSTID" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/AM_DqTRUSTAcctUpdateNUpdateTRUSTID" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="urn:enterprise.soap.sforce.com" xmlns:ns7="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://soap.sforce.com/schemas/class/AccountManagement" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/AM_DqTRUSTAcctUpdateNUpdateTRUSTID" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTAccountUpdates/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTAccountUpdate/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns2="http://www.siebel.com/xml/RCRM%20Account%20Publish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="sdfsdf" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink name="SalesForce" partnerRole="Soap_Role" partnerLinkType="ns4:Soap_PL"/>
+    <partnerLink myRole="Dequeue_role" name="DequeueTRUSTAccountUpdate" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink myRole="CCRMAM_PropagateTRUSTAccountRequester" name="CCRMAM_PropagateTRUSTAccount" partnerRole="CCRMAM_PropagateTRUSTAccountProvider" partnerLinkType="ns7:CCRMAM_PropagateTRUSTAccount"/>
+    <partnerLink name="TRUSTAcountUpdate" partnerLinkType="ns5:AccountManagementPortType_PL" myRole="AccountManagementPortType_Role" partnerRole="AccountManagementPortType_Role"/>
+  </partnerLinks>
+  <variables>
+    <variable name="rcvDequeueTRUSTAccountUpdateIV" messageType="ns1:AccountContactPublish_msg"/>
+    <variable name="InvSFDCLoginIV" messageType="ns4:loginRequest"/>
+    <variable name="InvSFDCLoginOV" messageType="ns4:loginResponse"/>
+    <variable name="headerRequest" messageType="ns5:Header"/>
+    <variable name="SIEBELID" type="xsd:string"/>
+    <variable name="InvTRUSTAcountUpdateIV" messageType="ns5:updateSiebelIdRequest"/>
+    <variable name="InvTRUSTAcountUpdateOV" messageType="ns5:updateSiebelIdResponse"/>
+    <variable name="InvCCRMAM_PropagateTRUSTAccountIV" messageType="ns7:TRUSTAccountUpdateMsg"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="InvCCRMAM_PropagateTRUSTAccountFault" messageType="ns7:TRUSTAccountUpdateMsg"/>
+    <variable name="SFDCID" type="xsd:string"/>
+    <variable name="TCIdLength" type="xsd:nonNegativeInteger"/>
+  </variables>
+  <faultHandlers>
+    <catch faultName="bpelx:InvalidResponse" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnInvalidFault" language="java" version="1.5">
+        <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)                                      
+                        getVariableData("rcvDequeueTRUSTAccountUpdateIV", "AccountContactPublish", "/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:RCRMSFDCId")).getFirstChild().getNodeValue();                                         
+String Title=(SFDCID!=null ? ("SFDCID: "+ SFDCID+ ";TRUSTFault") : ".;");          
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+        <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)                                     
+                        getVariableData("rcvDequeueTRUSTAccountUpdateIV", "AccountContactPublish", "/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:RCRMSFDCId")).getFirstChild().getNodeValue();                                        
+String Title=(SFDCID!=null ? ("SFDCID: "+ SFDCID+ ";Fault") : ".;");         
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:insertionFault" faultVariable="runtimeFault">
+      <sequence name="SeqPropagateTRUSTAccountOnFault">
+        <assign name="TransPropagateTRUSTAcntOnPopulateXrefError">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransTRUSTAcntUpdOnPopulateXrefError.xsl',bpws:getVariableData('rcvDequeueTRUSTAccountUpdateIV','AccountContactPublish'))"/>
+            <to variable="InvCCRMAM_PropagateTRUSTAccountFault" part="TRUSTUpdateAccount"/>
+          </copy>
+        </assign>
+        <invoke name="InvCCRMAM_PropagateTRUSTAccount" partnerLink="CCRMAM_PropagateTRUSTAccount" portType="ns7:CCRMAM_PropagateTRUSTAccount" operation="updateAccount" inputVariable="InvCCRMAM_PropagateTRUSTAccountFault"/>
+      </sequence>
+    </catch>
+    <catchAll>
+      <bpelx:exec name="AsgCustomTitleOnGeneric" language="java" version="1.5">
+        <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)                                     
+                        getVariableData("rcvDequeueTRUSTAccountUpdateIV", "AccountContactPublish", "/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:RCRMSFDCId")).getFirstChild().getNodeValue();                                        
+String Title=(SFDCID!=null ? ("SFDCID: "+ SFDCID+ ";Fault") : ".;");         
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <receive name="rcvDequeueTRUSTAccountUpdate" createInstance="yes" partnerLink="DequeueTRUSTAccountUpdate" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="rcvDequeueTRUSTAccountUpdateIV"/>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[/*Write your java code below e.g.      
+	System.out.println("Hello, World");     
+*/     
+try{  
+String SFDCID = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("rcvDequeueTRUSTAccountUpdateIV", "AccountContactPublish", "/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:RCRMSFDCId")).getFirstChild().getNodeValue();                                     
+String Title=(SFDCID!=null ? ("SFDCID: "+ SFDCID) : ".;");                                            
+setCompositeInstanceTitle(Title);  
+}  
+catch(Exception e)  
+{  
+setCompositeInstanceTitle("No Id Supplied");  
+  
+}]]>
+    </bpelx:exec>
+    <assign name="AsgInitVariables">
+      <copy>
+        <from variable="rcvDequeueTRUSTAccountUpdateIV" part="AccountContactPublish" query="/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:RCRMSFDCId"/>
+        <to variable="SFDCID"/>
+      </copy>
+      <copy>
+        <from expression=" xref:lookupXRef(&quot;oramds:/apps/EAIMetaData/Xref/CRM_SFDC_ACCTXREF.xref&quot;,&quot;SFDCID&quot;,bpws:getVariableData('SFDCID'),&quot;SIEBELID&quot;,false())"/>
+        <to variable="SIEBELID"/>
+      </copy>
+      <copy>
+        <from expression="string-length(bpws:getVariableData('rcvDequeueTRUSTAccountUpdateIV','AccountContactPublish','/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:RCRMTCId'))"/>
+        <to variable="TCIdLength"/>
+      </copy>
+    </assign>
+    <scope name="ScpPopulateintoXrefTable">
+      <faultHandlers>
+        <catchAll>
+          <throw name="ThrErrOnPopulateXref" faultName="bpelx:insertionFault" faultVariable="runtimeFault"/>
+        </catchAll>
+      </faultHandlers>
+      <switch name="PopulateIntoXrefOnCreate">
+        <case condition="string-length(bpws:getVariableData('SIEBELID'))>0 ">
+          <bpelx:annotation>
+            <bpelx:pattern>Do not Populate into xref table for existing SIEBELID</bpelx:pattern>
+          </bpelx:annotation>
+          <empty name="DoNothing"/>
+        </case>
+        <otherwise>
+          <sequence name="Sequence_1">
+            <switch name="Switch_1">
+              <case condition="string-length(bpws:getVariableData('rcvDequeueTRUSTAccountUpdateIV','AccountContactPublish','/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:Id'))>0">
+                <assign name="TransPopulateSiebelIDintoXref">
+                  <bpelx:annotation>
+                    <bpelx:pattern>transformation</bpelx:pattern>
+                  </bpelx:annotation>
+                  <copy>
+                    <from expression="ora:processXSLT('TransPopulateSiebelIDintoXref.xsl',bpws:getVariableData('rcvDequeueTRUSTAccountUpdateIV','AccountContactPublish'))"/>
+                    <to variable="rcvDequeueTRUSTAccountUpdateIV"
+                        part="AccountContactPublish"/>
+                  </copy>
+                </assign>
+              </case>
+              <otherwise>
+                <empty name="Do_Nothing"/>
+              </otherwise>
+            </switch>
+          </sequence>
+        </otherwise>
+      </switch>
+    </scope>
+    <flow name="PropagateTRUSTAccountNTRUST">
+      <sequence name="SeqPropagateTRUSTAccount">
+        <scope name="ScpPropagateAccount">
+          <faultHandlers>
+            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+              <throw name="ThrRemoteFault" faultName="bpelx:remoteFault" faultVariable="runtimeFault"/>
+            </catch>
+          </faultHandlers>
+          <sequence name="SeqPropagateTRUSTAccount">
+            <assign name="TransTRUSTAccntUpdToPropagateAccntStatu">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransTRUSTAccntUpdToPropagateAccntStatus.xsl',bpws:getVariableData('rcvDequeueTRUSTAccountUpdateIV','AccountContactPublish'))"/>
+                <to variable="InvCCRMAM_PropagateTRUSTAccountIV" part="TRUSTUpdateAccount"/>
+              </copy>
+            </assign>
+            <invoke name="InvCCRMAM_PropagateTRUSTAccount" portType="ns7:CCRMAM_PropagateTRUSTAccount" inputVariable="InvCCRMAM_PropagateTRUSTAccountIV" partnerLink="CCRMAM_PropagateTRUSTAccount" operation="updateAccount"/>
+          </sequence>
+        </scope>
+      </sequence>
+      <sequence name="SeqPropagateToTRUST">
+        <switch name="CheckForTCId">
+          <case condition="(string-length(bpws:getVariableData('SIEBELID')) >0) or  bpws:getVariableData('TCIdLength')>0">
+            <empty name="DontSendUpdateToTRUST"/>
+          </case>
+          <otherwise>
+            <scope name="ScpSFDCLogin">
+              <faultHandlers>
+                <catchAll>
+                  <throw name="ThrInvalidResponse" faultName="bpelx:InvalidResponse" faultVariable="runtimeFault"/>
+                </catchAll>
+              </faultHandlers>
+              <switch name="Switch_2">
+                <case condition="string-length(bpws:getVariableData('rcvDequeueTRUSTAccountUpdateIV','AccountContactPublish','/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:Id'))>0">
+                  <sequence name="SeqSFDCLogin">
+                    <assign name="AsgCredentials">
+                      <copy>
+                        <from expression='ora:getPreference("loginId")'/>
+                        <to variable="InvSFDCLoginIV" part="parameters"
+                            query="/ns4:login/ns4:username"/>
+                      </copy>
+                      <copy>
+                        <from expression='ora:getPreference("password")'/>
+                        <to variable="InvSFDCLoginIV" part="parameters"
+                            query="/ns4:login/ns4:password"/>
+                      </copy>
+                    </assign>
+                    <invoke name="InvSFDCLogin" partnerLink="SalesForce"
+                            portType="ns4:Soap" operation="login"
+                            inputVariable="InvSFDCLoginIV"
+                            outputVariable="InvSFDCLoginOV"/>
+                    <assign name="readSession">
+                      <copy>
+                        <from variable="InvSFDCLoginOV" part="parameters"
+                              query="/ns4:loginResponse/ns4:result/ns4:sessionId"/>
+                        <to variable="headerRequest" part="SessionHeader"
+                            query="/ns5:SessionHeader/ns5:sessionId"/>
+                      </copy>
+                    </assign>
+                    <assign name="TransCreateAccountToSFDC">
+                      <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                      </bpelx:annotation>
+                      <copy>
+                        <from expression="ora:processXSLT('TransCreateAccountToSFDC.xsl',bpws:getVariableData('rcvDequeueTRUSTAccountUpdateIV','AccountContactPublish'))"/>
+                        <to variable="InvTRUSTAcountUpdateIV"
+                            part="parameters"/>
+                      </copy>
+                    </assign>
+                    <invoke name="InvTRUSTAcountUpdate"
+                            portType="ns5:AccountManagementPortType"
+                            inputVariable="InvTRUSTAcountUpdateIV"
+                            outputVariable="InvTRUSTAcountUpdateOV"
+                            partnerLink="TRUSTAcountUpdate"
+                            operation="updateSiebelId"
+                            bpelx:inputHeaderVariable="headerRequest"/>
+                    <switch name="AddCRMIdToTitle">
+                      <case condition="bpws:getVariableData('InvTRUSTAcountUpdateOV','parameters','/ns5:updateSiebelIdResponse/ns5:result/ns5:StatusCode')!= 'Error'">
+                        <bpelx:exec name="AddCRMIdToTitle" language="java"
+                                    version="1.5">
+                          <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+  
+String currenttitle = getTitle();  
+ 
+ 
+try{   
+String SFDCID = ((oracle.xml.parser.v2.XMLElement)                                   
+                        getVariableData("rcvDequeueTRUSTAccountUpdateIV", "AccountContactPublish", "/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:RCRMSFDCId")).getFirstChild().getNodeValue();                                      
+ 
+String CRMID = ((oracle.xml.parser.v2.XMLElement)                                   
+                        getVariableData("rcvDequeueTRUSTAccountUpdateIV", "AccountContactPublish", "/ns2:AccountContactPublish/ns2:RcrmAccount-Thin/ns2:Id")).getFirstChild().getNodeValue();                                 
+ String Title=(SFDCID+"; CRMId: "+CRMID);                     
+                         
+setCompositeInstanceTitle(Title);   
+}   
+catch(Exception e)   
+{   
+setCompositeInstanceTitle("No Id Supplied");   
+   
+}]]>
+                        </bpelx:exec>
+                      </case>
+                      <otherwise>
+                        <empty name="DoNothing"/>
+                      </otherwise>
+                    </switch>
+                  </sequence>
+                </case>
+                <otherwise>
+                  <empty name="DoNothing"/>
+                </otherwise>
+              </switch>
+            </scope>
+          </otherwise>
+        </switch>
+      </sequence>
+    </flow>
+  </sequence>
+</process>

@@ -1,0 +1,78 @@
+<definitions
+     name="TOMOMInvoker"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:pns1="http://xmlns.oracle.com/TOMOMInvoker/correlationset"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker"
+    >
+    <import namespace="http://xmlns.oracle.com/TOMOMInvoker/correlationset" location="TOMOMInvoker_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:pns1="http://xmlns.oracle.com/TOMOMInvoker/correlationset">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker"
+                 schemaLocation="TOMOMInvoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:pns1="http://xmlns.oracle.com/TOMOMInvoker/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.TOM.OM.237_PropagateOrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TOMOMInvokerResponseMessage">
+        <part name="payload" element="client:TOMOMInvokerProcessResponse"/>
+    </message>
+    <message name="TOMOMInvokerRequestMessage">
+        <part name="payload" element="ns1:orderRequest"/>
+    </message>
+    <message name="TOMOMInvokerReleaseOLICorrelationWaitRequestMessage">
+        <part name="payload" element="ns1:orderRequest"/>
+    </message>
+    <message name="TOMOMInvokerReleaseOrderHeaderCorrelationWaitRequestMessage">
+        <part name="payload" element="ns1:orderRequest"/>
+    </message>
+    <portType name="TOMOMInvokerCallback">
+        <operation name="onResult">
+            <input message="client:TOMOMInvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="TOMOMInvoker">
+        <operation name="fulfillOrder">
+            <input message="client:TOMOMInvokerRequestMessage"/>
+        </operation>
+        <operation name="releaseOLICorrelationWait">
+            <input message="client:TOMOMInvokerReleaseOLICorrelationWaitRequestMessage"/>
+        </operation>
+        <operation name="releaseOrderHeaderCorrelationWait">
+            <input message="client:TOMOMInvokerReleaseOrderHeaderCorrelationWaitRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TOMOMInvoker">
+        <plnk:role name="TOMOMInvokerProvider">
+            <plnk:portType name="client:TOMOMInvoker"/>
+        </plnk:role>
+        <plnk:role name="TOMOMInvokerRequester">
+            <plnk:portType name="client:TOMOMInvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:responsePropOLI" messageType="ns3:CreateQuoteProductsRequest"
+         part="CreateQuoteProductsRequest" query="/ns3:CreateQuoteProductsRequest/ns3:model/ns3:instance/ns3:TransactionID"
+         xmlns:ns4="http://schemas.hp.com/SM/7/Common" xmlns:ns3="http://schemas.hp.com/SM/7"/>
+    <bpws:propertyAlias propertyName="pns1:responsePropHeader" messageType="ns3:CreateQuoteRequest" part="CreateQuoteRequest"
+         query="/ns3:CreateQuoteRequest/ns3:model/ns3:instance/ns3:TransactionID" xmlns:ns4="http://schemas.hp.com/SM/7/Common"
+         xmlns:ns3="http://schemas.hp.com/SM/7"/>
+    <bpws:propertyAlias propertyName="pns1:responsePropHeader" messageType="client:TOMOMInvokerReleaseOrderHeaderCorrelationWaitRequestMessage"
+         part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns3:instanceId" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+         xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes"/>
+    <bpws:propertyAlias propertyName="pns1:responsePropOLI" messageType="client:TOMOMInvokerReleaseOLICorrelationWaitRequestMessage"
+         part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns3:instanceId" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+         xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes"/>
+</definitions>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="bpel.deploy" default="compile" basedir=".">
+    <import file="${bpel.home}/utilities/replace_hosts.xml"/>
+    <target name="compile">
+        <echo> -------------------------------------------------------------- | Compiling bpel process ${process.name}, revision ${rev} --------------------------------------------------------------         </echo>
+        <replace dir="${basedir}" token="10.136.164.216:8000"
+                 value="${hostname}:${http.port}">
+            <include name="**/*.xsd"/>
+        </replace>
+        <bpelc input="${process.dir}/bpel/bpel.xml" out="${process.dir}/output"
+               rev="${rev}" home="${bpel.home}">
+            <customize>
+                <partnerLinkBinding name="InterfaceManager">
+		 	<property name="wsdlLocation">http://10.136.164.216:8000/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl</property>
+         	</partnerLinkBinding>
+            </customize>
+        </bpelc>
+    </target>
+</project>

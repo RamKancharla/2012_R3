@@ -1,0 +1,99 @@
+<definitions targetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/Quote/GetQuoteLineItems" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/Quote/GetQuoteLineItems" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+   <types>
+      <s:schema elementFormDefault="qualified" targetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/Quote/GetQuoteLineItems" xmlns:tns="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/Quote/GetQuoteLineItems">
+         <s:element name="getQL">
+            <s:complexType>
+               <s:sequence>
+                  <s:element name="MacdQuote" type="tns:MacdQuote" minOccurs="1" maxOccurs="1"/>
+               </s:sequence>
+            </s:complexType>
+         </s:element>
+         <s:element name="getQLResponse">
+            <s:complexType>
+               <s:sequence>
+                  <s:element name="getQLResult" type="tns:RCRMQuoteLineItemData_Output" minOccurs="1" maxOccurs="1"/>
+               </s:sequence>
+            </s:complexType>
+         </s:element>
+         <s:complexType name="MacdQuote">
+            <s:sequence>
+               <s:element name="RCRMFieldH2" type="s:string" minOccurs="0"/>
+               <s:element name="RCRMFieldH1" type="s:string" minOccurs="0"/>
+               <s:element name="Timestamp" type="s:string" minOccurs="0"/>
+               <s:element name="TargetSystem" type="s:string" minOccurs="0"/>
+               <s:element name="SourceSystem" type="s:string" minOccurs="0"/>
+               <s:element name="MacdQuoteItem" type="tns:ArrayOfMacdQuoteItem" minOccurs="0"/>
+               <s:element name="TotalNoOfRecords" type="s:string" minOccurs="0"/>
+               <s:element name="PageNumber" type="s:string" minOccurs="0"/>
+               <s:element name="QuoteNumber" type="s:string" minOccurs="0"/>
+               <s:element name="MessageId" type="s:string" minOccurs="0"/>
+               <s:element name="SearchSpec" type="s:string" minOccurs="0"/>
+            </s:sequence>
+         </s:complexType>
+         <s:complexType name="ArrayOfMacdQuoteItem">
+            <s:sequence>
+               <s:element name="MacdQuoteItem" type="tns:MacdQuoteItem" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+            </s:sequence>
+         </s:complexType>
+         <s:complexType name="MacdQuoteItem">
+            <s:sequence>
+               <s:element name="RCRMFieldL5" type="s:string" minOccurs="0"/>
+               <s:element name="RCRMFieldL4" type="s:string" minOccurs="0"/>
+               <s:element name="RCRMFieldL3" type="s:string" minOccurs="0"/>
+               <s:element name="RCRMFieldL2" type="s:string" minOccurs="0"/>
+               <s:element name="LineTotal" type="s:string" minOccurs="0"/>
+               <s:element name="RCRMFieldL1" type="s:string" minOccurs="0"/>
+               <s:element name="BillingAccountSite" type="s:string" minOccurs="0"/>
+               <s:element name="Action" type="s:string" minOccurs="0"/>
+               <s:element name="NetUnitPrice" type="s:string" minOccurs="0"/>
+               <s:element name="PLI" type="s:string" minOccurs="0"/>
+               <s:element name="ProductName" type="s:string" minOccurs="0"/>
+               <s:element name="Quantity" type="s:string" minOccurs="0"/>
+               <s:element name="ContactEmailAddress" type="s:string" minOccurs="0"/>
+               <s:element name="RCRMNetUnitPriceCurrencyCode" type="s:string" minOccurs="0"/>
+               <s:element name="InstalltoSubscriber" type="s:string" minOccurs="0"/>
+               <s:element name="RevenueType" type="s:string" minOccurs="0"/>
+            </s:sequence>
+         </s:complexType>
+         <s:complexType name="RCRMQuoteLineItemData_Output">
+            <s:sequence>
+               <s:element name="Error_spcCode" type="s:string" minOccurs="0"/>
+               <s:element name="Error_spcMessage" type="s:string" minOccurs="0"/>
+               <s:element name="Object_spcId" type="s:string" minOccurs="0"/>
+               <s:element name="Process_spcInstance_spcId" type="s:string" minOccurs="0"/>
+               <s:element name="Siebel_spcOperation_spcObject_spcId" type="s:string" minOccurs="0"/>
+               <s:element name="MacdQuote" type="tns:MacdQuote" minOccurs="0"/>
+            </s:sequence>
+         </s:complexType>
+      </s:schema>
+   </types>
+   <message name="getQLSoapIn">
+      <part name="parameters" element="s0:getQL"/>
+   </message>
+   <message name="getQLSoapOut">
+      <part name="parameters" element="s0:getQLResponse"/>
+   </message>
+   <portType name="GetQuoteLineItemsServ">
+      <operation name="GetQuoteLineItems">
+         <input message="s0:getQLSoapIn"/>
+         <output message="s0:getQLSoapOut"/>
+      </operation>
+   </portType>
+   <binding name="GetQuoteLineItemsSoap" type="s0:GetQuoteLineItemsServ">
+      <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+      <operation name="GetQuoteLineItems">
+         <soap:operation soapAction="GetQuoteLineItems" style="document"/>
+         <input>
+            <soap:body use="literal"/>
+         </input>
+         <output>
+            <soap:body use="literal"/>
+         </output>
+      </operation>
+   </binding>
+   <service name="GetQuoteLineItemsServ">
+      <port name="GetQuoteLineItems" binding="s0:GetQuoteLineItemsSoap">
+         <soap:address location="http://inkaban3ua-eai01:7777/event/AGATEWAY/QuoteLineItemRS"/>
+      </port>
+   </service>
+</definitions>

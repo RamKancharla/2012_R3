@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TOMOM_UpdateOrderRequestValidatorStub" revision="1.0" state="on">
+    <import location="TOMOM_UpdateOrderRequestValidatorStub.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub"/>
+    <service name="client" ui:wsdlLocation="TOMOM_UpdateOrderRequestValidatorStub.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub#wsdl.interface(TOMOM_UpdateOrderRequestValidatorStub)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub#wsdl.endpoint(TOMOM_UpdateOrderRequestValidatorStub/TOMOM_UpdateOrderRequestValidatorStub)"/>
+    </service>
+    <component name="TOMOM_UpdateOrderRequestValidatorStub">
+        <implementation.bpel src="TOMOM_UpdateOrderRequestValidatorStub.bpel"/>
+    </component>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>TOMOM_UpdateOrderRequestValidatorStub/client</target.uri>
+    </wire>
+</composite>

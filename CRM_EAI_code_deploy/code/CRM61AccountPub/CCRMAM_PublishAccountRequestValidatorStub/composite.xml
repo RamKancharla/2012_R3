@@ -1,0 +1,19 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMAM_PublishAccountRequestValidatorStub" revision="1.0" state="on">
+    <import location="CCRMAM_PublishAccountRequestValidatorStub.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CCRMAM_PublishAccountRequestValidatorStub"/>
+    <service name="client" ui:wsdlLocation="CCRMAM_PublishAccountRequestValidatorStub.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CCRMAM_PublishAccountRequestValidatorStub#wsdl.interface(CCRMAM_PublishAccountRequestValidatorStub)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CCRMAM_PublishAccountRequestValidatorStub#wsdl.endpoint(CCRMAM_PublishAccountRequestValidatorStub/CCRMAM_PublishAccountRequestValidatorStub)"/>
+    </service>
+    <component name="CCRMAM_PublishAccountRequestValidatorStub">
+        <implementation.bpel src="CCRMAM_PublishAccountRequestValidatorStub.bpel"/>
+        <property name="bpel.config.inMemoryOptimization">true</property>
+        <property name="bpel.config.completionPersistPolicy">off</property>
+    </component>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMAM_PublishAccountRequestValidatorStub/client</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

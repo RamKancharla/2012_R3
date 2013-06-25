@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAConfigPlan xmlns:jca="http://platform.integration.oracle/blocks/adapter/fw/metadata" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy" xmlns:edl="http://schemas.oracle.com/events/edl" xmlns="http://schemas.oracle.com/soa/configplan">
+   <composite name="CPFGAM_Invoker">
+         <service name="ReadCPFGAM_POLLING_V">
+         <binding type="ws">
+            <attribute name="port">
+               <replace>http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager#wsdl.endpoint(CPFGAM_AccountManager/CPFGAM_AccountManager)</replace>
+            </attribute>
+         </binding>
+      </service>
+      
+      <component name="CPFGAM_AccountManagerProcess">
+         <property name="bpel.config.sensorActionLocation">
+            <replace>CPFGAM_AccountManagerProcess_sensorAction.xml</replace>
+         </property>
+      </component>
+      
+   </composite>
+  </SOAConfigPlan>

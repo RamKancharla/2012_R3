@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toplink:object-persistence version="Oracle TopLink - 11g Release 1 (11.1.1.4.0) (Build 101210)" xmlns:opm="http://xmlns.oracle.com/ias/xsds/opm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:toplink="http://xmlns.oracle.com/ias/xsds/toplink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <opm:name>CPFG_StubAccountStore</opm:name>
+   <opm:class-mapping-descriptors>
+      <opm:class-mapping-descriptor xsi:type="toplink:relational-class-mapping-descriptor">
+         <opm:class>CPFGStubAccountStore.CpfgAccount</opm:class>
+         <opm:alias>CpfgAccount</opm:alias>
+         <opm:primary-key>
+            <opm:field table="CPFG_ACCOUNT" name="ID" xsi:type="opm:column"/>
+         </opm:primary-key>
+         <opm:events xsi:type="toplink:event-policy"/>
+         <opm:querying xsi:type="toplink:query-policy">
+            <opm:queries>
+               <opm:query name="findAllCpfgAccount" xsi:type="toplink:read-all-query">
+                  <toplink:timeout>0</toplink:timeout>
+                  <toplink:reference-class>CPFGStubAccountStore.CpfgAccount</toplink:reference-class>
+                  <toplink:cache-usage>primary-key</toplink:cache-usage>
+                  <toplink:lock-mode>none</toplink:lock-mode>
+                  <toplink:container xsi:type="toplink:list-container-policy">
+                     <toplink:collection-type>java.util.Vector</toplink:collection-type>
+                  </toplink:container>
+               </opm:query>
+               <opm:query name="CPFG_StubAccountStoreSelect" xsi:type="toplink:read-all-query">
+                  <opm:criteria operator="equal" xsi:type="toplink:relation-expression">
+                     <toplink:left name="id" xsi:type="toplink:query-key-expression">
+                        <toplink:base xsi:type="toplink:base-expression"/>
+                     </toplink:left>
+                     <toplink:right xsi:type="toplink:parameter-expression">
+                        <toplink:parameter name="id" xsi:type="opm:column"/>
+                     </toplink:right>
+                  </opm:criteria>
+                  <opm:arguments>
+                     <opm:argument name="id">
+                        <opm:type>java.lang.String</opm:type>
+                     </opm:argument>
+                  </opm:arguments>
+                  <toplink:timeout>0</toplink:timeout>
+                  <toplink:reference-class>CPFGStubAccountStore.CpfgAccount</toplink:reference-class>
+                  <toplink:cache-usage>primary-key</toplink:cache-usage>
+                  <toplink:lock-mode>none</toplink:lock-mode>
+                  <toplink:container xsi:type="toplink:list-container-policy">
+                     <toplink:collection-type>java.util.Vector</toplink:collection-type>
+                  </toplink:container>
+               </opm:query>
+            </opm:queries>
+            <toplink:does-exist-query xsi:type="toplink:does-exist-query">
+               <toplink:existence-check>check-database</toplink:existence-check>
+            </toplink:does-exist-query>
+         </opm:querying>
+         <opm:attribute-mappings>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>id</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="ID" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>parentId</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="PARENT_ID" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>hierarchyType</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="HIERARCHY_TYPE" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>name</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="NAME" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>organisationType</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="ORGANISATION_TYPE" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressCity</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="ADDRESS_CITY" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressStateprovcountry</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="ADDRESS_STATEPROVCOUNTRY" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>addressStreet</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="ADDRESS_STREET" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>site</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="SITE" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>region</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="REGION" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>subregion</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="SUBREGION" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>mccCode</opm:attribute-name>
+               <opm:field table="CPFG_ACCOUNT" name="MCC_CODE" xsi:type="opm:column"/>
+               <toplink:attribute-classification>java.lang.String</toplink:attribute-classification>
+            </opm:attribute-mapping>
+         </opm:attribute-mappings>
+         <toplink:descriptor-type>independent</toplink:descriptor-type>
+         <toplink:caching>
+            <toplink:cache-type>weak-reference</toplink:cache-type>
+            <toplink:always-refresh>true</toplink:always-refresh>
+            <toplink:unitofwork-isolation-level>isolate-new-data-after-transaction</toplink:unitofwork-isolation-level>
+         </toplink:caching>
+         <toplink:remote-caching>
+            <toplink:cache-type>weak-reference</toplink:cache-type>
+         </toplink:remote-caching>
+         <toplink:instantiation/>
+         <toplink:copying xsi:type="toplink:instantiation-copy-policy"/>
+         <toplink:change-policy xsi:type="toplink:deferred-detection-change-policy"/>
+         <toplink:tables>
+            <toplink:table name="CPFG_ACCOUNT"/>
+         </toplink:tables>
+      </opm:class-mapping-descriptor>
+   </opm:class-mapping-descriptors>
+</toplink:object-persistence>

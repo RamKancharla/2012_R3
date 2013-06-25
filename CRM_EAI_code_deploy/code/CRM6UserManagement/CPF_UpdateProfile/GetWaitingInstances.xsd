@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xs:schema targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances" xmlns="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="GetWaitingInstancesInput" type="GetWaitingInstancesInput"/>
+   <xs:complexType name="GetWaitingInstancesInput">
+      <xs:sequence>
+         <xs:element name="CorrelationString" type="xs:string" nillable="true"/>
+   </xs:sequence>
+</xs:complexType>
+<xs:element name="GetWaitingInstancesOutputCollection" type="GetWaitingInstancesOutputCollection" nillable="true"/>
+<xs:complexType name="GetWaitingInstancesOutputCollection">
+   <xs:sequence>
+      <xs:element name="GetWaitingInstancesOutput" type="GetWaitingInstancesOutput" minOccurs="0" maxOccurs="unbounded"/>
+   </xs:sequence>
+</xs:complexType>
+<xs:complexType name="GetWaitingInstancesOutput">
+   <xs:sequence>
+      <xs:element name="conv_id" type="xs:string" nillable="true"/>
+   </xs:sequence>
+</xs:complexType>
+</xs:schema>

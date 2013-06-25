@@ -1,0 +1,67 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SAPOM_Invoker" revision="1.0" state="on">
+    <import location="SAPOM_POLLING_V.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/SAPOM_POLLING_V/"/>
+    <import location="SI_Create_ContractOrder_OB_AsyncRef.wsdl" namespace="http://trm.com:I004:OrderProcessing:CreateContractOrder_Send"/>
+    <import location="Update_Inter_Buffer.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Inter_Buffer/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/InterfaceManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" importType="wsdl"/>
+    <service name="SAPOM_POLLING_V" ui:wsdlLocation="SAPOM_POLLING_V.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/SAPOM_POLLING_V/#wsdl.interface(SAPOM_POLLING_V_ptt)"/>
+        <binding.jca config="SAPOM_POLLING_V_db.jca"/>
+    </service>
+    <component name="SAPOM_Invoker">
+        <implementation.bpel src="SAPOM_Invoker.bpel"/>
+        
+        
+    </component>
+    <reference name="Update_Inter_Buffer" ui:wsdlLocation="Update_Inter_Buffer.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Inter_Buffer/#wsdl.interface(Update_Inter_Buffer_ptt)"/>
+        <binding.jca config="Update_Inter_Buffer_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="SI_Create_ContractOrder_OB_Async" ui:wsdlLocation="SI_Create_ContractOrder_OB_AsyncRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://trm.com:I004:OrderProcessing:CreateContractOrder_Send#wsdl.interface(SI_Create_ContractOrder_OB_Async)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="SI_Create_ContractOrder_OB_AsyncRef.wsdl" port="http://trm.com:I004:OrderProcessing:CreateContractOrder_Send#wsdl.endpoint(SI_Create_ContractOrder_OB_Async/OP_Create_ContractOrder_Send_Async)">
+            <property name="oracle.webservices.auth.password">${sap.Password}</property>
+            <property name="oracle.webservices.auth.username">${sap.UserName}</property>
+        </binding.ws>
+    </reference>
+    <reference name="SequenceReleaser" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="InterfaceManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+        <binding.ws port="http://xmlns.oracle.com/InterfaceManager#wsdl.endpoint(InterfaceManager/InterfaceManager)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>SAPOM_POLLING_V</source.uri>
+        <target.uri>SAPOM_Invoker/SAPOM_POLLING_V</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM_Invoker/InterfaceManager</source.uri>
+        <target.uri>InterfaceManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM_Invoker/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM_Invoker/Update_Inter_Buffer</source.uri>
+        <target.uri>Update_Inter_Buffer</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM_Invoker/SI_Create_ContractOrder_OB_Async</source.uri>
+        <target.uri>SI_Create_ContractOrder_OB_Async</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

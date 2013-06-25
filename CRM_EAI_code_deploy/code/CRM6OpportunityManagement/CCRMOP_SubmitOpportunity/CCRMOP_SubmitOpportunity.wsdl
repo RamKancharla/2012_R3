@@ -1,0 +1,62 @@
+<definitions
+     name="CCRMOP_SubmitOpportunity"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity/correlationset"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity/correlationset"
+         location="CCRMOP_SubmitOpportunity_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity"
+                 schemaLocation="CCRMOP_SubmitOpportunity.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity">
+            <xsd:import namespace="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound" schemaLocation="EAI.MSG.CCRM.OP.226_PublishOpportunityRequestResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMOP_SubmitOpportunityRequestMessage">
+        <part name="OpportunityStatus" element="ns1:RCRMOpportunityPublish"/>
+    </message>
+    <message name="TRUSTOpportunityUpdatemsg">
+        <part name="TRUSTOpportunityUpdate" element="ns1:RCRMOpportunityPublish"/>
+    </message>
+    <message name="CCRMOP_SubmitOpportunityResponseMessage">
+        <part name="payload" element="client:CCRMOP_SubmitOpportunityProcessResponse"/>
+    </message>
+    <portType name="CCRMOP_SubmitOpportunity">
+        <operation name="sendOpportunity">
+            <input message="client:CCRMOP_SubmitOpportunityRequestMessage"/>
+        </operation>
+        <operation name="updateOpportunity">
+            <input message="client:TRUSTOpportunityUpdatemsg"/>
+        </operation>
+    </portType>
+    <portType name="CCRMOP_SubmitOpportunityCallback">
+        <operation name="onResult">
+            <input message="client:CCRMOP_SubmitOpportunityResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOP_SubmitOpportunity">
+        <plnk:role name="CCRMOP_SubmitOpportunityProvider">
+            <plnk:portType name="client:CCRMOP_SubmitOpportunity"/>
+        </plnk:role>
+        <plnk:role name="CCRMOP_SubmitOpportunityRequester">
+            <plnk:portType name="client:CCRMOP_SubmitOpportunityCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:CorrProp" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/mq/headerenqueueOpportunityStatus/"
+         messageType="ns3:RCRMOpportunityPublish_msg" part="RCRMOpportunityPublish" query="/ns1:RCRMOpportunityPublish/@MessageId"/>
+    <bpws:propertyAlias propertyName="pns1:CorrProp" messageType="client:TRUSTOpportunityUpdatemsg" part="TRUSTOpportunityUpdate"
+         query="/ns1:RCRMOpportunityPublish/@MessageId"/>
+</definitions>

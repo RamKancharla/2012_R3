@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	*****************************************************************************************************************
+	*   Module:        EAI.MSG.EXT.137_PropagateAccountHierarchy.xsd					        *
+	*   Type:          XSD Schema										        * 
+	*   Description:   The Schema used to propagate the account hierarchy to Common Platform                        *
+	*													        *
+	*	Change History											        *
+	*	Version      Date     	Author            			Description Of Change                   *
+	*												                *
+	*       0.1      26/07/07   Mark Flynn                  Initial Version                         *
+	*       1.0      16/05/08   Andrew Humphreys            Changed namespaces to be AAA owned 
+	*****************************************************************************************************************
+-->
+<xsd:schema
+	xmlns:local="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:gcap-sa="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations"
+	xmlns:gcap-at="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonAccountTypes"
+	xmlns:gcap-mt="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+	targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.0">
+	
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations"
+		schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonAccountTypes"
+		schemaLocation="EAI.XSD.003_CommonAccountTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+		schemaLocation="EAI.XSD.005_CommonMessageTypes.xsd" />
+	
+	
+	<xsd:element name="propagateAccountHierarchyRequest"
+		type="local:PropagateAccountHierarchyRequest" />
+	<xsd:complexType name="PropagateAccountHierarchyRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-mt:EaiHeader" />
+			<xsd:element name="actionCode" type="gcap-mt:ActionCode" />
+			<xsd:element name="account" type="gcap-at:Account" />
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

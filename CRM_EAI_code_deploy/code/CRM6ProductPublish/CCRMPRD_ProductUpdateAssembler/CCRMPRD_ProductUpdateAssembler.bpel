@@ -1,0 +1,133 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Nov 07 00:09:04 GMT 2008
+  Author:  rob.billington
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMPRD_ProductUpdateAssembler" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler/correlationset" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ProductManagementServices" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.siebel.com/xml/Test%20Product" xmlns:ns2="http://www.siebel.com/xml/UDA%20Dynamic%20Matrix" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+   
+   <bpelx:exec import="com.reuters.www.ns.GCAP.CPFG.PRD.CPFGPRD_ProductUpdateFormatter.*"/>
+     <bpelx:exec import="com.reuters.www.ns.GCAP.productAssembler.*"/>
+    <bpelx:exec import="com.siebel.www.xml.UDA20Dynamic20Matrix.*"/>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CCRMPRD_ProductUpdateAssembler" myRole="CCRMPRD_ProductUpdateAssemblerProvider"/>
+        <partnerLink name="CPFGPRD_ProductUpdateFormatter" partnerRole="CPFGPRD_ProductUpdateFormatterProvider" partnerLinkType="ns1:CPFGPRD_ProductUpdateFormatter"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:CCRMPRD_ProductUpdateAssemblerRequestMessage"/>
+        <variable name="InvCPFGPRD_ProductUpdateFormatter_initiate_InputVariable" messageType="ns1:CPFGPRD_ProductUpdateFormatterRequestMessage"/>
+        <variable name="processProductConfigurations_processProductConfigurations_InputVariable" messageType="client:DynamicAttributesMessage"/>
+        <variable name="standaloneProductUpdate" messageType="client:StandaloneProductUpdateMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="ProductIntegrationIDCorrelationSet" properties="ns4:ProductIntegrationID"/>
+    </correlationSets>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="AsgFaultTitle" language="java" version="1.3">
+                <![CDATA[setCompositeInstanceTitle(getTitle() + ";Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMPRD_ProductUpdateAssembler.wsdl) -->
+        <receive name="processProductDefinition" partnerLink="client" portType="client:CCRMPRD_ProductUpdateAssembler" operation="processProductDefinition" variable="inputVariable" createInstance="yes">
+            <correlations>
+                <correlation initiate="yes" set="ProductIntegrationIDCorrelationSet"/>
+            </correlations>
+        </receive>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+            <![CDATA[String title = "null";  
+  
+if( null != ( (oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:Product/ns3:Id")).getFirstChild() ) {  
+    title = ( (oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:Product/ns3:Id")).getFirstChild().getNodeValue();  
+}  
+  
+setCompositeInstanceTitle(title);]]>
+        </bpelx:exec>
+        <assign name="TransStaticDataToStandaloneVar">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransStaticInputToStandaloneVar.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="standaloneProductUpdate" part="payload"/>
+            </copy>
+        </assign>
+        <switch name="SwitchSimpleProduct">
+            <case condition="bpws:getVariableData('inputVariable','payload','/ns3:Product/ns3:AatExists') = 'Y'">
+                <bpelx:annotation>
+                    <bpelx:pattern>AAT Exists</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_1">
+                    <receive name="processProductConfigurations" partnerLink="client" portType="client:CCRMPRD_ProductUpdateAssembler" operation="processProductConfigurations" variable="processProductConfigurations_processProductConfigurations_InputVariable" createInstance="no">
+                        <correlations>
+                            <correlation initiate="no" set="ProductIntegrationIDCorrelationSet"/>
+                        </correlations>
+                    </receive>
+                    <bpelx:exec name="CopyAndTransformConfigurations" language="java" version="1.3">
+                        <![CDATA[try {                                
+    Element inputVariableElement = (Element)getVariableData("processProductConfigurations_processProductConfigurations_InputVariable","payload","/ns2:PSPDynamicMatrix");                         
+    Element outputVariableElement = (Element)getVariableData("standaloneProductUpdate","payload","/payload");                         
+                    
+    IPSPDynamicMatrix input = PSPDynamicMatrixFactory.createFacade(inputVariableElement);                   
+    IProductDefinitionUpdate output = ProductDefinitionUpdateFactory.createFacade(outputVariableElement);                 
+                 
+    ProductConverter.convert( input, output);        
+    } catch (Exception ex) {             
+        addAuditTrailEntry( ex + " converting input to output" );  
+    }]]>
+                    </bpelx:exec>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+        <bpelx:exec import="org.w3c.dom.Element"/>
+        <assign name="TransStandaloneVarToOutput">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransStandaloneVarToOutput.xsl',bpws:getVariableData('standaloneProductUpdate','payload'))"/>
+                <to variable="InvCPFGPRD_ProductUpdateFormatter_initiate_InputVariable" part="payload"/>
+            </copy>
+        </assign>
+        <!--bpelx:exec import="com.reuters.www.ns.GCAP.productAssembler.ProductConverter"/>
+        <bpelx:exec import="com.reuters.www.ns.GCAP.CCRM.PRD.CCRMPRD_ProductUpdateAssembler.*"/>
+        <bpelx:exec import="com.siebel.www.xml.UDA20Dynamic20Matrix.*"/-->
+        <bpelx:exec import="java.util.Iterator"/>
+        <bpelx:exec import="java.util.List"/>
+        <invoke name="InvCPFGPRD_ProductUpdateFormatter" partnerLink="CPFGPRD_ProductUpdateFormatter" portType="ns1:CPFGPRD_ProductUpdateFormatter" operation="initiate" inputVariable="InvCPFGPRD_ProductUpdateFormatter_initiate_InputVariable"/>
+    </sequence>
+</process>

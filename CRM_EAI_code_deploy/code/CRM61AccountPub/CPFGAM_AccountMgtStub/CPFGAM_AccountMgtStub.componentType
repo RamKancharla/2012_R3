@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGAM_AccountMgtStub.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/CPFGAM_AccountMgtStub#wsdl.interface(CPFGAM_AccountMgtStub)"/>
+    </service>
+    <reference ui:wsdlLocation="CPFG_StubAccountStore.wsdl" name="CPFG_StubAccountStore">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/CPFG_StubAccountStore/#wsdl.interface(CPFG_StubAccountStore_ptt)"/>
+    </reference>
+</componentType>

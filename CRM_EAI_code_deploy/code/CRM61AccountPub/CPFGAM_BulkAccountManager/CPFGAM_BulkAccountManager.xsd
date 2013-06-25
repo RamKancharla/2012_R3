@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_BulkAccountManager"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_BulkAccountManager"
+            elementFormDefault="qualified"
+            xmlns:ap="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AccountPublish">
+  <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AccountPublish" schemaLocation="EAI.MSG.CPFG.AM.225_StandalonePublishAccountEventRequest.xsd"/>
+  <xsd:element name="accountCollection" type="AccountCollection"/>
+  <xsd:complexType name="AccountCollection">
+    <xsd:sequence>
+      <xsd:element name="standaloneAccountEvent"
+                   type="ap:Standalone_CPFGAccountPubRequest"
+                   maxOccurs="unbounded" minOccurs="0"/>
+      <xsd:element name="instanceID" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

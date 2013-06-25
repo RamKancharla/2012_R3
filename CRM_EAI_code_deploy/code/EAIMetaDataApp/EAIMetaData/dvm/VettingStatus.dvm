@@ -1,0 +1,13 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="VettingStatus" xmlns="http://xmlns.oracle.com/dvm">
+<description>Maps Quote technical vetting status from TOM to Siebel.
+
+Used by:
+CCRMTF_PropagateQuoteStatus</description><columns><column name="TOMStatus"/><column name="SiebelStatus"/></columns>
+<rows><row><cell>allocated</cell><cell>Allocated</cell></row>
+<row><cell>in progress</cell><cell>In Progress</cell></row>
+<row><cell>approved</cell><cell>Passed</cell></row>
+<row><cell>approval denied</cell><cell>Failed</cell></row>
+<row><cell>rejected</cell><cell>Failed</cell></row>
+<row><cell>Error</cell><cell>Error</cell></row>
+</rows></dvm>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.CS.OM.222_ExtenedOrderRequestForSubscriberSplit.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:	Canonical Order Schema with extended subscriber country code and subscriber location
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		10/04/08	S Gannavarapu			Initial Version
+*  0.02		21/08/08	Sreeja Prasad			Added po,ssPersonId and slPersonId in ExtSubcriberCanonicalOrderHeader.
+*  0.03     22/04/10    Satish Patel            Added installToSubscriber and installToItemNumber in  ExtSubcriberCanonicalOLI for PBI - 537
+*  0.04     11/04/11    Tanmay Saxena           Added pricelistCurrency for CR 15630
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.02">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="extSubcriberOrderRequest" type="xsdLocal:ExtSubcriberOrderRequest"/>
+	<xsd:complexType name="ExtSubcriberOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="logicalCountry" type="xsd:string"/>
+			<xsd:element name="messageHeader" type="xsdLocal:ExtSubcriberCanonicalMessageHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:ExtSubcriberCanonicalOrderHeader"/>
+                        <xsd:element name="index" type="xsd:string"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:ExtSubcriberCanonicalOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExtSubcriberCanonicalOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+			<xsd:element name="rootItemId" type="xsd:string"/>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="businessCase" type="xsd:string"/>
+			<xsd:element name="salesCode" type="xsd:string"/>
+			<xsd:element name="subscriber" type="xsd:string"/>
+			<xsd:element name="subscriberCountryCode" type="xsd:string"/>
+			<xsd:element name="subscriberNumber" type="xsd:string"/>
+			<xsd:element name="subAccount" type="xsd:string"/>
+			<xsd:element name="PLI" type="xsd:string"/>
+			<xsd:element name="permissioningSystem" type="xsd:string"/>
+			<xsd:element name="manualPermissioningRequired" type="xsd:string"/>
+			<xsd:element name="AKR" type="xsd:string"/>
+			<xsd:element name="userID" type="xsd:string"/>
+                        <xsd:element name="userIDtype" type="xsd:string"/>
+			<xsd:element name="userNumber" type="xsd:string"/>
+			<xsd:element name="firstName" type="xsd:string"/>
+			<xsd:element name="lastname" type="xsd:string"/>
+			<xsd:element name="dob" type="xsd:string"/>
+			<xsd:element name="isNewUser" type="xsd:string"/>
+			<xsd:element name="installDate" type="xsd:string"/>
+			<xsd:element name="removalDate" type="xsd:string"/>
+			<xsd:element name="QUID" type="xsd:string"/>
+			<xsd:element name="discount" type="xsd:string"/>
+			<xsd:element name="specialPrice" type="xsd:string"/>
+			<xsd:element name="specialPriceCurr" type="xsd:string"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsd:string"/>
+			<xsd:element name="itemNumber" type="xsd:string"/>
+			<xsd:element name="startStopBillingDate" type="xsd:string"/>
+			<xsd:element name="billingType" type="xsd:string"/>
+			<xsd:element name="billingNote" type="xsd:string"/>
+			<xsd:element name="freeTrailFlag" type="xsd:string"/>
+			<xsd:element name="STB" type="xsd:string"/>
+			<xsd:element name="assetIntegrationId" type="xsd:string"/>
+			<xsd:element name="orderLineStatus" type="xsd:string"/>
+			<xsd:element name="permissioningStatus" type="xsd:string"/>
+			<xsd:element name="interfaceForBilling" type="xsd:string"/>
+			<xsd:element name="interfaceForFulfilment" type="xsd:string"/>
+			<xsd:element name="permBillFlag" type="xsd:string"/>
+                        <xsd:element name="installToSubscriber" type="xsd:string"/>
+                        <xsd:element name="installToItemNumber" type="xsd:string"/>                        
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExtSubcriberCanonicalMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExtSubcriberCanonicalOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderNumber" type="xsd:string"/>
+			<xsd:element name="installDate" type="xsd:string"/>
+			<xsd:element name="removalDate" type="xsd:string"/>
+			<xsd:element name="po" type="xsd:string"/>
+			<xsd:element name="orderNote" type="xsd:string"/>
+			<xsd:element name="orderStatus" type="xsd:string"/>
+			<xsd:element name="ssPersonId" type="xsd:string"/>
+			<xsd:element name="slPersonId" type="xsd:string"/>
+            <xsd:element name="pricelistCurrency" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

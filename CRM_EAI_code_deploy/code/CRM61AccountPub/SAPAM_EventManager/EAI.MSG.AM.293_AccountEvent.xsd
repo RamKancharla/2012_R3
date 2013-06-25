@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	*********************************************************************************************************
+	* Module:      EAI.MSG.AM.293_AccountEvent.xsd
+	* Type:        XSD Schema
+	* Description: The schema used in EAI components to publish the account data to subscribers
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1        07/01/10    Lavanya	  Initial version
+	* 0.2        07/22/10    Damodar          Renamed file name to 293 changed filename.
+        * 1.3        13/08/10    Lavanya          Added Timestamp,Dummy3,Dummy2,Dummy1,TRBPVersion,ContractDetail,Name,Id,Discount,AgreementId,Title,SFDCId,PrimaryFunction,LocalTitle,LocalStreet,LocalState,LocalPostcode,LocalLastName,LocalFirstName,LocalCountry,LocalCity,EndUserActivity,ContactCategory,AssetFocus1,AccountSFDCId as part of R4
+        * 1.4        13/09/10    Kedar            Added KNOwned field for PBI 9134 R5
+        * 1.5        09/09/10    Rijoy            Added oaName as part of R5-CR#9586
+	* 1.6             11/01/11    Alekya           Added EikonAccountName as part of CR#12467
+        * 1.7	     11/01/11    Mallesh          Added RCRMFinancialCharges as part of Wave2-CR#531
+        *1.8       10/02/2012   Harshitha       Added localFloorAddress and nation as part of Wave 4
+        ********************************************************************************************************** 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+	xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+	xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+	xmlns:gcap-cut="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+	xmlns:gcap-NAT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes"
+	xmlns:gcap-NUT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.17">
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+		schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.003_CommonAccountTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes"
+		schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.009_NillableAccountTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+		schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+		schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.002_CommonUserTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes"
+		schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.016_NillableUserTypes.xsd" />
+	<xsd:element name="extendedaccountEvent" type="local:ExtendedAccountEvent" />
+	<xsd:complexType name="ExtendedAccountEvent">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader" />
+                        <!--ELEMENT FOR B2CC - I001-->
+<xsd:element name="publishAccountToSAP" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+<!--ELEMENTS FOR B2CC - I001 END HERE-->
+
+  <!--ELEMENT FOR R4 - I001 START HERE -->
+   <xsd:element name="Timestamp" type="xsd:string"/>
+   <!--ELEMENT FOR R4 - I001 END HERE -->
+   
+   
+			<xsd:element name="actionCode" type="gcap-cmt:ActionCode" />
+			<xsd:element name="country" type="gcap-cat:CountryCode" />
+			<xsd:element name="account" type="local:Account" />
+			<xsd:element name="accountAddress" type="local:AccountAddress" maxOccurs="unbounded" />
+			<xsd:element name="employee" type="local:Employee" maxOccurs="unbounded"/>
+			<xsd:element name="contact" type="local:Contact"  maxOccurs="unbounded"/>
+			<xsd:element name="attributeValuePair" type="local:AttributeValuePair"  maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Account">
+		<xsd:sequence>
+<!-- Added a field for CR 12467:Additional Location Account Name used within Eikon(AAA)-(EAI) -->
+   <xsd:element name="EikonAccountName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <!-- End Field for CR 12467 -->
+   <!-- Wave2 New Elements CR#531 -->
+      <xsd:element name="RCRMFinancialCharges" type="xsd:string" minOccurs="0"
+	maxOccurs="1"/>
+   <!-- END Wave2 Changes  -->          
+
+<xsd:element name="trscAgreementNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+<xsd:element name="urgentBillingFlag" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+ <xsd:element name="softDollarCode" type="xsd:string" minOccurs="0" maxOccurs="1" />
+<xsd:element name="SAPPublishedFlag" type="xsd:string" minOccurs="0" maxOccurs="1"/> 
+   <xsd:element name="billingLanguage" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="billingCurrency" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+ <xsd:element name="parentCustomerReferenceNumber" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+   <!-- Add a field for 9134: Knowledge Networks -->
+   <xsd:element name="KNOwned" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <!-- End field for 9134-->
+  <xsd:element name="invoiceDeliveryMethod" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="hardcopyDispatchMethod" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="extBillingAccountDesc" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+ 
+<!-- B2CC - I001 ELEMENTS END HERE-->
+
+<!--ELEMENT FOR R4 - I001 START HERE -->
+   <xsd:element name="Dummy3" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Dummy2" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Dummy1" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <!--ELEMENT FOR R4 - I001 END HERE -->
+   
+   
+			<xsd:element name="tomIntegrationFlag" type="gcap-NAT:TOMIntegrationFlag" />
+                        <xsd:element name="CMIntegrationFlag" type="gcap-NAT:CMIntegrationFlag" />
+			<xsd:element name="subRegion" type="gcap-NAT:SubRegion" />
+			<xsd:element name="SuspendBillingFlag" type="gcap-NAT:Suspend"/>
+			<xsd:element name="TCId" type="gcap-NAT:TCId"/>
+			<xsd:element name="primaryAccountFlag" type="gcap-NAT:PrimaryAccountFlag"/>
+			<xsd:element name="PerClientBillingFlag" type="gcap-NAT:PerClient"/>
+			<xsd:element name="oaid" type="gcap-NAT:OAID"/>
+                     <xsd:element name="oaName" type="gcap-NAT:OAName"/>
+			<xsd:element name="multiCenterNumber" type="gcap-NAT:MultiCenterNumber"/>
+			<xsd:element name="InvoicingCenter" type="gcap-NAT:InvoicingCenter"/>
+			<xsd:element name="invoiceDescription" type="gcap-NAT:InvoiceDescription"/>
+			<xsd:element name="GeoCode" type="gcap-NAT:GeoCode"/>
+			<xsd:element name="CityCode" type="gcap-NAT:CityCode"/>
+			<xsd:element name="csIntegrationFlag" type="gcap-NAT:CSIntegrationFlag"/>
+			<xsd:element name="alternateSubscriberNumber" type="gcap-NAT:AlternateSubscriberNumber"/>
+    		        <xsd:element name="addressType" type="gcap-NAT:AddressType"/>
+			<xsd:element name="phoneNumber" type="gcap-NAT:TelephoneNumber"/>
+			<xsd:element name="faxNumber" type="gcap-NAT:FaxNumber"/>
+			<xsd:element name="id" type="gcap-cat:AccountID"/>
+			<xsd:element name="irasReference" type="gcap-cat:IRASReference"/>
+			<xsd:element name="accountStatus" type="gcap-NAT:AccountStatus" />
+			<xsd:element name="contactRelationshipType" type="gcap-cat:ContactRelationshipType"/>
+                        <xsd:element name="globalUltimateParentType" type="gcap-cat:GlobalUltimateParentType"/>
+			<xsd:element name="currencyCode" type="gcap-cat:CurrencyCode" />
+			<xsd:element name="description" type="gcap-NAT:Description" />
+			<xsd:element name="groupTypeCode" type="gcap-NAT:GroupTypeCode" />
+			<xsd:element name="masterAccountId" type="gcap-NAT:MasterAccountId" />
+			<xsd:element name="name" type="gcap-NAT:AccountName" />
+			<xsd:element name="orgId" type="gcap-NAT:OrgId" />
+			<xsd:element name="parentAccountId" type="gcap-NAT:ParentAccountId" />
+			<xsd:element name="partyName" type="gcap-NAT:PartyName" />
+			<xsd:element name="partyTypeCode" type="gcap-NAT:PartyTypeCode" />
+			<xsd:element name="partyUId" type="gcap-cat:PartyUId" />
+			<xsd:element name="primaryAccountCity" type="gcap-NAT:PrimaryAccountCity" />
+			<xsd:element name="primaryAccountCountry" type="gcap-cat:PrimaryAccountCountry" />
+			<xsd:element name="primaryAccountPostalCode" type="gcap-cat:PrimaryAccountPostalCode" />
+			<xsd:element name="primaryAccountState" type="gcap-NAT:PrimaryAccountState" />
+			<xsd:element name="primaryAccountStreetAddress" type="gcap-NAT:PrimaryAccountStreetAddress" />
+			<xsd:element name="primaryAddressId" type="gcap-NAT:PrimaryAddressId" />
+			<xsd:element name="primaryAddressName" type="gcap-NAT:PrimaryAddressName" />
+			<xsd:element name="primaryContactId" type="gcap-NAT:PrimaryContactId" />
+			<xsd:element name="primaryPositionId" type="gcap-NAT:PrimaryPositionId" />
+			<xsd:element name="accountClass" type="gcap-NAT:AccountClass" />
+			<xsd:element name="accountFamily" type="gcap-NAT:AccountFamily" />
+			<xsd:element name="billingFrequency" type="gcap-cat:BillingFrequency" />
+			<xsd:element name="businessChannel" type="gcap-cat:BusinessChannel" />
+			<xsd:element name="RelationShipModel" type="gcap-NAT:RelationShipModel"/>
+			<xsd:element name="coreSuiteStatus" type="gcap-NAT:CoreSuiteStatus" />
+			<xsd:element name="errorMessage" type="gcap-NAT:ErrorMessage" />
+			<xsd:element name="fieldServiceLocation" type="gcap-NAT:FieldServiceLocation" />
+			<xsd:element name="internalAccountFlag" type="gcap-NAT:InternalAccountFlag" />
+			<xsd:element name="organisationType" type="gcap-NAT:OrganisationType" />
+			<xsd:element name="organisationTypeDesc" type="gcap-NAT:OrganisationTypeDesc" />
+			<xsd:element name="payTerms" type="gcap-NAT:PayTerms" />
+			<xsd:element name="primaryChildId" type="gcap-NAT:PrimaryChildId" />
+			<xsd:element name="quotronClient" type="gcap-NAT:QuotronClient" />
+			<xsd:element name="region" type="gcap-NAT:Region" />
+			<xsd:element name="subAccountName" type="gcap-cat:SubAccountName" />
+                        <xsd:element name="subAccountNumber" type="gcap-cat:SubAccountNumber"/>
+                        <xsd:element name="subscriberCountry" type="gcap-NAT:SubscriberCountry"/>
+			<xsd:element name="subscriberCountryCode" type="gcap-NAT:SubscriberCountryCode" />
+			<xsd:element name="subscriberNumber" type="gcap-cat:SubscriberNumber" />
+			<xsd:element name="subscriberShortName" type="gcap-NAT:SubscriberShortName" />
+                        <xsd:element name="sysUpdatedBy" type="gcap-NAT:SysUpdatedBy"/>
+                        <xsd:element name="taxCode" type="gcap-NAT:TaxCode"/>
+			<xsd:element name="vatCode" type="gcap-NAT:VATCode"/>
+			<xsd:element name="site" type="gcap-NAT:Site"/>
+			<xsd:element name="SFDCID" type="gcap-NAT:SFDCID"/>
+			<xsd:element name="HomePage" type="gcap-NAT:HomePage"/>
+			<xsd:element name="Segment" type="gcap-NAT:Segment"/>
+			<xsd:element name="ownerMail" type="gcap-NAT:OwnerMail"/>
+			<xsd:element name="masterAccountClass" type="gcap-NAT:MasterAccountClass"/>
+			<xsd:element name="taxIDNumber" type="gcap-NAT:TaxIDNumber"/>
+			<xsd:element name="customerReference" type="gcap-NAT:CustomerReference"/>
+			<xsd:element name="customerJourney" type="gcap-NAT:CustomerJourney"/>
+			<xsd:element name="accountNotes" type="gcap-NAT:AccountNotes"/>
+			<xsd:element name="accountDescription" type="gcap-NAT:AccountDescription"/>
+			<xsd:element name="parentAccountClass" type="gcap-NAT:ParentAccountClass"/>
+			<xsd:element name="caID" type="gcap-NAT:CAID"/>
+			<xsd:element name="TDOStatus" type="gcap-NAT:TDOStatus"/>
+			<xsd:element name="TDOCheckDate" type="gcap-NAT:TDOCheckDate"/>
+			<xsd:element name="CreditCheckStatus" type="gcap-NAT:CreditCheckStatus"/>
+			<xsd:element name="CreditCheckDate" type="gcap-NAT:CreditCheckDate"/>
+			<xsd:element name="ContractType" type="gcap-NAT:ContractType"/>
+			<xsd:element name="AccountTypeCode" type="gcap-NAT:AccountTypeCode"/>
+			<xsd:element name="siebelAccountStatus" type="gcap-NAT:Status"/>
+			<xsd:element name="lastUpdated" type="xsd:string"/> 
+			<xsd:element name="customerReferenceNumber" type="gcap-NAT:CustomerReferenceNumber"/>
+			<xsd:element name="localAccountName" type="gcap-NAT:AccountName"/>
+			<xsd:element name="legalEntityFlag" type="gcap-NAT:LegalEntityFlag"/>
+			<xsd:element name="localStreetAddress" type="gcap-NAT:PrimaryAccountStreetAddress" />
+			<xsd:element name="localCity" type="gcap-NAT:PrimaryAccountCity" />
+			<xsd:element name="localState" type="gcap-NAT:PrimaryAccountState" />
+			<xsd:element name="localCountry" type="gcap-NAT:PrimaryAccountCountry" />
+			<xsd:element name="localPostalCode" type="gcap-NAT:PrimaryAccountPostalCode" />
+			<xsd:element name="trscFields" type="local:TRSCFields"/>
+                        <xsd:element name="trbcFields" type="local:TRBCFields"/>
+			<xsd:element name="customerGroup" type="gcap-NAT:CustomerGroup"/>
+			<xsd:element name="LegacyParentId" type="gcap-NAT:OAID"/>
+      <xsd:element name="localFloorAddress" type="gcap-NAT:PrimaryAccountFloorAddress"/>
+       </xsd:sequence>
+	</xsd:complexType>
+        <xsd:complexType name="TRBCFields">
+		<xsd:sequence>
+                 <xsd:element name="industryType" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="industrySubType" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+
+                </xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRSCFields">
+		<xsd:sequence>					
+			<xsd:element name="TRSCversion" type="gcap-NAT:TRSCversion"/>
+			<xsd:element name="TRSCStartDate" type="gcap-NAT:TRSCStartDate"/>
+                        <xsd:element name="TRSCEndDate" type="gcap-NAT:TRSCEndDate"/>
+                        <xsd:element name="NonStdPriceAdjClause" type="gcap-NAT:NonStdPriceAdjClause"/>
+			<xsd:element name="AgreementType" type="gcap-NAT:NonStdContractType"/>
+			<xsd:element name="AgreementStatus" type="gcap-NAT:Status"/>
+			<xsd:element name="AgreementNumber" type="gcap-NAT:AgreementNumber"/>
+                        
+                         <!--ELEMENT FOR R4 - I001 START HERE -->
+   <xsd:element name="TermStatus" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="TRBPVersion" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Dummy3" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Dummy2" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Dummy1" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ContractDetail" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Name" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Discount" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="AgreementId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <!--ELEMENT FOR R4 - I001 END HERE -->
+                 </xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AccountAddress">
+		<xsd:sequence>
+			<xsd:element name="faxNumber" type="gcap-NAT:FaxNumber"/>
+                        <xsd:element name="id" type="gcap-NAT:Id" />
+			<xsd:element name="accountId" type="gcap-cat:AccountId" />
+			<xsd:element name="accountLoc" type="gcap-NAT:AccountLoc" />
+			<xsd:element name="accountName" type="gcap-cat:AccountName" />
+			<xsd:element name="accountPrimaryAddressId" type="gcap-NAT:AccountPrimaryAddressId" />
+			<xsd:element name="activeStatus" type="gcap-NAT:ActiveStatus" />
+			<xsd:element name="addrDescription" type="gcap-NAT:AddrDescription" />
+			<xsd:element name="addressId" type="gcap-cat:AddressId" />
+			<xsd:element name="addressName" type="gcap-cat:AddressName" />
+			<xsd:element name="addressType" type="gcap-cat:AddressType" />
+			<xsd:element name="apartmentNumber" type="gcap-NAT:ApartmentNumber" />
+			<xsd:element name="billAddressFlag" type="gcap-NAT:BillAddressFlag" />
+			<xsd:element name="city" type="gcap-NAT:City" />
+                        <xsd:element name="contactId" type="gcap-cat:ContactId" />
+			<xsd:element name="country" type="gcap-NAT:Country" />
+			<xsd:element name="county" type="gcap-NAT:StateProvinceCounty" />
+			<xsd:element name="descriptor" type="gcap-NAT:Descriptor" />
+			<xsd:element name="emailAddress" type="gcap-NAT:EmailAddress" />
+			<xsd:element name="integrationId" type="gcap-NAT:IntegrationId" />
+			<xsd:element name="landlordName" type="gcap-NAT:LandlordName" />
+			<xsd:element name="landlordPhoneNumber" type="gcap-NAT:LandlordPhoneNumber" />
+			<xsd:element name="lastUpdatedConAddr" type="gcap-NAT:LastUpdatedConAddr" />
+			<xsd:element name="localOperatingCompany" type="gcap-NAT:LocalOperatingCompany" />
+			<xsd:element name="localOperatingCompanyId" type="gcap-NAT:LocalOperatingCompanyId" />
+			<xsd:element name="localOperatingCompanySite" type="gcap-NAT:LocalOperatingCompanySite" />
+			<xsd:element name="mainAddressFlag" type="gcap-NAT:MainAddressFlag" />
+			<xsd:element name="parentAddress" type="gcap-NAT:ParentAddress" />
+			<xsd:element name="parentAddressId" type="gcap-NAT:ParentAddressId" />
+			<xsd:element name="phoneNumber" type="gcap-NAT:TelephoneNumber" />
+                        <xsd:element name="postalCode" type="gcap-NAT:PostalCode" />
+			<xsd:element name="province" type="gcap-NAT:StateProvinceCounty" />
+			<xsd:element name="rcrmaddressType" type="gcap-cat:AddressType" />
+			<xsd:element name="csaddressType" type="gcap-cat:AddressType" />
+			<xsd:element name="streetAddress" type="gcap-cat:StreetAddress" />
+			<xsd:element name="streetAddress2" type="gcap-cat:StreetAddress" />
+                        <xsd:element name="rcrmemailAddress" type="gcap-NAT:EmailAddress" />
+			<xsd:element name="floorAddress" type="gcap-NAT:FloorAddress" />
+			<xsd:element name="legacyAddressRef" type="gcap-NAT:LegacyAddressRef" />
+			<xsd:element name="legacyFlag" type="gcap-NAT:LegacyFlag" />
+			<xsd:element name="localStreet" type="gcap-NAT:StreetAddress" />
+			<xsd:element name="localCity" type="gcap-NAT:City" />
+			<xsd:element name="localCountry" type="gcap-NAT:Country" />
+			<xsd:element name="localPostalCode" type="gcap-cat:PostalCode" />
+			<xsd:element name="localState" type="gcap-NAT:PrimaryAccountState" />
+			<xsd:element name="region" type="gcap-NAT:Region" />
+			<xsd:element name="rowId" type="gcap-NAT:RowId" />
+			<xsd:element name="sInstance" type="gcap-NAT:S-SInstance" />
+			<xsd:element name="sInstanceId" type="gcap-NAT:S-SInstanceId" />
+			<xsd:element name="skeyId" type="gcap-cat:S-SKeyId" />
+			<xsd:element name="state" type="gcap-NAT:PrimaryAccountState" />
+			<xsd:element name="subRegion" type="gcap-NAT:SubRegion" />
+			<xsd:element name="type" type="gcap-cat:Type" />
+			<xsd:element name="verifiedFlag" type="gcap-NAT:VerifiedFlag" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Employee">
+		<xsd:sequence>
+                <!--for b2cc I001-->
+<xsd:element name="publishContactToSAP" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  
+  <xsd:element name="positionType" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="contactWorkNumber" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="contactState" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="contactPostalCode" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="contactFaxNumber" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="contactCountry" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="contactCity" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="contactAddress" type="xsd:string" minOccurs="0" maxOccurs="1" /> 
+  <xsd:element name="contactAccountNumber" type="xsd:string" minOccurs="0" maxOccurs="1" />
+                <!-- till here -->
+                
+                <!--ELEMENT FOR R4 - I001 START HERE -->
+   <xsd:element name="Dummy1" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <!--ELEMENT FOR R4 - I001 END HERE -->
+			<xsd:element name="id" type="gcap-NUT:Id" />
+			<xsd:element name="modId" type="gcap-NUT:ModId" />
+			<xsd:element name="accountId" type="gcap-cut:AccountId" />
+			<xsd:element name="accountLocation" type="gcap-NUT:AccountLocation" />
+			<xsd:element name="accountName2" type="gcap-NAT:AccountName" />
+			<xsd:element name="accountPositionId" type="gcap-NUT:AccountPositionId" />
+			<xsd:element name="accountRowStatus" type="gcap-NUT:AccountRowStatus" />
+			<xsd:element name="accountTeamRole" type="gcap-NUT:AccountTeamRole" />
+			<xsd:element name="activeEmail" type="gcap-NUT:ActiveEmail" />
+			<xsd:element name="activeFax" type="gcap-NUT:ActiveFax" />
+			<xsd:element name="activeFirstName" type="gcap-cut:FirstName" />
+			<xsd:element name="activeJobTitle" type="gcap-NUT:JobTitle" />
+			<xsd:element name="activeLastName" type="gcap-cut:LastName" />
+			<xsd:element name="activeLoginId" type="gcap-NUT:ActiveLoginId" />
+			<xsd:element name="activeLoginName" type="gcap-NUT:ActiveLoginName" />
+			<xsd:element name="activeMM" type="gcap-NUT:MM" />
+			<xsd:element name="activePagerNumber" type="gcap-cut:ActivePagerNumber" />
+			<xsd:element name="activePagerPIN" type="gcap-NUT:ActivePagerPIN" />
+			<xsd:element name="activePhone" type="gcap-cut:PhoneNumber" />
+			<xsd:element name="contactFirstName" type="gcap-NUT:FirstName" />
+			<xsd:element name="contactLastName" type="gcap-NUT:LastName" />
+			<xsd:element name="contactPrimaryAddressId" type="gcap-cut:ContactPrimaryAddressId" />
+			<xsd:element name="contactPrimaryPositionId" type="gcap-cut:ContactPrimaryPositionId" />
+			<xsd:element name="contactPriorityFlag" type="gcap-NUT:ContactPriorityFlag" />
+			<xsd:element name="contactRowStatus" type="gcap-NUT:ContactRowStatus" />
+			<xsd:element name="costAllocation" type="gcap-NUT:CostAllocation" />
+			<xsd:element name="coverageRole" type="gcap-NUT:CoverageRole" />
+			<xsd:element name="description" type="gcap-NUT:Description" />
+			<xsd:element name="division" type="gcap-NUT:Division" />
+			<xsd:element name="employeeId" type="gcap-NUT:EmployeeId" />
+			<xsd:element name="employmentStatus" type="gcap-NUT:EmploymentStatus" />
+			<xsd:element name="groupTypeCode2" type="gcap-NUT:GroupTypeCode2" />
+			<xsd:element name="integrationId" type="gcap-cut:IntegrationId" />
+			<xsd:element name="loginId" type="gcap-NUT:LoginId" />
+			<xsd:element name="middleName" type="gcap-NUT:MiddleName" />
+			<xsd:element name="name2" type="gcap-cut:Name2" />
+			<xsd:element name="opportunitySalesTeamRole" type="gcap-NUT:OpportunitySalesTeamRole" />
+			<xsd:element name="parentPositionId" type="gcap-NUT:ParentPositionId" />
+			<xsd:element name="parentPositionName" type="gcap-NUT:ParentPositionName" />
+			<xsd:element name="parentPrimaryPositionId" type="gcap-NUT:ParentPrimaryPositionId" />
+			<xsd:element name="partyTypeCode2" type="gcap-cut:PartyTypeCode2" />
+			<xsd:element name="partyUId2" type="gcap-NUT:PartyUId2" />
+			<xsd:element name="onceOffRevenue" type="gcap-NUT:OnceOffRevenue" />
+			<xsd:element name="responsiblity" type="gcap-NUT:Responsiblity" />
+			<xsd:element name="relationship" type="gcap-NUT:RelationshipType" />
+			<xsd:element name="role" type="gcap-NUT:Role" />
+			<xsd:element name="rowId" type="gcap-NUT:RowId" />
+			</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Contact">
+		<xsd:sequence>
+                <!--ELEMENT FOR R4 - I001 START HERE -->
+   <xsd:element name="Title" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="SFDCId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PrimaryFunction" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LocalTitle" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LocalStreet" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LocalState" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LocalPostcode" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LocalLastName" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LocalFirstName" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LocalCountry" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LocalCity" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="EndUserActivity" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ContactCategory" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AssetFocus1" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AccountSFDCId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <!--ELEMENT FOR R4 - I001 END HERE -->
+                
+			<xsd:element name="id" type="gcap-cut:Id" />
+			<xsd:element name="accountId" type="gcap-NUT:AccountId" />
+			<xsd:element name="cellularPhone" type="gcap-NUT:CellularPhone" />
+			<xsd:element name="emailAddress2" type="gcap-NUT:EmailAddress2" />
+			<xsd:element name="employeeFlag" type="gcap-NUT:EmployeeFlag" />
+			<xsd:element name="firstName" type="gcap-NUT:FirstName" />
+			<xsd:element name="jobTitle" type="gcap-NUT:JobTitle" />
+			<xsd:element name="lastName" type="gcap-cut:LastName" />
+			<xsd:element name="mm" type="gcap-NUT:MM" />
+			<xsd:element name="masterAccountId" type="gcap-cut:MasterAccountId" />
+			<xsd:element name="partyTypeCD" type="gcap-NUT:PartyTypeCD" />
+			<xsd:element name="partyUID3" type="gcap-cut:PartyUID3" />
+			<xsd:element name="personUId" type="gcap-NUT:PersonUId" />
+			<xsd:element name="primaryPositionId" type="gcap-NUT:PrimaryPositionId" />
+			<xsd:element name="contactSubType" type="gcap-NUT:ContactSubType" />
+			<xsd:element name="coreSuiteStatus" type="gcap-NUT:CoreSuiteStatus" />
+			<xsd:element name="directMarketing" type="gcap-NUT:DirectMarketing" />
+			<xsd:element name="errorMessage" type="gcap-NUT:ErrorMessage" />
+			<xsd:element name="functionId" type="gcap-NUT:FunctionId" />
+			<xsd:element name="PreferredLanguage" type="gcap-NUT:PreferredLanguage" />
+			<xsd:element name="status" type="gcap-NUT:Status" />
+			<xsd:element name="relationshipType" type="gcap-NUT:RelationshipType" />
+			<xsd:element name="workPhone" type="gcap-NUT:WorkPhone" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AttributeValuePair">
+		<xsd:sequence>
+		        <xsd:element name="AccountId" type="xsd:string" />
+			<xsd:element name="AttributeName" type="xsd:string" />
+			<xsd:element name="AttributeValue" type="xsd:string" />
+		</xsd:sequence>	
+	</xsd:complexType>
+</xsd:schema>

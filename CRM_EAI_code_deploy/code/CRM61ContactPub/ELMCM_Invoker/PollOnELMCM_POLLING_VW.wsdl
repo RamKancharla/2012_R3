@@ -1,0 +1,43 @@
+<?binding.jca PollOnELMCM_POLLING_VW_db.jca?>
+<wsdl:definitions name="PollOnELMCM_POLLING_VW"
+                  targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/ELMCM_Invoker/PollOnELMCM_POLLING_VW"
+                  xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/ELMCM_Invoker/PollOnELMCM_POLLING_VW"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+                  xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/PollOnELMCM_POLLING_VW"
+                  xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest">
+    <plt:partnerLinkType name="PollOnELMCM_POLLING_VW_plt">
+        <plt:role name="PollOnELMCM_POLLING_VW_role">
+            <plt:portType name="tns:PollOnELMCM_POLLING_VW_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/PollOnELMCM_POLLING_VW"
+                    schemaLocation="xsd/PollOnELMCM_POLLING_VW_table.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest"
+                        schemaLocation="xsd/EAI.MSG.ELM.CM.289_PublishContactRequest.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="ElmcmPollingVCollection_msg">
+        <wsdl:part name="ElmcmPollingVCollection"
+                   element="top:ElmcmPollingVCollection"/>
+    </wsdl:message>
+    <wsdl:message name="ELMCM_EventManagerMessage">
+        <wsdl:part name="payload" element="ns2:ContactRequest"/>
+    </wsdl:message>
+    <wsdl:portType name="PollOnELMCM_POLLING_VW_ptt">
+        <wsdl:operation name="receive">
+            <wsdl:input message="tns:ElmcmPollingVCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>
+
+
+
+
+
+

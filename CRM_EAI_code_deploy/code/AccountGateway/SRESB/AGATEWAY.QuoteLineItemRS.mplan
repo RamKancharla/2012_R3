@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="AGATEWAY.QuoteLineItemRS" wsdlTargetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/Quote/GetQuoteLineItems" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="GetQuoteLineItems">
+      <switch>
+         <case name="Case_1_AGATEWAY.QuoteLineItemRS.GetQuoteLineItems" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TransRCRMQuoteLineItemData_Input.xsl,$in.parameters)" name="$out.RCRMQuoteLineItemData_Input"/>
+               </transform>
+               <assign/>
+               <invoke reference="AGATEWAY.QuoteLineItemSOAP" operation="RCRMQuoteLineItemData">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/TransRCRMQuoteLineItemData_Output.xsl,$in.RCRMQuoteLineItemData_Output)" name="$out.parameters"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

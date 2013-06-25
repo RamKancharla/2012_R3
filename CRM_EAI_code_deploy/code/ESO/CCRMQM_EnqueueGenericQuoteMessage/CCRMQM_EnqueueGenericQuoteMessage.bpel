@@ -1,0 +1,183 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Sep 14 20:07:53 GMT+05:30 2011
+  Author:  rijoy.purayil
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMQM_EnqueueGenericQuoteMessage" targetNamespace="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://xmlns.oracle.com/PropagateGenericQuoteStatus" xmlns:ns7="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.siebel.com/xml/RCRMGenericQuoteInterface" xmlns:client="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage" xmlns:ns6="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessageStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueue_GenQuoteServ/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/CRM/GenericQuoteMessage" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CCRMQM_EnqueueGenericQuoteMessage" myRole="CCRMQM_EnqueueGenericQuoteMessageProvider" partnerRole="CCRMQM_EnqueueGenericQuoteMessageRequester"/>
+        <partnerLink name="Enqueue_GenQuoteServ" partnerRole="Enqueue_role" partnerLinkType="ns1:Enqueue_plt"/>
+        <partnerLink myRole="CCRMQM_QuoteStatusDispatcherRequester" name="CCRMQM_QuoteStatusDispatcher" partnerRole="CCRMQM_QuoteStatusDispatcherProvider" partnerLinkType="ns7:CCRMQM_QuoteStatusDispatcher"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="inputVariable" messageType="client:CCRMQM_EnqueueGenericQuoteMessageRequestMessage"/>
+        <variable name="outputVariable" messageType="client:CCRMQM_EnqueueGenericQuoteMessageResponseMessage"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMQM_EnqueueGenericQuoteMessage.wsdl) -->
+        <receive name="receiveQuoteMessage" partnerLink="client" portType="client:CCRMQM_EnqueueGenericQuoteMessage" operation="initiate" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <!-- <invoke name="callbackClient" partnerLink="client"
+                portType="client:CCRMQM_EnqueueGenericQuoteMessageCallback"
+                operation="onResult" inputVariable="outputVariable"/> -->
+        <scope name="Scope_1">
+            <variables>
+                <variable name="Inv_EnqueueGenQuote_Enqueue_InputVariable" messageType="ns1:ListOfGenQuoteInterface_msg"/>
+                <variable name="runtimeFaultVar" messageType="bpelx:RuntimeFaultMessage"/>
+                <variable name="InvQuoteStatusInputVar" messageType="ns7:CCRMQM_QuoteStatusDispatcherRequestMessage"/>
+                <variable name="InvQuoteStatusInVar" messageType="ns7:CCRMQM_QuoteStatusDispatcherRequestMessage"/>
+                <variable name="InvQuoteFaultStatusInputVar" messageType="ns7:CCRMQM_QuoteStatusDispatcherRequestMessage"/>
+            </variables>
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFaultVar">
+                    <sequence name="Sequence_1">
+                        <assign name="Assign_QuoteRemoteFaultMsg">
+                            <copy>
+                                <from expression="'FAILED'"/>
+                                <to variable="outputVariable" part="payload"
+                                    query="/client:CCRMQM_EnqueueGenericQuoteMessageProcessResponse/client:result"/>
+                            </copy>
+                            <copy>
+                                <from expression="bpws:getVariableData('inputVariable','payload','/ns2:ListOfGenQuoteInterface/ns2:Quote/ns2:TransactionId')"/>
+                                <to variable="InvQuoteFaultStatusInputVar"
+                                    part="payload"
+                                    query="/ns6:UpdateQuoteStatusRequest/ns6:updateQuoteStatusRequest/ns6:TransactionId"/>
+                            </copy>
+                            <copy>
+                                <from expression="'EAI'"/>
+                                <to variable="InvQuoteFaultStatusInputVar"
+                                    part="payload"
+                                    query="/ns6:UpdateQuoteStatusRequest/ns6:updateQuoteStatusRequest/ns6:Sourcesystem"/>
+                            </copy>
+                            <copy>
+                                <from expression="bpws:getVariableData('runtimeFaultVar','code')"/>
+                                <to variable="InvQuoteFaultStatusInputVar"
+                                    part="payload"
+                                    query="/ns6:UpdateQuoteStatusRequest/ns6:updateQuoteStatusRequest/ns6:ErrorMessage"/>
+                            </copy>
+                            <copy>
+                                <from expression="'FAILED'"/>
+                                <to variable="InvQuoteFaultStatusInputVar"
+                                    part="payload"
+                                    query="/ns6:UpdateQuoteStatusRequest/ns6:updateQuoteStatusRequest/ns6:Actioncode"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvQuoteRemoteFaultStatus" partnerLink="CCRMQM_QuoteStatusDispatcher" portType="ns7:CCRMQM_QuoteStatusDispatcher" operation="initiate" inputVariable="InvQuoteFaultStatusInputVar"/>
+                    </sequence>
+                </catch>
+                <catchAll>
+                    <sequence name="Seq_Fault">
+                        <assign name="Assign_QuoteFaultMsg">
+                            <copy>
+                                <from expression="'FAILED'"/>
+                                <to variable="outputVariable" part="payload"
+                                    query="/client:CCRMQM_EnqueueGenericQuoteMessageProcessResponse/client:result"/>
+                            </copy>
+                            <copy>
+                                <from expression="bpws:getVariableData('inputVariable','payload','/ns2:ListOfGenQuoteInterface/ns2:Quote/ns2:TransactionId')"/>
+                                <to variable="InvQuoteFaultStatusInputVar"
+                                    part="payload"
+                                    query="/ns6:UpdateQuoteStatusRequest/ns6:updateQuoteStatusRequest/ns6:TransactionId"/>
+                            </copy>
+                            <copy>
+                                <from expression="'EAI'"/>
+                                <to variable="InvQuoteFaultStatusInputVar"
+                                    part="payload"
+                                    query="/ns6:UpdateQuoteStatusRequest/ns6:updateQuoteStatusRequest/ns6:Sourcesystem"/>
+                            </copy>
+                            <copy>
+                                <from expression="'UNKNOWN ERROR - 001'"/>
+                                <to variable="InvQuoteFaultStatusInputVar"
+                                    part="payload"
+                                    query="/ns6:UpdateQuoteStatusRequest/ns6:updateQuoteStatusRequest/ns6:ErrorMessage"/>
+                            </copy>
+                            <copy>
+                                <from expression="'FAILED'"/>
+                                <to variable="InvQuoteFaultStatusInputVar"
+                                    part="payload"
+                                    query="/ns6:UpdateQuoteStatusRequest/ns6:updateQuoteStatusRequest/ns6:Actioncode"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvQuoteFaultStatus" partnerLink="CCRMQM_QuoteStatusDispatcher" portType="ns7:CCRMQM_QuoteStatusDispatcher" operation="initiate" inputVariable="InvQuoteFaultStatusInputVar"/>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="Sequence_2">
+                <assign name="TransQuoteMsgToEnqGenericQuoteMsg">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransQuoteMsgToEnqGenericQuoteMsg.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                        <to variable="Inv_EnqueueGenQuote_Enqueue_InputVariable" part="ListOfGenQuoteInterface"/>
+                    </copy>
+                </assign>
+                <invoke name="Inv_EnqueueGenQuote" partnerLink="Enqueue_GenQuoteServ" portType="ns1:Enqueue_ptt" operation="Enqueue" inputVariable="Inv_EnqueueGenQuote_Enqueue_InputVariable"/>
+                <bpelx:exec name="SetTitle_TransactionId" language="java" version="1.5">
+                    <![CDATA[String TransactionId = "";               
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns2:ListOfGenQuoteInterface/ns2:Quote/ns2:TransactionId")).getFirstChild()){           
+    TransactionId = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns2:ListOfGenQuoteInterface/ns2:Quote/ns2:TransactionId")).getFirstChild().getNodeValue();                     
+ }           
+setCompositeInstanceTitle( "TransactionID:" + " " + TransactionId );]]>
+                </bpelx:exec>
+                <assign name="Assign_EnqueueStatus">
+                    <copy>
+                        <from expression="'SUCCESS'"/>
+                        <to variable="outputVariable" part="payload" query="/client:CCRMQM_EnqueueGenericQuoteMessageProcessResponse/client:result"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('outputVariable','payload','/client:CCRMQM_EnqueueGenericQuoteMessageProcessResponse/client:result')!='SUCCESS'">
+                <bpelx:annotation>
+                    <bpelx:pattern>FAILURE</bpelx:pattern>
+                </bpelx:annotation>
+                <bpelx:exec name="setCustomTitleFault" language="java" version="1.5">
+                    <![CDATA[String TransactionId = "";                
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns2:ListOfGenQuoteInterface/ns2:Quote/ns2:TransactionId")).getFirstChild()){            
+    TransactionId = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns2:ListOfGenQuoteInterface/ns2:Quote/ns2:TransactionId")).getFirstChild().getNodeValue();                      
+ }            
+setCompositeInstanceTitle( "Fault - TransactionID:"+ " " +TransactionId );]]>
+                </bpelx:exec>
+            </case>
+            <otherwise>
+                <empty name="DONE"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

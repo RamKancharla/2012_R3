@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CSZ.CSZQueryDetails" wsdlTargetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="getSRDetails">
+      <switch>
+         <case name="Case_1_CSZ.CSZQueryDetails.getSRDetails" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TransCSZReqToEAIReq.xsl,$in.CSZServiceRequest)" name="$out.EAICSZServiceRequest"/>
+               </transform>
+               <assign/>
+               <invoke reference="CSZ.CCRM_QuerySRDetails" operation="getSRDetails">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/TransCRMResToEAIRes.xsl,$in.EAICSZServiceResponse)" name="$out.CSZServiceResponse"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!--
+/*********************************************************************************
+* Module        EAI.MSG.CS.OM.157_OrderRequest.xsd
+* Type          XML Schema Document
+*
+*Description    Compass Order Schema document including message header
+*               which is required by Compass. This helps in generating fixed length message
+*
+*
+*Change History
+* Version	Date		Author			Description Of Change
+* =======	======		=================	================================
+*  0.01		15/10/07	G Suryanarayana		Initial Version
+*  0.02		16/10/07	G Patchipulusu 		Amended types and removed enumeration
+*  0.03         17/10/07        G Suryanarayana         Changed the element name compassOrder to CScompassOrder
+*  0.04         09/01/08        G Patchipulusu          Added permission date and removed discount, PBI 136
+*  0.05		22/08/08	Sreeja Prasad		Modified the length of _CSOrderNote to 50 and added PO,_CSSSPersonId and _CSSLPersonId as part of PBI 577.
+*  0.06		21/02/10	Surya G			Modified to add PermBillFlag 	
+*  0.06		21/02/10	Satish Patel		Modified to add installToSubscriber and installToItemNumber as part of PBI -537 	
+*************************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.05">
+
+	<xsd:complexType name="_UREaiHeader">
+        <xsd:sequence>
+            <xsd:element name="applicationId" type="xsdLocal:string10"/>
+            <xsd:element name="transactionId" type="xsdLocal:string30"/>
+            <xsd:element name="messageId" type="xsdLocal:string30"/>
+            <xsd:element name="messageHistory" type="xsdLocal:string100"/>
+            <xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+            <xsd:element name="timeStamp" type="xsd:dateTime"/>
+            <xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+            <xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+            <xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+        </xsd:sequence>
+    </xsd:complexType>
+	
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

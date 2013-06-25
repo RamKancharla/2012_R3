@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.XSD.016_NillableUserTypes.xsd
+	* Type:        XSD Schema
+	* Description: The schema used for Common Account Message attributes
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         19/05/08   Subramanya Vegesna    Initial version
+	* 0.2         21/11/08   anvv sharma		Removed the Duplicates
+        * 0.3         22/05/08   S Gannavarapu          Added ModId
+        * 0.4         23/05/08   S Gannavarapu          Added LastUpdatedSiebelOn field
+	* 0.5	      12/06/08	 Sreeja Prasad	        Added ContactStatus	
+	* 0.6	      18/08/08	 Sreeja Prasad	        Added ContactID	
+        * 0.7         05/09/08   Shanker Reddy          Added Name
+	**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes"
+            xmlns:gcap-cut="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            version="0.7">
+ <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+             schemaLocation="EAI.XSD.002_CommonUserTypes.xsd"/>
+ <xsd:simpleType name="ContactPrimaryAddressId">
+  <xsd:union memberTypes="gcap-cut:ContactPrimaryAddressId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ContactPrimaryPositionId">
+  <xsd:union memberTypes="gcap-cut:ContactPrimaryPositionId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ContactPriorityFlag">
+  <xsd:union memberTypes="gcap-cut:ContactPriorityFlag local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ContactRowStatus">
+  <xsd:union memberTypes="gcap-cut:ContactRowStatus local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+  <xsd:simpleType name="CostAllocation">
+  <xsd:union memberTypes="gcap-cut:CostAllocation local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="CoverageRole">
+  <xsd:union memberTypes="gcap-cut:CoverageRole local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="Description">
+  <xsd:union memberTypes="gcap-cut:Description local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="Division">
+  <xsd:union memberTypes="gcap-cut:Division local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="EmployeeId">
+  <xsd:union memberTypes="gcap-cut:EmployeeId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="EmploymentStatus">
+  <xsd:union memberTypes="gcap-cut:EmploymentStatus local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="GroupTypeCode2">
+  <xsd:union memberTypes="gcap-cut:GroupTypeCode2 local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="IntegrationId">
+  <xsd:union memberTypes="gcap-cut:IntegrationId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="LoginId">
+  <xsd:union memberTypes="gcap-cut:LoginId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="MiddleName">
+  <xsd:union memberTypes="gcap-cut:MiddleName local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="Name2">
+  <xsd:union memberTypes="gcap-cut:Name2 local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="Name">
+   <xsd:union memberTypes="gcap-cut:Name local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="OpportunitySalesTeamRole">
+  <xsd:union memberTypes="gcap-cut:OpportunitySalesTeamRole local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ParentPositionId">
+  <xsd:union memberTypes="gcap-cut:ParentPositionId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ParentPositionName">
+  <xsd:union memberTypes="gcap-cut:ParentPositionName local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ParentPrimaryPositionId">
+  <xsd:union memberTypes="gcap-cut:ParentPrimaryPositionId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="PartyTypeCode2">
+  <xsd:union memberTypes="gcap-cut:PartyTypeCode2 local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="PartyUId2">
+  <xsd:union memberTypes="gcap-cut:PartyUId2 local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="OnceOffRevenue">
+  <xsd:union memberTypes="gcap-cut:OnceOffRevenue local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="Responsiblity">
+  <xsd:union memberTypes="gcap-cut:Responsiblity local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="Relationship">
+  <xsd:union memberTypes="gcap-cut:Relationship local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="Role">
+  <xsd:union memberTypes="gcap-cut:Role local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="RowId">
+  <xsd:union memberTypes="gcap-cut:RowId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="Id">
+  <xsd:union memberTypes="gcap-cut:Id local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="AccountId">
+  <xsd:union memberTypes="gcap-cut:AccountId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="CellularPhone">
+  <xsd:union memberTypes="gcap-cut:CellularPhone local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="EmailAddress2">
+  <xsd:union memberTypes="gcap-cut:EmailAddress2 local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="EmployeeFlag">
+  <xsd:union memberTypes="gcap-cut:EmployeeFlag local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="FirstName">
+  <xsd:union memberTypes="gcap-cut:FirstName local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="JobTitle">
+  <xsd:union memberTypes="gcap-cut:JobTitle local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="LastName">
+  <xsd:union memberTypes="gcap-cut:LastName local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="MM">
+  <xsd:union memberTypes="gcap-cut:MM local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="MasterAccountId">
+  <xsd:union memberTypes="gcap-cut:MasterAccountId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="PartyTypeCD">
+  <xsd:union memberTypes="gcap-cut:PartyTypeCD local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="PartyUID3">
+  <xsd:union memberTypes="gcap-cut:PartyUID3 local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="PersonUId">
+  <xsd:union memberTypes="gcap-cut:PersonUId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="PrimaryPositionId">
+  <xsd:union memberTypes="gcap-cut:PrimaryPositionId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ContactSubType">
+  <xsd:union memberTypes="gcap-cut:ContactSubType local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="CoreSuiteStatus">
+  <xsd:union memberTypes="gcap-cut:CoreSuiteStatus local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="DirectMarketing">
+  <xsd:union memberTypes="gcap-cut:DirectMarketing local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ErrorMessage">
+  <xsd:union memberTypes="gcap-cut:ErrorMessage local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="FunctionId">
+  <xsd:union memberTypes="gcap-cut:FunctionId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="PreferredLanguage">
+  <xsd:union memberTypes="gcap-cut:PreferredLanguage local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="Status">
+  <xsd:union memberTypes="gcap-cut:Status local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="RelationshipType">
+  <xsd:union memberTypes="gcap-cut:RelationshipType local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="WorkPhone">
+  <xsd:union memberTypes="gcap-cut:WorkPhone local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="AccountLocation">
+  <xsd:union memberTypes="gcap-cut:AccountLocation local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="AccountPositionId">
+  <xsd:union memberTypes="gcap-cut:AccountPositionId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="AccountRowStatus">
+  <xsd:union memberTypes="gcap-cut:AccountRowStatus local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="AccountTeamRole">
+  <xsd:union memberTypes="gcap-cut:AccountTeamRole local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ActivePagerNumber">
+  <xsd:union memberTypes="gcap-cut:ActivePagerNumber local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ActivePagerPIN">
+  <xsd:union memberTypes="gcap-cut:ActivePagerPIN local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ActiveLoginId">
+  <xsd:union memberTypes="gcap-cut:ActiveLoginId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ActiveLoginName">
+  <xsd:union memberTypes="gcap-cut:ActiveLoginName local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ActiveEmail">
+  <xsd:union memberTypes="gcap-cut:ActiveEmail local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ActiveFax">
+  <xsd:union memberTypes="gcap-cut:ActiveFax local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ActiveFirstName">
+  <xsd:union memberTypes="gcap-cut:ActiveFirstName local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ActiveLastName">
+  <xsd:union memberTypes="gcap-cut:ActiveLastName local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ModId">
+  <xsd:union memberTypes="gcap-cut:ModId local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="PhoneNumber">
+  <xsd:union memberTypes="gcap-cut:PhoneNumber local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+  <xsd:simpleType name="ContactStatus">
+  <xsd:union memberTypes="gcap-cut:ContactStatus local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="ContactID">
+  <xsd:union memberTypes="gcap-cut:ContactID local:EmptyString "></xsd:union>
+ </xsd:simpleType>
+ <xsd:simpleType name="EmptyString">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="0"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+</xsd:schema>

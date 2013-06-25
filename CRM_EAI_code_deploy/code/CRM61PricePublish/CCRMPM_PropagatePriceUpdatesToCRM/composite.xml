@@ -1,0 +1,42 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPM_PropagatePriceUpdatesToCRM" revision="1.0" state="on">
+    <import location="CCRMPM_PropagatePriceUpdatesToCRM.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM"/>
+    <import location="EAI.SRV.EXT.CCRM.047_UpdatePriceChangeToHQNodeRef.wsdl" namespace="http://www.reuters.com/2008/07/23/GCAP/RCRM"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus.wsdl" importType="wsdl"/>
+    <service name="anchorToCCRMPM_PropagatePriceUpdatesToCRM" ui:wsdlLocation="CCRMPM_PropagatePriceUpdatesToCRM.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM#wsdl.interface(CCRMPM_PropagatePriceUpdatesToCRMCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM#wsdl.interface(CCRMPM_PropagatePriceUpdatesToCRM)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM#wsdl.endpoint(CCRMPM_PropagatePriceUpdatesToCRM/CCRMPM_PropagatePriceUpdatesToCRM)"/>
+    </service>
+    <component name="CCRMPM_PropagatePriceUpdatesToCRM">
+        <implementation.bpel src="CCRMPM_PropagatePriceUpdatesToCRM.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMPM_PropagatePriceUpdateStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatus)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.interface(CCRMPM_PropagatePriceUpdateStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.endpoint(CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus#wsdl.endpoint(CCRMPM_PropagatePriceUpdateStatus/CCRMPM_PropagatePriceUpdateStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="RCRMHQNode" ui:wsdlLocation="EAI.SRV.EXT.CCRM.047_UpdatePriceChangeToHQNodeRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/2008/07/23/GCAP/RCRM#wsdl.interface(RCRM_spcHQ_spcPrice_spcPublish_spcPort)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="EAI.SRV.EXT.CCRM.047_UpdatePriceChangeToHQNodeRef.wsdl" port="http://www.reuters.com/2008/07/23/GCAP/RCRM#wsdl.endpoint(RCRM_spcHQ_spcPrice_spcPublish/RCRM_spcHQ_spcPrice_spcPublish_spcPort)"/>
+    </reference>
+    <wire>
+        <source.uri>anchorToCCRMPM_PropagatePriceUpdatesToCRM</source.uri>
+        <target.uri>CCRMPM_PropagatePriceUpdatesToCRM/anchorToCCRMPM_PropagatePriceUpdatesToCRM</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_PropagatePriceUpdatesToCRM/RCRMHQNode</source.uri>
+        <target.uri>RCRMHQNode</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_PropagatePriceUpdatesToCRM/CCRMPM_PropagatePriceUpdateStatus</source.uri>
+        <target.uri>CCRMPM_PropagatePriceUpdateStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

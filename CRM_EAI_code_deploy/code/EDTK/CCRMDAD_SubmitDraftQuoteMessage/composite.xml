@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMDAD_SubmitDraftQuoteMessage" revision="1.0" state="on">
+    <import location="CCRMDAD_SubmitDraftQuoteMessage.wsdl" namespace="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage"/>
+    <import location="Enqueue_DrafttQuoteService.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueue_DrafttQuoteService/"/>
+    <service name="client" ui:wsdlLocation="CCRMDAD_SubmitDraftQuoteMessage.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage#wsdl.interface(CCRMDAD_SubmitDraftQuoteMessageCallback)" interface="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage#wsdl.interface(CCRMDAD_SubmitDraftQuoteMessage)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage#wsdl.endpoint(CCRMDAD_SubmitDraftQuoteMessage/CCRMDAD_SubmitDraftQuoteMessage)"/>
+    </service>
+    <component name="CCRMDAD_SubmitDraftQuoteMessage">
+        <implementation.bpel src="CCRMDAD_SubmitDraftQuoteMessage.bpel"/>
+    </component>
+    <reference name="Enqueue_DraftQuoteService" ui:wsdlLocation="Enqueue_DrafttQuoteService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueue_DrafttQuoteService/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="Enqueue_DrafttQuoteService_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMDAD_SubmitDraftQuoteMessage/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMDAD_SubmitDraftQuoteMessage/Enqueue_DraftQuoteService</source.uri>
+        <target.uri>Enqueue_DraftQuoteService</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

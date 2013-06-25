@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMAM_PropagateTRUSTAccount" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="enqueueAccountStatus.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerenqueueAccountStatus/"/>
+    <import location="CCRMAM_PropagateTRUSTAccount.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl"
+            importType="wsdl"/>
+    <service name="anchorToCCRMAM_PropagateTRUSTAccount" ui:wsdlLocation="CCRMAM_PropagateTRUSTAccount.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccountCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccount)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.endpoint(CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccount)"/>
+    </service>
+    <component name="CCRMAM_PropagateTRUSTAccount">
+        <implementation.bpel src="CCRMAM_PropagateTRUSTAccount.bpel"/>
+        <property name="bpel.config.sensorLocation">CCRMAM_PropagateTRUSTAccount_sensor.xml</property>
+        <property name="bpel.config.sensorActionLocation">CCRMAM_PropagateTRUSTAccount_sensorAction.xml</property>
+    </component>
+    <reference name="SequenceReleaser"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="enqueueAccountStatus" ui:wsdlLocation="enqueueAccountStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerenqueueAccountStatus/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="enqueueAccountStatus_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>anchorToCCRMAM_PropagateTRUSTAccount</source.uri>
+        <target.uri>CCRMAM_PropagateTRUSTAccount/anchorToCCRMAM_PropagateTRUSTAccount</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMAM_PropagateTRUSTAccount/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMAM_PropagateTRUSTAccount/enqueueAccountStatus</source.uri>
+        <target.uri>enqueueAccountStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

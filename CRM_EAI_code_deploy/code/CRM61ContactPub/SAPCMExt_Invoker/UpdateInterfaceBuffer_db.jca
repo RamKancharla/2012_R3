@@ -1,0 +1,24 @@
+<adapter-config name="UpdateInterfaceBuffer" adapter="Database Adapter" wsdlLocation="UpdateInterfaceBuffer.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="BANGDEVDB" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//inkaban3ud-eai01:1521/EAIDEV"/>
+      <property name="UserName" value="eaiowner"/>
+      <property name="Password" value="D17D09B7D556B6F53AC0A5374043425B"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="UpdateInterfaceBuffer_ptt" operation="update">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="UpdateInterfaceBuffer.InterfaceBuffer"/>
+      <property name="DmlType" value="update"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="UpdateInterfaceBuffer-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

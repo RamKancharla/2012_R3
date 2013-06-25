@@ -1,0 +1,35 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<definitions
+     name="CCRMQM_PropagateQuoteRequestMsg"
+     targetNamespace="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns1="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessage"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg"
+    >
+    <plnk:partnerLinkType name="CCRMQM_PropagateQuoteRequestMsg">
+        <plnk:role name="CCRMQM_PropagateQuoteRequestMsgProvider">
+            <plnk:portType name="client:CCRMQM_PropagateQuoteRequestMsg"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessage"
+                 schemaLocation="EAI.MSQ.QM.313_QuoteRequestResponseMessage.xsd"/>
+        </schema>
+    </types>
+    <message name="CCRMQM_PropagateQuoteRequestMsgRequestMessage">
+        <part name="payload" element="ns1:GenerateQuote"/>
+    </message>
+    <message name="CCRMQM_PropagateQuoteRequestMsgResponseMessage">
+        <part name="payload" element="ns1:GenerateQuoteResponse"/>
+    </message>
+    <portType name="CCRMQM_PropagateQuoteRequestMsg">
+        <operation name="process">
+            <input message="client:CCRMQM_PropagateQuoteRequestMsgRequestMessage"/>
+            <output message="client:CCRMQM_PropagateQuoteRequestMsgResponseMessage"/>
+        </operation>
+    </portType>
+</definitions>

@@ -1,0 +1,31 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMACM_PropagateAccountContactPublishStatus" revision="1.0" state="on">
+    <import location="AccountUpdate.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerAccountUpdate/"/>
+    <import location="CCRMACM_PropagateAccountContactPublishStatus.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus"/>
+    <service name="AnchorCCRMACM_PropagateAccCntPublish" ui:wsdlLocation="CCRMACM_PropagateAccountContactPublishStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatusCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.endpoint(CCRMACM_PropagateAccountContactPublishStatus/CCRMACM_PropagateAccountContactPublishStatus)"/>
+    </service>
+    <component name="CCRMACM_PropagateAccountContactPublishStatus">
+        <implementation.bpel src="CCRMACM_PropagateAccountContactPublishStatus.bpel"/>
+        <property name="preference.type">WS</property>
+        
+        
+    </component>
+    <reference name="AccountUpdate" ui:wsdlLocation="AccountUpdate.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerAccountUpdate/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="AccountUpdate_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>AnchorCCRMACM_PropagateAccCntPublish</source.uri>
+        <target.uri>CCRMACM_PropagateAccountContactPublishStatus/AnchorCCRMACM_PropagateAccCntPublish</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMACM_PropagateAccountContactPublishStatus/AccountUpdate</source.uri>
+        <target.uri>AccountUpdate</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

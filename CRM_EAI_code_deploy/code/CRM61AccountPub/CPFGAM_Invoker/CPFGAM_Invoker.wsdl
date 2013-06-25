@@ -1,0 +1,44 @@
+<definitions
+     name="CPFGAM_Invoker"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_Invoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AccountPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_Invoker"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_Invoker">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_Invoker"
+                 schemaLocation="CPFGAM_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_Invoker">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AccountPublish" schemaLocation="EAI.MSG.CPFG.AM.225_StandalonePublishAccountEventRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFGAM_InvokerResponseMessage">
+        <part name="payload" element="client:CPFGAM_InvokerProcessResponse"/>
+    </message>
+    <message name="CPFGAM_InvokerRequestMessage">
+        <part name="payload" element="client:CPFGAM_InvokerProcessRequest"/>
+    </message>
+    <portType name="CPFGAM_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:CPFGAM_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CPFGAM_Invoker">
+        <operation name="initiate">
+            <input message="client:CPFGAM_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFGAM_Invoker">
+        <plnk:role name="CPFGAM_InvokerProvider">
+            <plnk:portType name="client:CPFGAM_Invoker"/>
+        </plnk:role>
+        <plnk:role name="CPFGAM_InvokerRequester">
+            <plnk:portType name="client:CPFGAM_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

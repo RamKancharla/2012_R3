@@ -1,0 +1,406 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      ATHUOM_PropagateUserOrderStatus.bpel 
+* Type:        BPEL Process 
+* Description: Asynchronous BPEL Process that Propagates CS UserOrderStatus to Athena .
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         19/06/2009     Shanker Reddy            Initial Version 
+*  1.1	       26/08/2009     Surya Gannavarapu	       Included the new version of the wsdl file from Athena team.
+*  1.2	       19/10/2009     Surya Gannavarapu	       Modified the 062 wsdl to append namespace to messageHeader elements and 
+						       modified the xslt for the defect 32239
+*  1.3         05/11/2009     Surya Gannavarapu        Modified the format of the XML message , sending as expected by Athena
+*  1.4         06/11/2009     ShankerReddy G           Added condition for MOVE User Scenario.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHUOM_PropagateUserOrderStatus" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://service.coresuitews.sea.athena.thomsonreuters.com/" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus" xmlns:ns6="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/Exception" xmlns:ns2="http://xml.netbeans.org/schema/BillingNotifyMessage" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToATHUOM_PropagateUserOrderStatus" partnerLinkType="client:ATHUOM_PropagateUserOrderStatus" myRole="ATHUOM_PropagateUserOrderStatusProvider" partnerRole="ATHUOM_PropagateUserOrderStatusRequester"/>
+        <partnerLink name="BillingNotifyResponseServiceService" partnerRole="BillingInfoResponseService_Role" partnerLinkType="ns4:BillingInfoResponseService_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="PropagateUserOrderStatusIV" messageType="client:ATHUOM_PropagateUserOrderStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:ATHUOM_PropagateUserOrderStatusResponseMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="UnKnownError" type="xsd:string"/>
+        <variable name="InvBillingNotifyResponseIV" messageType="ns4:notify"/>
+        <variable name="InvBillingNotifyResponseOV" messageType="ns4:notifyResponse"/>
+        <variable name="presentTransUserNumber" type="xsd:string"/>
+        <variable name="previousTransUserNumber" type="xsd:string"/>
+        <variable name="ExtendedTransUserOrder" messageType="client:ExtendedBillNotifyMessageType"/>
+        <variable name="index" type="xsd:nonNegativeInteger"/>
+        <variable name="noofuserorderlines" type="xsd:string"/>
+        <variable name="orderWithUserOrderNumberForAppending" messageType="client:ExtendedBillNotifyMessageType"/>
+        <variable name="UserOrderLineStatusWithUniqueTranIds" messageType="client:ATHUOM_PropagateUserOrderStatusRequestMessage"/>
+        <variable name="NoOfUniqueTranIds" type="xsd:nonNegativeInteger"/>
+        <variable name="loopUniqueTranId" type="xsd:nonNegativeInteger"/>
+        <variable name="ExtendedPropagateUserOrderStatusIV" messageType="client:ATHUOM_PropagateUserOrderStatusRequestMessage"/>
+        <variable name="ExtendedBillingNotifyResponseIV" messageType="client:ExtendedBillNotifyMessageType"/>
+        <variable name="InvBillingNotifyResponseMoveUserIV" messageType="ns4:notify"/>
+        <variable name="InvBillingNotifyResponseMoveUserOV" messageType="ns4:notifyResponse"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node transanctionId = ((oracle.xml.parser.v2.XMLElement)getVariableData("PropagateUserOrderStatusIV", "payload", "/ns1:UserOrderResponse/ns1:userOrderHeader/ns1:transactionId"));                               
+String TransanctionId = transanctionId == null ? "" : transanctionId.getFirstChild().getNodeValue();            
+setCompositeInstanceTitle(TransanctionId+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node transanctionId = ((oracle.xml.parser.v2.XMLElement)getVariableData("PropagateUserOrderStatusIV", "payload", "/ns1:UserOrderResponse/ns1:userOrderHeader/ns1:transactionId"));                                  
+String TransanctionId = transanctionId == null ? "" : transanctionId.getFirstChild().getNodeValue();               
+setCompositeInstanceTitle(TransanctionId+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node transanctionId = ((oracle.xml.parser.v2.XMLElement)getVariableData("PropagateUserOrderStatusIV", "payload", "/ns1:UserOrderResponse/ns1:userOrderHeader/ns1:transactionId"));                                
+String TransanctionId = transanctionId == null ? "" : transanctionId.getFirstChild().getNodeValue();             
+setCompositeInstanceTitle(TransanctionId+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqUnKnownError">
+                <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                    <![CDATA[org.w3c.dom.Node transanctionId = ((oracle.xml.parser.v2.XMLElement)getVariableData("PropagateUserOrderStatusIV", "payload", "/ns1:UserOrderResponse/ns1:userOrderHeader/ns1:transactionId"));                                
+String TransanctionId = transanctionId == null ? "" : transanctionId.getFirstChild().getNodeValue();             
+setCompositeInstanceTitle(TransanctionId+" Fault");]]>
+                </bpelx:exec>
+                <assign name="AsgUnknownError">
+                    <copy>
+                        <from expression="&quot;UnKnownError&quot;"/>
+                        <to variable="UnKnownError"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ATHUOM_PropagateUserOrderStatus.wsdl) -->
+        <receive name="rcvPropagateUserOrderStatus" partnerLink="anchorToATHUOM_PropagateUserOrderStatus" portType="client:ATHUOM_PropagateUserOrderStatus" operation="sendUserOrderStatus" variable="PropagateUserOrderStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node transanctionId = ((oracle.xml.parser.v2.XMLElement)getVariableData("PropagateUserOrderStatusIV", "payload", "/ns1:UserOrderResponse/ns1:userOrderHeader/ns1:transactionId"));                             
+String TransanctionId = transanctionId == null ? "" : transanctionId.getFirstChild().getNodeValue();          
+setCompositeInstanceTitle(TransanctionId);]]>
+        </bpelx:exec>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('PropagateUserOrderStatusIV','payload','/ns1:UserOrderResponse/ns1:messageHeader/ns1:actionCode')='OM70'">
+                <bpelx:annotation>
+                    <bpelx:pattern>MoveUser</bpelx:pattern>
+                </bpelx:annotation>
+                <scope name="ScpMoveUser">
+                    <faultHandlers>
+                        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                            <throw name="ThrNotifyResponse" faultName="bpelx:remoteFault" faultVariable="runtimeFault"/>
+                        </catch>
+                    </faultHandlers>
+                    <sequence name="SeqMoveUser">
+                        <assign name="TransPropagateUserOrderStatusToBillingNotifyResponse">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransPropagateUserOrderStatusToBillingNotifyResponseMoveUser.xsl',bpws:getVariableData('PropagateUserOrderStatusIV','payload'))"/>
+                                <to variable="InvBillingNotifyResponseMoveUserIV" part="parameters"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvBillingNotifyResponseMoveUser" inputVariable="InvBillingNotifyResponseMoveUserIV" outputVariable="InvBillingNotifyResponseMoveUserOV" partnerLink="BillingNotifyResponseServiceService" portType="ns4:BillingInfoResponseService" operation="notify"/>
+                    </sequence>
+                </scope>
+            </case>
+            <otherwise>
+                <sequence name="SeqNonMoveUserActionCodes">
+                    <assign name="TransSortTranIds">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransSortTranIds.xsl',bpws:getVariableData('PropagateUserOrderStatusIV','payload'))"/>
+                            <to variable="PropagateUserOrderStatusIV" part="payload"/>
+                        </copy>
+                    </assign>
+                    <assign name="TransPropagateToExtendedOrder">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransPropagateToExtendedOrder.xsl',bpws:getVariableData('PropagateUserOrderStatusIV','payload'))"/>
+                            <to variable="ExtendedTransUserOrder" part="BillNotify"/>
+                        </copy>
+                    </assign>
+                    <assign name="TransPropagateUserOrderStatusIVtoExtendedUserOrderStatusIV">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransPropagateUserOrderStatusIVtoExtendedUserOrderStatusIV.xsl',bpws:getVariableData('PropagateUserOrderStatusIV','payload'))"/>
+                            <to variable="ExtendedPropagateUserOrderStatusIV" part="payload"/>
+                        </copy>
+                    </assign>
+                    <assign name="TransFindUniqueTransIds">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransFindUniqueTransIds.xsl',bpws:getVariableData('PropagateUserOrderStatusIV','payload'))"/>
+                            <to variable="UserOrderLineStatusWithUniqueTranIds" part="payload"/>
+                        </copy>
+                    </assign>
+                    <assign name="AgnInitVariables">
+                        <copy>
+                            <from expression="1"/>
+                            <to variable="index"/>
+                        </copy>
+                        <copy>
+                            <from expression="count(bpws:getVariableData('PropagateUserOrderStatusIV','payload','/ns1:UserOrderResponse/ns1:userOrderLineItem'))"/>
+                            <to variable="noofuserorderlines"/>
+                        </copy>
+                        <copy>
+                            <from expression="count(bpws:getVariableData('UserOrderLineStatusWithUniqueTranIds','payload','/ns1:UserOrderResponse/ns1:userOrderLineItem'))"/>
+                            <to variable="NoOfUniqueTranIds"/>
+                        </copy>
+                        <copy>
+                            <from expression="1"/>
+                            <to variable="loopUniqueTranId"/>
+                        </copy>
+                    </assign>
+                    <assign name="TransMessageHeaderToExtendedBillingNotifyResponse">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransMessageHeaderToExtendedBillingNotifyResponse.xsl',bpws:getVariableData('PropagateUserOrderStatusIV','payload'))"/>
+                            <to variable="ExtendedBillingNotifyResponseIV" part="BillNotify"/>
+                        </copy>
+                    </assign>
+                    <while name="While_2" condition="bpws:getVariableData('NoOfUniqueTranIds')>=bpws:getVariableData('loopUniqueTranId')">
+                        <sequence name="LoopUniqueTransactionIds">
+                            <assign name="AsgUniqueTranIdToMessageId">
+                                <copy>
+                                    <from variable="UserOrderLineStatusWithUniqueTranIds" part="payload" query="/ns1:UserOrderResponse/ns1:userOrderLineItem[bpws:getVariableData('loopUniqueTranId')]/ns1:userUniqueLineId"/>
+                                    <to variable="ExtendedPropagateUserOrderStatusIV" part="payload" query="/ns1:UserOrderResponse/ns1:eaiHeader/ns1:messageId"/>
+                                </copy>
+                            </assign>
+                            <assign name="TransTranIdHeaderDetailsToUserOrderForAppending">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransTranIdHeaderDetailsToUserOrderForAppending.xsl',bpws:getVariableData('ExtendedPropagateUserOrderStatusIV','payload'))"/>
+                                    <to variable="orderWithUserOrderNumberForAppending" part="BillNotify"/>
+                                </copy>
+                            </assign>
+                            <assign name="TransServicesForParticularUser">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransServicesForParticularUser.xsl',bpws:getVariableData('ExtendedPropagateUserOrderStatusIV','payload'))"/>
+                                    <to variable="ExtendedTransUserOrder" part="BillNotify"/>
+                                </copy>
+                            </assign>
+                            <assign name="AppendServiceToTranDetail">
+                                <bpelx:append>
+                                    <bpelx:from variable="ExtendedTransUserOrder" part="BillNotify" query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail/ns2:service"/>
+                                    <bpelx:to variable="orderWithUserOrderNumberForAppending" part="BillNotify" query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail"/>
+                                </bpelx:append>
+                                <bpelx:append>
+                                    <bpelx:from variable="orderWithUserOrderNumberForAppending" part="BillNotify" query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail"/>
+                                    <bpelx:to variable="ExtendedBillingNotifyResponseIV" part="BillNotify" query="/ns2:billingInfoResponse/ns2:messageBody"/>
+                                </bpelx:append>
+                                <copy>
+                                    <from expression="bpws:getVariableData('loopUniqueTranId')+1"/>
+                                    <to variable="loopUniqueTranId"/>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </while>
+                    <assign name="TransFilterTranDetailsWithEmptyTransactionId">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransFilterTranDetailsWithEmptyTransactionId.xsl',bpws:getVariableData('ExtendedBillingNotifyResponseIV','BillNotify'))"/>
+                            <to variable="ExtendedBillingNotifyResponseIV" part="BillNotify"/>
+                        </copy>
+                    </assign>
+                    <assign name="TransExtendedBillingNotifyResponseIVToBillingNotifyResponseIV">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransExtendedBillingNotifyResponseIVToBillingNotifyResponseIV.xsl',bpws:getVariableData('ExtendedBillingNotifyResponseIV','BillNotify'))"/>
+                            <to variable="InvBillingNotifyResponseIV" part="parameters"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvBillingNotifyResponse" portType="ns4:BillingInfoResponseService" partnerLink="BillingNotifyResponseServiceService" operation="notify" inputVariable="InvBillingNotifyResponseIV" outputVariable="InvBillingNotifyResponseOV"/>
+                </sequence>
+            </otherwise>
+        </switch>
+        <!-- <assign name="TransPropagateToExtendedOrder">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransPropagateToExtendedOrder.xsl',bpws:getVariableData('PropagateUserOrderStatusIV','payload'))"/>
+                <to variable="ExtendedTransUserOrder" part="BillNotify"/>
+            </copy>
+        </assign>
+        <assign name="AsgPresentAndPreviousTransUserOrderNumber">
+            <copy>
+                <from variable="ExtendedTransUserOrder" part="BillNotify"
+                      query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail[bpws:getVariableData('index')]/ns2:transactionId"/>
+                <to variable="presentTransUserNumber"/>
+            </copy>
+            <copy>
+                <from variable="ExtendedTransUserOrder" part="BillNotify"
+                      query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail[bpws:getVariableData('index')]/ns2:transactionId"/>
+                <to variable="previousTransUserNumber"/>
+            </copy>
+        </assign>
+        <assign name="TransExtendedToIVHeader">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransExtendedToOrderwithUserOrderAppending.xsl',bpws:getVariableData('ExtendedTransUserOrder','BillNotify'))"/>
+                <to variable="orderWithUserOrderNumberForAppending"
+                    part="BillNotify"/>
+            </copy>
+        </assign>-->
+        <!--<while name="While_1"
+               condition="bpws:getVariableData('noofuserorderlines')+1>=bpws:getVariableData('index')">
+            <sequence name="Sequence_1">
+                <switch name="Switch_1">
+                    <case condition="(bpws:getVariableData('presentTransUserNumber')=bpws:getVariableData('previousTransUserNumber')) and (bpws:getVariableData('index')&lt;=bpws:getVariableData('noofuserorderlines'))">
+                        <assign name="AppendUserOrderLine">
+                            <bpelx:append>
+                                <bpelx:from variable="ExtendedTransUserOrder"
+                                            part="BillNotify"
+                                            query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail[bpws:getVariableData('index')]/ns2:service"/>
+                                <bpelx:to variable="orderWithUserOrderNumberForAppending"
+                                          part="BillNotify"
+                                          query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail"/>
+                            </bpelx:append>
+                        </assign>
+                    </case>
+                    <otherwise>
+                        <sequence name="Sequence_2">
+                            <scope name="ScpPropagateUserOrderStatus">
+                                <faultHandlers>
+                                    <catch faultName="bpelx:remoteFault"
+                                           faultVariable="runtimeFault">
+                                        <throw name="ThrNotifyResponse"
+                                               faultName="ns3:NotifyResponse"
+                                               faultVariable="runtimeFault"/>
+                                    </catch>
+                                </faultHandlers>
+                                <sequence name="SeqPropagateUserOrderStatus">
+                                    <assign name="TransPropagateUserOrderStatusToBillingNotifyResponse">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransUserOrderStatusappendingToBillingNotifyResponse.xsl',bpws:getVariableData('orderWithUserOrderNumberForAppending','BillNotify'))"/>
+                                            <to variable="InvBillingNotifyResponseIV"
+                                                part="parameters"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvBillingNotifyResponse"
+                                            portType="ns4:BillingInfoResponseService"
+                                            partnerLink="BillingNotifyResponseServiceService"
+                                            operation="notify"
+                                            inputVariable="InvBillingNotifyResponseIV"
+                                            outputVariable="InvBillingNotifyResponseOV"/>
+                                    <switch name="Switch_3">
+                                        <case condition="bpws:getVariableData('noofuserorderlines')>=bpws:getVariableData('index')">
+                                            <assign name="remove">
+                                                <bpelx:remove>
+                                                    <bpelx:target variable="ExtendedTransUserOrder"
+                                                                  part="BillNotify"
+                                                                  query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail/ns2:service"/>
+                                                </bpelx:remove>
+                                                <copy>
+                                                    <from variable="presentTransUserNumber"/>
+                                                    <to variable="previousTransUserNumber"/>
+                                                </copy>
+                                                <bpelx:append>
+                                                    <bpelx:from variable="ExtendedTransUserOrder"
+                                                                part="BillNotify"
+                                                                query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail/ns2:service"/>
+                                                    <bpelx:to variable="orderWithUserOrderNumberForAppending"
+                                                              part="BillNotify"
+                                                              query="/ns2:billingInfoResponse"/>
+                                                </bpelx:append>
+                                            </assign>
+                                        </case>
+                                        <otherwise>
+                                            <empty name="donothing"/>
+                                        </otherwise>
+                                    </switch>
+                                </sequence>
+                            </scope>
+                        </sequence>
+                    </otherwise>
+                </switch>
+                <assign name="AsgIncrementIndex">
+                    <copy>
+                        <from expression="bpws:getVariableData('index')+1"/>
+                        <to variable="index"/>
+                    </copy>
+                </assign>
+                <switch name="Switch_2">
+                    <case condition="bpws:getVariableData('noofuserorderlines')>=bpws:getVariableData('index')">
+                        <assign name="AsgPresentUserOrderNumber">
+                            <copy>
+                                <from variable="ExtendedTransUserOrder"
+                                      part="BillNotify"
+                                      query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail[bpws:getVariableData('index')]/ns2:transactionId"/>
+                                <to variable="presentTransUserNumber"/>
+                            </copy>
+                            <copy>
+                                <from variable="previousTransUserNumber"/>
+                                <to variable="presentTransUserNumber"/>
+                            </copy>
+                        </assign>
+                    </case>
+                    <otherwise>
+                        <empty name="doNothing"/>
+                    </otherwise>
+                </switch>
+            </sequence>
+        </while>-->
+    </sequence>
+</process>

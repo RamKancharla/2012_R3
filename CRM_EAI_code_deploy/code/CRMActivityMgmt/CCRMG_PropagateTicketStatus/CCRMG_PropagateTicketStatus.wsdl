@@ -1,0 +1,45 @@
+<definitions
+     name="CCRMG_PropagateTicketStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/XtraMigrationStatus"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus"
+                 schemaLocation="CCRMG_PropagateTicketStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/XtraMigrationStatus"
+                 schemaLocation="EAI.MSG.CCRM.MG.273_MigrationStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMG_PropagateTicketStatusResponseMessage">
+        <part name="payload" element="client:CCRMG_PropagateTicketStatusProcessResponse"/>
+    </message>
+    <message name="CCRMG_PropagateTicketStatusRequestMessage">
+        <part name="crmMigrationStatus" element="ns1:crmMigrationStatus"/>
+    </message>
+    <portType name="CCRMG_PropagateTicketStatusCallback">
+        <operation name="onResult">
+            <input message="client:CCRMG_PropagateTicketStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMG_PropagateTicketStatus">
+        <operation name="propagateTicketStatus">
+            <input message="client:CCRMG_PropagateTicketStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMG_PropagateTicketStatus">
+        <plnk:role name="CCRMG_PropagateTicketStatusProvider">
+            <plnk:portType name="client:CCRMG_PropagateTicketStatus"/>
+        </plnk:role>
+        <plnk:role name="CCRMG_PropagateTicketStatusRequester">
+            <plnk:portType name="client:CCRMG_PropagateTicketStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

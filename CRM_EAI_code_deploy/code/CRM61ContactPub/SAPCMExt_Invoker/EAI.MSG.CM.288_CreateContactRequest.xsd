@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Module:      EAI.MSG.CM.287_ContactRequest.xsd
+    * Type:        XSD Schema
+    * Description: Schema used to publish contacts, from CRM to an internal EAI topic.
+    * Change History
+    * Version           Date      Author             Description Of Change
+    * 0.1               11/01/11  Albin Issac        Initial version created for contacts sync
+-->
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest" xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:local="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.5">
+            
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>  
+  <xsd:element name="Contacts" type="local:Contacts"/>
+  <xsd:complexType name="Contacts">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+			<xsd:element name="actioncode" type="gcap-cmt:ActionCode"/>
+			<xsd:element name="contact" type="local:contact"/>
+      <xsd:element name="localFirstName" type="xsd:string"/>
+      <xsd:element name="localLastName" type="xsd:string"/>
+      <xsd:element name="localSalutation" type="xsd:string"/>
+		</xsd:sequence>
+
+	</xsd:complexType>
+        
+        <xsd:complexType name="contact">
+		<xsd:sequence>                  
+                        
+                        <xsd:element name="ContactRowId" type="xsd:string"/>
+                        <xsd:element name="fName" type="xsd:string"/>
+			<xsd:element name="lName" type="xsd:string"/>
+                        <xsd:element name="title" type="xsd:string"/>
+			<xsd:element name="workPhone" type="xsd:string"/>
+                        <xsd:element name="mobilePhone" type="xsd:string"/>
+
+			<xsd:element name="email" type="xsd:string"/>                                                 
+                        <xsd:element name="Function" type="local:Function"/>                       
+                </xsd:sequence>
+                </xsd:complexType>
+                
+                
+                <xsd:complexType name="Function">
+                    <xsd:sequence>
+                        <xsd:element name="Name" type="xsd:string"/>
+                        <xsd:element name="AccountId" type="xsd:string"/>        
+                        <xsd:element name="RCRMAccountNumber" type="xsd:string"/>
+                    </xsd:sequence>
+
+                </xsd:complexType>          
+  
+</xsd:schema>

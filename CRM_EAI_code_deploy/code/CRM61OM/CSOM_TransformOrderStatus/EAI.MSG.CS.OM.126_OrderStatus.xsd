@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.CS.OM.126_OrderStatus.xsd
+*						Order Management (Core Suite)
+* Type:				XML Schema Document
+* Description:  	Core Suite Order Status Schema document including message header
+*
+*
+* Change History
+* Version		Date				Author									Description Of Change
+* =======	========	==================		===============================
+*  0.01			05/07/07		G PATCHIPULUSU				Initial Version
+*  0.02			03/08/07		G PATCHIPULUSU				Added new element parsingStatus which is of type basic response
+*  0.03			03/08/07		G PATCHIPULUSU				Name space has been changed to /CS/OM/
+*  0.04			12/09/07		G PATCHIPULUSU				Added the logicalCountry, which will be used to map the asset integration id & item no
+*  0.05			17/09/07		GPATCHIPULUSU					Changed the common schema location
+*
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" xmlns:comt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.05">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="orderStatus" type="xsdLocal:OrderStatus"/>
+	<xsd:complexType name="OrderStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="parsingStatus" type="cmt:BasicResponse"/>
+			<xsd:element name="logicalCountry" type="comt:CountryCode"/>
+			<xsd:element name="messageHeader" type="comt:MessageHeader"/>
+			<xsd:element name="orderHeader" type="comt:ResponseOrderHeader"/>
+			<xsd:element name="orderLineItem" type="comt:AstResponseOLI" maxOccurs="250"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

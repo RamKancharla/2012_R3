@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ATHUOM_PropagateUserOrderStatus.wsdl" name="anchorToATHUOM_PropagateUserOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.interface(ATHUOM_PropagateUserOrderStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.interface(ATHUOM_PropagateUserOrderStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="EAI.SRV.EXT.ATH.062_PropagateUserOrderStatusServiceRef.wsdl" name="BillingNotifyResponseServiceService">
+        <interface.wsdl interface="http://service.coresuitews.sea.athena.thomsonreuters.com/#wsdl.interface(BillingInfoResponseService)"/>
+    </reference>
+</componentType>

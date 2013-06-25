@@ -1,0 +1,53 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGEF_PropagateFulfillmentStatus" revision="2.0" state="on">
+    <import location="CPFGEF_PropagateFulfillmentStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus"/>
+    <import location="CrossRefService.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"/>
+    <import location="AdpOrderCacheServ.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheServ/"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="CPFGEF_PropagateFulfillmentStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.interface(CPFGEF_PropagateFulfillmentStatusCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.interface(CPFGEF_PropagateFulfillmentStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.endpoint(CPFGEF_PropagateFulfillmentStatus/CPFGEF_PropagateFulfillmentStatus)"/>
+    </service>
+    <component name="CPFGEF_PropagateFulfillmentStatus">
+        <implementation.bpel src="CPFGEF_PropagateFulfillmentStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="OM_ManageOrderLineStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CrossRefService" ui:wsdlLocation="CrossRefService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService#wsdl.interface(CrossRefServicePortType)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="CrossRefService.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService#wsdl.endpoint(CrossRefService/CrossRefServiceSplitOrderSOAPPort)"/>
+    </reference>
+    <reference name="AdpOrderCacheServ" ui:wsdlLocation="AdpOrderCacheServ.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheServ/#wsdl.interface(AdpOrderCacheServ_ptt)"/>
+        <binding.jca config="AdpOrderCacheServ_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CPFGEF_PropagateFulfillmentStatus/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_PropagateFulfillmentStatus/OM_ManageOrderLineStatus</source.uri>
+        <target.uri>OM_ManageOrderLineStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_PropagateFulfillmentStatus/CrossRefService</source.uri>
+        <target.uri>CrossRefService</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_PropagateFulfillmentStatus/AdpOrderCacheServ</source.uri>
+        <target.uri>AdpOrderCacheServ</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

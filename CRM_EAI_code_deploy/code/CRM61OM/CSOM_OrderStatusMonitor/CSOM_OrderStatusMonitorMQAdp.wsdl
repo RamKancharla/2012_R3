@@ -1,0 +1,50 @@
+<definitions
+     name="CSOM_OrderStatusMonitorMQAdp"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerCSOM_OrderStatusMonitorMQAdp/"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/headerCSOM_OrderStatusMonitorMQAdp/"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+     xmlns:pc="http://xmlns.oracle.com/pcbpel/"
+     xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/mq/header"
+    >
+    <import namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/header" location="MQAdapterInboundHeader.wsdl"/>
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" schemaLocation="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd" />
+      </schema>
+    </types>
+    <message name="EBCDICMessage_msg">
+        <part name="EBCDICMessage" element="imp1:EBCDICMessage"/>
+    </message>
+    <portType name="monitorOrderStatus_ptt">
+        <operation name="monitorOrderStatus">
+            <input message="tns:EBCDICMessage_msg"/>
+        </operation>
+    </portType>
+    <binding name="monitorOrderStatus_binding" type="tns:monitorOrderStatus_ptt">
+    <pc:inbound_binding 
+          UITransmissionPrimitive="Dequeue" />
+        <operation name="monitorOrderStatus">
+      <jca:operation
+          ActivationSpec="oracle.tip.adapter.mq.inbound.ActivationSpecImpl"
+          QueueName="TALL_EAI_RPLY_TRANS"
+          OpaqueSchema="false" >
+      </jca:operation>
+      <input>
+        <jca:header message="hdr:InboundHeader_msg" part="inboundHeader"/>
+      </input>
+        </operation>
+    </binding>
+    <service name="CSOM_OrderStatusMonitorMQAdp">
+        <port name="monitorOrderStatus_pt" binding="tns:monitorOrderStatus_binding">
+      <jca:address location="eis/MQ/MQSeriesAdapterRemote" />
+        </port>
+    </service>
+  <plt:partnerLinkType name="monitorOrderStatus_plt" >
+    <plt:role name="monitorOrderStatus_role" >
+      <plt:portType name="tns:monitorOrderStatus_ptt" />
+    </plt:role>
+  </plt:partnerLinkType>
+</definitions>

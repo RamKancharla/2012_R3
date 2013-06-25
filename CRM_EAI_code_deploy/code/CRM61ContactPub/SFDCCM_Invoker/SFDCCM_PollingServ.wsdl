@@ -1,0 +1,21 @@
+<?binding.jca SFDCCM_PollingServ_db.jca?>
+<wsdl:definitions name="SFDCCM_PollingServ" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_PollingServ" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/SFDCCM_Invoker/SFDCCM_PollingServ" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/SFDCCM_PollingServ">
+    <plt:partnerLinkType name="SFDCCM_PollingServ_plt">
+        <plt:role name="SFDCCM_PollingServ_role">
+            <plt:portType name="tns:SFDCCM_PollingServ_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/SFDCCM_PollingServ" schemaLocation="xsd/SFDCCM_PollingServ_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="SfdccmPollingVCollection_msg">
+        <wsdl:part name="SfdccmPollingVCollection" element="top:SfdccmPollingVCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="SFDCCM_PollingServ_ptt">
+        <wsdl:operation name="receive">
+            <wsdl:input message="tns:SfdccmPollingVCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

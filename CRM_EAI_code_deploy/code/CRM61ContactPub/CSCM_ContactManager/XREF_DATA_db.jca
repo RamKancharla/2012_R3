@@ -1,0 +1,21 @@
+<adapter-config name="XREF_DATA" adapter="Database Adapter" wsdlLocation="XREF_DATA.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/XRef" UIConnectionName="EAIDEV02" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.internal.databaseaccess.Oracle9Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@eaidev2:1521:EAIDEV2"/>
+      <property name="UserName" value="jmsuser"/>
+      <property name="Password" value="BE49B84750434652C21A27623F0F412D"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="XREF_DATA_ptt" operation="XREF_DATA">
+    <interaction-spec className="oracle.tip.adapter.db.DBPureSQLInteractionSpec">
+      <property name="SqlString" value="SELECT B.VALUE  FROM   SOA_SOAINFRA.XREF_DATA A      , SOA_SOAINFRA.XREF_DATA B  WHERE SUBSTR(B.XREF_TABLE_NAME,1,100)  = 'oramds:/apps/EAIMeatData/Xref/CRMCONTACTID_CSPERSONID.xref'   AND SUBSTR(B.XREF_COLUMN_NAME,1,50) = 'CSPERSONID'   AND A.ROW_NUMBER = B.ROW_NUMBER   AND SUBSTR(A.VALUE,3,50) = ?"/>
+    </interaction-spec>
+    <input/>
+    <output/>
+  </endpoint-interaction>
+
+</adapter-config>

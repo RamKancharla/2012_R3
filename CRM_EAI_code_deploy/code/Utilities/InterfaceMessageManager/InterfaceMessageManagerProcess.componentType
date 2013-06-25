@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="InterfaceMessageManager.wsdl" name="InterfaceMessageManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceMessageManager#wsdl.interface(InterfaceMessageManager)"/>
+    </service>
+    <reference ui:wsdlLocation="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID.wsdl" name="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID/#wsdl.interface(INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="INTERFACE_BUFFER.wsdl" name="INTERFACE_BUFFER">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/#wsdl.interface(INTERFACE_BUFFER_ptt)"/>
+    </reference>
+</componentType>

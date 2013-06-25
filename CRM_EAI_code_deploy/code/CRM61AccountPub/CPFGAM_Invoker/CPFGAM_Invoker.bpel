@@ -1,0 +1,483 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Sat Aug 08 20:24:50 BST 2009
+  Author:  rob.billington
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFGAM_Invoker" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_Invoker" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateCPFGAM_POLLING_V/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns16="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateINTERFACEBUFFER" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AccountPublish" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns17="http://xmlns.oracle.com/InterfaceManager" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/CPFGAM_POLLING_V/" xmlns:ns2="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices/PA" xmlns:ns15="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonAccountTypes" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/Common" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateMESSAGE_BUFFER/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices" xmlns:ns18="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_Invoker" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateCPFGAMPOLLINGV" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns14="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/top/CPFGAMPOLLINGV" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateINTERFACE_BUFFER/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink myRole="CPFGAM_POLLING_V_role" name="ReadCPFGAM_POLLING_V" partnerLinkType="ns1:CPFGAM_POLLING_V_plt"/>
+        <partnerLink name="AAA" partnerRole="AccountManagementInterface_Role" partnerLinkType="ns2:AccountManagementInterface_PL"/>
+        <partnerLink name="InterfaceManager" partnerRole="InterfaceManagerProvider" partnerLinkType="ns17:InterfaceManager"/>
+        <partnerLink name="UpdateINTERFACE_BUFFER" partnerRole="UpdateINTERFACE_BUFFER_role" partnerLinkType="ns8:UpdateINTERFACE_BUFFER_plt"/>
+        <partnerLink name="SequenceReleaser"
+                     partnerLinkType="ns9:SequenceReleaser"
+                     partnerRole="SequenceReleaserProvider"
+                     myRole="SequenceReleaserRequester"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="nReceived" type="xsd:integer"/>
+        <variable name="nProcessed" type="xsd:integer"/>
+        <variable name="nErrors" type="xsd:integer"/>
+        <variable name="errorMsg" type="xsd:string"/>
+        <variable name="nFailures" type="xsd:integer"/>
+        <variable name="state" type="xsd:string"/>
+        <variable name="rawMessage" type="xsd:string"/>
+        <variable name="parsedRawMessage" type="xsd:string"/>
+        <variable name="javaException" type="xsd:string"/>
+        <variable name="id" type="xsd:string"/>
+        <variable name="created" type="xsd:string"/>
+        <variable name="interfaceId" type="xsd:string"/>
+        <variable name="referenceId" type="xsd:string"/>
+        <variable name="InvSequenceReleaserIV" messageType="ns9:SequenceReleaserRequestMessage"/>
+        <variable name="accountPubRequest" element="ns5:standaloneAccountPubRequest"/>
+        <variable name="releaseSequence" type="xsd:boolean"/>
+        <variable name="InvPropagateAccountHierarchyIV" messageType="ns12:PropagateAccountHierarchyRequestMessage"/>
+        <variable name="InvPropagateAccountHierarchyOV" messageType="ns12:BasicResponseMessage"/>
+        <variable name="pollingIV" messageType="ns1:CpfgamPollingVCollection_msg"/>
+        <variable name="RequestHealthCheckIV" messageType="ns17:InterfaceManagerRequestMessage"/>
+        <variable name="RequestHealthCheckOV" messageType="ns17:InterfaceManagerResponseMessage"/>
+        <variable name="InvUpdateINTERFACE_BUFFERIV" messageType="ns8:InterfaceBufferCollection_msg"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CPFGAM_Invoker.wsdl) -->
+        <receive name="receiveInput" partnerLink="ReadCPFGAM_POLLING_V" portType="ns1:CPFGAM_POLLING_V_ptt" operation="receive" variable="pollingIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitialVariables">
+            <copy>
+                <from expression="count(bpws:getVariableData('pollingIV','CpfgamPollingVCollection','/ns3:CpfgamPollingVCollection/ns3:CpfgamPollingV'))"/>
+                <to variable="nReceived"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nProcessed"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nErrors"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nFailures"/>
+            </copy>
+            <copy>
+                <from expression="'false'"/>
+                <to variable="releaseSequence"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="errorMsg"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="SetInitialTitle" language="java" version="1.3">
+            <![CDATA[setCompositeInstanceTitle("Processing " + getVariableData("nReceived") + " messages");]]>
+        </bpelx:exec>
+        <while name="While_1" condition="bpws:getVariableData('nProcessed') &lt; bpws:getVariableData('nReceived')">
+            <sequence name="ProcessAccount">
+                <scope name="ProcessAccount">
+                    <faultHandlers>
+                        <catchAll>
+                            <sequence name="Sequence_7">
+                                <assign name="IncrementFailed">
+                                    <copy>
+                                        <from expression="bpws:getVariableData('nFailures') + 1"/>
+                                        <to variable="nFailures"/>
+                                    </copy>
+                                </assign>
+                                <assign name="AsgState-FAILED-DoNotRelease">
+                                    <copy>
+                                        <from expression="'F'"/>
+                                        <to variable="state"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="'false'"/>
+                                        <to variable="releaseSequence"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                        <to variable="errorMsg"/>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </catchAll>
+                    </faultHandlers>
+                    <sequence name="Sequence_5">
+                        <assign name="AsgAccountToLocalVariables">
+                            <copy>
+                                <from variable="pollingIV" part="CpfgamPollingVCollection" query="/ns3:CpfgamPollingVCollection/ns3:CpfgamPollingV[bpws:getVariableData('nProcessed') + 1]/ns3:payload"/>
+                                <to variable="rawMessage"/>
+                            </copy>
+                            <copy>
+                                <from variable="pollingIV" part="CpfgamPollingVCollection" query="/ns3:CpfgamPollingVCollection/ns3:CpfgamPollingV[bpws:getVariableData('nProcessed') + 1]/ns3:id"/>
+                                <to variable="id"/>
+                            </copy>
+                            <copy>
+                                <from variable="pollingIV" part="CpfgamPollingVCollection" query="/ns3:CpfgamPollingVCollection/ns3:CpfgamPollingV[bpws:getVariableData('nProcessed') + 1]/ns3:created"/>
+                                <to variable="created"/>
+                            </copy>
+                            <copy>
+                                <from variable="pollingIV" part="CpfgamPollingVCollection" query="/ns3:CpfgamPollingVCollection/ns3:CpfgamPollingV[bpws:getVariableData('nProcessed') + 1]/ns3:interfaceId"/>
+                                <to variable="interfaceId"/>
+                            </copy>
+                            <copy>
+                                <from variable="pollingIV" part="CpfgamPollingVCollection" query="/ns3:CpfgamPollingVCollection/ns3:CpfgamPollingV[bpws:getVariableData('nProcessed') + 1]/ns3:referenceId"/>
+                                <to variable="referenceId"/>
+                            </copy>
+                        </assign>
+                        <bpelx:exec name="ReplaceUnsafeCharactersInRawMessage" language="java" version="1.5">
+                            <![CDATA[try {                          
+    setVariableData("parsedRawMessage", ((String)getVariableData("rawMessage")).replaceAll("&", "&amp;") );    
+    } catch (Exception e) {                       
+        setVariableData("javaException", e.getMessage() );                
+    }]]>
+                        </bpelx:exec>
+                        <switch name="JavaException">
+                            <case condition="bpws:getVariableData('javaException')  != ''">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>Exception Thrown</bpelx:pattern>
+                                </bpelx:annotation>
+                                <sequence name="Sequence_11">
+                                    <assign name="AsgState-FAILED-DoNotRelease">
+                                        <copy>
+                                            <from expression="bpws:getVariableData('nFailures') + 1"/>
+                                            <to variable="nFailures"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="'F'"/>
+                                            <to variable="state"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="'false'"/>
+                                            <to variable="releaseSequence"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="bpws:getVariableData('javaException')"/>
+                                            <to variable="errorMsg"/>
+                                        </copy>
+                                    </assign>
+                                </sequence>
+                            </case>
+                            <otherwise>
+                                <sequence name="Sequence_10">
+                                    <assign name="AsgAccount">
+                                        <copy>
+                                            <from expression="ora:parseEscapedXML(bpws:getVariableData('parsedRawMessage'))"/>
+                                            <to variable="accountPubRequest"/>
+                                        </copy>
+                                    </assign>
+                                    <scope name="CallAAA">
+                                        <faultHandlers>
+                                            <catchAll>
+                                                <sequence name="Sequence_3">
+                                                    <assign name="IncrementFailed">
+                                                        <copy>
+                                                            <from expression="bpws:getVariableData('nFailures') + 1"/>
+                                                            <to variable="nFailures"/>
+                                                        </copy>
+                                                    </assign>
+                                                    <assign name="AsgState-RETRYABLE-DoNotRelease">
+                                                        <copy>
+                                                            <from expression="'R'"/>
+                                                            <to variable="state"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                                            <to variable="errorMsg"/>
+                                                        </copy>
+                                                    </assign>
+                                                </sequence>
+                                            </catchAll>
+                                        </faultHandlers>
+                                        <sequence name="CallAAA">
+                                            <assign name="AssignANumberToNULL">
+                                                <copy>
+                                                    <from expression='""'/>
+                                                    <to variable="accountPubRequest"
+                                                        query="/ns5:standaloneAccountPubRequest/ns5:account/ns5:customerReferenceNumber"/>
+                                                </copy>
+                                            </assign>
+                                            <switch name="SwitchDeleteUnknownAccountType">
+                                                <case condition="(bpws:getVariableData('accountPubRequest','/ns5:standaloneAccountPubRequest/ns5:actionCode') = &quot;Delete&quot;) and (bpws:getVariableData('accountPubRequest','/ns5:standaloneAccountPubRequest/ns5:account/ns5:hierarchyType') = &quot;&quot;)">
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>Delete Message but no account type provided</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <assign name="TransDeletedAccountToAAAInput">
+                                                        <bpelx:annotation>
+                                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                                        </bpelx:annotation>
+                                                        <copy>
+                                                            <from expression="ora:processXSLT('TransDeletedAccountToAAAInput.xsl',bpws:getVariableData('accountPubRequest'))"/>
+                                                            <to variable="InvPropagateAccountHierarchyIV" part="parameter"/>
+                                                        </copy>
+                                                    </assign>
+                                                </case>
+                                                <otherwise>
+                                                    <assign name="TransAccountToAAAInput">
+                                                        <bpelx:annotation>
+                                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                                        </bpelx:annotation>
+                                                        <copy>
+                                                            <from expression="ora:processXSLT('TransAccountReqToOtherAccount.xsl',bpws:getVariableData('accountPubRequest'))"/>
+                                                            <to variable="InvPropagateAccountHierarchyIV" part="parameter"/>
+                                                        </copy>
+                                                    </assign>
+                                                </otherwise>
+                                            </switch>
+                                            <invoke name="InvPropagateAccountHierarchy" partnerLink="AAA" portType="ns12:AccountManagementInterface" operation="propagateAccountHierarchy" inputVariable="InvPropagateAccountHierarchyIV" outputVariable="InvPropagateAccountHierarchyOV"/>
+                                            <switch name="SuccessOrFail">
+												<case condition="(bpws:getVariableData('accountPubRequest','/ns5:standaloneAccountPubRequest/ns5:account/ns5:parentAccountID')='' and bpws:getVariableData('accountPubRequest','/ns5:standaloneAccountPubRequest/ns5:account/ns5:masterAccountID')='') and (bpws:getVariableData('InvPropagateAccountHierarchyIV','parameter','/ns12:PropagateAccountHierarchy_parameterElement/ns12:actionCode') = 'EAI.SRV.EXT.019.ACT001')and (bpws:getVariableData('InvPropagateAccountHierarchyOV','parameter','/ns13:basicResponse/ns13:basicResponse/ns14:response') != '0')">
+                                                    <assign name="AsgState-WARNING-Release">
+                                                        <copy>
+                                                            <from expression="'W'"/>
+                                                            <to variable="state"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="'true'"/>
+                                                            <to variable="releaseSequence"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="bpws:getVariableData('nErrors') + 1"/>
+                                                            <to variable="nErrors"/>
+                                                        </copy>
+                                                    </assign>
+                                                </case>
+							                  <case condition="(bpws:getVariableData('InvPropagateAccountHierarchyIV','parameter','/ns12:PropagateAccountHierarchy_parameterElement/ns12:actionCode') = 'EAI.SRV.EXT.019.ACT002' or bpws:getVariableData('InvPropagateAccountHierarchyIV','parameter','/ns12:PropagateAccountHierarchy_parameterElement/ns12:actionCode')= 'EAI.SRV.EXT.019.ACT003') and (bpws:getVariableData('InvPropagateAccountHierarchyOV','parameter','/ns13:basicResponse/ns13:basicResponse/ns14:response') != '0')">                                                    
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>Success with Warning</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <assign name="AsgState-WARNING-Release">
+                                                        <copy>
+                                                            <from expression="'W'"/>
+                                                            <to variable="state"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="'true'"/>
+                                                            <to variable="releaseSequence"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="bpws:getVariableData('nErrors') + 1"/>
+                                                            <to variable="nErrors"/>
+                                                        </copy>
+                                                    </assign>
+                                                </case>
+                                                <case condition="(bpws:getVariableData('InvPropagateAccountHierarchyOV','parameter','/ns13:basicResponse/ns13:basicResponse/ns14:response') = '0')">
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>Success</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <sequence name="Sequence_8">
+                                                        <assign name="AsgState-COMPLETE-Release">
+                                                            <copy>
+                                                                <from expression="'true'"/>
+                                                                <to variable="releaseSequence"/>
+                                                            </copy>
+                                                            <copy>
+                                                                <from expression="'C'"/>
+                                                                <to variable="state"/>
+                                                            </copy>
+                                                        </assign>
+                                                    </sequence>
+                                                </case>
+                                                <otherwise>
+                                                    <assign name="AsgState-FAILED-DoNotRelease">
+                                                        <copy>
+                                                            <from expression="'F'"/>
+                                                            <to variable="state"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="'false'"/>
+                                                            <to variable="releaseSequence"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="bpws:getVariableData('nFailures') + 1"/>
+                                                            <to variable="nFailures"/>
+                                                        </copy>
+                                                    </assign>
+                                                </otherwise>
+                                            </switch>
+                                        </sequence>
+                                    </scope>
+                                </sequence>
+                            </otherwise>
+                        </switch>
+                    </sequence>
+                </scope>
+                <switch name="ReleaseSequence">
+                    <case condition="'true' = bpws:getVariableData('releaseSequence') and (count(bpws:getVariableData('accountPubRequest','/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:tracingId')) = 1) and (bpws:getVariableData('accountPubRequest','/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:tracingId') != '0')">
+                        <bpelx:annotation>
+                            <bpelx:pattern>Release Sequence</bpelx:pattern>
+                        </bpelx:annotation>
+                        <sequence name="Sequence_6">
+                            <assign name="AsgSequenceReleaseValues">
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:tracingId"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:correlationID"/>
+                                </copy>
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:applicationId"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns11:applicationId"/>
+                                </copy>
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:transactionId"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns11:transactionId"/>
+                                </copy>
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:messageId"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns11:messageId"/>
+                                </copy>
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:messageHistory"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns11:messageHistory"/>
+                                </copy>
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:tracingId"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns11:tracingId"/>
+                                </copy>
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:timeStamp"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns11:timeStamp"/>
+                                </copy>
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:instanceId"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns11:instanceId"/>
+                                </copy>
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:timeToLive"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns11:timeToLive"/>
+                                </copy>
+                                <copy>
+                                    <from variable="accountPubRequest" query="/ns5:standaloneAccountPubRequest/ns5:eaiHeader/ns5:payloadVersion"/>
+                                    <to variable="InvSequenceReleaserIV" part="payload" query="/ns10:releaseSequenceRequest/ns10:eaiHeader/ns11:payloadVersion"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns9:SequenceReleaser" operation="releaseSequence" inputVariable="InvSequenceReleaserIV"/>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <empty name="DoNothing"/>
+                    </otherwise>
+                </switch>
+                <sequence name="UpdateDatabase">
+                    <assign name="TransBlankUpdateMessage">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransBlankUpdateMessage.xsl',bpws:getVariableData('InvUpdateINTERFACE_BUFFERIV','InterfaceBufferCollection'))"/>
+                            <to variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection"/>
+                        </copy>
+                    </assign>
+                    <assign name="AsgUpdateValues">
+                        <copy>
+                            <from variable="id"/>
+                            <to variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns16:InterfaceBufferCollection/ns16:InterfaceBuffer/ns16:id"/>
+                        </copy>
+                        <copy>
+                            <from variable="created"/>
+                            <to variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns16:InterfaceBufferCollection/ns16:InterfaceBuffer/ns16:created"/>
+                        </copy>
+                        <copy>
+                            <from variable="rawMessage"/>
+                            <to variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns16:InterfaceBufferCollection/ns16:InterfaceBuffer/ns16:payload"/>
+                        </copy>
+                        <copy>
+                            <from variable="interfaceId"/>
+                            <to variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns16:InterfaceBufferCollection/ns16:InterfaceBuffer/ns16:interfaceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="referenceId"/>
+                            <to variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns16:InterfaceBufferCollection/ns16:InterfaceBuffer/ns16:referenceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="state"/>
+                            <to variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns16:InterfaceBufferCollection/ns16:InterfaceBuffer/ns16:state"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCompositeInstanceId()"/>
+                            <to variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns16:InterfaceBufferCollection/ns16:InterfaceBuffer/ns16:updatedBy"/>
+                        </copy>
+                        <bpelx:remove>
+                            <bpelx:target variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns16:InterfaceBufferCollection/ns16:InterfaceBuffer/ns16:lastUpdated"/>
+                        </bpelx:remove>
+                        <copy>
+                            <from variable="errorMsg"/>
+                            <to variable="InvUpdateINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns16:InterfaceBufferCollection/ns16:InterfaceBuffer/ns16:errorMessage"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvUpdateINTERFACE_BUFFER" portType="ns8:UpdateINTERFACE_BUFFER_ptt" inputVariable="InvUpdateINTERFACE_BUFFERIV" partnerLink="UpdateINTERFACE_BUFFER" operation="update"/>
+                </sequence>
+                <assign name="AsgIncrementProcessedCount">
+                    <copy>
+                        <from expression="bpws:getVariableData('nProcessed') + 1"/>
+                        <to variable="nProcessed"/>
+                    </copy>
+                    <copy>
+                        <from expression="''"/>
+                        <to variable="errorMsg"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <bpelx:exec name="SetCompletedTitle" language="java" version="1.3">
+            <![CDATA[setCompositeInstanceTitle("Completed R:P:E:F=" + getVariableData("nReceived") + ":" + getVariableData("nProcessed") + ":" + getVariableData("nErrors") + ":" + getVariableData("nFailures"));]]>
+        </bpelx:exec>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('nProcessed') = bpws:getVariableData('nFailures')">
+                <bpelx:annotation>
+                    <bpelx:pattern>All Failed</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_9">
+                    <assign name="AsgHealthCheckParams">
+                        <copy>
+                            <from expression="'doHealthCheck'"/>
+                            <to variable="RequestHealthCheckIV" part="payload" query="/ns17:InterfaceManagerProcessRequest/ns17:operation"/>
+                        </copy>
+                        <copy>
+                            <from expression="'CPFGAM'"/>
+                            <to variable="RequestHealthCheckIV" part="payload" query="/ns17:InterfaceManagerProcessRequest/ns17:interfaceConfig/ns18:id"/>
+                        </copy>
+                    </assign>
+                    <invoke name="RequestHealthCheck" partnerLink="InterfaceManager" portType="ns17:InterfaceManager" operation="process" inputVariable="RequestHealthCheckIV" outputVariable="RequestHealthCheckOV"/>
+                    <terminate name="Terminate"/>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

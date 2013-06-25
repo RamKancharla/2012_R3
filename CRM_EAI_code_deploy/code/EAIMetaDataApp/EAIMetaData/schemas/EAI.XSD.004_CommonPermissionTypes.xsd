@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 sp2 (http://www.altova.com) by Ramakrishnan Sivarajan (Reuters) -->
+<!--********************************************************************************
+* Module:      EAI.XSD.004_CommonPermissionTypes.xsd
+* Type:        XSD Schema
+* Description: The schema used for Common Permission Message attributes
+*
+* Change History
+* Version     Date      Author             Description Of Change
+*
+* 0.1         02/03/07   R. Sivarajan (Detica)    Initial version                *
+* 0.02        06/03/07   Rob Billington		  Version scheme changed
+* 0.03        06/03/07   Rob Billington		  Added OrderFulfilmentProductCode and restriction on PBB length
+*
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPermissionTypes" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPermissionTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.03">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd"/>
+	<xsd:simpleType name="ProductCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem></gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ServiceStartDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>CDM v1.0 ORDER LINE.PERMISSION START DATE</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:dateTime"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ServiceEndDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>CDM v1.0 ORDER LINE.PERMISSION END DATE</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:dateTime"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="PBB">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>CDM v1.0 PERMISSION BUILDING BLOCK(PBB).CODE</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>WWI3000X50</content>
+					<comment>PDP Code for Reuters 3000 Xtra Version 5.0</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>LSE1D</content>
+					<comment>PDP Code LSE - LEVEL 1 DOMESTIC</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>294</content>
+					<comment>MXPDB Right ID for 'Channel_Feed_RRI'</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>2</content>
+					<comment>MXPDB Right ID for 'VIEW'</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>137</content>
+					<comment>MXPDB Right ID for 'Consensus Estimates Americas'</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderFulfilmentProductCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>CDM.v1.ORDER FULFILMENT PRODUCT.CODE</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>XTMO45</content>
+					<comment>XTRA MOBILITY ACCESS V 4.5</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>XK1INTD</content>
+					<comment>3000 XTRA (INC KOBRA/PPP) DF ACCESS</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>XK2INTD</content>
+					<comment>3000 XTRA-K (PPP ONLY) DF ACC</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>MDN-BUSREPZ</content>
+					<comment>BUSINESS NEWS</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>CEGIDN</content>
+					<comment>CANADIAN EXCHANGE GROUP PERMISSIONING ONLY</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>RKN NET</content>
+					<comment>REUTERS KNOWLEDGE HOSTED INTERNET</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

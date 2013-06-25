@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="ELMOM_Invoker" revision="1.0" mode="active" state="on"
+           xmlns="http://xmlns.oracle.com/sca/1.0"
+           xmlns:ui="http://xmlns.oracle.com/soa/designer/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+           xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy">
+    <import location="ELMOM_Invoker.wsdl"/>
+    <import location="ELMOrderPolling.wsdl"
+            namespace="http://xmlns.oracle.com/pcbpel/adapter/db/ELMOrderPolling/"/>
+    <import location="OrderServiceRef.wsdl"
+            namespace="http://order.service.eai.trls.thomsonreuters.com/"/>
+    <import namespace="http://xmlns.oracle.com/InterfaceManager"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61OM/ELMOM_Invoker/UpdateInterfaceBuffer"
+            location="UpdateInterfaceBuffer.wsdl" importType="wsdl"/>
+    <service ui:wsdlLocation="ELMOrderPolling.wsdl" name="ELMOrderPolling">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/ELMOrderPolling/#wsdl.interface(ELMOrderPolling_ptt)"
+                        xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="ELMOrderPolling_db.jca"/>
+    </service>
+    <component name="ELMOM_Invoker">
+        <implementation.bpel src="ELMOM_Invoker.bpel"/>
+    </component>
+    <reference ui:wsdlLocation="OrderServiceRef.wsdl" name="OrderService">
+        <interface.wsdl interface="http://order.service.eai.trls.thomsonreuters.com/#wsdl.interface(Order)"
+                        xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://order.service.eai.trls.thomsonreuters.com/#wsdl.endpoint(OrderService/OrderPort)"
+                    location="OrderServiceRef.wsdl"
+                    xmlns:ns="http://xmlns.oracle.com/sca/1.0">
+            <wsp:PolicyReference URI="oracle/wss_http_token_client_policy"
+                                 orawsp:category="security"
+                                 orawsp:status="enabled"/>
+            <property name="oracle.webservices.auth.username" type="xs:string"
+                      many="false" override="may">${elm.UserName}</property>
+            <property name="oracle.webservices.auth.password" type="xs:string"
+                      many="false" override="may">${elm.Password}</property>
+        </binding.ws>
+    </reference>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl"
+               name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+        <binding.ws port="http://xmlns.oracle.com/InterfaceManager#wsdl.endpoint(InterfaceManager/InterfaceManager)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/InterfaceManager/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="UpdateInterfaceBuffer"
+               ui:wsdlLocation="UpdateInterfaceBuffer.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61OM/ELMOM_Invoker/UpdateInterfaceBuffer#wsdl.interface(UpdateInterfaceBuffer_ptt)"/>
+        <binding.jca config="UpdateInterfaceBuffer_db.jca"/>
+        <property name="jca.retry.count" type="xs:int" many="false"
+                  override="may">4</property>
+        <property name="jca.retry.interval" type="xs:int" many="false"
+                  override="may">1</property>
+        <property name="jca.retry.backoff" type="xs:int" many="false"
+                  override="may">2</property>
+        <property name="jca.retry.maxInterval" type="xs:string" many="false"
+                  override="may">120</property>
+    </reference>
+    <wire>
+        <source.uri>ELMOrderPolling</source.uri>
+        <target.uri>ELMOM_Invoker/ELMOrderPolling</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ELMOM_Invoker/OrderService</source.uri>
+        <target.uri>OrderService</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ELMOM_Invoker/InterfaceManager</source.uri>
+        <target.uri>InterfaceManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ELMOM_Invoker/UpdateInterfaceBuffer</source.uri>
+        <target.uri>UpdateInterfaceBuffer</target.uri>
+    </wire>
+</composite>

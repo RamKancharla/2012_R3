@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TOMOM_UpdateOrderStatus" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import importType="wsdl" location="EAI.SRV.EXT.TOM.042_PropagateOrderLineStatusService.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/OrderTechFul"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator"
+            location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOMOM_UpdateOrderRequestValidator/TOMOM_UpdateOrderRequestValidator.wsdl"
+            importType="wsdl"/>
+    <service name="TOM.UpdateOrderStatus_RS_ep" ui:wsdlLocation="EAI.SRV.EXT.TOM.042_PropagateOrderLineStatusService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/OrderTechFul#wsdl.interface(PropagateOrderStatusSoap)"/>
+        <binding.ws location="EAI.SRV.EXT.TOM.042_PropagateOrderLineStatusService.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/OrderTechFul#wsdl.endpoint(PropagateStatusUpdate/PropagateOrderStatusSoap)"/>
+    </service>
+    <component name="TOM.UpdateOrderStatus_RS">
+        <implementation.mediator src="TOM.UpdateOrderStatus_RS.mplan"/>
+    </component>
+    <reference name="TOM.UpdateOrderRequestValidator"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOMOM_UpdateOrderRequestValidator/TOMOM_UpdateOrderRequestValidator.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator#wsdl.interface(TOMOM_UpdateOrderRequestValidator)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator#wsdl.endpoint(TOMOM_UpdateOrderRequestValidator/TOMOM_UpdateOrderRequestValidator)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOMOM_UpdateOrderRequestValidator/anchorToTOMOM_UpdateOrderRequestValidator?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>TOM.UpdateOrderStatus_RS_ep</source.uri>
+        <target.uri>TOM.UpdateOrderStatus_RS/TOM.UpdateOrderStatus_RS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOM.UpdateOrderStatus_RS/TOM.UpdateOrderRequestValidator</source.uri>
+        <target.uri>TOM.UpdateOrderRequestValidator</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

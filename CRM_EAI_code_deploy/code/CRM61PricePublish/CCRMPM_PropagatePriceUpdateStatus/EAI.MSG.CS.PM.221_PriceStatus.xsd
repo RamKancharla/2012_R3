@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.CS.PM.221_PriceStatus.xsd
+* Type:				XML Schema Document
+* Description:  	        Core Suite Price Status Schema 
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		14/04/08	Sreeja Prasad			Initial Version
+*  0.02         24/07/08        Jyothirmayi                 Changed the element names from orderHeader and orderLineItem to  priceHeader and priceLineItem  
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate" xmlns:gcap-cps="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" xmlns:gcap-cpt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.014_CommonPriceStructures.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.012_CommonPriceTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+<!--
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" schemaLocation="./EAI.XSD.014_CommonPriceStructures.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceTypes" schemaLocation="./EAI.XSD.012_CommonPriceTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="./EAI.XSD.005_CommonMessageTypes.xsd"/>
+       -->
+	<xsd:element name="priceStatus" type="xsdLocal:PriceStatus"/>
+ 	<xsd:complexType name="PriceStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+			<xsd:element name="parsingStatus" type="gcap-cmt:BasicResponse"/>
+			<xsd:element name="logicalCountry" type="gcap-cpt:CountryCode"/>
+			<xsd:element name="messageHeader" type="gcap-cmt:CompassMessageHeader"/>
+			<xsd:element name="priceHeader" type="gcap-cps:PriceUpdateHeaderStatus"/>
+			<xsd:element name="priceLineItem" type="gcap-cps:PriceUpdateLineItemStatus" maxOccurs="400"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

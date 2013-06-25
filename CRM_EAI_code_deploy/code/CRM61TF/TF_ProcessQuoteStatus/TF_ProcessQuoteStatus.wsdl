@@ -1,0 +1,42 @@
+<definitions
+     name="TF_ProcessQuoteStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TechFul"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus"
+                 schemaLocation="TF_ProcessQuoteStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TechFul" schemaLocation="EAI.MSG.TF.155_VettingStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TF_ProcessQuoteStatusResponseMessage">
+        <part name="payload" element="client:TF_ProcessQuoteStatusProcessResponse"/>
+    </message>
+    <message name="TF_ProcessQuoteStatusRequestMessage">
+        <part name="processQuoteRequest" element="ns1:vettingStatus"/>
+    </message>
+    <portType name="TF_ProcessQuoteStatus">
+        <operation name="processVettingStatus">
+            <input message="client:TF_ProcessQuoteStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="TF_ProcessQuoteStatusCallback">
+        <operation name="onResult">
+            <input message="client:TF_ProcessQuoteStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TF_ProcessQuoteStatus">
+        <plnk:role name="TF_ProcessQuoteStatusProvider">
+            <plnk:portType name="client:TF_ProcessQuoteStatus"/>
+        </plnk:role>
+        <plnk:role name="TF_ProcessQuoteStatusRequester">
+            <plnk:portType name="client:TF_ProcessQuoteStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

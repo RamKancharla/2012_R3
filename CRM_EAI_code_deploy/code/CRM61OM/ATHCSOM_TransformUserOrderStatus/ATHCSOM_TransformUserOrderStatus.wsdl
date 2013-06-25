@@ -1,0 +1,67 @@
+<definitions
+     name="ATHCSOM_TransformUserOrderStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns4="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus"
+                 schemaLocation="ATHCSOM_TransformUserOrderStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+                 schemaLocation="EAI.MSG.CS.209_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.CS.UOM.275_UserOrderResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHCSOM_TransformUserOrderStatusResponseMessage">
+        <part name="payload" element="ns3:UserOrderResponse"/>
+    </message>
+    <message name="ATHCSOM_TransformUserOrderStatusRequestMessage">
+        <part name="payload" element="ns2:EBCDICMessage"/>
+    </message>
+    <portType name="ATHCSOM_TransformUserOrderStatusCallback">
+        <operation name="onResult">
+            <input message="client:ATHCSOM_TransformUserOrderStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="ATHCSOM_TransformUserOrderStatus">
+        <operation name="processUserOrderStatus">
+            <input message="client:ATHCSOM_TransformUserOrderStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHCSOM_TransformUserOrderStatus">
+        <plnk:role name="ATHCSOM_TransformUserOrderStatusProvider">
+            <plnk:portType name="client:ATHCSOM_TransformUserOrderStatus"/>
+        </plnk:role>
+        <plnk:role name="ATHCSOM_TransformUserOrderStatusRequester">
+            <plnk:portType name="client:ATHCSOM_TransformUserOrderStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

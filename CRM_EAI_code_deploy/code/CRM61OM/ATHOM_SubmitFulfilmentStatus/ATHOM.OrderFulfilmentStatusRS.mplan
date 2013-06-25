@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="ATHOM.OrderFulfilmentStatusRS" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/OM/ATHOM" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="orderFulfilmentStatus">
+      <switch>
+         <case name="Case_1_ATHOM.OrderFulfilmentStatusRS.orderFulfilmentStatus" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TransOrderFulfilmentStatusToFulfilmentValidate.xsl,$in.UserProvisionResponse)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="ATHOM.OrderFulfilmentStatusNValidatorSOAPAdp" operation="validateFulfillment">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/TransValidationResponseToFulfilmentResponse.xsl,$in.payload)" name="$out.billingInfoResponse"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

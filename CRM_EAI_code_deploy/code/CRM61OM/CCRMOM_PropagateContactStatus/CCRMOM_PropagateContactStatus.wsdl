@@ -1,0 +1,49 @@
+<definitions
+     name="CCRMOM_PropagateContactStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.reuters.com/2008/02/15/GCAP/RCRM"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus/correlationset"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus"
+    >
+     <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus/correlationset"
+         location="CCRMOM_PropagateContactStatus_Properties.wsdl"/>
+    <import namespace="http://www.reuters.com/2008/02/15/GCAP/RCRM" location="RCRMContactInbound.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus"
+                 schemaLocation="CCRMOM_PropagateContactStatus.xsd"/>
+        </schema>
+    </types>
+    <message name="CCRMOM_PropagateContactStatusRequestMessage">
+        <part name="payload" element="ns1:RCRM_spcContact_spcInbound_spcOperatiion_Input"/>
+    </message>
+    <message name="CCRMOM_PropagateContactStatusResponseMessage">
+        <part name="payload" element="ns1:RCRM_spcContact_spcInbound_spcOperatiion_Output"/>
+    </message>
+    <portType name="CCRMOM_PropagateContactStatus">
+        <operation name="initiate">
+            <input message="client:CCRMOM_PropagateContactStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMOM_PropagateContactStatusCallback">
+        <operation name="onResult">
+            <input message="client:CCRMOM_PropagateContactStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOM_PropagateContactStatus">
+        <plnk:role name="CCRMOM_PropagateContactStatusProvider">
+            <plnk:portType name="client:CCRMOM_PropagateContactStatus"/>
+        </plnk:role>
+        <plnk:role name="CCRMOM_PropagateContactStatusRequester">
+            <plnk:portType name="client:CCRMOM_PropagateContactStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:UUID" messageType="client:CCRMOM_PropagateContactStatusRequestMessage"
+         part="payload" query="/ns1:RCRM_spcContact_spcInbound_spcOperatiion_Input/ns2:ContactExternalIO/ns2:Contact/ns2:Id"
+         xmlns:ns2="http://www.siebel.com/xml/ContactExternalIO"/>
+</definitions>

@@ -1,0 +1,11 @@
+<adapter-config name="DequeueDADService" adapter="MQSeriesAdapter" wsdlLocation="DequeueDADService.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemoteCRMtoEAI" adapterRef=""/>
+  <endpoint-activation portType="Dequeue_ptt" operation="Dequeue" UITransmissionPrimitive="Dequeue">
+    <activation-spec className="oracle.tip.adapter.mq.inbound.ActivationSpecImpl">
+      <property name="QueueName" value="${mq.token.prefix}EDTK_EAI_307_DAD_QT_RQST_Q"/>
+    </activation-spec>
+    <input/>
+  </endpoint-activation>
+
+</adapter-config>

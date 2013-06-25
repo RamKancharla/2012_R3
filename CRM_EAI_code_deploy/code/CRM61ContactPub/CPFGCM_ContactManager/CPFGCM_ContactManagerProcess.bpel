@@ -1,0 +1,211 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Sat Oct 11 14:26:58 BST 2008
+  Author:  rob.billington
+  Purpose: Asynchronous BPEL Process
+  
+  * 2.0		28/06/10		Albin I		Defect 37842  Removing the usage of JMS Topic
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFGCM_ContactManagerProcess" targetNamespace="http://xmlns.oracle.com/CPFGCM_ContactManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/jms/DequeueContact/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile" xmlns:client="http://xmlns.oracle.com/CPFGCM_ContactManager" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/UserManagementServices" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/top/WriteContact" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <partnerLink name="WriteContact" partnerRole="WriteContact_role" partnerLinkType="ns9:WriteContact_plt"/>
+        <partnerLink myRole="AsyncSequenceCheckerRequester" name="AsyncSequenceChecker" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns11:AsyncSequenceChecker"/>
+        <partnerLink myRole="CPFGCM_ContactManagerProvider" name="CPFGCM_ContactManager" partnerRole="CPFGCM_ContactManagerRequester" partnerLinkType="client:CPFGCM_ContactManager"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="InvCPFGUM_Invoker_process_InputVariable" element="ns1:standalonePropagateUserRequest"/>
+        <variable name="InvWriteContactIV" messageType="ns9:InterfaceBufferCollection_msg"/>
+        <variable name="CheckSequenceIV" messageType="ns11:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="SequenceCheckerOV" messageType="ns11:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="InputVariable" messageType="client:CPFGCM_ContactManagerRequestMessage"/>
+        <variable name="CountUUIDIndex" type="xsd:int"/>
+        <variable name="countContactId" type="xsd:int"/>
+        <variable name="temp" type="xsd:string"/>
+        <variable name="temp1" type="xsd:string"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CPFGCM_ContactManager.wsdl) -->
+        <receive name="receiveInput" variable="InputVariable" createInstance="yes" partnerLink="CPFGCM_ContactManager" portType="client:CPFGCM_ContactManager" operation="initiate"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String UUID = "null";                         
+String userId = "null";                         
+String title = "null";                         
+                         
+try {                         
+    if ( null != getVariableData("InputVariable","contactEvent","/ns8:contactEvent/ns8:contact/ns8:UUID") ) {                      
+                                                     
+        UUID = ((oracle.xml.parser.v2.XMLElement)getVariableData("InputVariable","contactEvent","/ns8:contactEvent/ns8:contact/ns8:UUID")).getFirstChild().getNodeValue();                      
+    }                         
+                        
+    title = UUID ;                         
+    setCompositeInstanceTitle( title );                         
+} catch (Exception e) {                         
+    setCompositeInstanceTitle( ";Fault ");                         
+}]]>
+        </bpelx:exec>
+        <assign name="AsgInitialVariables">
+            <copy>
+                <from part="contactEvent" query="/ns8:contactEvent/ns8:eaiHeader/ns3:applicationId" variable="InputVariable"/>
+                <to variable="InvCPFGUM_Invoker_process_InputVariable" query="/ns1:standalonePropagateUserRequest/ns1:eaiHeader/ns1:applicationId"/>
+            </copy>
+            <!-- <copy>
+                <from part="contactEvent"
+                      query="/ns8:contactEvent/ns8:contact/ns8:UUID"
+                      variable="InputVariable"/>
+                <to variable="InvCPFGUM_Invoker_process_InputVariable"
+                    query="/ns1:standalonePropagateUserRequest/ns1:userDetails/ns1:UUID"/>
+            </copy>-->
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to query="/ns8:contactEvent/ns8:eaiHeader/ns3:instanceId" variable="InputVariable" part="contactEvent"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to query="/ns8:contactEvent/ns8:eaiHeader/ns3:tracingId" variable="InputVariable" part="contactEvent"/>
+            </copy>
+        </assign>
+        <assign name="AsgCountUUID">
+            <copy>
+                <from expression="ora:countNodes('InputVariable','contactEvent','/ns8:contactEvent/ns8:contactUserId')"/>
+                <to variable="countContactId"/>
+            </copy>
+            <copy>
+                <from expression="1"/>
+                <to variable="CountUUIDIndex"/>
+            </copy>
+        </assign>
+        <while name="While_1" condition="bpws:getVariableData('CountUUIDIndex') &lt;= bpws:getVariableData('countContactId')">
+            <sequence name="Sequence_2">
+                <switch name="Switch_1">
+                    <case condition="bpws:getVariableData('InputVariable','contactEvent','/ns8:contactEvent/ns8:contactUserId[CountUUIDIndex]/ns8:CPFGUserId')= &quot;&quot; ">
+                        <bpelx:annotation>
+                            <bpelx:pattern>No CPfG User ID</bpelx:pattern>
+                        </bpelx:annotation>
+                        <empty name="DoNothing"/>
+                    </case>
+                    <otherwise>
+                        <sequence name="CallCPfG">
+                            <!--<assign name="AsUUIDValues">
+                            <copy>
+                                <from variable="InputVariable"
+                                      part="contactEvent"
+                                      query="/ns8:contactEvent/ns8:contactUserId/ns8:ContactUUID"/>
+                                <to variable="InvCPFGUM_Invoker_process_InputVariable"
+                                    query="/ns1:standalonePropagateUserRequest/ns1:userDetails/ns1:UUID"/>
+                            </copy>
+                        </assign>-->
+                            <assign name="TransInputToCPFGUM_InvokerInput">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransInputToCPFGUM_Invoker.xsl',bpws:getVariableData('InputVariable','contactEvent'))"/>
+                                    <to variable="InvCPFGUM_Invoker_process_InputVariable"/>
+                                </copy>
+                            </assign>
+                            <assign name="AsgContactUserDetails">
+                                <copy>
+                                    <from variable="InputVariable" part="contactEvent" query="/ns8:contactEvent/ns8:contactUserId[bpws:getVariableData('CountUUIDIndex')]/ns8:ContactUUID"/>
+                                    <to variable="InvCPFGUM_Invoker_process_InputVariable" query="/ns1:standalonePropagateUserRequest/ns1:userDetails/ns1:UUID"/>
+                                </copy>
+                                <copy>
+                                    <from variable="InputVariable" part="contactEvent" query="/ns8:contactEvent/ns8:contactUserId[bpws:getVariableData('CountUUIDIndex')]/ns8:CPFGUserId"/>
+                                    <to variable="InvCPFGUM_Invoker_process_InputVariable" query="/ns1:standalonePropagateUserRequest/ns1:userDetails/ns1:userID"/>
+                                </copy>
+                                <copy>
+                                    <from variable="InputVariable" part="contactEvent" query="/ns8:contactEvent/ns8:contactUserId[bpws:getVariableData('CountUUIDIndex')]/ns8:FTLCompleteFlag"/>
+                                    <to variable="InvCPFGUM_Invoker_process_InputVariable" query="/ns1:standalonePropagateUserRequest/ns1:userDetails/ns1:FTLCompleted"/>
+                                </copy>
+                                <copy>
+                                    <from variable="InputVariable" part="contactEvent" query="/ns8:contactEvent/ns8:contactUserId[bpws:getVariableData('CountUUIDIndex')]/ns8:FTLFlagSetDate"/>
+                                    <to variable="InvCPFGUM_Invoker_process_InputVariable" query="/ns1:standalonePropagateUserRequest/ns1:userDetails/ns1:FTLCompletedOn"/>
+                                </copy>
+                                <copy>
+                                    <from variable="InputVariable" part="contactEvent" query="/ns8:contactEvent/ns8:contactUserId[bpws:getVariableData('CountUUIDIndex')]/ns8:LocalDACSId"/>
+                                    <to variable="InvCPFGUM_Invoker_process_InputVariable" query="/ns1:standalonePropagateUserRequest/ns1:userDetails/ns1:localDACSID"/>
+                                </copy>
+                            </assign>
+                            <assign name="TransRemoveSplCharToCPFGUM_Invoker">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransRemoveSplCharToCPFGUM_Invoker.xsl',bpws:getVariableData('InvCPFGUM_Invoker_process_InputVariable'))"/>
+                                    <to variable="InvCPFGUM_Invoker_process_InputVariable"/>
+                                </copy>
+                            </assign>
+                            <switch name="Switch_2">
+                                <case condition="bpws:getVariableData('InvCPFGUM_Invoker_process_InputVariable','/ns1:standalonePropagateUserRequest/ns1:actionCode') != &quot;&quot;">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>Send to CPfG</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <sequence name="Sequence_1">
+                                        <assign name="TransInputToWriteContactIV">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransInputToWriteContactIV.xsl',bpws:getVariableData('InvCPFGUM_Invoker_process_InputVariable'))"/>
+                                                <to variable="InvWriteContactIV" part="InterfaceBufferCollection"/>
+                                            </copy>
+                                        </assign>
+                                        <sequence name="CheckSequencer">
+                                            <assign name="TransInputToSequenceCheck">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransInputToSequenceCheck.xsl',bpws:getVariableData('InputVariable','contactEvent'))"/>
+                                                    <to variable="CheckSequenceIV" part="payload"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvSequenceChecker" partnerLink="AsyncSequenceChecker" portType="ns11:AsyncSequenceChecker" operation="initiate" inputVariable="CheckSequenceIV"/>
+                                            <receive name="ReceiveSequenceRelease" partnerLink="AsyncSequenceChecker" portType="ns11:AsyncSequenceCheckerCallback" operation="onResult" variable="SequenceCheckerOV" createInstance="no"/>
+                                        </sequence>
+                                        <invoke name="InvWriteContact" partnerLink="WriteContact" portType="ns9:WriteContact_ptt" operation="insert" inputVariable="InvWriteContactIV"/>
+                                    </sequence>
+                                </case>
+                                <otherwise>
+                                    <empty name="DoNothing"/>
+                                </otherwise>
+                            </switch>
+                        </sequence>
+                    </otherwise>
+                </switch>
+                <assign name="AsgIncrementOnCount">
+                    <copy>
+                        <from expression="bpws:getVariableData('CountUUIDIndex')+1"/>
+                        <to variable="CountUUIDIndex"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+    </sequence>
+</process>

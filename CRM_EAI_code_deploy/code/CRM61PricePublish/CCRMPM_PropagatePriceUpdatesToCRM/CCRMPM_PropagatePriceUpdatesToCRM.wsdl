@@ -1,0 +1,45 @@
+<definitions
+     name="CCRMPM_PropagatePriceUpdatesToCRM"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM"
+                 schemaLocation="CCRMPM_PropagatePriceUpdatesToCRM.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.CCRM.PM.211_PriceUpdateRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMPM_PropagatePriceUpdatesToCRMRequestMessage">
+        <part name="payload" element="ns1:priceUpdateRequest"/>
+    </message>
+    <message name="CCRMPM_PropagatePriceUpdatesToCRMResponseMessage">
+        <part name="payload" element="client:CCRMPM_PropagatePriceUpdatesToCRMProcessResponse"/>
+    </message>
+    <portType name="CCRMPM_PropagatePriceUpdatesToCRM">
+        <operation name="propagatePriceUpdate">
+            <input message="client:CCRMPM_PropagatePriceUpdatesToCRMRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMPM_PropagatePriceUpdatesToCRMCallback">
+        <operation name="onResult">
+            <input message="client:CCRMPM_PropagatePriceUpdatesToCRMResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMPM_PropagatePriceUpdatesToCRM">
+        <plnk:role name="CCRMPM_PropagatePriceUpdatesToCRMProvider">
+            <plnk:portType name="client:CCRMPM_PropagatePriceUpdatesToCRM"/>
+        </plnk:role>
+        <plnk:role name="CCRMPM_PropagatePriceUpdatesToCRMRequester">
+            <plnk:portType name="client:CCRMPM_PropagatePriceUpdatesToCRMCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

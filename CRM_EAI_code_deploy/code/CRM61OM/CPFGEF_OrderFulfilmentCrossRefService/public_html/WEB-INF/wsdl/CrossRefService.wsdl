@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+     name="CrossRefService"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+             elementFormDefault="qualified" xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/">
+            <include schemaLocation="EAI.MSG.CPFG.EF.215_SplitOrderRequest.xsd"/>
+            <include schemaLocation="EAI.MSG.CPFG.EF.216_SplitOrderResponse.xsd"/>
+            <include schemaLocation="EAI.MSG.CPFG.EF.217_GetOrderDetailsRequest.xsd"/>
+            <include schemaLocation="EAI.MSG.CPFG.EF.218_GetOrderDetailsResponse.xsd"/>
+        </schema>
+    </types>
+    <message name="CrossRefGetOrderDetailsRequest">
+        <part name="parameters" element="tns:getOrderDetailsRequest"/>
+    </message>
+    <message name="CrossRefGetOrderDetailsResponse">
+        <part name="parameters" element="tns:getOrderDetailsResponse"/>
+    </message>
+    <message name="CrossRefSplitOrderRequest">
+        <part name="parameters" element="tns:splitOrderRequest"/>
+    </message>
+    <message name="CrossRefSplitOrderResponse">
+        <part name="parameters" element="tns:splitOrderResponse"/>
+    </message>
+    <portType name="CrossRefServicePortType">
+        <operation name="getOrderDetails">
+            <input message="tns:CrossRefGetOrderDetailsRequest"/>
+            <output message="tns:CrossRefGetOrderDetailsResponse"/>
+        </operation>
+        <operation name="splitOrder">
+            <input message="tns:CrossRefSplitOrderRequest"/>
+            <output message="tns:CrossRefSplitOrderResponse"/>
+        </operation>
+    </portType>
+    <binding name="CrossRefServiceSplitOrderSOAP" type="tns:CrossRefServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="getOrderDetails">
+            <soap:operation soapAction="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService/getOrderDetails"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="splitOrder">
+            <soap:operation soapAction="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService/splitOrder"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="CrossRefService">
+        <port name="CrossRefServiceSplitOrderSOAPPort" binding="tns:CrossRefServiceSplitOrderSOAP">
+            <soap:address location="http://10.15.61.72:8888/Utilities-CPFGEF_OrderFulfilmentCrossRefService-context-root/CrossRefServiceSplitOrderSOAPPort"/>
+        </port>
+    </service>
+</definitions>

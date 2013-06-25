@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:		EAI.MSG.CCRM.PM.214_PriceUpdateSubmissionStatus
+*						
+* Type:			XML Schema Document
+* Description:  	Internal message format used to reply the status of submission of the Price List from EAI to Siebel
+*
+*
+* Change History
+* Version	Date		Author			Description Of Change
+* =======	======		=================	================================
+*  0.01		08/04/08	Sreeja Prasad		Initial Version
+*
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdate" xmlns:gcap-cps="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdate" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.014_CommonPriceStructures.xsd"/>
+	<xsd:element name="priceReqUpdateSubmissionStatus" type="xsdLocal:PriceReqUpdateSubmissionStatus"/>
+	<xsd:complexType name="PriceReqUpdateSubmissionStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+			<xsd:element name="messageHeader" type="gcap-cmt:_CCRMMessageHeader"/>
+			<xsd:element name="submissionStatus" type="gcap-cps:_CCRMPriceUpdateSubmissionStatus"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

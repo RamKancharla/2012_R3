@@ -1,0 +1,25 @@
+<?binding.jca DBService_db.jca?>
+<definitions name="DBService" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/DBService/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:db="http://xmlns.oracle.com/pcbpel/adapter/db/DBService" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/DBService/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="DBService_plt">
+        <plt:role name="DBService_role">
+            <plt:portType name="tns:DBService_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/DBService" schemaLocation="DBService.xsd"/>
+        </schema>
+    </types>
+    <message name="DBServiceInput_msg">
+        <part name="DBServiceInput_msg" element="db:DBServiceInput"/>
+    </message>
+    <message name="DBServiceOutput_msg">
+        <part name="DBServiceOutput" element="db:DBServiceOutput"/>
+    </message>
+    <portType name="DBService_ptt">
+        <operation name="DBService">
+            <input message="tns:DBServiceInput_msg"/>
+            <output message="tns:DBServiceOutput_msg"/>
+        </operation>
+    </portType>
+</definitions>

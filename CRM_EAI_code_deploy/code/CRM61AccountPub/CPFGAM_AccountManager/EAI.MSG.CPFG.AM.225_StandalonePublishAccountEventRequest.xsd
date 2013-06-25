@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+    * Module:      EAI.MSG.CPFG.AM.225_StandalonePublishAccountEventRequest.xsd
+    * Type:        XSD Schema
+    * Description: The schema used as input to TOMAM_Invoker and has no references to common type schemas
+    *
+    * Change History
+    * Version		Date		Author		Description Of Change
+    *
+    * 0.1               07/05/08	Rob Billington	Initial version
+    * 0.2               08/07/08	Rob Billington	Removed AccountType as redundant
+    * 
+    **********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AccountPublish" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AccountPublish" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.1">
+	<xsd:element name="standaloneAccountPubRequest" type="local:Standalone_CPFGAccountPubRequest"/>
+	<xsd:complexType name="Standalone_CPFGAccountPubRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="local:StandaloneEaiHeader"/>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="account" type="local:Standalone_CPFGAccount"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Standalone_CPFGAccount">
+		<xsd:sequence>
+			<xsd:element name="accountID" type="xsd:string"/>
+			<xsd:element name="parentAccountID" type="xsd:string"/>
+			<xsd:element name="masterAccountID" type="xsd:string"/>
+			<xsd:element name="hierarchyType" type="xsd:string"/>
+			<xsd:element name="accountName" type="xsd:string"/>
+			<xsd:element name="address" type="local:Standalone_CPFGAccountAddress"/>
+			<xsd:element name="subscriberNumber" type="xsd:string"/>
+			<xsd:element name="subAccountNumber" type="xsd:string"/>
+			<xsd:element name="status" type="xsd:string"/>
+			<xsd:element name="site" type="xsd:string"/>
+			<xsd:element name="region" type="xsd:string"/>
+			<xsd:element name="subRegion" type="xsd:string"/>
+			<xsd:element name="subscriberCountryCode" type="xsd:string"/>
+			<xsd:element name="BusinessChannel" type="xsd:string"/>
+                        <xsd:element name="FieldServiceLocation" type="xsd:string"/>
+			<xsd:element name="OrganisationType" type="xsd:string"/>
+			<xsd:element name="MCCCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Standalone_CPFGAccountAddress">
+		<xsd:sequence>
+			<xsd:element name="city" type="xsd:string"/>
+			<xsd:element name="mainFaxNumber" type="xsd:string"/>
+			<xsd:element name="mainTelephoneNumber" type="xsd:string"/>
+			<xsd:element name="name" type="xsd:string"/>
+			<xsd:element name="postalCode" type="xsd:string"/>
+			<xsd:element name="stateProvinceCounty" type="xsd:string"/>
+			<xsd:element name="country" type="xsd:string"/>
+			<xsd:element name="streetAddress" type="xsd:string"/>
+			<xsd:element name="addressType" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="StandaloneEaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="xsd:string"/>
+			<xsd:element name="transactionId" type="xsd:string"/>
+			<xsd:element name="messageId" type="xsd:string"/>
+			<xsd:element name="messageHistory" type="xsd:string"/>
+			<xsd:element name="tracingId" type="xsd:string" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="xsd:string" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

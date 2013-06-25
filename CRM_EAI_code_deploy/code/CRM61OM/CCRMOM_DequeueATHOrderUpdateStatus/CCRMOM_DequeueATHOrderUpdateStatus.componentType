@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="DequeueATHOrderAck.wsdl" name="DequeueATHOrderAck">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueATHOrderAck/#wsdl.interface(Dequeue_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateUserOrderRequest/CCRMOM_PropagateUserOrderRequest.wsdl" name="CCRMOM_PropagateUserOrderRequest">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.interface(CCRMOM_PropagateUserOrderRequest)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.interface(CCRMOM_PropagateUserOrderRequestCallback)"/>
+    </reference>
+</componentType>

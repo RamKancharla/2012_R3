@@ -1,0 +1,123 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Oct 09 14:31:03 GMT+05:30 2009
+  Author:  sg59930
+  Purpose: Asynchronous BPEL Process
+  * Version		Date		Author		Description Of Change
+  * 0.3               29/12/09	        Sreeja 	        Added the mapping from ContractType to AgreementType in TransInputToSFDCAMInvoker.xsl.
+  * 0.4               16-Feb -2010	Sandeep 	Created mapping for CustomerRefrenceNumber, Legal entityflag, master account id and aprent account id as a part of Sprint 10.
+  * 0.5               23-Mar-2010       Venkat 	        Created mapping for NomCustomerGroup in TransAccountPublishToSFDCAMInvoker.xsl and TransInputToSFDCAMInvoker.xsl as a part of PBI 483.
+  * 0.6               17-Apr-2010       Venkat 	        Created mapping for OAID in TransAccountPublishToSFDCAMInvoker.xsl and TransInputToSFDCAMInvoker.xsl as a part of PBI 524.
+  * 0.7				  28-Jun-2010		Albin I			Defect 37842  Removing the usage of JMS Topic	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="SFDCAM_AccountEventManagerProcess" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_AccountEventManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_AccountEventManager" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/jms/DequeueAccount/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <partnerLink name="AsyncSequenceChecker" partnerLinkType="ns5:AsyncSequenceChecker" myRole="AsyncSequenceCheckerRequester" partnerRole="AsyncSequenceCheckerProvider"/>
+        <partnerLink name="WriteContact" partnerRole="WriteContact_role" partnerLinkType="ns6:WriteContact_plt"/>
+        <partnerLink myRole="SFDCAM_AccountEventManagerProvider" name="SFDCAM_AccountEventManager" partnerRole="SFDCAM_AccountEventManagerRequester" partnerLinkType="client:SFDCAM_AccountEventManager"/>
+    </partnerLinks>
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="SFDCAM_Account_InputVariable" element="ns4:accountPubRequest"/>
+        <variable name="InvSequenceCheckerIV" messageType="ns5:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="ReceiveSequenceReleaseIV" messageType="ns5:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="InvWriteContactIV" messageType="ns6:InterfaceBufferCollection_msg"/>
+        <variable name="inputVariable" messageType="client:SFDCAM_AccountEventManagerRequestMessage"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SFDCAM_AccountEventManager.wsdl) -->
+        <receive name="receiveInput" variable="inputVariable" createInstance="yes" partnerLink="SFDCAM_AccountEventManager" portType="client:SFDCAM_AccountEventManager" operation="initiate"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String accountID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","accountEvent","/ns2:accountEvent/ns2:account/ns2:id")).getFirstChild().getNodeValue();               
+                 
+String Title=("AccountID: " +accountID);                     
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <switch name="CheckConditions">
+            <case condition="(bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:actionCode')='Delete') or (contains('Location,Wildcat,Athena,Multipub,MOPS,Peoplesoft,Bridge,Billing',bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:account/ns2:accountClass')) and (bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:account/ns2:lastUpdated')!=('SADMIN')))">
+                <sequence name="Sequence_1">
+                    <scope name="ScpSeqChecker">
+                        <sequence name="SeqChecker">
+                            <assign name="TransInputToSFDCAMInvoker">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:doXSLTransformForDoc('TransInputToSFDCAMInvoker.xsl', $inputVariable.accountEvent)"/>
+                                    <to variable="SFDCAM_Account_InputVariable"/>
+                                </copy>
+                            </assign>
+                            <assign name="AsgInitVariables">
+                                <copy>
+                                    <from expression="ora:generateGUID()"/>
+                                    <to variable="SFDCAM_Account_InputVariable" query="/ns4:accountPubRequest/ns4:eaiHeader/ns3:tracingId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="SFDCAM_Account_InputVariable" query="/ns4:accountPubRequest/ns4:eaiHeader/ns3:instanceId"/>
+                                </copy>
+                            </assign>
+                            <assign name="TransInputToSequenceCheck">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransSFDCAMInputToSequenceCheck.xsl',bpws:getVariableData('SFDCAM_Account_InputVariable'))"/>
+                                    <to variable="InvSequenceCheckerIV" part="payload"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvSequenceChecker" partnerLink="AsyncSequenceChecker" portType="ns5:AsyncSequenceChecker" operation="initiate" inputVariable="InvSequenceCheckerIV"/>
+                            <receive name="ReceiveSequenceRelease" partnerLink="AsyncSequenceChecker" portType="ns5:AsyncSequenceCheckerCallback" operation="onResult" variable="ReceiveSequenceReleaseIV" createInstance="no"/>
+                        </sequence>
+                    </scope>
+                    <scope name="ScpWriteToDB">
+                        <sequence name="SeqWriteToDB">
+                            <assign name="TransInputToWriteContactIV">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:doXSLTransformForDoc('TransInputToWriteContactIV.xsl', $SFDCAM_Account_InputVariable)"/>
+                                    <to variable="InvWriteContactIV" part="InterfaceBufferCollection"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvWriteContact" partnerLink="WriteContact" portType="ns6:WriteContact_ptt" operation="insert" inputVariable="InvWriteContactIV"/>
+                        </sequence>
+                    </scope>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

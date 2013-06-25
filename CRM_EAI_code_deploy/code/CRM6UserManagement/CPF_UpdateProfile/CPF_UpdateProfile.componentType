@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPF_UpdateProfile.wsdl" name="CPF_UserManagementService">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.interface(CPF_UpdateProfile)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.interface(CPF_UpdateProfileCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8000/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" name="AsyncSequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CCRMOM_PropagateContactStatus/CCRMOM_PropagateContactStatus.wsdl" name="CCRMOM_PropagateContactStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.interface(CCRMOM_PropagateContactStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.interface(CCRMOM_PropagateContactStatusCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager.wsdl" name="CPFGOM_UserOrderManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager#wsdl.interface(CPFGOM_UserOrderManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="GetWaitingInstances.wsdl" name="GetWaitingInstances">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances/#wsdl.interface(GetWaitingInstances_ptt)"/>
+    </reference>
+    <property name="preference.EAI" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.Success_Response" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.UpdateCPfGTemporaryURL" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.UpdateProfile" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.Failure_Response" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.validationStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.UpdateProfileSchema" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.variableStatus_1" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.FTL" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.BPELProcessName" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.FTLSchema" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.UpdateCPfGStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.InputSchema" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

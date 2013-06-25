@@ -1,0 +1,81 @@
+* Change History
+* Version	Date		Author              Description Of Change
+* ========	========	===========         ===============================
+*  0.01		18/04/08	anvv sharma         Initial Version
+*  0.02		05/05/08	anvv sharma         Modified Electronmic Fulfilment Id DataType FROM Varchar2(4000) TO Number Type
+*  0.02		05/05/08	anvv sharma         Modified StoredProcedure PROC_JAVATYPE - OUT Parameter DataType FROM Varchar2(4000) TO Number Type
+* ========	========	===========	    ===============================
+
+/*==================================== DATABASE DETAILS ===============================================*/
+
+
+
+/*========================================== DATABASE SEQUENCE SCRIPT =================================*/
+
+DROP SEQUENCE ORDERFULFILMENT_EF_SEQUENCE
+
+CREATE SEQUENCE  "SOA_EAIOWNER"."ORDERFULFILMENT_EF_SEQUENCE"  MINVALUE 0 MAXVALUE 999999999 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE ;
+ 
+/*========================================== DATABASE TABLE SCRIPT ====================================*/
+
+DROP TABLE ORDERFULFILMENT
+CREATE TABLE "SOA_EAIOWNER"."ORDERFULFILMENT" 
+   (	"ORDER_ID" VARCHAR2(4000 BYTE), 
+	"ORDER_LINE_ID" VARCHAR2(4000 BYTE), 
+	"ELECTRONICFULFIL_REQ_ID" NUMBER NOT NULL ENABLE
+   );
+
+/*========================================== CREATING TYPE FOR JAVA ====================================*/
+
+drop type "SOA_EAIOWNER"."ORDER_ID_ARRAY"
+
+create or replace TYPE ORDER_ID_ARRAY is TABLE OF varchar2(4000);
+
+/*========================================== STORED PROCEDURE SCRIPT ====================================*/
+
+
+create or replace
+PROCEDURE PROC_JAVATYPE(p_orderid_array in ORDER_ID_ARRAY, 
+			p_orderlineid_array in ORDER_ID_ARRAY, 
+			oElectronicfulfil_req_id out varchar2 )  AS
+
+  l_Electronicfulfil_req_id varchar2(4000) := null;
+  
+BEGIN
+
+  SELECT ORDERFULFILMENT_EF_SEQUENCE.NEXTVAL INTO l_Electronicfulfil_req_id FROM DUAL;
+
+  FOR i IN 1 .. p_orderid_array.count LOOP
+    INSERT INTO SOA_EAIOWNER.ORDERFULFILMENT (ORDER_ID, ORDER_LINE_ID, ELECTRONICFULFIL_REQ_ID) 
+      VALUES (p_orderid_array(i), p_orderlineid_array(i), l_Electronicfulfil_req_id);
+  
+    oElectronicfulfil_req_id := l_Electronicfulfil_req_id;
+  
+    DBMS_OUTPUT.PUT_LINE('oElectronicfulfil_req_id ' || oElectronicfulfil_req_id);
+  END LOOP;
+END;
+
+/*============= Modified StoredProcedure PROC_JAVATYPE - OUT Parameter DataType FROM Varchar2(4000) TO Number Type ================*/
+
+
+create or replace
+PROCEDURE PROC_JAVATYPE(p_orderid_array in ORDER_ID_ARRAY, 
+			p_orderlineid_array in ORDER_ID_ARRAY, 
+			oElectronicfulfil_req_id out NUMBER )  AS
+
+  l_Electronicfulfil_req_id NUMBER := null;
+  
+BEGIN
+
+  SELECT ORDERFULFILMENT_EF_SEQUENCE.NEXTVAL INTO l_Electronicfulfil_req_id FROM DUAL;
+
+  FOR i IN 1 .. p_orderid_array.count LOOP
+    INSERT INTO SOA_EAIOWNER.ORDERFULFILMENT (ORDER_ID, ORDER_LINE_ID, ELECTRONICFULFIL_REQ_ID) 
+      VALUES (p_orderid_array(i), p_orderlineid_array(i), l_Electronicfulfil_req_id);
+  
+    oElectronicfulfil_req_id := l_Electronicfulfil_req_id;
+  
+    DBMS_OUTPUT.PUT_LINE('oElectronicfulfil_req_id ' || oElectronicfulfil_req_id);
+  END LOOP;
+END;
+

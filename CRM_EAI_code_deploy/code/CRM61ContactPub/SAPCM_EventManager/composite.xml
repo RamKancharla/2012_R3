@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SAPCM_EventManager" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="SAPCM_EventManager.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager"/>
+    <import location="WriteContact.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl"
+            importType="wsdl"/>
+    <service name="SAPCM_EventManager" ui:wsdlLocation="SAPCM_EventManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager#wsdl.interface(SAPCM_EventManagerCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager#wsdl.interface(SAPCM_EventManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager#wsdl.endpoint(SAPCM_EventManager/SAPCM_EventManager)"/>
+    </service>
+    <component name="SAPCM_EventManagerProcess">
+        <implementation.bpel src="SAPCM_EventManagerProcess.bpel"/>
+    </component>
+    <reference name="AsyncSequenceCheckerI065"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="WriteContact" ui:wsdlLocation="WriteContact.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/#wsdl.interface(WriteContact_ptt)"/>
+        <binding.jca config="WriteContact_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="AsyncSequenceChecker"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>SAPCM_EventManager</source.uri>
+        <target.uri>SAPCM_EventManagerProcess/SAPCM_EventManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPCM_EventManagerProcess/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPCM_EventManagerProcess/WriteContact</source.uri>
+        <target.uri>WriteContact</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPCM_EventManagerProcess/AsyncSequenceCheckerI065</source.uri>
+        <target.uri>AsyncSequenceCheckerI065</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

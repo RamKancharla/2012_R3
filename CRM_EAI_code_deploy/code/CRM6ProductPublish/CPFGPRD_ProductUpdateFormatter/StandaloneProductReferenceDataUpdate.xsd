@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter"
+            version="0.1"
+            xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <xsd:element name="productDefinitionUpdate"
+              type="local:ProductDefinitionUpdate"/>
+ <xsd:complexType name="ProductDefinitionUpdate">
+  <xsd:sequence>
+   <!-- Header Fields -->
+   <xsd:element name="applicationId" type="xsd:string"/>
+   <xsd:element name="transactionId" type="xsd:string"/>
+   <xsd:element name="messageId" type="xsd:string"/>
+   <xsd:element name="messageHistory" type="xsd:string"/>
+   <xsd:element name="tracingId" type="xsd:string"/>
+   <xsd:element name="timeStamp" type="xsd:dateTime"/>
+   <xsd:element name="instanceId" type="xsd:string"/>
+   <xsd:element name="timeToLive" type="xsd:int"/>
+   <xsd:element name="payloadVersion" type="xsd:string"/>
+   <!-- Main payload -->
+   <xsd:element name="productID" type="xsd:string"/>
+   <xsd:element name="actionCode" type="xsd:string"/>
+   <xsd:element name="productName" type="xsd:string"/>
+   <xsd:element name="productDescription" type="xsd:string"/>
+   <xsd:element name="definitionVersion" type="xsd:string"/>
+   <xsd:element name="productStatus" type="xsd:string"/>
+   <xsd:element name="freeTrialAllowed" type="xsd:boolean"/>
+   <xsd:element name="productType" type="xsd:string"/>
+   <xsd:element name="productConfiguration" type="local:ProductConfiguration"
+                minOccurs="0" maxOccurs="unbounded"/>
+   <xsd:element name="addOns" type="local:AddOnList"/>
+   <xsd:element name="attributeDefinitionList"
+                type="local:AttributeDefinitionList"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="ProductConfiguration">
+  <xsd:sequence>
+   <xsd:element name="configurationID" type="xsd:positiveInteger"/>
+   <xsd:element name="description" type="xsd:string"></xsd:element>
+   <xsd:element name="globalPLI" type="xsd:string"/>
+   <xsd:element name="permissioningSystem" type="xsd:string"/>
+   <xsd:element name="attribute" type="local:Attribute" minOccurs="0"
+                maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="AttributeDefinition">
+  <xsd:sequence>
+   <xsd:element name="attributeID" type="xsd:string"/>
+   <xsd:element name="attributeName" type="xsd:string"/>
+   <xsd:element name="freeTextAllowed" type="xsd:boolean"/>
+   <xsd:element name="isCommerciallyAffecting" type="xsd:boolean"/>
+   <xsd:element name="allowedValue" type="local:AllowedAttributeValue"
+                maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="AllowedAttributeValue">
+  <xsd:sequence>
+   <xsd:element name="valueID" type="xsd:string"/>
+   <xsd:element name="valueName" type="xsd:string"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Attribute">
+  <xsd:attribute name="attributeID" type="xsd:string"/>
+  <xsd:attribute name="valueID" type="xsd:string"/>
+ </xsd:complexType>
+ <xsd:complexType name="AddOnList">
+  <xsd:sequence>
+   <xsd:element name="addOn" type="local:AddOn" minOccurs="0"
+                maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="AttributeDefinitionList">
+  <xsd:sequence>
+   <xsd:element name="attributeDefinition" type="local:AttributeDefinition"
+                minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="AddOn">
+  <xsd:attribute name="productID" type="xsd:string"/>
+ </xsd:complexType>
+</xsd:schema>

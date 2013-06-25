@@ -1,0 +1,448 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CSACM_AccountContactManager.bpel 
+* Type:        BPEL FILE 
+* Description: Asynchronous BPEL Process that validates the xml and transforms into CS format and sends the message to CS.
+* Change History
+* Version      Date         Author                      Description Of Change 
+*              11/02/09     Sreeja Prasad               Added the validation as per the defect 23270.
+*	       18/03/09	    Surya			Modified the code to cater for Country Speicific attributes
+*              15/02/10     Sandeep Raghupatruni        New mappings for CustomerReferenceNumber and LegalEntityFlag for Sprint 10; PBI 413,422
+*              20/04/10     Swapna Pampana              Added BussinessAreaCode in the condition  for Latam Countries
+*              29/04/10     Swapna Pampana              Changed into BusinessAreaCode from BussinessAreaCode
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CSACM_AccountContactManagerProcess" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_AccountContactManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CCRMAM_PublishAccountRequestValidatorStub" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_AccountContactManager" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublishExtended" xmlns:ns9="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthRequest" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/CCRMAM_PublishAccountRequestValidatorStub" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/Exception" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="TransAccountContactPublishToCSFormat" partnerRole="TransformAccountContactRequest_Role" partnerLinkType="ns1:TransformAccountContactRequest_PL" myRole="TransformAccountContactRequest_Role"/>
+        <partnerLink myRole="CCRMACM_PropagateAccountContactPublishStatusRequester" name="CCRMACM_PropagateAccountContactPublishStatus" partnerRole="CCRMACM_PropagateAccountContactPublishStatusProvider" partnerLinkType="ns9:CCRMACM_PropagateAccountContactPublishStatus"/>
+        <partnerLink name="SubmitOrderToCOMPASSRS" partnerRole="submitOrder_pptProvider" partnerLinkType="ns6:submitOrder_pptLT"/>
+        <partnerLink name="CCRMAM_PublishAccountRequestValidatorStub" partnerRole="CCRMAM_PublishAccountRequestValidatorStubProvider" partnerLinkType="ns4:CCRMAM_PublishAccountRequestValidatorStub"/>
+        <partnerLink name="CSACM_AccountContactManager"
+                     partnerLinkType="client:CSACM_AccountContactManager"
+                     myRole="CSACM_AccountContactManagerProvider"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="rcvAccountContactPublishRequest_manageAccountContact_IV" messageType="client:CSACM_AccountContactManagerRequestMessage"/>
+        <variable name="positionContactMerge" messageType="client:MergeContacts"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="errorMessage" type="xsd:string"/>
+        <variable name="InvValidateAccountRequest" messageType="client:ValidateAccountRequest"/>
+        <variable name="InvCCRMACM_PropagateAccountContactPublishStatuIV" messageType="ns9:CCRMACM_PropagateAccountContactPublishStatusRequestMessage"/>
+        <variable name="updateCountrySpecAttributes" messageType="client:ValidateAccountRequest"/>
+        <variable name="ExtendedAccountContactPublishRequest" messageType="client:ExtendedAccountContactManagerRequestMessage"/>
+        <variable name="index" type="xsd:nonNegativeInteger"/>
+        <variable name="AttributeName" type="xsd:string"/>
+        <variable name="CountryAttributeName" type="xsd:string"/>
+        <variable name="InvCSOM_SubmitOrderToCompassIV" messageType="ns6:fixedLengthOrderRequest_request"/>
+        <variable name="InvAccountRequestValidatorStubIV" messageType="ns4:CCRMAM_PublishAccountRequestValidatorStubRequestMessage"/>
+        <variable name="InvTransAccountContactPublishToCSFormatIV" messageType="ns1:AccountContactRequest"/>
+        <variable name="InvTransAccountContactPublishToCSFormatOV" messageType="ns1:AccountContactResponse"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:invalidVariables" faultVariable="runTimeFault">
+            <sequence name="InvalidXMLFault">
+                <assign name="TransInvalidAccountReqToCCRMStatus">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransInvalidAccountReqToCCRMStatus.xsl',bpws:getVariableData('InvValidateAccountRequest','validateAccountRequest'))"/>
+                        <to variable="InvCCRMACM_PropagateAccountContactPublishStatuIV" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvCCRMACM_PropagateAccountContactPublishStatus" partnerLink="CCRMACM_PropagateAccountContactPublishStatus" portType="ns9:CCRMACM_PropagateAccountContactPublishStatus" operation="sendAccountContactStatus" inputVariable="InvCCRMACM_PropagateAccountContactPublishStatuIV"/>
+            </sequence>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[String AccountID ="";      
+String title="";    
+try      
+{      
+AccountID = ((oracle.xml.parser.v2.XMLElement)                                          
+                        getVariableData("rcvAccountContactPublishRequest_manageAccountContact_IV","payload","/ns2:CSPublishAccountContactRequest/ns2:AccountId")).getFirstChild().getNodeValue();  
+title=(AccountID!=null ? ("Account ID: "+AccountID+"; Fault") : "Amend Contact");      
+setCompositeInstanceTitle(title);      
+    
+}      
+catch(Exception e)      
+{      
+setCompositeInstanceTitle("Amend Contact ");      
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String AccountID ="";      
+String title="";    
+try      
+{      
+AccountID = ((oracle.xml.parser.v2.XMLElement)                                          
+                        getVariableData("rcvAccountContactPublishRequest_manageAccountContact_IV","payload","/ns2:CSPublishAccountContactRequest/ns2:AccountId")).getFirstChild().getNodeValue();  
+title=(AccountID!=null ? ("Account ID: "+AccountID+"; Fault") : "Amend Contact");      
+setCompositeInstanceTitle(title);      
+    
+}      
+catch(Exception e)      
+{      
+setCompositeInstanceTitle("Amend Contact ");      
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String AccountID ="";      
+String title="";    
+try      
+{      
+AccountID = ((oracle.xml.parser.v2.XMLElement)                                          
+                        getVariableData("rcvAccountContactPublishRequest_manageAccountContact_IV","payload","/ns2:CSPublishAccountContactRequest/ns2:AccountId")).getFirstChild().getNodeValue();  
+title=(AccountID!=null ? ("Account ID: "+AccountID+"; Fault") : "Amend Contact");      
+setCompositeInstanceTitle(title);      
+    
+}      
+catch(Exception e)      
+{      
+setCompositeInstanceTitle("Amend Contact ");      
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="ns8:TransCSFormatRemoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnTransCSFormat" language="java" version="1.5">
+                <![CDATA[String AccountID ="";      
+String title="";    
+try      
+{      
+AccountID = ((oracle.xml.parser.v2.XMLElement)                                          
+                        getVariableData("rcvAccountContactPublishRequest_manageAccountContact_IV","payload","/ns2:CSPublishAccountContactRequest/ns2:AccountId")).getFirstChild().getNodeValue();  
+title=(AccountID!=null ? ("Account ID: "+AccountID+"; Fault") : "Amend Contact");      
+setCompositeInstanceTitle(title);      
+    
+}      
+catch(Exception e)      
+{      
+setCompositeInstanceTitle("Amend Contact ");      
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="ns8:SubmitOrderToCompassRemoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSubmitOrderToCompass" language="java" version="1.5">
+                <![CDATA[String AccountID ="";      
+String title="";    
+try      
+{      
+AccountID = ((oracle.xml.parser.v2.XMLElement)                                          
+                        getVariableData("rcvAccountContactPublishRequest_manageAccountContact_IV","payload","/ns2:CSPublishAccountContactRequest/ns2:AccountId")).getFirstChild().getNodeValue();  
+title=(AccountID!=null ? ("Account ID: "+AccountID+"; Fault") : "Amend Contact");      
+setCompositeInstanceTitle(title);      
+    
+}      
+catch(Exception e)      
+{      
+setCompositeInstanceTitle("Amend Contact ");      
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqGenericFault">
+                <bpelx:exec name="AsgCustomTitleonGenericFault" language="java" version="1.5">
+                    <![CDATA[String AccountID ="";      
+String title="";    
+try      
+{      
+AccountID = ((oracle.xml.parser.v2.XMLElement)                                          
+                        getVariableData("rcvAccountContactPublishRequest_manageAccountContact_IV","payload","/ns2:CSPublishAccountContactRequest/ns2:AccountId")).getFirstChild().getNodeValue();  
+title=(AccountID!=null ? ("Account ID: "+AccountID+"; Fault") : "Amend Contact");      
+setCompositeInstanceTitle(title);      
+    
+}      
+catch(Exception e)      
+{      
+setCompositeInstanceTitle("Amend Contact ");      
+}]]>
+                </bpelx:exec>
+                <assign name="AsgGenericFault">
+                    <copy>
+                        <from expression="&quot;Unable To Process the Request&quot;"/>
+                        <to variable="errorMessage"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CSACM_AccountContactManager.wsdl) -->
+        <receive name="rcvAccountContactPublishRequest"
+                 partnerLink="CSACM_AccountContactManager" portType="client:CSACM_AccountContactManager" operation="manageAccountContact" variable="rcvAccountContactPublishRequest_manageAccountContact_IV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String AccountID ="";      
+String title="";    
+try      
+{      
+AccountID = ((oracle.xml.parser.v2.XMLElement)                                          
+                        getVariableData("rcvAccountContactPublishRequest_manageAccountContact_IV","payload","/ns2:CSPublishAccountContactRequest/ns2:AccountId")).getFirstChild().getNodeValue();  
+title=(AccountID!=null ? ("Account ID: "+AccountID) : "Amend Contact");      
+setCompositeInstanceTitle(title);      
+    
+}      
+catch(Exception e)      
+{      
+setCompositeInstanceTitle("Amend Contact");      
+}]]>
+        </bpelx:exec>
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="1"/>
+                <to variable="index"/>
+            </copy>
+        </assign>
+        <assign name="TransAccountContactPublishToExtendedAccountContactPublish">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransAccountContactPublishToExtendedAccountContactPublish.xsl',bpws:getVariableData('rcvAccountContactPublishRequest_manageAccountContact_IV','payload'))"/>
+                <to variable="ExtendedAccountContactPublishRequest" part="payload"/>
+            </copy>
+        </assign>
+        <scope name="ScpRetreiveAttributeValues">
+            <while name="While_1" condition="count(bpws:getVariableData('rcvAccountContactPublishRequest_manageAccountContact_IV','payload','/ns2:CSPublishAccountContactRequest/ns2:attributevaluepair'))>=bpws:getVariableData('index')">
+                <sequence name="SeqRetreiveAttribute">
+                    <assign name="AsgAttributeName">
+                        <copy>
+                            <from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:attributevaluepair[bpws:getVariableData('index')]/ns2:AttributeName"/>
+                            <to variable="AttributeName"/>
+                        </copy>
+                        <copy>
+                            <from expression="concat(bpws:getVariableData('rcvAccountContactPublishRequest_manageAccountContact_IV','payload','/ns2:CSPublishAccountContactRequest/ns2:country'),bpws:getVariableData('AttributeName'))"/>
+                            <to variable="CountryAttributeName"/>
+                        </copy>
+                    </assign>
+                    <switch name="CheckRetreiveAttributes">
+                        <case condition="bpws:getVariableData('AttributeName') = 'Tax Office' and (dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CCRMCS_CountryAttributes.dvm&quot;,&quot;Name&quot;,bpws:getVariableData('CountryAttributeName'),&quot;Value&quot;,&quot;N&quot;)=&quot;Y&quot;)">
+                            <assign name="AsgTaxOffice">
+                                <copy>
+                                    <from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:attributevaluepair[bpws:getVariableData('index')]/ns2:AttributeValue"/>
+                                    <to variable="ExtendedAccountContactPublishRequest" part="payload" query="/ns11:CSPublishAccountContactRequest/ns11:CountrySpecAttributes/ns11:taxOffice"/>
+                                </copy>
+                            </assign>
+                        </case>
+                        <case condition="bpws:getVariableData('AttributeName') = 'R.I. Purchase Order' and (dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CCRMCS_CountryAttributes.dvm&quot;,&quot;Name&quot;,bpws:getVariableData('CountryAttributeName'),&quot;Value&quot;,&quot;N&quot;)=&quot;Y&quot;)">
+                            <assign name="AsgRIPurchaseOrder">
+                                <copy>
+                                    <from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:attributevaluepair[bpws:getVariableData('index')]/ns2:AttributeValue"/>
+                                    <to variable="ExtendedAccountContactPublishRequest" part="payload" query="/ns11:CSPublishAccountContactRequest/ns11:CountrySpecAttributes/ns11:RIPurchaseOrder"/>
+                                </copy>
+                            </assign>
+                        </case>
+                        <case condition="bpws:getVariableData('AttributeName') = 'E.R. Purchase Order' and (dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CCRMCS_CountryAttributes.dvm&quot;,&quot;Name&quot;,bpws:getVariableData('CountryAttributeName'),&quot;Value&quot;,&quot;N&quot;)=&quot;Y&quot;)">
+                            <assign name="AsgERPurchaseOrder">
+                                <copy>
+                                    <from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:attributevaluepair[bpws:getVariableData('index')]/ns2:AttributeValue"/>
+                                    <to variable="ExtendedAccountContactPublishRequest" part="payload" query="/ns11:CSPublishAccountContactRequest/ns11:CountrySpecAttributes/ns11:ERPurchaseOrder"/>
+                                </copy>
+                            </assign>
+                        </case>
+                        <case condition="bpws:getVariableData('AttributeName') = 'RIO Indicator' and (dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CCRMCS_CountryAttributes.dvm&quot;,&quot;Name&quot;,bpws:getVariableData('CountryAttributeName'),&quot;Value&quot;,&quot;Y&quot;)=&quot;Y&quot;)">
+                            <assign name="AsgRIOIndicator">
+                                <copy>
+                                    <from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:attributevaluepair[bpws:getVariableData('index')]/ns2:AttributeValue"/>
+                                    <to variable="ExtendedAccountContactPublishRequest" part="payload" query="/ns11:CSPublishAccountContactRequest/ns11:CountrySpecAttributes/ns11:RIOIndicator"/>
+                                </copy>
+                            </assign>
+                        </case>
+                        <case condition="bpws:getVariableData('AttributeName') = 'Ex-Postel' and (dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CCRMCS_CountryAttributes.dvm&quot;,&quot;Name&quot;,bpws:getVariableData('CountryAttributeName'),&quot;Value&quot;,&quot;N&quot;)=&quot;Y&quot;)">
+                            <assign name="AsgExPostel">
+                                <copy>
+                                    <from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:attributevaluepair[bpws:getVariableData('index')]/ns2:AttributeValue"/>
+                                    <to variable="ExtendedAccountContactPublishRequest" part="payload" query="/ns11:CSPublishAccountContactRequest/ns11:CountrySpecAttributes/ns11:exPostel"/>
+                                </copy>
+                            </assign>
+                        </case>
+                        <case condition="bpws:getVariableData('AttributeName') = 'Direct Debit' and (dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CCRMCS_CountryAttributes.dvm&quot;,&quot;Name&quot;,bpws:getVariableData('CountryAttributeName'),&quot;Value&quot;,&quot;N&quot;)=&quot;Y&quot;)">
+                            <assign name="AsgDirectDebitRequired">
+                                <copy>
+                                    <from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:attributevaluepair[bpws:getVariableData('index')]/ns2:AttributeValue"/>
+                                    <to variable="ExtendedAccountContactPublishRequest" part="payload" query="/ns11:CSPublishAccountContactRequest/ns11:CountrySpecAttributes/ns11:directDebitRequired"/>
+                                </copy>
+                            </assign>
+                        </case>
+                        <case condition="bpws:getVariableData('AttributeName') = 'Business Area Code' and (dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CCRMCS_CountryAttributes.dvm&quot;,&quot;Name&quot;,bpws:getVariableData('CountryAttributeName'),&quot;Value&quot;,&quot;N&quot;)=&quot;Y&quot;)">
+                            <assign name="AsgBusinessAreaCodeRequired">
+                                <copy>
+                                    <from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:attributevaluepair[bpws:getVariableData('index')]/ns2:AttributeValue"/>
+                                    <to variable="ExtendedAccountContactPublishRequest" part="payload" query="/ns11:CSPublishAccountContactRequest/ns11:account/ns11:businessArea"/>
+                                </copy>
+                            </assign>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>
+                    <assign name="AsgIncrementIndex">
+                        <copy>
+                            <from expression="bpws:getVariableData('index')+1"/>
+                            <to variable="index"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </while>
+        </scope>
+        <scope name="ValidateXML">
+            <faultHandlers>
+                <catch faultName="bpelx:invalidVariablesFault" faultVariable="runTimeFault">
+                    <throw name="invalidVariables" faultName="bpelx:invalidVariables" faultVariable="runTimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="validateXML">
+                <assign name="TransAccountContactReqToValidateReq">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransAccountContactReqToValidateRequest.xsl',bpws:getVariableData('ExtendedAccountContactPublishRequest','payload'))"/>
+                        <to variable="InvValidateAccountRequest" part="validateAccountRequest"/>
+                    </copy>
+                </assign>
+                <assign name="TransValidateAccountReqToAccountReqValidatorStub">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransValidateAccountReqToAccountReqValidatorStub.xsl',bpws:getVariableData('InvValidateAccountRequest','validateAccountRequest'))"/>
+                        <to variable="InvAccountRequestValidatorStubIV" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvAccountRequestValidatorStub" partnerLink="CCRMAM_PublishAccountRequestValidatorStub" portType="ns4:CCRMAM_PublishAccountRequestValidatorStub" operation="initiate" inputVariable="InvAccountRequestValidatorStubIV"/>
+            </sequence>
+        </scope>
+        <assign name="TransUpdateAddressType">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransUpdateAddressType.xsl',bpws:getVariableData('ExtendedAccountContactPublishRequest','payload'))"/>
+                <to variable="ExtendedAccountContactPublishRequest" part="payload"/>
+            </copy>
+        </assign>
+        <!--<assign name="TransUpdateCountrySpecAttributes">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransUpdateCountrySpecAttributes.xsl',bpws:getVariableData('rcvAccountContactPublishRequest_manageAccountContact_IV','payload'))"/>
+                <to variable="updateCountrySpecAttributes"
+                    part="validateAccountRequest"/>
+            </copy>
+        </assign>-->
+        <assign name="TransFilterAddress">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransFilterAddress.xsl',bpws:getVariableData('ExtendedAccountContactPublishRequest','payload'))"/>
+                <to variable="positionContactMerge" part="positionContactMerge"/>
+            </copy>
+        </assign>
+        <assign name="AsgMergeContacts">
+            <copy>
+                <from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:eaiHeader"/>
+                <to variable="positionContactMerge" part="positionContactMerge" query="/ns2:CSAccountContactRequest/ns2:eaiHeader"/>
+            </copy>
+            <bpelx:append>
+                <bpelx:from variable="rcvAccountContactPublishRequest_manageAccountContact_IV" part="payload" query="/ns2:CSPublishAccountContactRequest/ns2:contact"/>
+                <bpelx:to variable="positionContactMerge" part="positionContactMerge" query="/ns2:CSAccountContactRequest"/>
+            </bpelx:append>
+        </assign>
+        <scope name="AccountContactPublishTOCSFormat">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                    <throw name="ThrTransCSFormatRemoteFault" faultName="ns8:TransCSFormatRemoteFault" faultVariable="runTimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqAccountContactPublishToCSFormat">
+                <assign name="TransMergedOneToContact">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransMergedOneToContact.xsl',bpws:getVariableData('positionContactMerge','positionContactMerge'))"/>
+                        <to variable="InvTransAccountContactPublishToCSFormatIV" part="parameter"/>
+                    </copy>
+                </assign>
+                <assign name="TransModifyAddress">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransModifyAddress.xsl',bpws:getVariableData('InvTransAccountContactPublishToCSFormatIV','parameter'))"/>
+                        <to variable="InvTransAccountContactPublishToCSFormatIV" part="parameter"/>
+                    </copy>
+                </assign>
+                <invoke name="InvTransAccountContactPublishToCSFormat" partnerLink="TransAccountContactPublishToCSFormat" portType="ns1:TransformAccountContactRequest" operation="transform" inputVariable="InvTransAccountContactPublishToCSFormatIV" outputVariable="InvTransAccountContactPublishToCSFormatOV"/>
+            </sequence>
+        </scope>
+        <switch name="CheckWebServiceOutput">
+            <case condition="bpws:getVariableData('InvTransAccountContactPublishToCSFormatOV','parameter','/ns3:fixedLengthRequest/ns3:basicResponse/ns3:response')='0'">
+                <scope name="SubmitAccountContactPublishToCompass">
+                    <faultHandlers>
+                        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                            <throw name="ThrSubmitOrderToCompassRemoteFault" faultName="ns8:SubmitOrderToCompassRemoteFault" faultVariable="runTimeFault"/>
+                        </catch>
+                    </faultHandlers>
+                    <sequence name="SeqAccountContactPublishToContact">
+                        <assign name="TransAccountContactPublishCSFormatToSubmitOrderToCompass">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransAccountContactPublishCSFormatToSubmitOrderToCompass.xsl',bpws:getVariableData('InvTransAccountContactPublishToCSFormatOV','parameter'))"/>
+                                <to variable="InvCSOM_SubmitOrderToCompassIV" part="fixedLengthOrderRequest"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvCSOM_SubmitOrderToCompass" partnerLink="SubmitOrderToCOMPASSRS" portType="ns6:submitOrder_ppt" operation="submitOrder" inputVariable="InvCSOM_SubmitOrderToCompassIV"/>
+                    </sequence>
+                </scope>
+            </case>
+            <otherwise>
+                <bpelx:exec name="AsgCustomTitleWhenFault" language="java" version="1.3">
+                    <![CDATA[String AccountID = ((oracle.xml.parser.v2.XMLElement)                                             
+                        getVariableData("rcvAccountContactPublishRequest_manageAccountContact_IV","payload","/ns2:CSPublishAccountContactRequest/ns2:AccountId")).getFirstChild().getNodeValue();     
+ String title=(AccountID!=null ? ("Account ID: "+AccountID + "; Fault") : ".; Fault");     
+setCompositeInstanceTitle(title);]]>
+                </bpelx:exec>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="TOM.UpdateOrderStatus_RS" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/OrderTechFul" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="propagateOrderStatus">
+      <switch>
+         <case name="Case_1_TOM.UpdateOrderStatus_RS.propagateOrderStatus" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TFOrderStatusToOrderRequestValidator.xsl,$in.orderStatus)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="TOM.UpdateOrderRequestValidator" operation="validateOrderStatus">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/UpdateOrderResponseToTFOrderStatus.xsl,$in.payload)" name="$out.statusSubmissionResponse"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

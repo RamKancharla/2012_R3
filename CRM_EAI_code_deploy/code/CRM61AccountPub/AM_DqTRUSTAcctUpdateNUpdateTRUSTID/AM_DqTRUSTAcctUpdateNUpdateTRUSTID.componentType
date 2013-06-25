@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="DequeueTRUSTAccountUpdate.wsdl" name="DequeueTRUSTAccountUpdate">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTAccountUpdate/#wsdl.interface(Dequeue_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="enterpriseRef.wsdl" name="SalesForce">
+        <interface.wsdl interface="urn:enterprise.soap.sforce.com#wsdl.interface(Soap)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccount.wsdl" name="CCRMAM_PropagateTRUSTAccount">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccount)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccountCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="EAI.SRV.EXT.SFDC.049_SendAccountToSFDCServiceRef.wsdl" name="TRUSTAcountUpdate">
+        <interface.wsdl interface="http://soap.sforce.com/schemas/class/AccountManagement#wsdl.interface(AccountManagementPortType)"/>
+    </reference>
+    <property name="preference.password" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.loginId" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

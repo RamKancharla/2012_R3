@@ -1,0 +1,21 @@
+<?binding.jca AdpOrderCacheService_db.jca?>
+<definitions name="AdpOrderCacheService" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheService/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/db/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheService/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/AdpOrderCacheService">
+    <plt:partnerLinkType name="AdpOrderCacheService_plt">
+        <plt:role name="AdpOrderCacheService_role">
+            <plt:portType name="tns:AdpOrderCacheService_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/AdpOrderCacheService" schemaLocation="AdpOrderCacheService_table.xsd"/>
+        </schema>
+    </types>
+    <message name="OrderCacheCollection_msg">
+        <part name="OrderCacheCollection" element="top:OrderCacheCollection"/>
+    </message>
+    <portType name="AdpOrderCacheService_ptt">
+        <operation name="update">
+            <input message="tns:OrderCacheCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

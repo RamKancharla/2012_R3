@@ -1,0 +1,246 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Purpose: Synchronous BPEL Process
+* Module:      TOM_ValidateQuoteStatus.bpel 
+* Type:        BPEL FILE 
+* Description: Synchronous BPEL Process that validates the message from Peregrine.
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         29/10/07     ANVV Sharma             Initial Version 
+*  1.1         31/10/07     Sunil V                 Added exception handling and sensors.
+*  1.2         05/11/07     Sunil V                 Added DVM for assigning the Schema name for XML validator
+*  1.3         07/02/08     Raju V                  Implimented schema changes as part of PBI 244 and removed XML validator for using a stub
+*  1.4         19/08/08     Sreeja                  Modified the transformations TransValidateQuoteReqToValidateQuoteStatus.xsl and TransvalidateQuoteToProcessQuote.xsl.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TOM_ValidateQuoteStatus" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonQuoteTypes" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/XMLValidator" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="anchorToValidateQuoteStatus" partnerLinkType="client:TOM_ValidateQuoteStatus" myRole="TOM_ValidateQuoteStatusProvider"/>
+    <partnerLink myRole="TF_ProcessQuoteStatusRequester" name="TF_ProcessQuoteStatus" partnerRole="TF_ProcessQuoteStatusProvider" partnerLinkType="ns6:TF_ProcessQuoteStatus"/>
+    <partnerLink name="TOM_ValidateQuoteStatusStub" partnerRole="TOM_ValidateQuoteStatusStubProvider" partnerLinkType="ns7:TOM_ValidateQuoteStatusStub"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="validateQuoteStatusRequest" messageType="client:TOM_ValidateQuoteStatusRequestMessage"/>
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="validateQuoteStatusResponse" messageType="client:TOM_ValidateQuoteStatusResponseMessage"/>
+    <variable name="successResponseCode" type="xsd:string"/>
+    <variable name="unknownError" type="xsd:string"/>
+    <variable name="schemaNameToXMLValidator" type="xsd:string"/>
+    <variable name="processQuoteStatusIV" messageType="ns6:TF_ProcessQuoteStatusRequestMessage"/>
+    <variable name="errorMessage" type="xsd:string"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="InvValidateQuoteStatusIV" messageType="ns7:TOM_ValidateQuoteStatusStubRequestMessage"/>
+    <variable name="InvValidateQuoteStatusOV" messageType="ns7:TOM_ValidateQuoteStatusStubResponseMessage"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in TOM_ValidateQuoteStatus.wsdl) -->
+    <scope name="ScopeValidateQuoteStatusRequest">
+      <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+          <sequence name="SeqRemoteFault">
+            <empty name="remoteFaultEmptyActivity"/>
+            <assign name="TransRemoteFaultToStatusResponse">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransErrorMsgToStatusResponse.xsl',bpws:getVariableData('validateQuoteStatusRequest','validateQuoteStatusRequest'))"/>
+                <to variable="validateQuoteStatusResponse" part="validateQuoteStatusResponse"/>
+              </copy>
+            </assign>
+          </sequence>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+          <sequence name="SeqSelectionFailure">
+            <empty name="selectionFailureEmptyActivity"/>
+            <assign name="TransSelectionFailureToStatusResponse">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransErrorMsgToStatusResponse.xsl',bpws:getVariableData('validateQuoteStatusRequest','validateQuoteStatusRequest'))"/>
+                <to variable="validateQuoteStatusResponse" part="validateQuoteStatusResponse"/>
+              </copy>
+            </assign>
+          </sequence>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+          <sequence name="SeqBindingFault">
+            <empty name="bindingFaultEmptyActivity"/>
+            <assign name="TransBindingFaultToStatusResponse">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransErrorMsgToStatusResponse.xsl',bpws:getVariableData('validateQuoteStatusRequest','validateQuoteStatusRequest'))"/>
+                <to variable="validateQuoteStatusResponse" part="validateQuoteStatusResponse"/>
+              </copy>
+            </assign>
+          </sequence>
+        </catch>
+        <catchAll>
+          <sequence name="SeqCatchAll">
+            <assign name="AsgGenericErrorMessage">
+              <copy>
+                <from expression="'UnKnownError'"/>
+                <to variable="errorMessage"/>
+              </copy>
+            </assign>
+            <assign name="TransErrorMsgToStatusResponse">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransErrorMsgToStatusResponse.xsl',bpws:getVariableData('validateQuoteStatusRequest','validateQuoteStatusRequest'))"/>
+                <to variable="validateQuoteStatusResponse" part="validateQuoteStatusResponse"/>
+              </copy>
+            </assign>
+          </sequence>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="SeqValidateQuoteStatusRequest">
+        <receive name="rcvValidateQuoteRequest" partnerLink="anchorToValidateQuoteStatus" portType="client:TOM_ValidateQuoteStatus" operation="validateVettingStatus" variable="validateQuoteStatusRequest" createInstance="yes"/>
+        <assign name="AsgInitialVariables">
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value','0')"/>
+            <to variable="successResponseCode"/>
+          </copy>
+          <copy>
+            <from expression="'UnKnownError'"/>
+            <to variable="unknownError"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="validateQuoteStatusRequest" part="validateQuoteStatusRequest" query="/ns2:vettingStatus/ns2:eaiHeader/ns4:instanceId"/>
+          </copy>
+        </assign>
+        <scope name="ScopeValidateQuoteStatus">
+          <faultHandlers>
+            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+              <throw name="ThrProcessQuoteStatusRemoteFault" faultName="bpelx:ProcessQuoteStatusRemoteFault" faultVariable="runtimeFault"/>
+            </catch>
+            <catch faultName="bpws:invalidVariables" faultVariable="runtimeFault">
+              <assign name="TransInvalidResponseToQuoteStatusResponse">
+                <bpelx:annotation>
+                  <bpelx:pattern>transformation</bpelx:pattern>
+                </bpelx:annotation>
+                <copy>
+                  <from expression="ora:processXSLT('TransInvalidResponseToQuoteStatusResponse.xsl',bpws:getVariableData('validateQuoteStatusRequest','validateQuoteStatusRequest'))"/>
+                  <to variable="validateQuoteStatusResponse" part="validateQuoteStatusResponse"/>
+                </copy>
+              </assign>
+            </catch>
+          </faultHandlers>
+          <sequence name="SeqValidateQuoteStatus">
+            <!--   <assign name="AsgValidateQuoteRequestToXMLValidatorInput">
+              <copy>
+                <from variable="validateQuoteStatusRequest"
+                      part="validateQuoteStatusRequest"
+                      query="/ns2:vettingStatus/ns2:eaiHeader"/>
+                <to variable="XMLValidationRequest" part="parameters"
+                    query="/ns1:validationRequest/ns1:eaiHeader"/>
+              </copy>
+              <copy>
+                <from variable="schemaNameToXMLValidator"/>
+                <to variable="XMLValidationRequest" part="parameters"
+                    query="/ns1:validationRequest/ns1:request/ns1:schema"/>
+              </copy>
+              <copy>
+                <from expression="ora:getContentAsString(bpws:getVariableData('validateQuoteStatusRequest','validateQuoteStatusRequest','/ns2:vettingStatus'))"/>
+                <to variable="XMLValidationRequest" part="parameters"
+                    query="/ns1:validationRequest/ns1:request/ns1:message"/>
+              </copy>
+            </assign>
+            <invoke name="InvXMLValidator" partnerLink="XMLValidator"
+                    portType="ns1:XMLValidator" operation="validateXML"
+                    inputVariable="XMLValidationRequest"
+                    outputVariable="XMLValidationResponse"/>
+            <assign name="TransValidationResponse">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransQuoteValidationResponse.xsl',bpws:getVariableData('XMLValidationResponse','parameters'))"/>
+                <to variable="validateQuoteStatusResponse"
+                    part="validateQuoteStatusResponse"/>
+              </copy>
+            </assign>       -->
+            <assign name="TransValidateQuoteReqToValidateQuoteStatus">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransValidateQuoteReqToValidateQuoteStatus.xsl',bpws:getVariableData('validateQuoteStatusRequest','validateQuoteStatusRequest'))"/>
+                <to variable="InvValidateQuoteStatusIV" part="payload"/>
+              </copy>
+            </assign>
+            <invoke name="InvValidateQuoteStatusStub" partnerLink="TOM_ValidateQuoteStatusStub" portType="ns7:TOM_ValidateQuoteStatusStub" operation="process" inputVariable="InvValidateQuoteStatusIV" outputVariable="InvValidateQuoteStatusOV"/>
+            <assign name="TransValidateQuoteToProcessQuote">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransvalidateQuoteToProcessQuote.xsl',bpws:getVariableData('validateQuoteStatusRequest','validateQuoteStatusRequest'))"/>
+                <to variable="processQuoteStatusIV" part="processQuoteRequest"/>
+              </copy>
+            </assign>
+            <invoke name="InvProcessQuoteStatus" partnerLink="TF_ProcessQuoteStatus" portType="ns6:TF_ProcessQuoteStatus" operation="processVettingStatus" inputVariable="processQuoteStatusIV"/>
+            <assign name="TransValidQuoteStatusToQuoteStatusResponse">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransValidQuoteStatusToQuoteStatusResponse.xsl',bpws:getVariableData('validateQuoteStatusRequest','validateQuoteStatusRequest'))"/>
+                <to variable="validateQuoteStatusResponse" part="validateQuoteStatusResponse"/>
+              </copy>
+            </assign>
+            <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+              <![CDATA[String quoteNo ="";      
+String status="";   
+try{ 
+quoteNo = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("validateQuoteStatusRequest","validateQuoteStatusRequest","/ns2:vettingStatus/ns2:response/ns5:quoteNumber")).getFirstChild().getNodeValue();        
+status = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("validateQuoteStatusRequest","validateQuoteStatusRequest","/ns2:vettingStatus/ns2:response/ns5:vettingStatus")).getFirstChild().getNodeValue();        
+                                
+setCompositeInstanceTitle("Q: " + quoteNo + "; ST: " + status); 
+} 
+catch(Exception e) 
+{ 
+    setCompositeInstanceTitle("Q: " );  
+}]]>
+            </bpelx:exec>
+          </sequence>
+        </scope>
+      </sequence>
+    </scope>
+    <!-- Generate reply to synchronous request -->
+    <reply name="validateQuoteResponse" partnerLink="anchorToValidateQuoteStatus" portType="client:TOM_ValidateQuoteStatus" operation="validateVettingStatus" variable="validateQuoteStatusResponse"/>
+  </sequence>
+</process>

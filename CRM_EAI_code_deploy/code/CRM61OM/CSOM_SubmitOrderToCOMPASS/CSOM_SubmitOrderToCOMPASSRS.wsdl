@@ -1,0 +1,22 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<definitions
+     name="SubmitOrderToCOMPASSRS"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM"
+     xmlns:inp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+    >
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" schemaLocation="EAI.MSG.CS.OM.133_FixedLengthOrderRequest.xsd" />
+      </schema>
+    </types>
+    <message name="fixedLengthOrderRequest_request">
+        <part name="fixedLengthOrderRequest" element="inp1:fixedLengthOrderRequest"/>
+    </message>
+    <portType name="submitOrder_ppt">
+        <operation name="submitOrder">
+            <input message="tns:fixedLengthOrderRequest_request"/>
+        </operation>
+    </portType>
+</definitions>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="ELMAM_Invoker" revision="1.0" mode="active" state="on"
+           xmlns="http://xmlns.oracle.com/sca/1.0"
+           xmlns:ui="http://xmlns.oracle.com/soa/designer/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+           xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy">
+    <import location="UpodateBuffer.wsdl"
+            namespace="http://xmlns.oracle.com/pcbpel/adapter/db/UpodateBuffer/"/>
+    <import location="ELMAM_Invoker.wsdl"/>
+    <import location="AccountServiceRef.wsdl"
+            namespace="http://account.service.eai.trls.thomsonreuters.com/"/>
+    <import location="ELM_AMPOLLING.wsdl"
+            namespace="http://xmlns.oracle.com/pcbpel/adapter/db/ELM_AMPOLLING/"/>
+    <import namespace="http://xmlns.oracle.com/InterfaceManager"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl"
+            importType="wsdl"/>
+    <service ui:wsdlLocation="ELM_AMPOLLING.wsdl" name="ELM_AMPOLLING">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/ELM_AMPOLLING/#wsdl.interface(ELM_AMPOLLING_ptt)"
+                        xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="ELM_AMPOLLING_db.jca"/>
+    </service>
+    <component name="ELMAM_Invoker">
+        <implementation.bpel src="ELMAM_Invoker.bpel"/>
+    </component>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl"
+               name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+        <binding.ws port="http://xmlns.oracle.com/InterfaceManager#wsdl.endpoint(InterfaceManager/InterfaceManager)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/InterfaceManager/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference ui:wsdlLocation="UpodateBuffer.wsdl" name="UpdateBuffer">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpodateBuffer/#wsdl.interface(UpodateBuffer_ptt)"
+                        xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="UpodateBuffer_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference ui:wsdlLocation="AccountServiceRef.wsdl" name="AccountService">
+        <interface.wsdl interface="http://account.service.eai.trls.thomsonreuters.com/#wsdl.interface(Account)"
+                        xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://account.service.eai.trls.thomsonreuters.com/#wsdl.endpoint(AccountService/AccountPort)"
+                    location="AccountServiceRef.wsdl"
+                    xmlns:ns="http://xmlns.oracle.com/sca/1.0">
+            <wsp:PolicyReference URI="oracle/wss_http_token_client_policy"
+                                 orawsp:category="security"
+                                 orawsp:status="enabled"/>
+            <property name="oracle.webservices.auth.username" type="xs:string"
+                      many="false" override="may">${elm.UserName}</property>
+            <property name="oracle.webservices.auth.password" type="xs:string"
+                      many="false" override="may">${elm.Password}</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>ELM_AMPOLLING</source.uri>
+        <target.uri>ELMAM_Invoker/ELM_AMPOLLING</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ELMAM_Invoker/UpdateBuffer</source.uri>
+        <target.uri>UpdateBuffer</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ELMAM_Invoker/InterfaceManager</source.uri>
+        <target.uri>InterfaceManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ELMAM_Invoker/AccountService</source.uri>
+        <target.uri>AccountService</target.uri>
+    </wire>
+</composite>

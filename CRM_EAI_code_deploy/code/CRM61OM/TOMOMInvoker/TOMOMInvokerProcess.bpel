@@ -1,0 +1,706 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMAM_PublishContactRequestvalidator.bpel 
+* Type:        BPEL FILE 
+* Description: Synchronous BPEL Process that validates the xml and enqueues the contact message into JMS topic.
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         23/06/08     Ruchi              Initial Version 
+* 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TOMOMInvokerProcess" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://schemas.hp.com/SM/7" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://schemas.hp.com/SM/7/Common" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://xmlns.oracle.com/InterfaceManager" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://schemas.hp.com/SM/7" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns14="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns8="http://xmlns.oracle.com/TOMOMInvoker/correlationset" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="TOMOMInvoker" partnerLinkType="client:TOMOMInvoker" myRole="TOMOMInvokerProvider" partnerRole="TOMOMInvokerRequester"/>
+    <partnerLink name="TOM" partnerLinkType="ns12:TOM_PL" partnerRole="TOM_Role"/>
+    <partnerLink name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns7:SequenceReleaser"/>
+    <partnerLink name="INTERFACE_BUFFER" partnerRole="INTERFACE_BUFFER_role" partnerLinkType="ns10:INTERFACE_BUFFER_plt"/>
+    <partnerLink name="InterfaceManager" partnerRole="InterfaceManagerProvider" partnerLinkType="ns13:InterfaceManager"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="TomResponse" type="xsd:string"/>
+    <variable name="ErrorMessage" type="xsd:string"/>
+    <variable name="errorMsg" type="xsd:string"/>
+    <variable name="remotefault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="InvokeTomRetrieveLineItemListIV" messageType="ns4:RetrieveQuoteProductsRequest"/>
+    <variable name="InvokeTomRetrieveQuoteProductsOV" messageType="ns4:RetrieveQuoteProductsResponse"/>
+    <variable name="rcvTomOrderRequestIV" messageType="client:TOMOMInvokerRequestMessage"/>
+    <variable name="InvTOMCreateQuoteProductsIV" messageType="ns4:CreateQuoteProductsRequest"/>
+    <variable name="InvTOMCreateQuoteProductsOV" messageType="ns4:CreateQuoteProductsResponse"/>
+    <variable name="InvTOMCreateQuoteIV" messageType="ns4:CreateQuoteRequest"/>
+    <variable name="InvTOMCreateQuoteOV" messageType="ns4:CreateQuoteResponse"/>
+    <variable name="submitQuoteResponseIV" messageType="client:TOMOMInvokerResponseMessage"/>
+    <variable name="waitForCorrelation" type="xsd:boolean"/>
+    <variable name="RcvResponseForOLICorrelationWait_IV" messageType="client:TOMOMInvokerReleaseOLICorrelationWaitRequestMessage"/>
+    <variable name="RcvResponseForHeaderCorrelationWait_IV" messageType="client:TOMOMInvokerReleaseOrderHeaderCorrelationWaitRequestMessage"/>
+    <variable name="sendCreateQuote" type="xsd:boolean"/>
+    <variable name="InvSequenceReleaser" messageType="ns7:SequenceReleaserRequestMessage"/>
+    <variable name="correlationID" type="xsd:string"/>
+    <variable name="ReceiveResponse_onResult_IV" messageType="client:TOMOMInvokerResponseMessage"/>
+    <variable name="updatedByInstanceId" type="xsd:string"/>
+    <variable name="INTERFACE_BUFFER_InputVariable" messageType="ns10:InterfaceBufferCollection_msg"/>
+    <variable name="RequestHealthCheckIV" messageType="ns13:InterfaceManagerRequestMessage"/>
+    <variable name="RequestHealthCheckOV" messageType="ns13:InterfaceManagerResponseMessage"/>
+  </variables>
+  <correlationSets>
+    <correlationSet name="ResponseCorrelationSetOLI" properties="ns8:responsePropOLI"/>
+    <correlationSet name="ResponseCorrelationSetHeader" properties="ns8:responsePropHeader"/>
+  </correlationSets>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in TOMOMInvoker.wsdl) -->
+    <scope name="SeqSubmitAccount">
+      <faultHandlers>
+        <catchAll>
+          <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+            <![CDATA[String orderNum = ((oracle.xml.parser.v2.XMLElement)                     
+                        getVariableData("rcvTomOrderRequestIV", "payload", "/ns1:orderRequest/ns1:orderHeader/ns3:orderNumber")).getFirstChild().getNodeValue();                        
+       
+setCompositeInstanceTitle("OrderNumber: " + orderNum+ "Fault");]]>
+          </bpelx:exec>
+          <assign name="AsgGenericFault">
+            <copy>
+              <from expression="'Unable To Process the Request'"/>
+              <to variable="ErrorMessage"/>
+            </copy>
+          </assign>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="SeqSubmitAccount">
+        <receive name="rcvTomOrder" partnerLink="TOMOMInvoker" portType="client:TOMOMInvoker" operation="fulfillOrder" variable="rcvTomOrderRequestIV" createInstance="yes"/>
+        <assign name="AssCorrelationValue">
+          <copy>
+            <from variable="rcvTomOrderRequestIV" part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns2:tracingId"/>
+            <to variable="correlationID"/>
+          </copy>
+        </assign>
+        <assign name="AsgInitVariables">
+          <copy>
+            <from expression="ora:generateGUID()"/>
+            <to variable="rcvTomOrderRequestIV" part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns2:instanceId"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:instanceID"/>
+          </copy>
+          <copy>
+            <from expression="'false'"/>
+            <to variable="sendCreateQuote"/>
+          </copy>
+          <copy>
+            <from expression="''"/>
+            <to variable="errorMsg"/>
+          </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+          <![CDATA[String orderNum = ((oracle.xml.parser.v2.XMLElement)                      
+                       getVariableData("rcvTomOrderRequestIV", "payload", "/ns1:orderRequest/ns1:orderHeader/ns3:orderNumber")).getFirstChild().getNodeValue();                                            
+        
+setCompositeInstanceTitle("OrderNumber: " + orderNum);]]>
+        </bpelx:exec>
+      </sequence>
+    </scope>
+    <!-- Generate reply to synchronous request -->
+    <scope name="ScopeInvokeTom">
+      <sequence name="SeqInvokeTom">
+        <scope name="ScpResponseForOLI">
+          <faultHandlers>
+            <catchAll>
+              <sequence name="Sequence_1">
+                <switch name="Switch_3">
+                  <case condition="contains(substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999),'Read timed out')">
+                    <bpelx:annotation>
+                      <bpelx:pattern>OLIs_ReadTimedOut</bpelx:pattern>
+                    </bpelx:annotation>
+                    <assign name="AsgWaitForCorrelation">
+                      <copy>
+                        <from expression="'true'"/>
+                        <to variable="waitForCorrelation"/>
+                      </copy>
+                      <copy>
+                        <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                        <to variable="errorMsg"/>
+                      </copy>
+                    </assign>
+                  </case>
+                  <otherwise>
+                    <assign name="Assign_OLI_RemoteFault">
+                      <copy>
+                        <from expression="'false'"/>
+                        <to variable="waitForCorrelation"/>
+                      </copy>
+                      <copy>
+                        <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                        <to variable="errorMsg"/>
+                      </copy>
+                    </assign>
+                  </otherwise>
+                </switch>
+              </sequence>
+            </catchAll>
+          </faultHandlers>
+          <sequence name="SeqResponseForOLI">
+            <assign name="TransCreateQuoteProductRequest">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransCreateOuoteProductsRequestTom.xsl',bpws:getVariableData('rcvTomOrderRequestIV','payload'))"/>
+                <to variable="InvTOMCreateQuoteProductsIV" part="CreateQuoteProductsRequest"/>
+              </copy>
+            </assign>
+            <invoke name="InvTOM" partnerLink="TOM" portType="ns4:TOM" operation="CreateQuoteProducts" inputVariable="InvTOMCreateQuoteProductsIV" outputVariable="InvTOMCreateQuoteProductsOV">
+              <correlations>
+                <correlation initiate="yes" set="ResponseCorrelationSetOLI" pattern="out"/>
+              </correlations>
+            </invoke>
+            <assign name="AsnDoNotWaitForCorreleation">
+              <copy>
+                <from expression="'false'"/>
+                <to variable="waitForCorrelation"/>
+              </copy>
+            </assign>
+          </sequence>
+        </scope>
+        <switch name="SwitcOnResponseForOLI">
+          <case condition="bpws:getVariableData('waitForCorrelation')='true'">
+            <bpelx:annotation>
+              <bpelx:pattern>waitForCorrelation=true</bpelx:pattern>
+            </bpelx:annotation>
+            <sequence name="Sequence_5">
+              <scope name="Scope_1">
+                <sequence name="Sequence_6">
+                  <pick name="Pick_1">
+                    <onMessage portType="client:TOMOMInvoker" operation="releaseOLICorrelationWait" variable="RcvResponseForOLICorrelationWait_IV" partnerLink="TOMOMInvoker">
+                      <correlations>
+                        <correlation initiate="no" set="ResponseCorrelationSetOLI"/>
+                      </correlations>
+                      <sequence name="Sequence_10">
+                        <switch name="Switch_1">
+                          <case condition="(bpws:getVariableData('RcvResponseForOLICorrelationWait_IV','payload','/ns1:orderRequest/ns1:eaiHeader/ns2:tracingId')!=&quot;&quot; and  ( not (starts-with(bpws:getVariableData('RcvResponseForOLICorrelationWait_IV','payload','/ns1:orderRequest/ns1:orderLineItem/ns3:technicalFulfilmentStatus'),'error')))) or bpws:getVariableData('InvTOMCreateQuoteProductsOV','CreateQuoteProductsResponse','/ns4:CreateQuoteProductsResponse/@returnCode') = '0' ">
+                            <bpelx:annotation>
+                              <bpelx:pattern>Success</bpelx:pattern>
+                            </bpelx:annotation>
+                            <sequence name="SeqCreateQuote">
+                              <assign name="AsgSendCreateQuote">
+                                <copy>
+                                  <from expression="'true'"/>
+                                  <to variable="sendCreateQuote"/>
+                                </copy>
+                                <copy>
+                                  <from expression="'Successfully Acknowledged'"/>
+                                  <to variable="errorMsg"/>
+                                </copy>
+                              </assign>
+                            </sequence>
+                          </case>
+                          <otherwise>
+                            <sequence name="Sequence_2">
+                              <assign name="AsgERROR_DoNotRelease_DoNotSendCreateQuote">
+                                <copy>
+                                  <from expression="'false'"/>
+                                  <to variable="sendCreateQuote"/>
+                                </copy>
+                                <copy>
+                                  <from expression="'E'"/>
+                                  <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                                </copy>
+                                <copy>
+                                  <from expression="'false'"/>
+                                  <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                                </copy>
+                                <copy>
+                                  <from expression="'Invalid CreateQuoteProductResponse OR Invalid technicalFulFilmentstatus[technicalFulfilmentStatus=error] / tracingId from releaseOLICorrelationWait'"/>
+                                  <to variable="errorMsg"/>
+                                </copy>
+                              </assign>
+                            </sequence>
+                          </otherwise>
+                        </switch>
+                      </sequence>
+                    </onMessage>
+                    <onAlarm for="ora:getPreference('maxTimeoutOnCreateQuoteProductsAsyncResponse')">
+                      <sequence name="Sequence_8">
+                        <bpelx:exec name="TimeoutOnAsyncResponse" language="java" version="1.3">
+                          <![CDATA[String orderNum = ((oracle.xml.parser.v2.XMLElement)                        
+                        getVariableData("rcvTomOrderRequestIV", "payload", "/ns1:orderRequest/ns1:orderHeader/ns3:orderNumber")).getFirstChild().getNodeValue();                           
+          
+setCompositeInstanceTitle("OrderNumber: " + orderNum+ " Timed Out");]]>
+                        </bpelx:exec>
+                        <assign name="AsgRETRY_DoNotRelease_DoNotSendCreateQuote">
+                          <copy>
+                            <from expression="'R'"/>
+                            <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                          </copy>
+                          <copy>
+                            <from expression="'false'"/>
+                            <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                          </copy>
+                          <copy>
+                            <from expression="'false'"/>
+                            <to variable="sendCreateQuote"/>
+                          </copy>
+                          <copy>
+                            <from expression="'Timeout occured on CreateQuoteProducts AsyncResponse'"/>
+                            <to variable="errorMsg"/>
+                          </copy>
+                        </assign>
+                      </sequence>
+                    </onAlarm>
+                  </pick>
+                </sequence>
+              </scope>
+            </sequence>
+          </case>
+          <otherwise>
+            <sequence name="Sequence_14">
+              <switch name="SwitchOnSyncResponse">
+                <case condition="bpws:getVariableData('InvTOMCreateQuoteProductsOV','CreateQuoteProductsResponse','/ns4:CreateQuoteProductsResponse/@returnCode') != '0' and bpws:getVariableData('InvTOMCreateQuoteProductsOV','CreateQuoteProductsResponse','/ns4:CreateQuoteProductsResponse/@status') = 'FAILURE'">
+                  <bpelx:annotation>
+                    <bpelx:pattern>Failure</bpelx:pattern>
+                  </bpelx:annotation>
+                  <sequence name="Sequence_15">
+                    <assign name="AsgERROR_DoNotRelease_DoNotSendCreateQuote">
+                      <copy>
+                        <from expression="'false'"/>
+                        <to variable="sendCreateQuote"/>
+                      </copy>
+                      <copy>
+                        <from expression="'E'"/>
+                        <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                      </copy>
+                      <copy>
+                        <from expression="'false'"/>
+                        <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                      </copy>
+                      <copy>
+                        <from expression="'Invalid returncode in CreateQuoteProducts Response'"/>
+                        <to variable="errorMsg"/>
+                      </copy>
+                    </assign>
+                  </sequence>
+                </case>
+                <case condition="bpws:getVariableData('InvTOMCreateQuoteProductsOV','CreateQuoteProductsResponse','/ns4:CreateQuoteProductsResponse/@returnCode') = '0'">
+                  <bpelx:annotation>
+                    <bpelx:pattern>Success</bpelx:pattern>
+                  </bpelx:annotation>
+                  <sequence name="Sequence_18">
+                    <assign name="AsgSendCreateQuote">
+                      <copy>
+                        <from expression="'true'"/>
+                        <to variable="sendCreateQuote"/>
+                      </copy>
+                    </assign>
+                  </sequence>
+                </case>
+                <otherwise>
+                  <sequence name="Sequence_15">
+                    <assign name="AsgRETRY_DoNotRelease_DoNotSendCreateQuote">
+                      <copy>
+                        <from expression="'false'"/>
+                        <to variable="sendCreateQuote"/>
+                      </copy>
+                      <copy>
+                        <from expression="'R'"/>
+                        <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                      </copy>
+                      <copy>
+                        <from expression="'false'"/>
+                        <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                      </copy>
+                      <copy>
+                        <from expression="'Remote Fault Occurred while sending OLI'"/>
+                        <to variable="errorMsg"/>
+                      </copy>
+                    </assign>
+                  </sequence>
+                </otherwise>
+              </switch>
+            </sequence>
+          </otherwise>
+        </switch>
+        <switch name="SwitchOnSendCreateQuote">
+          <case condition="bpws:getVariableData('sendCreateQuote') = 'true'">
+            <bpelx:annotation>
+              <bpelx:pattern>sendCreateQuote=true</bpelx:pattern>
+            </bpelx:annotation>
+            <sequence name="Sequence_13">
+              <scope name="ScpResponseForHeader">
+                <faultHandlers>
+                  <catchAll>
+                    <sequence name="Sequence_4">
+                      <switch name="Switch_11">
+                        <case condition="contains(substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999),'Read timed out')">
+                          <bpelx:annotation>
+                            <bpelx:pattern>HDR_ReadTimedOut</bpelx:pattern>
+                          </bpelx:annotation>
+                          <assign name="AsgWaitForCorrelation">
+                            <copy>
+                              <from expression="'true'"/>
+                              <to variable="waitForCorrelation"/>
+                            </copy>
+                            <copy>
+                              <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                              <to variable="errorMsg"/>
+                            </copy>
+                          </assign>
+                        </case>
+                        <otherwise>
+                          <sequence name="Sequence_19">
+                            <assign name="Assign_HDR_RemoteFault">
+                              <copy>
+                                <from expression="'false'"/>
+                                <to variable="waitForCorrelation"/>
+                              </copy>
+                              <copy>
+                                <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                <to variable="errorMsg"/>
+                              </copy>
+                            </assign>
+                          </sequence>
+                        </otherwise>
+                      </switch>
+                    </sequence>
+                  </catchAll>
+                </faultHandlers>
+                <sequence name="SeqResponseForHeader">
+                  <assign name="TransCreateQuoteRequest">
+                    <bpelx:annotation>
+                      <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                      <from expression="ora:processXSLT('TransCreateQuoteRequests.xsl',bpws:getVariableData('rcvTomOrderRequestIV','payload'))"/>
+                      <to variable="InvTOMCreateQuoteIV" part="CreateQuoteRequest"/>
+                    </copy>
+                  </assign>
+                  <invoke name="InvTOMCreateQuote" partnerLink="TOM" portType="ns4:TOM" operation="CreateQuote" inputVariable="InvTOMCreateQuoteIV" outputVariable="InvTOMCreateQuoteOV">
+                    <correlations>
+                      <correlation initiate="yes" set="ResponseCorrelationSetHeader" pattern="out"/>
+                    </correlations>
+                  </invoke>
+                  <assign name="AsnDoNotWaitForCorreleation">
+                    <copy>
+                      <from expression="'false'"/>
+                      <to variable="waitForCorrelation"/>
+                    </copy>
+                  </assign>
+                </sequence>
+              </scope>
+              <switch name="SwitchOnReponseForHeader">
+                <case condition=" bpws:getVariableData('waitForCorrelation')='true'">
+                  <bpelx:annotation>
+                    <bpelx:pattern>waitForCorrelation=true</bpelx:pattern>
+                  </bpelx:annotation>
+                  <sequence name="Sequence_3">
+                    <scope name="Scope_2">
+                      <sequence name="Sequence_7">
+                        <pick name="Pick_2">
+                          <onMessage portType="client:TOMOMInvoker" operation="releaseOrderHeaderCorrelationWait" variable="RcvResponseForHeaderCorrelationWait_IV" partnerLink="TOMOMInvoker">
+                            <correlations>
+                              <correlation initiate="no" set="ResponseCorrelationSetHeader"/>
+                            </correlations>
+                            <sequence name="Sequence_11">
+                              <switch name="SuccessOrError">
+                                <case condition="starts-with(bpws:getVariableData('RcvResponseForHeaderCorrelationWait_IV','payload','/ns1:orderRequest/ns1:orderLineItem/ns3:technicalFulfilmentStatus'),'error')">
+                                  <bpelx:annotation>
+                                    <bpelx:pattern>technicalFulfilmentStatus=error</bpelx:pattern>
+                                  </bpelx:annotation>
+                                  <assign name="AsgERROR_DoNotReleaseSequence">
+                                    <copy>
+                                      <from expression="'E'"/>
+                                      <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                                    </copy>
+                                    <copy>
+                                      <from expression="'false'"/>
+                                      <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                                    </copy>
+                                    <copy>
+                                      <from expression="'Invalid technicalFulfilmentStatus [technicalFulfilmentStatus=error] from releaseOrderHeaderCorrelationWait'"/>
+                                      <to variable="errorMsg"/>
+                                    </copy>
+                                  </assign>
+                                </case>
+                                <otherwise>
+                                  <assign name="AsgCOMPLETE_ReleaseSequence">
+                                    <copy>
+                                      <from expression="'true'"/>
+                                      <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                                    </copy>
+                                    <copy>
+                                      <from expression="'C'"/>
+                                      <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                                    </copy>
+                                    <copy>
+                                      <from expression="'Successfully Acknowledged'"/>
+                                      <to variable="errorMsg"/>
+                                    </copy>
+                                  </assign>
+                                </otherwise>
+                              </switch>
+                            </sequence>
+                          </onMessage>
+                          <onAlarm for="ora:getPreference('maxTimeoutOnCreateQuoteAsyncResponse')">
+                            <sequence name="Sequence_9">
+                              <bpelx:exec name="TimeoutOnAsyncResponse" language="java" version="1.3">
+                                <![CDATA[String orderNum = ((oracle.xml.parser.v2.XMLElement)                         
+                        getVariableData("rcvTomOrderRequestIV", "payload", "/ns1:orderRequest/ns1:orderHeader/ns3:orderNumber")).getFirstChild().getNodeValue();                            
+           
+setCompositeInstanceTitle("OrderNumber: " + orderNum+ " TimedOut");]]>
+                              </bpelx:exec>
+                              <assign name="AsgRETRY_DoNotRelease">
+                                <copy>
+                                  <from expression="'R'"/>
+                                  <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                                </copy>
+                                <copy>
+                                  <from expression="'false'"/>
+                                  <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                                </copy>
+                                <copy>
+                                  <from expression="'Timeout occured on CreateQuote  AsyncResponse'"/>
+                                  <to variable="errorMsg"/>
+                                </copy>
+                              </assign>
+                            </sequence>
+                          </onAlarm>
+                        </pick>
+                      </sequence>
+                    </scope>
+                  </sequence>
+                </case>
+                <otherwise>
+                  <sequence name="Sequence_12">
+                    <switch name="SwitchOnSyncResponse">
+                      <case condition="bpws:getVariableData('InvTOMCreateQuoteOV','CreateQuoteResponse','/ns4:CreateQuoteResponse/@returnCode') = '0'">
+                        <bpelx:annotation>
+                          <bpelx:pattern>Success</bpelx:pattern>
+                        </bpelx:annotation>
+                        <assign name="AsgCOMPLETE_ReleaseSequence">
+                          <copy>
+                            <from expression="'C'"/>
+                            <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                          </copy>
+                          <copy>
+                            <from expression="'true'"/>
+                            <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                          </copy>
+                        </assign>
+                      </case>
+                      <case condition="bpws:getVariableData('InvTOMCreateQuoteProductsOV','CreateQuoteProductsResponse','/ns4:CreateQuoteProductsResponse/@returnCode') != '0' and bpws:getVariableData('InvTOMCreateQuoteProductsOV','CreateQuoteProductsResponse','/ns4:CreateQuoteProductsResponse/@status') = 'FAILURE'">
+                        <bpelx:annotation>
+                          <bpelx:pattern>Failure</bpelx:pattern>
+                        </bpelx:annotation>
+                        <assign name="AsgERROR_DoNotReleaseSequence">
+                          <copy>
+                            <from expression="'E'"/>
+                            <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                          </copy>
+                          <copy>
+                            <from expression="'false'"/>
+                            <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                          </copy>
+                          <copy>
+                            <from expression="'Invalid return code for CreateQuote Response '"/>
+                            <to variable="errorMsg"/>
+                          </copy>
+                        </assign>
+                      </case>
+                      <otherwise>
+                        <assign name="AsgRETRY_DoNotReleaseSequence">
+                          <copy>
+                            <from expression="'R'"/>
+                            <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+                          </copy>
+                          <copy>
+                            <from expression="'false'"/>
+                            <to variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+                          </copy>
+                          <copy>
+                            <from expression="'Remote Fault occurred while sending Header'"/>
+                            <to variable="errorMsg"/>
+                          </copy>
+                        </assign>
+                      </otherwise>
+                    </switch>
+                  </sequence>
+                </otherwise>
+              </switch>
+            </sequence>
+          </case>
+          <otherwise>
+            <sequence name="Sequence_16">
+              <empty name="DoNothing"/>
+            </sequence>
+          </otherwise>
+        </switch>
+      </sequence>
+    </scope>
+    <!--<invoke name="submitQuoteResponse" partnerLink="TOMOMInvoker"
+            portType="client:TOMOMInvokerCallback" operation="onResult"
+            inputVariable="submitQuoteResponseIV"/>-->
+    <!-- <assign name="AsgStateAndReleaseSeq">
+      <copy>
+        <from variable="ReceiveResponse_onResult_IV" part="payload"
+              query="/client:TOMOMInvokerProcessResponse/client:result"/>
+        <to variable="state"/>
+      </copy>
+      <copy>
+        <from variable="ReceiveResponse_onResult_IV" part="payload"
+              query="/client:TOMOMInvokerProcessResponse/client:releaseSequence"/>
+        <to variable="releaseSequence"/>
+      </copy>
+      <copy>
+        <from variable="ReceiveResponse_onResult_IV" part="payload"
+              query="/client:TOMOMInvokerProcessResponse/client:instanceID"/>
+        <to variable="updatedByInstanceId"/>
+      </copy>
+    </assign>-->
+    <switch name="Switch_2">
+      <case condition="bpws:getVariableData('submitQuoteResponseIV','payload','/client:TOMOMInvokerProcessResponse/client:releaseSequence') = &quot;true&quot;">
+        <bpelx:annotation>
+          <bpelx:pattern>releaseSequence=true</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_17">
+          <assign name="TOMOrderReleaseSequence">
+            <copy>
+              <from variable="correlationID"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:correlationID"/>
+            </copy>
+            <copy>
+              <from variable="correlationID"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:eaiHeader/ns2:tracingId"/>
+            </copy>
+            <copy>
+              <from expression="'EAI'"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:eaiHeader/ns2:applicationId"/>
+            </copy>
+            <copy>
+              <from expression="ora:getCompositeInstanceId()"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:eaiHeader/ns2:transactionId"/>
+            </copy>
+            <copy>
+              <from expression="ora:getCompositeInstanceId()"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:eaiHeader/ns2:messageId"/>
+            </copy>
+            <copy>
+              <from expression="'EAI;'"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:eaiHeader/ns2:messageHistory"/>
+            </copy>
+            <copy>
+              <from expression="ora:getCurrentDateTime()"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:eaiHeader/ns2:timeStamp"/>
+            </copy>
+            <copy>
+              <from expression="ora:getCompositeInstanceId()"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:eaiHeader/ns2:instanceId"/>
+            </copy>
+            <copy>
+              <from expression="'1'"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:eaiHeader/ns2:timeToLive"/>
+            </copy>
+            <copy>
+              <from expression="'V'"/>
+              <to variable="InvSequenceReleaser" part="payload" query="/ns9:releaseSequenceRequest/ns9:eaiHeader/ns2:payloadVersion"/>
+            </copy>
+          </assign>
+          <invoke name="InvokeSequenceReleaser" partnerLink="SequenceReleaser" portType="ns7:SequenceReleaser" operation="releaseSequence" inputVariable="InvSequenceReleaser"/>
+        </sequence>
+      </case>
+      <otherwise>
+        <empty name="DoNothing"/>
+      </otherwise>
+    </switch>
+    <assign name="TransformToUpdateDatabase">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:processXSLT('TransformToUpdateDatabase.xsl',bpws:getVariableData('rcvTomOrderRequestIV','payload'))"/>
+        <to variable="INTERFACE_BUFFER_InputVariable" part="InterfaceBufferCollection"/>
+      </copy>
+    </assign>
+    <assign name="Asg_INTERFACE_BUFFER_Update">
+      <copy>
+        <from variable="submitQuoteResponseIV" part="payload" query="/client:TOMOMInvokerProcessResponse/client:result"/>
+        <to variable="INTERFACE_BUFFER_InputVariable" part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:state"/>
+      </copy>
+      <copy>
+        <from expression="ora:getCompositeInstanceId()"/>
+        <to variable="INTERFACE_BUFFER_InputVariable" part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:updatedBy"/>
+      </copy>
+      <copy>
+        <from variable="errorMsg"/>
+        <to variable="INTERFACE_BUFFER_InputVariable" part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:errorMessage"/>
+      </copy>
+    </assign>
+    <invoke name="updateMessageStatus" portType="ns10:INTERFACE_BUFFER_ptt" inputVariable="INTERFACE_BUFFER_InputVariable" partnerLink="INTERFACE_BUFFER" operation="update"/>
+    <switch name="Switch_12">
+      <case condition="(bpws:getVariableData('submitQuoteResponseIV','payload','/client:TOMOMInvokerProcessResponse/client:result')='R')">
+        <bpelx:annotation>
+          <bpelx:pattern>Case RETRY</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_9">
+          <!--  <assign name="AsgHealthCheckParams">
+            <copy>
+              <from expression="'doHealthCheck'"/>
+              <to variable="RequestHealthCheckIV" part="payload"
+                  query="/ns13:InterfaceManagerProcessRequest/ns17:operation"/>
+            </copy>
+            <copy>
+              <from expression="'TOMOM'"/>
+              <to variable="RequestHealthCheckIV" part="payload"
+                  query="/ns17:InterfaceManagerProcessRequest/ns17:interfaceConfig/ns18:id"/>
+            </copy>
+          </assign>
+          <invoke name="RequestHealthCheck" partnerLink="InterfaceManager"
+                  portType="InterfaceManager" operation="process"
+                  inputVariable="RequestHealthCheckIV"
+                  outputVariable="RequestHealthCheckOV"/>
+          <terminate name="Terminate"/> -->
+          <assign name="AsgHealthCheckParams">
+            <copy>
+              <from expression="'doHealthCheck'"/>
+              <to variable="RequestHealthCheckIV" part="payload" query="/ns13:InterfaceManagerProcessRequest/ns13:operation"/>
+            </copy>
+            <copy>
+              <from expression="'TOMOM'"/>
+              <to variable="RequestHealthCheckIV" part="payload" query="/ns13:InterfaceManagerProcessRequest/ns13:interfaceConfig/ns14:id"/>
+            </copy>
+          </assign>
+          <invoke name="RequestHealthCheck" partnerLink="InterfaceManager" portType="ns13:InterfaceManager" operation="process" inputVariable="RequestHealthCheckIV" outputVariable="RequestHealthCheckOV"/>
+          <terminate name="Terminate"/>
+        </sequence>
+      </case>
+      <otherwise>
+        <empty name="DoNothing"/>
+      </otherwise>
+    </switch>
+  </sequence>
+</process>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ESOQM_PropagateQuoteSubmitStatus"
+             targetNamespace="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus"
+             xmlns:ns1="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessageStatus"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessageStatus" schemaLocation="EAI.MSQ.QM.314_QuoteRequestResponseMessageStatus.xsd" />
+		</schema>
+	</types>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<message name="ESOQM_PropagateQuoteSubmitStatusRequestMessage">
+		<part name="payload" element="ns1:UpdateQuoteStatusRequest" />
+	</message>
+
+	<message name="ESOQM_PropagateQuoteSubmitStatusResponseMessage">
+		<part name="payload" element="ns1:UpdateQuoteStatusResponse" />
+	</message>
+
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- portType implemented by the ESOQM_PropagateQuoteSubmitStatus BPEL process -->
+	<portType name="ESOQM_PropagateQuoteSubmitStatus">
+		<operation name="initiate">
+			<input message="client:ESOQM_PropagateQuoteSubmitStatusRequestMessage"/>
+		</operation>
+	</portType>
+
+	<!-- portType implemented by the requester of ESOQM_PropagateQuoteSubmitStatus BPEL process
+	for asynchronous callback purposes
+	-->
+	<portType name="ESOQM_PropagateQuoteSubmitStatusCallback">
+		<operation name="onResult">
+			<input message="client:ESOQM_PropagateQuoteSubmitStatusResponseMessage"/>
+		</operation>
+	</portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	the ESOQM_PropagateQuoteSubmitStatus partnerLinkType binds the provider and
+	requester portType into an asynchronous conversation.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<plnk:partnerLinkType name="ESOQM_PropagateQuoteSubmitStatus">
+		<plnk:role name="ESOQM_PropagateQuoteSubmitStatusProvider">
+			<plnk:portType name="client:ESOQM_PropagateQuoteSubmitStatus"/>
+		</plnk:role>
+		<plnk:role name="ESOQM_PropagateQuoteSubmitStatusRequester">
+			<plnk:portType name="client:ESOQM_PropagateQuoteSubmitStatusCallback"/>
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

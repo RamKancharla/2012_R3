@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSGPM_PropagateGPStatusLogs.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs#wsdl.interface(CSGPM_PropagateGPStatusLogs)" callbackInterface="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs#wsdl.interface(CSGPM_PropagateGPStatusLogsCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="GlobalPriceUpdateLogFTP.wsdl" name="GlobalPriceUpdateLogFTP">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog#wsdl.interface(FTPPLLogRequest)"/>
+    </reference>
+    <reference ui:wsdlLocation="oramds:/soa/shared/workflow/NotificationService.wsdl" name="NotificationService">
+        <interface.wsdl interface="http://xmlns.oracle.com/ias/pcbpel/NotificationService#wsdl.interface(NotificationService)"/>
+    </reference>
+</componentType>

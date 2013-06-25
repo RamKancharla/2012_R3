@@ -1,0 +1,110 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Mar 10 17:01:58 GMT+05:30 2009
+  Author:  sg59930
+  Purpose: Empty BPEL Process
+  * Change History 
+* Version      Date         Author             Description Of Change 
+                 
+               01/04/10     Vasanthi           Mapped the RCRMPurchaseOrderStatus & RCRMPurchaseOrder in the TransDequeueOpportunityToCCRMOPPublishOpportunityl.xsl for defect#35949  
+    0.2        19/07/10     Swathi             Added new field as part of CR 5552           
+               
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOP_DequeueOpportunity" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_DequeueOpportunity" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_DequeueOpportunity" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOpportunity/" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity" xmlns:ns2="http://www.siebel.com/xml/RCRMOpportunityPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink myRole="Dequeue_role" name="DequeueOpportunity" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink myRole="CCRMOP_PublishOpportunityRequester" name="CCRMOP_PublishOpportunity" partnerRole="CCRMOP_PublishOpportunityProvider" partnerLinkType="ns3:CCRMOP_PublishOpportunity"/>
+  </partnerLinks>
+  <variables>
+    <variable name="RcvOpportunityIV" messageType="ns1:RCRMOpportunityPublish_msg"/>
+    <variable name="InvCCRMOPPublishOpportunityIV" messageType="ns3:CCRMOP_PublishOpportunityRequestMessage"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+  </variables>
+  <faultHandlers>
+    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+        <![CDATA[String OptyID = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("RcvOpportunityIV", "RCRMOpportunityPublish", "/ns5:RCRMOpportunityPublish/ns5:Opportunity/ns5:Id")).getFirstChild().getNodeValue();                                    
+String Title=(OptyID!=null ? ("siebelOptyID: "+ OptyID) : ".;");                                           
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+        <![CDATA[String OptyID = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("RcvOpportunityIV", "RCRMOpportunityPublish", "/ns5:RCRMOpportunityPublish/ns5:Opportunity/ns5:Id")).getFirstChild().getNodeValue();                                     
+String Title=(OptyID!=null ? ("siebelOptyID: "+ OptyID) : ".;");                                            
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+        <![CDATA[String OptyID = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("RcvOpportunityIV", "RCRMOpportunityPublish", "/ns5:RCRMOpportunityPublish/ns5:Opportunity/ns5:Id")).getFirstChild().getNodeValue();                                    
+String Title=(OptyID!=null ? ("siebelOptyID: "+ OptyID) : ".;");                                           
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catchAll>
+      <sequence name="SeqGenericError">
+        <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+          <![CDATA[String OptyID = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("RcvOpportunityIV", "RCRMOpportunityPublish", "/ns5:RCRMOpportunityPublish/ns5:Opportunity/ns5:Id")).getFirstChild().getNodeValue();                                    
+String Title=(OptyID!=null ? ("siebelOptyID: "+ OptyID) : ".;");                                           
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+      </sequence>
+    </catchAll>
+  </faultHandlers>
+  <sequence name="main">
+    <receive name="RcvOpportunity" partnerLink="DequeueOpportunity" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="RcvOpportunityIV" createInstance="yes"/>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[String OptyID = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("RcvOpportunityIV", "RCRMOpportunityPublish", "/ns5:RCRMOpportunityPublish/ns5:Opportunity/ns5:Id")).getFirstChild().getNodeValue();                                  
+String Title=(OptyID!=null ? ("siebelOptyID: "+ OptyID) : ".;");                                         
+setCompositeInstanceTitle(Title);]]>
+    </bpelx:exec>
+    <scope name="ScopeCCRMOPPublishOpportunity">
+      <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+          <throw name="ThrPublishOpportunityFault" faultName="ns4:PublishOpportunityError" faultVariable="runtimeFault"/>
+        </catch>
+      </faultHandlers>
+      <sequence name="SeqPublishOpportunity">
+        <assign name="TransDequeueOpportunityToCCRMOPPublishOpportunity">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransDequeueOpportunityToCCRMOPPublishOpportunityl.xsl',bpws:getVariableData('RcvOpportunityIV','RCRMOpportunityPublish'))"/>
+            <to variable="InvCCRMOPPublishOpportunityIV" part="payload"/>
+          </copy>
+        </assign>
+        <invoke name="InvCCRMOPPublishOpportunity" partnerLink="CCRMOP_PublishOpportunity" portType="ns3:CCRMOP_PublishOpportunity" operation="initiate" inputVariable="InvCCRMOPPublishOpportunityIV"/>
+      </sequence>
+    </scope>
+  </sequence>
+</process>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSPM_PropagatePriceUpdatesToCS.wsdl" name="anchorToCSPM_PropagatePriceUpdatesToCS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.interface(CSPM_PropagatePriceUpdatesToCS)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.interface(CSPM_PropagatePriceUpdatesToCSCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="TransformPriceUpdateToCSFormat.wsdl" name="TransformPriceUpdateToCSFormat">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/PM/PriceUpdateRequestFormatter#wsdl.interface(TransformPriceUpdateRequest)"/>
+    </reference>
+    <reference ui:wsdlLocation="DBAdpStorePriceListCountry.wsdl" name="DBAdpStorePriceListCountry">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/DBAdpStorePriceListCountry/#wsdl.interface(DBAdpStorePriceListCountry_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSWrapper.wsdl" name="CSOM_SubmitOrderToCompass">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+    </reference>
+</componentType>

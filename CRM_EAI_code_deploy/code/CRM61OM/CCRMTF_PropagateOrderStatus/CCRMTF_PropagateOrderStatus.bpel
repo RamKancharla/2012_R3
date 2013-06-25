@@ -1,0 +1,147 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMTF_PropagateOrderStatus.bpel 
+* Type:        BPEL Process 
+* Description: Asynchronous BPEL Process that Transforms TOM OrderStatus to Siebel Orderstatus .
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         03/06/08     Sreeja                  Initial Version 
+*  1.1         16/10/08     Sreeja                  Modified the code for MQ's whcih enqueue the TOM Updates in CCRM.041_ORD_RES_OUT and dequeues the message
+                                                    from the queue CCRM.014_ORD_STATUS_UPD_TOM_IN for defect 18157.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMTF_PropagateOrderStatus" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/mq/headerUpdateOrderStatus/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/OM/Exception" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/mq/headerUpdateOrderForTOM/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/OrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.siebel.com/xml/RCRM%20Order%20Entry" xmlns:ns2="http://www.reuters.com/ns/2008/06/24/GCAP/RCRM" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus/correlationset" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToCCRMTF_PropagateOrderStatus" partnerLinkType="client:CCRMTF_PropagateOrderStatus" myRole="CCRMTF_PropagateOrderStatusProvider" partnerRole="CCRMTF_PropagateOrderStatusRequester"/>
+        <partnerLink name="UpdateOrderForTOM" partnerRole="Enqueue_role" partnerLinkType="ns6:Enqueue_plt"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns9:SequenceReleaser"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="rcvOrderStatusIV" messageType="client:CCRMTF_PropagateOrderStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CCRMTF_PropagateOrderStatusResponseMessage"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="errorMsg" type="xsd:string"/>
+        <variable name="InvSequenceReleaserIV" messageType="ns9:SequenceReleaserRequestMessage"/>
+        <variable name="InvUpdateOrderForTOM_Enqueue_IV" messageType="ns6:OrderRequest_msg"/>
+        <variable name="RcvUpdateOrderStatusIV" messageType="client:CCRMTF_PropagateOrderStatusRequestMessage"/>
+        <variable name="RcvDequeueUpdateOrderStatus_IV" messageType="client:TOMUpdateStatusMsg"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet" properties="ns8:CorrelationProp"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="ns5:propagateTFOrderStatusRemoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("rcvOrderStatusIV", "payload", "/ns1:crmOrderStatus/ns1:orderHeader/ns1:OrderNumber")).getFirstChild().getNodeValue();                  
+setCompositeInstanceTitle((orderNumber!= null ? "ORD: "+orderNumber : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                
+                        getVariableData("rcvOrderStatusIV", "payload", "/ns1:crmOrderStatus/ns1:orderHeader/ns1:OrderNumber")).getFirstChild().getNodeValue();                   
+setCompositeInstanceTitle((orderNumber!= null ? "ORD: "+orderNumber : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("rcvOrderStatusIV", "payload", "/ns1:crmOrderStatus/ns1:orderHeader/ns1:OrderNumber")).getFirstChild().getNodeValue();                  
+setCompositeInstanceTitle((orderNumber!= null ? "ORD: "+orderNumber : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqGenericFault">
+                <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                    <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                
+                        getVariableData("rcvOrderStatusIV", "payload", "/ns1:crmOrderStatus/ns1:orderHeader/ns1:OrderNumber")).getFirstChild().getNodeValue();                   
+setCompositeInstanceTitle((orderNumber!= null ? "ORD: "+orderNumber : ".; ")+"; Fault");]]>
+                </bpelx:exec>
+                <assign name="AsgGenericFault">
+                    <copy>
+                        <from expression="'Unable to process the request'"/>
+                        <to variable="errorMsg"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMTF_PropagateOrderStatus.wsdl) -->
+        <receive name="rcvOrderStatus" partnerLink="anchorToCCRMTF_PropagateOrderStatus" portType="client:CCRMTF_PropagateOrderStatus" operation="sendOrderStatus" variable="rcvOrderStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                  
+                        getVariableData("rcvOrderStatusIV","payload","/ns1:crmOrderStatus/ns1:orderHeader/ns1:OrderNumber")).getFirstChild().getNodeValue();                     
+setCompositeInstanceTitle(orderNumber!= null ?("ORD: "+orderNumber) : ".; ");]]>
+        </bpelx:exec>
+        <scope name="SubmitOrderStatus">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                    <throw name="ThrPropogateTFOrderStatusRemoteException" faultName="ns5:propagateTFOrderStatusRemoteFault" faultVariable="runTimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqSubmitOrderStatus">
+                <assign name="TransOrderStatusIVToEnqueue">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransOrderStatusIVToEnqueue.xsl',bpws:getVariableData('rcvOrderStatusIV','payload'))"/>
+                        <to variable="InvUpdateOrderForTOM_Enqueue_IV" part="OrderRequest"/>
+                    </copy>
+                </assign>
+                <invoke name="InvUpdateOrderForTOM" partnerLink="UpdateOrderForTOM" portType="ns6:Enqueue_ptt" operation="Enqueue" inputVariable="InvUpdateOrderForTOM_Enqueue_IV">
+                    <correlations>
+                        <correlation initiate="yes" set="CorrelationSet" pattern="out"/>
+                    </correlations>
+                </invoke>
+                <receive name="RcvUpdateOrderStatus" portType="client:CCRMTF_PropagateOrderStatus" createInstance="no" partnerLink="anchorToCCRMTF_PropagateOrderStatus" operation="updateOrderStatus" variable="RcvDequeueUpdateOrderStatus_IV">
+                    <correlations>
+                        <correlation initiate="no" set="CorrelationSet"/>
+                    </correlations>
+                </receive>
+                <assign name="TransOrdStatusToSequenceReleaser">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransOrdStatusToSequenceReleaser.xsl',bpws:getVariableData('rcvOrderStatusIV','payload'))"/>
+                        <to variable="InvSequenceReleaserIV" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns9:SequenceReleaser" operation="releaseSequence" inputVariable="InvSequenceReleaserIV"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

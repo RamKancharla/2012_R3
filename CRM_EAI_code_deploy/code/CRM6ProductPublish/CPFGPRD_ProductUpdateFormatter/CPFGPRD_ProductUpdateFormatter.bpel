@@ -1,0 +1,162 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Nov 06 22:53:41 GMT 2008
+  Author:  rob.billington
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFGPRD_ProductUpdateFormatter" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ProductManagementServices" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_ProductUpdateFormatter" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ProductManagementServices" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_FTPtoCPFG" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:util="http://www.oracle.com/XSL/Transform/java/com.reuters.eai.util.StringHasher" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    
+    
+    <bpelx:exec import="com.reuters.www.ns.GCAP.CPFG.PRD.CPFGPRD_ProductUpdateFormatter.*"/>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CPFGPRD_ProductUpdateFormatter" myRole="CPFGPRD_ProductUpdateFormatterProvider"/>
+        <partnerLink name="CPFGPRD_FTPtoCPFG" partnerRole="CPFGPRD_FTPtoCPFGProvider" partnerLinkType="ns3:CPFGPRD_FTPtoCPFG"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:CPFGPRD_ProductUpdateFormatterRequestMessage"/>
+        <variable name="InvFTPtoAAA_initiate_InputVariable" messageType="ns3:CPFGPRD_FTPtoCPFGRequestMessage"/>
+        <variable name="temporaryAAApayload" messageType="ns3:CPFGPRD_FTPtoCPFGRequestMessage"/>
+        <variable name="standaloneProduct" messageType="client:standaloneProductUpdateMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="AsgFaultTitle" language="java" version="1.3">
+                <![CDATA[setCompositeInstanceTitle(getTitle() + ";Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CPFGPRD_ProductUpdateFormatter.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:CPFGPRD_ProductUpdateFormatter" operation="initiate" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+            <![CDATA[String title = "null"; 
+ 
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns1:productReferenceDataUpdate/productDefinitionUpdate/productID")).getFirstChild() ) { 
+    title = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns1:productReferenceDataUpdate/productDefinitionUpdate/productID")).getFirstChild().getNodeValue(); 
+} 
+ 
+setCompositeInstanceTitle( title );]]>
+        </bpelx:exec>
+        <assign name="TransGCAPSchemaToStandaloneSchema">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransGCAPSchemaToStandaloneSchema.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="standaloneProduct" part="payload"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="ExpandConfigurations" language="java" version="1.3">
+            <![CDATA[try {                                               
+    Element element = (Element)getVariableData("standaloneProduct","payload","/client:productDefinitionUpdate");                                        
+                                 
+    IProductDefinitionUpdate productDefinitionUpdate = ProductDefinitionUpdateFactory.createFacade(element);               
+     
+    ProductConfigurationCalculator.expandConfigurations( productDefinitionUpdate );                       
+    } catch (Exception ex) {                            
+        setVariableData("runtimeFault","summary", ex.getMessage());      
+        setVariableData("runtimeFault","detail", ex.getCause());      
+    }]]>
+        </bpelx:exec>
+        <bpelx:exec import="com.reuters.www.ns.GCAP.CPFG.PRD.CPFGPRD_ProductUpdateFormatter.*"/>
+        <bpelx:exec import="java.util.Iterator"/>
+        <assign name="TransStandaloneProductToAAAProduct">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransStandaloneProductToAAAProduct.xsl',bpws:getVariableData('standaloneProduct','payload'))"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload"/>
+            </copy>
+        </assign>
+        <switch name="SwitchErrorParsingProduct">
+            <case condition="(0 &lt; string-length(bpws:getVariableData('runtimeFault','code')))  or (0 &lt; string-length(bpws:getVariableData('runtimeFault','summary')))  or (0 &lt; string-length(bpws:getVariableData('runtimeFault','detail')))">
+                <bpelx:annotation>
+                    <bpelx:pattern>Non-empty runtimeFault</bpelx:pattern>
+                </bpelx:annotation>
+                <throw name="ThrowRuntimeFault" faultName="bpelx:runtimeFault" faultVariable="runtimeFault"/>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+        <assign name="Assign_1">
+            <copy>
+                <from variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/productDefinitionUpdate"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/productDefinitionUpdate"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:applicationId"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/eaiHeader/ns5:applicationId"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:transactionId"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/eaiHeader/ns5:transactionId"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:messageId"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/eaiHeader/ns5:messageId"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:messageHistory"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/eaiHeader/ns5:messageHistory"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:tracingId"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/eaiHeader/ns5:tracingId"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:timeStamp"/>
+                <to variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:timeStamp"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:instanceId"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/eaiHeader/ns5:instanceId"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:timeToLive"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/eaiHeader/ns5:timeToLive"/>
+            </copy>
+            <copy>
+                <from variable="inputVariable" part="payload" query="/ns1:productReferenceDataUpdate/eaiHeader/ns2:payloadVersion"/>
+                <to variable="InvFTPtoAAA_initiate_InputVariable" part="payload" query="/ns4:productReferenceDataUpdate/eaiHeader/ns5:payloadVersion"/>
+            </copy>
+        </assign>
+        <bpelx:exec import="org.w3c.dom.Element"/>
+        <bpelx:exec import="java.util.List"/>
+        <invoke name="InvFTPtoAAA" partnerLink="CPFGPRD_FTPtoCPFG" portType="ns3:CPFGPRD_FTPtoCPFG" operation="initiate" inputVariable="InvFTPtoAAA_initiate_InputVariable"/>
+    </sequence>
+</process>

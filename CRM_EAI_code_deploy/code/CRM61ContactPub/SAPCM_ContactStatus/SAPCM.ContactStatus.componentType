@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="SI_ContactErrorResponse_IB_Async.wsdl" name="SAPCM.ContactStatus">
+        <interface.wsdl interface="http://trm.com:I065:ARCash:ContactManagement_Send#wsdl.interface(SI_ContactErrorResponse_IB_Async)"/>
+    </service>
+    <reference ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CCRMCM_PropagateContactErrorStatus/CCRMCM_PropagateContactErrorStatus.wsdl" name="SAPCM.PublishContactStatus">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus#wsdl.interface(CCRMCM_PropagateContactErrorStatus)"/>
+    </reference>
+</componentType>

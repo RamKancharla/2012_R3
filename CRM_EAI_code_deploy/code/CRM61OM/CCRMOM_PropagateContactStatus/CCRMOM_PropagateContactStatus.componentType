@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMOM_PropagateContactStatus.wsdl" name="anchorToCCRMOM_PropagateContactStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.interface(CCRMOM_PropagateContactStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus#wsdl.interface(CCRMOM_PropagateContactStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="RCRMContactInboundRef.wsdl" name="SiebelRCRMContactInbound">
+        <interface.wsdl interface="http://www.reuters.com/2008/02/15/GCAP/RCRM#wsdl.interface(RCRM_spcContact_spcInbound)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSZ_QuerySRDetails.wsdl" name="CSZ.QuerySRDetails">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.interface(getSRDetails_ppt)"/>
+    </service>
+    <reference ui:wsdlLocation="EAI.SRV.CCRM.044_QuerySRDetailsService.wsdl" name="CSZ.QuerySRDetailsSOAPAdp">
+        <interface.wsdl interface="http://www.reuters.com/2008/07/12/GCAP/RCRM#wsdl.interface(RCRM_spcKNOVA_spcService_spcRequest)"/>
+    </reference>
+</componentType>

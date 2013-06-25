@@ -1,0 +1,39 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSOM_UserFulfilment" revision="1.0" state="on">
+    <import location="CSOM_UserFulfilment.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment"/>
+    <import location="TransformUserToCSFormat.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" location="CSOM_SubmitOrderToCOMPASSRSRef.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="CSOM_UserFulfilment.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.interface(CSOM_UserFulfilmentCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.interface(CSOM_UserFulfilment)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.endpoint(CSOM_UserFulfilment/CSOM_UserFulfilment)"/>
+    </service>
+    <component name="CSOM_UserFulfilment">
+        <implementation.bpel src="CSOM_UserFulfilment.bpel"/>
+        
+        
+    </component>
+    <reference name="CSOM_SubmitOrderToCOMPASS" ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSRef.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.endpoint(submitOrder_ppt/submitOrder_ppt_pt)" location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CSOM_SubmitOrderToCOMPASS/CSOM.SubmitOrderToCOMPASSRS_ep?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="TransformUserToCSFormat" ui:wsdlLocation="TransformUserToCSFormat.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter#wsdl.interface(TransformUserRequest)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="TransformUserToCSFormat.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter#wsdl.endpoint(TransformUserRequest/UserRequest)"/>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CSOM_UserFulfilment/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_UserFulfilment/CSOM_SubmitOrderToCOMPASS</source.uri>
+        <target.uri>CSOM_SubmitOrderToCOMPASS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_UserFulfilment/TransformUserToCSFormat</source.uri>
+        <target.uri>TransformUserToCSFormat</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

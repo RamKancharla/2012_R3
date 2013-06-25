@@ -1,0 +1,31 @@
+<adapter-config name="CPFGEF_POLLING_V" adapter="Database Adapter" wsdlLocation="CPFGEF_POLLING_V.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="eaidev2_EAIOWNER" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//eaidev2:1521/EAIDEV2"/>
+      <property name="UserName" value="eaiowner"/>
+      <property name="Password" value="E8D26CEB17C942CF78415AE2B31C2AA9"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-activation portType="CPFGEF_POLLING_V_ptt" operation="receive">
+    <activation-spec className="oracle.tip.adapter.db.DBActivationSpec">
+      <property name="DescriptorName" value="CPFGEFPOLLINGV.CpfgefPollingV"/>
+      <property name="QueryName" value="CPFGEF_POLLING_V"/>
+      <property name="PollingStrategy" value="LogicalDeletePollingStrategy"/>
+      <property name="MarkReadColumn" value="STATE"/>
+      <property name="MarkReadValue" value="P"/>
+      <property name="MaxRaiseSize" value="4"/>
+      <property name="MaxTransactionSize" value="4"/>
+      <property name="PollingInterval" value="16"/>
+      <property name="NumberOfThreads" value="1"/>
+      <property name="UseBatchDestroy" value="false"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+      <property name="MappingsMetaDataURL" value="CPFGEF_POLLING_V-or-mappings.xml"/>
+    </activation-spec>
+    <input/>
+  </endpoint-activation>
+
+</adapter-config>

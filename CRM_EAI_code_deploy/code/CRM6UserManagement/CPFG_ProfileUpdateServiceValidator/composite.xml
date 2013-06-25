@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFG_ProfileUpdateServiceValidator" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="CPFG_ProfileUpdateServiceValidator.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UpdateProfile.wsdl"
+            importType="wsdl"/>
+    <service name="CPFG_ProfileUpdateService" ui:wsdlLocation="CPFG_ProfileUpdateServiceValidator.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator#wsdl.interface(CPFG_ProfileUpdateServiceValidator)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator#wsdl.endpoint(CPFG_ProfileUpdateServiceValidator/CPFG_ProfileUpdateServiceValidator)"/>
+    </service>
+    <component name="CPFG_ProfileUpdateServiceValidator">
+        <implementation.bpel src="CPFG_ProfileUpdateServiceValidator.bpel"/>
+        <property name="preference.CPFGOM_UserOrderManagerURL">http://inkaban3ua-eai01:7777/orabpel/ccrmasync/CPFGOM_UserOrderManager</property>
+        <property name="preference.EAI">EAI</property>
+        <property name="preference.Success_Response">0</property>
+        <property name="preference.UpdateCPfGTemporaryURL">UpdateCPfGTemporaryURL</property>
+        <property name="preference.UpdateProfile">EAI.SRV.EXT.010.ACT002</property>
+        <property name="preference.Failure_Response">1</property>
+        <property name="preference.validationStatus">0</property>
+        <property name="preference.UpdateProfileSchema">EAI.MSG.CCRM.118_SyncCPfGUserDetailsRequest.xsd</property>
+        <property name="preference.variableStatus_1">1</property>
+        <property name="preference.FTL">EAI.SRV.EXT.010.ACT001</property>
+        <property name="preference.BPELProcessName">CPF_UpdateProfile</property>
+        <property name="preference.FTLSchema">EAI.MSG.CCRM.117_FTLRequest.xsd</property>
+        <property name="preference.UpdateCPfGStatus">UpdateCPfGStatus</property>
+        <property name="preference.InputSchema">EAI.MSG.CCRM.124_UpdateProfileRequest.xsd</property>
+    </component>
+    <reference name="CPF_UpdateProfile"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UpdateProfile.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.interface(CPF_UpdateProfile)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.endpoint(CPF_UpdateProfile/CPF_UpdateProfile)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UserManagementService?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CPFG_ProfileUpdateService</source.uri>
+        <target.uri>CPFG_ProfileUpdateServiceValidator/CPFG_ProfileUpdateService</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+    <wire>
+        <source.uri>CPFG_ProfileUpdateServiceValidator/CPF_UpdateProfile</source.uri>
+        <target.uri>CPF_UpdateProfile</target.uri>
+    </wire>
+</composite>

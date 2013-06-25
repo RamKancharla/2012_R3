@@ -1,0 +1,45 @@
+<definitions
+     name="ELMAM_Invoker"
+     targetNamespace="http://xmlns.oracle.com/ELMAM_Invoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/ELM/AM/AccountPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://xmlns.oracle.com/ELMAM_Invoker"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/ELMAM_Invoker" schemaLocation="ELMAM_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/07/07/SAMI/ELM/AM/AccountPublish"
+                 schemaLocation="EAI.MSG.ELM.AM.301_PublishAccount.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ELMAM_InvokerRequestMessage">
+        <part name="payload" element="client:ELMAM_InvokerProcessRequest"/>
+    </message>
+    <message name="ELMAM_InvokerResponseMessage">
+        <part name="payload" element="client:ELMAM_InvokerProcessResponse"/>
+    </message>
+    <message name="ELMAccountMessageType">
+        <part name="ELMAccountMessageType" element="ns1:AccountPublish"/>
+    </message>
+    <portType name="ELMAM_Invoker">
+        <operation name="initiate">
+            <input message="client:ELMAM_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="ELMAM_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:ELMAM_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ELMAM_Invoker">
+        <plnk:role name="ELMAM_InvokerProvider">
+            <plnk:portType name="client:ELMAM_Invoker"/>
+        </plnk:role>
+        <plnk:role name="ELMAM_InvokerRequester">
+            <plnk:portType name="client:ELMAM_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

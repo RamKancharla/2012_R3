@@ -1,0 +1,48 @@
+<definitions
+     name="TRUSTOP_PropagateOpportunity"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity"
+                 schemaLocation="TRUSTOP_PropagateOpportunity.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+                 schemaLocation="EAI.MSG.SFDC.OP.248_PublishOpportunityEventRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TRUSTOP_PropagateOpportunityRequestMessage">
+        <part name="payload" element="ns2:SFDCOpportunityEvent"/>
+    </message>
+    <message name="TRUSTOP_PropagateOpportunityResponseMessage">
+        <part name="payload" element="ns1:basicResponse"/>
+    </message>
+    <portType name="TRUSTOP_PropagateOpportunity">
+        <operation name="process">
+            <input message="client:TRUSTOP_PropagateOpportunityRequestMessage"/>
+            <output message="client:TRUSTOP_PropagateOpportunityResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TRUSTOP_PropagateOpportunity">
+        <plnk:role name="TRUSTOP_PropagateOpportunityProvider">
+            <plnk:portType name="client:TRUSTOP_PropagateOpportunity"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,29 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://xmlns.oracle.com/InterfaceManager"
+        xmlns:db="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig"
+        xmlns:tns="http://xmlns.oracle.com/InterfaceManager"
+        xmlns="http://www.w3.org/2001/XMLSchema">
+  <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" schemaLocation="InterfaceConfig_table.xsd"/>
+  <element name="InterfaceManagerProcessRequest" type="tns:InterfaceManagerRequest"/>
+  <element name="InterfaceManagerProcessResponse" type="tns:InterfaceManagerResponse"/>
+  <complexType name="InterfaceManagerRequest">
+    <sequence>
+      <element name="operation">
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="getConfig"/>
+            <enumeration value="updateConfig"/>
+            <enumeration value="doHealthCheck"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element name="interfaceConfig" type="db:InterfaceConfig"/>
+    </sequence>
+  </complexType>
+  <complexType name="InterfaceManagerResponse">
+    <complexContent>
+      <extension base="db:InterfaceConfigCollection"/>
+    </complexContent>
+  </complexType>
+  </schema>

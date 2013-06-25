@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="ELMAM_EventManager" revision="1.0" mode="active" state="on" xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <import location="ELMAM_EventManager.wsdl" namespace="http://xmlns.oracle.com/ELMAM_EventManager"/>
+    <import location="InsertToBuffer.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/InsertToBuffer/"/>
+    <service ui:wsdlLocation="ELMAM_EventManager.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/ELMAM_EventManager#wsdl.interface(ELMAM_EventManager)" callbackInterface="http://xmlns.oracle.com/ELMAM_EventManager#wsdl.interface(ELMAM_EventManagerCallback)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://xmlns.oracle.com/ELMAM_EventManager#wsdl.endpoint(ELMAM_EventManager/ELMAM_EventManager)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+    </service>
+    <component name="ELMAM_EventManager">
+        <implementation.bpel src="ELMAM_EventManager.bpel"/>
+    </component>
+    <reference ui:wsdlLocation="InsertToBuffer.wsdl" name="InsertToBuffer">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/InsertToBuffer/#wsdl.interface(InsertToBuffer_ptt)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="InsertToBuffer_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>ELMAM_EventManager/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ELMAM_EventManager/InsertToBuffer</source.uri>
+        <target.uri>InsertToBuffer</target.uri>
+    </wire>
+</composite>

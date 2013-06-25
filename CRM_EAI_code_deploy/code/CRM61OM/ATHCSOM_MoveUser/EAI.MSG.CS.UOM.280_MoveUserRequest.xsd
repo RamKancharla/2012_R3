@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!--
+/*********************************************************************************
+* Module        EAI.MSG.CS.UOM.280_MoveUserRequest.xsd
+* Type          XML Schema Document
+*
+*Description    Compass Move User Schema including message header
+*               which is required by Compass. This helps in generating fixed length message for Athena Request
+*
+*
+*Change History
+* Version	Date		Author			Description Of Change
+* =======	======		=================	================================
+*  0.01		30/07/09	shanker Reddy             	Initial Version
+*************************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+	xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+	xmlns:gcap-cuot="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes"
+	xmlns:gcap-nuot="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.00">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.019_CommonUserOrderTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.020_NillableUserOrderTypes.xsd" />
+	<xsd:element name="MoveUser" type="local:MoveUserRequest"/>
+	<xsd:complexType name="MoveUserRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+			<xsd:element name="country" type="gcap-cuot:CountryCode" />
+			<xsd:element name="messageHeader" type="gcap-cmt:CSCompassMessageHeader"/>
+			<xsd:element name="sourceSystem" type="gcap-cuot:SourceSystem" />
+			<xsd:element name="userOrderHeader" type="local:MoveUserOrderHeader"/>
+			<xsd:element name="userOrderLineItem" type="local:MoveUOLI" maxOccurs="100"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="MoveUserOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="transactionId" type="gcap-cuot:TransactionId"/>
+			<xsd:element name="subscriber" type="gcap-cuot:Subscriber"/>
+			<xsd:element name="subAccount" type="gcap-nuot:SubAccount"/>
+			<xsd:element name="newSubscriber" type="gcap-cuot:Subscriber"/>
+			<xsd:element name="newSubAccount" type="gcap-nuot:SubAccount"/>
+			<xsd:element name="actionCode" type="gcap-nuot:ActionCode"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="MoveUOLI">
+		<xsd:sequence>
+		        
+			<xsd:element name="uniqueUserLineId" type="gcap-nuot:UOLIId"/>
+			<xsd:element name="athenSubId" type="gcap-nuot:AthenaSubId"/>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+	
+</xsd:schema>

@@ -1,0 +1,30 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TF_ManageQuote" revision="1.0" state="on">
+    <import location="TF_ManageQuote.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote"/>
+    <import location="INTERFACE_BUFFER.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/"/>
+    <service name="ManageQuoteAnchor" ui:wsdlLocation="TF_ManageQuote.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote#wsdl.interface(TF_ManageQuoteCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote#wsdl.interface(TF_ManageQuote)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote#wsdl.endpoint(TF_ManageQuote/TF_ManageQuote)"/>
+    </service>
+    <component name="TF_ManageQuote">
+        <implementation.bpel src="TF_ManageQuote.bpel"/>
+        
+        
+    </component>
+    <reference name="INTERFACE_BUFFER" ui:wsdlLocation="INTERFACE_BUFFER.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/#wsdl.interface(INTERFACE_BUFFER_ptt)"/>
+        <binding.jca config="INTERFACE_BUFFER_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>ManageQuoteAnchor</source.uri>
+        <target.uri>TF_ManageQuote/ManageQuoteAnchor</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TF_ManageQuote/INTERFACE_BUFFER</source.uri>
+        <target.uri>INTERFACE_BUFFER</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

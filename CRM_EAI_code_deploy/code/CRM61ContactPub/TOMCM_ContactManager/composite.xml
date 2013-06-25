@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TOMCM_ContactManager" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="TOMCM_ContactManager.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager"/>
+    <import location="WriteContact.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl"
+            importType="wsdl"/>
+    <service name="TOMCM_ContactManager" ui:wsdlLocation="TOMCM_ContactManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager#wsdl.interface(TOMCM_ContactManagerCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager#wsdl.interface(TOMCM_ContactManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager#wsdl.endpoint(TOMCM_ContactManager/TOMCM_ContactManager)"/>
+    </service>
+    <component name="TOMCM_ContactManagerProcess">
+        <implementation.bpel src="TOMCM_ContactManagerProcess.bpel"/>
+    </component>
+    <reference name="AsyncSequenceChecker"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="WriteContact" ui:wsdlLocation="WriteContact.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/#wsdl.interface(WriteContact_ptt)"/>
+        <binding.jca config="WriteContact_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>TOMCM_ContactManager</source.uri>
+        <target.uri>TOMCM_ContactManagerProcess/TOMCM_ContactManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMCM_ContactManagerProcess/WriteContact</source.uri>
+        <target.uri>WriteContact</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TOMCM_ContactManagerProcess/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

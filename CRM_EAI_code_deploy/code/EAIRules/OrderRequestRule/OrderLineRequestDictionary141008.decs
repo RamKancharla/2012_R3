@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<decisionServices xmlns="http://xmlns.oracle.com/bpel/rules" name="OrderLineRequestDictionary141008">
+    <ruleEngineProvider name="OracleRulesSDK" provider="Oracle_11.0.0.0.0">
+        <repository type="SCA-Archive">
+            <path>OrderRequestRule/oracle/rules/OrderLineRequestDictionary141008/Version1_1/OrderLineRequestDictionary141008.rules</path>
+        </repository>
+    </ruleEngineProvider>
+    <decisionService targetNamespace="http://xmlns.oracle.com/OrderLineRequestDictionary141008/OrderLineRequestDictionary141008_DecisionService_1" ruleEngineProviderReference="OracleRulesSDK" name="OrderLineRequestDictionary141008_DecisionService_1">
+        <catalog>OrderLineRequestDictionary141008</catalog>
+        <pattern name="CallFunctionStateless">
+            <arguments>
+                <call>OrderLineRequestDictionary141008.Version1_1.OrderLineRequestDictionary141008.OrderLineRequestDictionary141008_DecisionService_1</call>
+            </arguments>
+        </pattern>
+        <pattern name="CallFunctionStateful">
+            <arguments>
+                <call>OrderLineRequestDictionary141008.Version1_1.OrderLineRequestDictionary141008.OrderLineRequestDictionary141008_DecisionService_1</call>
+            </arguments>
+        </pattern>
+    </decisionService>
+</decisionServices>

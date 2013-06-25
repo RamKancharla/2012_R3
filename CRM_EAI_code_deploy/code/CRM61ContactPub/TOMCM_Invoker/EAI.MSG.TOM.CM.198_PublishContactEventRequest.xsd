@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.TOM.CM.198_PublishContactEventRequest.xsd
+	* Type:        XSD Schema
+	* Description: The schema used to call the TOM adapter to publish a contact event
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         22/01/08   Rob Billington    Initial version without associated accounts or logons
+	* 0.2         24/01/08   Rob Billington    Added clientContactJobFunctionList and supporting types
+	*                                          Added clientContactAccountList and supporting types
+	*                                          Added employeePositionList and supporting types
+	*                                          Corrected type for emailAddress.
+	* 0.3         30/01/08   Rob Billington    Replaced EmployeeFlag with ContactSubType
+      * 0.4         05/02/08   Rob Billington    Replaced local references to common type schemas to use the eaidev1 network store
+	* 0.5         18/02/08   Sreeja            Replaced gcap-cat:AccountID with gcap-NAT:AccountID for nillable elements 
+      *					   parentAccountId and masterAccountId
+	*
+	* 0.6         20/02/08   Rob Billington    Changed gcap-NAT:AccountID to xsd:string for nillable elements
+	*                                          because schemac (and JAXB) cannot cope with XML union types used in the Nillable types.    
+        
+        * 0.7          27/04/10  Surya Gannavarapu  Added account id to the ClientContactJobFunctionList as per PBI_0278 , Sprint10 , Release3 and also removed clientContactAccount list
+	* 0.8         16/07/10   Swapna             Added isPrimaryPosition flag for the CR 7248
+	**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish" xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" xmlns:gcap-cut="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" xmlns:gcap-NAT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.5">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.003_CommonAccountTypes.xsd"/>
+      <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.002_CommonUserTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+        <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.009_NillableAccountTypes.xsd"/>
+	<xsd:element name="pubContactRequest" type="local:_TOMContactPubRequest"/>
+	<xsd:complexType name="_TOMContactPubRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+			<xsd:element name="actionCode" type="gcap-cmt:ActionCode"/>
+			<xsd:element name="contact" type="local:_TOMContact"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_TOMContact">
+		<xsd:sequence>
+			<xsd:element name="UUID" type="gcap-cut:UUID" />
+			<xsd:element name="parentAccountID"
+				type="xsd:string" />
+			<xsd:element name="masterAccountID"
+				type="xsd:string" />
+			<xsd:element name="firstName"
+				type="gcap-cut:FirstName" />
+			<xsd:element name="lastName"
+				type="gcap-cut:LastName" />
+			<xsd:element name="telNumber"
+				type="gcap-cut:PhoneNumber" />
+			<xsd:element name="emailAddress"
+				type="gcap-cut:EmailAddress" />
+			<xsd:element name="contactSubType"
+				type="gcap-cut:ContactSubType" />
+            <xsd:element name="clientContactJobFunctionList" type="local:ClientContactJobFunctionList" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+           <!-- <xsd:element name="clientContactAccountList" type="local:AccountList"></xsd:element> -->
+            <xsd:element name="employeePositionList" type="local:EmployeePositionList"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+    <xsd:complexType name="EmployeePosition">
+        <xsd:sequence>
+            <xsd:element name="name" type="gcap-cut:EmployeePositionName"></xsd:element>
+            <xsd:element name="isPrimaryPosition" type="xsd:boolean"></xsd:element>
+            <xsd:element name="accountList" type="local:AccountList"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+
+    <xsd:complexType name="Account">
+        <xsd:sequence>
+            <xsd:element name="id" type="gcap-cat:AccountID"></xsd:element>
+            <xsd:element name="isPrimaryPosition" type="xsd:boolean"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ClientContactJobFunctionList">
+        <xsd:sequence>
+            <xsd:element name="clientContactJobFunction" type="gcap-cut:ContactJobFunction" maxOccurs="1" minOccurs="0"></xsd:element>
+             <xsd:element name="id" type="gcap-cat:AccountID"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="AccountList">
+        <xsd:sequence>
+            <xsd:element name="account" type="local:Account" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="EmployeePositionList">
+        <xsd:sequence>
+            <xsd:element name="employeePosition" type="local:EmployeePosition" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

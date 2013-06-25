@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TOMOM_POLLING_V.wsdl" name="TOMOM_POLLING_V">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/TOMOM_POLLING_V/#wsdl.interface(TOMOM_POLLING_V_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMOMInvoker/TOMOMInvoker.wsdl" name="TOMOMInvoker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvoker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvokerCallback)"/>
+    </reference>
+</componentType>

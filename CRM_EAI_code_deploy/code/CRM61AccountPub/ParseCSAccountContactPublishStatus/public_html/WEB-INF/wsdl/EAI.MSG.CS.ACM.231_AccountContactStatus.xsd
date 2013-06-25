@@ -1,0 +1,223 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+     xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+    <xsd:element name="CSAccountContactPublish" type="xsdLocal:_CSAccountContactPublish"/>
+    <xsd:complexType name="_CSAccountContactPublish">
+        <xsd:sequence>
+            <xsd:element name="eaiHeader" type="xsdLocal:_CSEaiHeader"/>
+            <xsd:element name="accountContactPublishStatus" type="xsdLocal:_CSACMBasicResponse"/>
+            <xsd:element name="logicalCountry" type="xsdLocal:_CSCountryCode"/>
+            <xsd:element name="messageHeader" type="xsdLocal:_CSACMMessageHeader"/>
+            <xsd:element name="subMessageStatus" type="xsdLocal:_CSACMMessageStatus"/>
+            <xsd:element name="subHeaderMessageId" type="xsdLocal:_CSACMMessageId"/>
+            <xsd:element name="subRowId" type="xsdLocal:_CSACMRowId"/>
+            <xsd:element name="subscriberAccountData" type="xsdLocal:_CSACMSubscriberData"/>
+            <xsd:element name="installationAddress" type="xsdLocal:_CSACMInstallationAddress"/>
+            <xsd:element name="billingAddress" type="xsdLocal:_CSACMBillingAddress"/>
+            <xsd:element name="contactData" type="xsdLocal:_CSACMContact" maxOccurs="20"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="_CSEaiHeader">
+        <xsd:sequence>
+            <xsd:element name="applicationId" type="xsdLocal:string10"/>
+            <xsd:element name="transactionId" type="xsdLocal:string30"/>
+            <xsd:element name="messageId" type="xsdLocal:string30"/>
+            <xsd:element name="messageHistory" type="xsdLocal:string100"/>
+            <xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+            <xsd:element name="timeStamp" type="xsd:dateTime"/>
+            <xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+            <xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+            <xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="_CSCountryCode">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>FR</content>
+                    <comment>Country code for France</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="2"/>
+            <xsd:maxLength value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="_CSACMBasicResponse">
+        <xsd:sequence>
+            <xsd:element name="response" type="xsdLocal:Response"/>
+            <xsd:element name="responseCode" type="xsdLocal:ResponseCode"/>
+            <xsd:element name="responseMessage" type="xsdLocal:Message"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="Response">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>0</content>
+                    <comment>Success</comment>
+                </gcap-sa:Example>
+                <gcap-sa:Example>
+                    <content>1</content>
+                    <comment>Failure</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:token">
+            <xsd:enumeration value="0"/>
+            <xsd:enumeration value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="ResponseCode">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>00203-EAI-INVALID ACTION CODE</content>
+                    <comment>In valid action code</comment>
+                </gcap-sa:Example>
+                <gcap-sa:Example>
+                    <content>00202-EAI-INVALID MESSAGE CONTENT</content>
+                    <comment>Invalid message content provided by service client</comment>
+                </gcap-sa:Example>
+                <gcap-sa:Example>
+                    <content>00401-EAI-TIMEOUT ERROR</content>
+                    <comment>Timeout error returned if the service cannot respond within a specified time.</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="250"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="Message">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content/>
+                    <comment/>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="4000"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="_CSACMMessageHeader">
+        <xsd:sequence>
+            <xsd:element name="messageId" type="xsd:string"/>
+            <xsd:element name="transactionId" type="xsd:string"/>
+            <xsd:element name="messageHistory" type="xsd:string"/>
+            <xsd:element name="tracingId" type="xsd:string"/>
+            <xsd:element name="messageCode" type="xsd:string"/>
+            <xsd:element name="version" type="xsd:string"/>
+            <xsd:element name="timeStamp" type="xsd:dateTime"/>
+            <xsd:element name="userId" type="xsd:string"/>
+            <xsd:element name="objectSystem" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="_CSACMMessageStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="_CSACMSubscriberData">
+        <xsd:sequence>
+            <xsd:element name="subscriberNumber" type="xsdLocal:_CSSubscriberNumber"/>
+            <xsd:element name="subscriberMessageId" type="xsdLocal:_CSACMMessageId"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="_CSSubscriberNumber">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="7"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="_CSACMInstallationAddress">
+        <xsd:sequence>
+            <xsd:element name="InstallAddressAcctId" type="xsdLocal:_CSInstallAddressAcctId"/>
+            <xsd:element name="InstallAddressMessageId" type="xsdLocal:_CSACMMessageId"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="_CSInstallAddressAcctId">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="_CSACMBillingAddress">
+        <xsd:sequence>
+            <xsd:element name="BillingAddressAcctId" type="xsdLocal:_CSBillingAddressAcctId"/>
+            <xsd:element name="BillingMessageId" type="xsdLocal:_CSACMMessageId"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="_CSBillingAddressAcctId">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="_CSACMContact">
+        <xsd:sequence>
+            <xsd:element name="ContactRowId" type="xsdLocal:_CSACMRowId"/>
+            <xsd:element name="ContactPersonId" type="xsdLocal:_CSACMContactPersonId"/>
+            <xsd:element name="ContactType" type="xsdLocal:_CSACMContactType"/>
+            <xsd:element name="ContactMessageId" type="xsdLocal:_CSACMMessageId"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="_CSACMRowId">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="0"/>
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="_CSACMContactPersonId">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="0"/>
+            <xsd:maxLength value="4"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="_CSACMContactType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="0"/>
+            <xsd:maxLength value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="_CSACMMessageId">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="4"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string3">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string30">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string50">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="50"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string10">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string40">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string100">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,1072 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************************************
+* Module:	EAI.MSG.CS.ACM.228_AccountContactPublishRequest.xsd
+*				
+* Type:		XML Schema Document
+* Description:	Publish Account Contact request in CS Domain
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		15/05/08	Sreeja Prasad			Initial Version
+*  0.02		10/06/08	Sreeja Prasad			Added the new elements Status,PerClient,Suspend,Summary and CRHold in _CSAccount and
+								Status,PerClient & Suspend in _CSInstallationAddress & _CSBillingAddress
+*  0.03		11/06/08        Sreeja Prasad			Renamed element suspend to billingSuspensionRequired,summary to invoicingSummary, CRHold to CRHoldRequired 
+*  0.04		12/06/08        Sreeja Prasad	                Added status element in _CSContact
+*  0.05		11/07/08        Satish Patel	                Added accountNotes,accountDescription,customerReference element in _CSBillingAddress and _CSInstallationAddress
+                                                                Added messageId in _CSAccount and removed status field from _CSContact
+*  0.06		18/09/08	Surya Gannavarapu		Added Subscriber User Short Name field.
+*  0.07         24/10/08        Chandrasekhar                   minOccurs="0" to  _CSContact
+*  0.08		11/03/09	Surya				Added the attributes specific to the countries like DirectDebit,TaxOffice,Ex-Postel,RIOIndicator,RI-PurchaseOrderNumber,ER-PurchaseOrderNumber
+*  0.09		13/11/09	Sreeja				Removed the duplicated type string1
+*  0.10         25/11/09	Sreeja				Added the element ContractType
+*  0.11         11/02/10	Sreeja				Added the element globalSubNum as a child element for CSAccount as part of Release 2
+*************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.10">
+	<xsd:element name="CSAccountContactPublish" type="xsdLocal:_CSAccountContactPublish"/>
+	<xsd:complexType name="_CSAccountContactPublish">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="xsdLocal:_CSEaiHeader"/>
+			<xsd:element name="messageHeader" type="xsdLocal:_CSCompassMessageHeader"/>
+			<xsd:element name="country" type="xsdLocal:_CSCountry"/>
+			<xsd:element name="AccountId" type="xsdLocal:_CSAccountID"/>
+			<xsd:element name="account" type="xsdLocal:_CSAccount"/>
+			<xsd:element name="installAddress" type="xsdLocal:_CSInstallationAddress"/>
+			<xsd:element name="billingAddress" type="xsdLocal:_CSBillingAddress"/>
+			<xsd:element name="contact" type="xsdLocal:_CSContact" minOccurs="0" maxOccurs="20"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSEaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="xsdLocal:string10"/>
+			<xsd:element name="transactionId" type="xsdLocal:string30"/>
+			<xsd:element name="messageId" type="xsdLocal:string30"/>
+			<xsd:element name="messageHistory" type="xsdLocal:string100"/>
+			<xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSCompassMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="messageId" type="xsd:string"/>
+			<xsd:element name="transactionId" type="xsd:string"/>
+			<xsd:element name="messageHistory" type="xsd:string"/>
+			<xsd:element name="tracingId" type="xsd:string"/>
+			<xsd:element name="messageCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="userId" type="xsd:string"/>
+			<xsd:element name="objectSystem" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSAccount">
+		<xsd:sequence>
+			<xsd:element name="subscriberNumber" type="xsdLocal:SubscriberNumber"/>
+			<xsd:element name="subscriberName" type="xsdLocal:SubscriberName"/>
+			<xsd:element name="irasRef" type="xsdLocal:IRASReference"/>
+			<xsd:element name="subscriberType" type="xsdLocal:SubscriberType"/>
+			<xsd:element name="subscriberRelation" type="xsdLocal:SubscriberRelation"/>
+			<xsd:element name="ifaceInd" type="xsdLocal:IfaceInd"/>
+			<xsd:element name="billingFrequency" type="xsdLocal:BillingFrequency"/>
+			<xsd:element name="businessCategory" type="xsdLocal:BusinessCategory"/>
+			<xsd:element name="businessArea" type="xsdLocal:BusinessArea"/>
+			<xsd:element name="subFG1" type="xsdLocal:SubFG1"/>
+			<xsd:element name="subFG2" type="xsdLocal:SubFG2"/>
+			<xsd:element name="subscriberTaxCode" type="xsdLocal:SubscriberTaxCode"/>
+			<xsd:element name="subscriberPayTerms" type="xsdLocal:SubscriberPayTerms"/>
+			<xsd:element name="MCCCode" type="xsdLocal:MCCCode"/>
+			<xsd:element name="subMulticSubno" type="xsdLocal:SubMulticSubNo"/>
+			<xsd:element name="shortName" type="xsdLocal:ShortName"/>
+			<xsd:element name="cityCode" type="xsdLocal:CityCode"/>
+			<xsd:element name="subUserShortName" type="xsdLocal:SubUserShortName"/>			
+			<xsd:element name="dirName" type="xsdLocal:DirName"/>
+			<xsd:element name="enterpriseCode" type="xsdLocal:EnterpriseCode"/>
+			<xsd:element name="VATNumber" type="xsdLocal:VATNumber"/>
+			<xsd:element name="billingSubscriberNumber" type="xsdLocal:BillingSubscriberNumber"/>
+			<xsd:element name="status" type="xsdLocal:Status"/>
+			<xsd:element name="perClient" type="xsdLocal:PerClient"/>
+			<xsd:element name="billingSuspensionRequired" type="xsdLocal:Suspend"/>
+			<xsd:element name="invoicingSummary" type="xsdLocal:Summary"/>
+			<xsd:element name="CRHoldRequired" type="xsdLocal:CRHold"/>
+			<xsd:element name="directDebitRequired" type="xsdLocal:DirectDebit"/>
+			<xsd:element name="exPostel" type="xsdLocal:Ex-Postel"/>
+			<xsd:element name="taxOffice" type="xsdLocal:TaxOffice"/>
+			<xsd:element name="RIOIndicator" type="xsdLocal:RIOIndicator"/>
+			<xsd:element name="contractType" type="xsdLocal:ContractType"/>
+			<xsd:element name="globalSubNum" type="xsdLocal:UniqueCutomerReference"/>
+			<xsd:element name="messageId" type="xsdLocal:MessageId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSInstallationAddress">
+		<xsd:sequence>
+			<xsd:element name="subAccount" type="xsdLocal:SubAccount"/>
+			<xsd:element name="name1" type="xsdLocal:Name1"/>
+			<xsd:element name="name2" type="xsdLocal:Name2"/>
+			<xsd:element name="building" type="xsdLocal:Building"/>
+			<xsd:element name="street" type="xsdLocal:Street"/>
+			<xsd:element name="city" type="xsdLocal:City"/>
+			<xsd:element name="state" type="xsdLocal:State"/>
+			<xsd:element name="country" type="xsdLocal:Country"/>
+			<xsd:element name="zipCode" type="xsdLocal:ZipCode"/>
+			<xsd:element name="GeoCode" type="xsdLocal:GEOCode"/>
+			<xsd:element name="status" type="xsdLocal:Status"/>
+			<xsd:element name="perClient" type="xsdLocal:PerClient"/>
+			<xsd:element name="billingSuspensionRequired" type="xsdLocal:Suspend"/>
+			<xsd:element name="accountNotes" type="xsdLocal:AccountNotes"/>
+			<xsd:element name="accountDescription" type="xsdLocal:AccountDescription"/>
+			<xsd:element name="customerReference" type="xsdLocal:CustomerReference"/>
+			<xsd:element name="RIPurchaseOrder" type="xsdLocal:RIPurchaseOrder"/>
+			<xsd:element name="ERPurchaseOrder" type="xsdLocal:ERPurchaseOrder"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSBillingAddress">
+		<xsd:sequence>
+			<xsd:element name="subAccount" type="xsdLocal:SubAccount"/>
+			<xsd:element name="name1" type="xsdLocal:Name1"/>
+			<xsd:element name="name2" type="xsdLocal:Name2"/>
+			<xsd:element name="building" type="xsdLocal:Building"/>
+			<xsd:element name="street" type="xsdLocal:Street"/>
+			<xsd:element name="city" type="xsdLocal:City"/>
+			<xsd:element name="state" type="xsdLocal:State"/>
+			<xsd:element name="country" type="xsdLocal:Country"/>
+			<xsd:element name="zipCode" type="xsdLocal:ZipCode"/>
+			<xsd:element name="GeoCode" type="xsdLocal:GEOCode"/>
+			<xsd:element name="status" type="xsdLocal:Status"/>
+			<xsd:element name="perClient" type="xsdLocal:PerClient"/>
+			<xsd:element name="billingSuspensionRequired" type="xsdLocal:Suspend"/>
+			<xsd:element name="accountNotes" type="xsdLocal:AccountNotes"/>
+			<xsd:element name="accountDescription" type="xsdLocal:AccountDescription"/>
+			<xsd:element name="customerReference" type="xsdLocal:CustomerReference"/>
+			<xsd:element name="RIPurchaseOrder" type="xsdLocal:RIPurchaseOrder"/>
+			<xsd:element name="ERPurchaseOrder" type="xsdLocal:ERPurchaseOrder"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSContact">
+		<xsd:sequence>
+			<xsd:element name="contactId" type="xsdLocal:ContactId"/>
+			<xsd:element name="personId" type="xsdLocal:PersonId"/>
+			<xsd:element name="contactType" type="xsdLocal:ContactType"/>
+			<xsd:element name="responsibilityCode" type="xsdLocal:ResponsibilityCode"/>
+			<xsd:element name="firstName" type="xsdLocal:FirstName"/>
+			<xsd:element name="lastName" type="xsdLocal:LastName"/>
+			<xsd:element name="title" type="xsdLocal:Title"/>
+			<xsd:element name="jobTitle" type="xsdLocal:JobTitle"/>
+			<xsd:element name="businessTelephoneNumber" type="xsdLocal:BusinessTelephoneNumber"/>
+			<xsd:element name="homeTelephoneNumber" type="xsdLocal:HomeTelephoneNumber"/>
+			<xsd:element name="messageId" type="xsdLocal:MessageId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="_CSCountry">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>France</content>
+					<comment>Country name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSAccountID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubscriberNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="7"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubscriberName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Sub Account Name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IRASReference">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>NA2</content>
+					<comment>Ref</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubscriberType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>C</content>
+					<comment>C ; I ; D </comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubscriberRelation">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>B</content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IfaceInd">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>N</content>
+					<comment>Vetting Required 'Y' or 'N'</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BillingFrequency">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>01</content>
+					<comment>Billing Freq 01,03,06,12 </comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BusinessCategory">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BusinessArea">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubFG1">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>FG1</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubFG2">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubscriberTaxCode">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubscriberPayTerms">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MCCCode">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubMulticSubNo">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="7"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ShortName">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="12"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CityCode">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubUserShortName">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>UserShortname for 3000xtra</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="27"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DirName">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="EnterpriseCode">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="VATNumber">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="18"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BillingSubscriberNumber">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="7"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubAccount">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>001</content>
+					<comment>for a new subscriber this comes as 001 by default</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Name1">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Name2">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Building">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Address1</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Street">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Address2</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="City">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>City Name Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="State">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>State Name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Country">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ZipCode">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="GEOCode">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="9"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ContactId">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PersonId">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ContactType">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>S or R</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ResponsibilityCode">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FirstName">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LastName">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Title">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="JobTitle">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BusinessTelephoneNumber">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>TelephoneNumber</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="HomeTelephoneNumber">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>Billing Freq</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessageId">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>messageId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Status">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>messageId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PerClient">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>messageId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Suspend">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>messageId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountNotes">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>messageId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="60"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountDescription">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>messageId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="60"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CustomerReference">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>messageId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="12"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Summary">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>messageId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CRHold">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment>messageId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DirectDebit">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>yes</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Ex-Postel">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>yes</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TaxOffice">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="8"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RIOIndicator">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>yes</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RIPurchaseOrder">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ERPurchaseOrder">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ContractType">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="UniqueCutomerReference">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+		<xsd:simpleType name="string1">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string2">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="SIEBEL_ACCOUNT_STG.wsdl" name="SIEBEL_ACCOUNT_STG">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/SIEBEL_ACCOUNT_STG/#wsdl.interface(SIEBEL_ACCOUNT_STG_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="SIEBEL_ACCOUNT_STG_UPDATE.wsdl" name="SIEBEL_ACCOUNT_STG_UPDATE">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/SIEBEL_ACCOUNT_STG_UPDATE/#wsdl.interface(SIEBEL_ACCOUNT_STG_UPDATE_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="INTERFACE_BUFFER.wsdl" name="INTERFACE_BUFFER">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/#wsdl.interface(INTERFACE_BUFFER_ptt)"/>
+    </reference>
+</componentType>

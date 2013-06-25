@@ -1,0 +1,52 @@
+<definitions
+     name="INTERFACE_BUFFER"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/"
+     xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+     xmlns:pc="http://xmlns.oracle.com/pcbpel/"
+     xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/db/"
+    >
+    <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/" location="DBAdapterOutboundHeader.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/"
+             xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/" xmlns:pc="http://xmlns.oracle.com/pcbpel/"
+             xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/db/">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER" schemaLocation="INTERFACEBUFFER_table.xsd"/>
+        </schema>
+    </types>
+    <message name="InterfaceBufferCollection_msg">
+        <part name="InterfaceBufferCollection" element="top:InterfaceBufferCollection"/>
+    </message>
+    <portType name="INTERFACE_BUFFER_ptt">
+        <operation name="update">
+            <input message="tns:InterfaceBufferCollection_msg"/>
+        </operation>
+    </portType>
+    <binding name="INTERFACE_BUFFER_binding" type="tns:INTERFACE_BUFFER_ptt">
+        <jca:binding/>
+        <operation name="update">
+            <jca:operation InteractionSpec="oracle.tip.adapter.db.DBWriteInteractionSpec" DescriptorName="INTERFACEBUFFER.InterfaceBuffer"
+                 DmlType="update" DetectOmissions="true" OptimizeMerge="true" MappingsMetaDataURL="INTERFACEBUFFER_toplink_mappings.xml"/>
+            <input>
+                <jca:header message="hdr:OutboundHeader_msg" part="outboundHeader"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="INTERFACE_BUFFER">
+        <port name="INTERFACE_BUFFER_pt" binding="tns:INTERFACE_BUFFER_binding">
+            <jca:address location="eis/DB/EAISOA" UIConnectionName="DBR2SysTest" ManagedConnectionFactory="oracle.tip.adapter.db.DBManagedConnectionFactory"
+                 mcf.DriverClassName="oracle.jdbc.OracleDriver" mcf.PlatformClassName="oracle.toplink.platform.database.oracle.Oracle10Platform"
+                 mcf.ConnectionString="jdbc:oracle:thin:@//ukcq-eai04:1521/EAIDB04" mcf.UserName="EAIOWNER"
+                 mcf.Password="E8D26CEB17C942CF78415AE2B31C2AA9"/>
+        </port>
+    </service>
+    <plt:partnerLinkType name="INTERFACE_BUFFER_plt">
+        <plt:role name="INTERFACE_BUFFER_role">
+            <plt:portType name="tns:INTERFACE_BUFFER_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+</definitions>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.EXT.121_PropagateStatusUpdateRequest.xsd
+	* Type:        XSD Schema
+	*
+	* Change History
+	*Version	   Date		       Author			        Description Of Change
+	*
+	*  0.01	       25/04/07	       Kevin Wood		        Initial version
+	*  0.02        26/04/07        Mark Flynn               Removed reference to orderId as
+	*                                                       no longer needed
+	*  0.03        15/08/07        Rob Billington           Minor formatting fix.
+	*  0.04	       16/08/07        Mark Flynn               Changed description of interface
+	*  1.0         16/05/08        Andrew Humphreys         Changed namespaces to be AAA owned
+	**********************************************************************************-->
+<xsd:schema
+	xmlns:local="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:gcap-mt="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+	xmlns:gcap-ut="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes"
+	targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.01">
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+		schemaLocation="EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes"
+		schemaLocation="EAI.XSD.002_CommonUserTypes.xsd" />
+	<xsd:complexType name="PropagateStatusUpdateRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-mt:EaiHeader" />
+			<xsd:element name="entityType" type="xsd:string" />
+			<xsd:element name="entityID" type="xsd:string" />
+			<xsd:element name="entityStatus" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="propagateStatusUpdateRequest"
+		type="local:PropagateStatusUpdateRequest" />
+</xsd:schema>

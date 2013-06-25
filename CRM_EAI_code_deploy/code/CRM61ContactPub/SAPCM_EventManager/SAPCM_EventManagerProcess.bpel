@@ -1,0 +1,205 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Purpose: BPEL Process
+  * Version		Date		Author		          Description Of Change
+  * 0.2                 12/01/2011	Albin Issac               I065(SAP Contact Sync changes included)  
+ 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="SAPCM_EventManagerProcess" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager/correlationset" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns10="://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="SAPCM_EventManager" partnerLinkType="client:SAPCM_EventManager" myRole="SAPCM_EventManagerProvider" partnerRole="SAPCM_EventManagerRequester"/>
+        <partnerLink myRole="AsyncSequenceCheckerRequester" name="AsyncSequenceChecker" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns3:AsyncSequenceChecker"/>
+        <partnerLink name="WriteContact" partnerRole="WriteContact_role" partnerLinkType="ns4:WriteContact_plt"/>
+        <partnerLink myRole="AsyncSequenceCheckerRequester" name="AsyncSequenceCheckerI065" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns3:AsyncSequenceChecker"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="rcvContact_IV" messageType="client:SAPCM_EventManagerRequestMessage"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <sequence name="ErrorSequence">
+                <bpelx:exec name="ErrorThrown" language="java" version="1.4">
+                    <![CDATA[setCompositeInstanceTitle("Error occured");]]>
+                </bpelx:exec>
+                <throw name="ThrowError" faultName="bpws:uninitializedVariable"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SAPCM_EventManager.wsdl) -->
+        <receive name="rcvContact" partnerLink="SAPCM_EventManager" portType="client:SAPCM_EventManager" operation="initiate" variable="rcvContact_IV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="rcvContact_IV" part="contactEvent" query="/ns1:contactEvent/ns1:eaiHeader/ns2:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="rcvContact_IV" part="contactEvent" query="/ns1:contactEvent/ns1:eaiHeader/ns2:instanceId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.4">
+            <![CDATA[String uuid = ((oracle.xml.parser.v2.XMLElement)                                    
+                        getVariableData("rcvContact_IV", "contactEvent", "/ns1:contactEvent/ns1:contact/ns1:UUID")).getFirstChild().getNodeValue();                                       
+setCompositeInstanceTitle("ContactId: " + uuid);     
+//setCompositeInstanceTitle("ContactId: ");]]>
+        </bpelx:exec>
+        <scope name="ScpContactPublish">
+            <flow name="Flow_Contact">
+                <scope name="ScpI046">
+                    <variables>
+                        <variable name="InvSequenceCheckerIV" messageType="ns3:AsyncSequenceCheckerRequestMessage"/>
+                        <variable name="ReceiveSequenceReleaseIV" messageType="ns3:AsyncSequenceCheckerResponseMessage"/>
+                        <variable name="InputToSAPCMInvokerIV" element="ns5:Contacts"/>
+                        <variable name="WriteContactIV" messageType="ns4:InterfaceBufferCollection_msg"/>
+                    </variables>
+                    <faultHandlers>
+                        <catchAll>
+                            <sequence name="SeqError">
+                                <bpelx:exec name="AsgErrorThrown" language="java" version="1.5">
+                                    <![CDATA[setCompositeInstanceTitle("Error occured I046");]]>
+                                </bpelx:exec>
+                            </sequence>
+                        </catchAll>
+                    </faultHandlers>
+                    <switch name="SendToSAPI046">
+                        <case condition="bpws:getVariableData('rcvContact_IV','contactEvent','/ns1:contactEvent/ns1:contact/ns1:UUID')!='' and bpws:getVariableData('rcvContact_IV','contactEvent','/ns1:contactEvent/ns1:contact/ns1:RCRMPublishContactToSAP')='Y' ">
+                            <sequence name="SeqContactsI046">
+                                <assign name="TransInputToSAPCMInvokerI046">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransInputToSAPCMInvoker.xsl',bpws:getVariableData('rcvContact_IV','contactEvent'))"/>
+                                        <to variable="InputToSAPCMInvokerIV"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransInputToWriteContactI046IV">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransInputToWriteContactIV.xsl',bpws:getVariableData('InputToSAPCMInvokerIV'))"/>
+                                        <to variable="WriteContactIV" part="InterfaceBufferCollection"/>
+                                    </copy>
+                                </assign>
+                                <sequence name="TransSequenceCheck">
+                                    <assign name="TransInputToSequenceCheckI046">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransInputToSequenceCheck.xsl',bpws:getVariableData('rcvContact_IV','contactEvent'))"/>
+                                            <to variable="InvSequenceCheckerIV" part="payload"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvSequenceCheckerI046" partnerLink="AsyncSequenceChecker" portType="ns3:AsyncSequenceChecker" operation="initiate" inputVariable="InvSequenceCheckerIV"/>
+                                    <receive name="ReceiveSequenceReleaseI046" partnerLink="AsyncSequenceChecker" portType="ns3:AsyncSequenceCheckerCallback" operation="onResult" variable="ReceiveSequenceReleaseIV" createInstance="no"/>
+                                </sequence>
+                                <invoke name="InvWriteContactI046" partnerLink="WriteContact" portType="ns4:WriteContact_ptt" operation="insert" inputVariable="WriteContactIV"/>
+                               
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>
+                </scope>
+                <scope name="ScpI065">
+                    <variables>
+                        <variable name="InvSequenceCheckerIV" messageType="ns3:AsyncSequenceCheckerRequestMessage"/>
+                        <variable name="ReceiveSequenceReleaseIV" messageType="ns3:AsyncSequenceCheckerResponseMessage"/>
+                        <variable name="WriteContactIV" messageType="ns4:InterfaceBufferCollection_msg"/>
+                        <variable name="InputToSAPCMInvokerIV" element="ns6:Contacts"/>
+                    </variables>
+                    <faultHandlers>
+                        <catchAll>
+                            <sequence name="SeqError">
+                                <bpelx:exec name="AsgErrorThrown" language="java" version="1.5">
+                                    <![CDATA[setCompositeInstanceTitle("Error occured I065");]]>
+                                </bpelx:exec>
+                            </sequence>
+                        </catchAll>
+                    </faultHandlers>
+                    <sequence name="SeqContactsI065">
+                        <assign name="TransInputToSAPCMInvokerI065">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransInputToSAPCMSyncInvoker.xsl',bpws:getVariableData('rcvContact_IV','contactEvent'))"/>
+                                <to variable="InputToSAPCMInvokerIV"/>
+                            </copy>
+                        </assign>
+                        <switch name="SendToSAPI065">
+                            <case condition="count(bpws:getVariableData('InputToSAPCMInvokerIV','/ns6:Contacts/ns6:contact/ns6:Function')) > 0">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>ContactSync</bpelx:pattern>
+                                </bpelx:annotation>
+                                <sequence name="SeqI065">
+                                    <assign name="TransInputToWriteContactI065IV">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransInputToWriteContactI065IV.xsl',bpws:getVariableData('InputToSAPCMInvokerIV'))"/>
+                                            <to variable="WriteContactIV" part="InterfaceBufferCollection"/>
+                                        </copy>
+                                    </assign>
+                                    <sequence name="TransSequenceCheck">
+                                        <assign name="TransInputToSequenceCheckI065">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransInputToSequenceCheck_I065.xsl',bpws:getVariableData('rcvContact_IV','contactEvent'))"/>
+                                                <to variable="InvSequenceCheckerIV" part="payload"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvSequenceCheckerI065" partnerLink="AsyncSequenceCheckerI065" portType="ns3:AsyncSequenceChecker" operation="initiate" inputVariable="InvSequenceCheckerIV"/>
+                                        <receive name="ReceiveSequenceReleaseI065" partnerLink="AsyncSequenceCheckerI065" portType="ns3:AsyncSequenceCheckerCallback" operation="onResult" variable="ReceiveSequenceReleaseIV" createInstance="no"/>
+                                    </sequence>
+                                    <invoke name="InvWriteContactI065" partnerLink="WriteContact" portType="ns4:WriteContact_ptt" operation="insert" inputVariable="WriteContactIV"/>
+                                </sequence>
+                            </case>
+                            <otherwise>
+                                <empty name="DoNothing"/>
+                            </otherwise>
+                        </switch>
+                    </sequence>
+                </scope>
+            </flow>
+        </scope>
+    </sequence>
+</process>

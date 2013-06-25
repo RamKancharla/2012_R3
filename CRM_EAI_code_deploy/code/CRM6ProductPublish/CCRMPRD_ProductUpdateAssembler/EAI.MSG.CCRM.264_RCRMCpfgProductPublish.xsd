@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.siebel.com/xml/Test%20Product"
+            xmlns:xsdLocal="http://www.siebel.com/xml/Test%20Product"
+            attributeFormDefault="unqualified" elementFormDefault="qualified">
+ <xsd:annotation>
+  <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights
+                     reserved. Siebel XSD Generation</xsd:documentation>
+ </xsd:annotation>
+ <xsd:element name="Product" type="xsdLocal:Product"/>
+ <xsd:complexType name="ProductTopElmt">
+  <xsd:sequence>
+   <xsd:element name="Product" type="xsdLocal:Product" minOccurs="1"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Product">
+  <xsd:sequence>
+   <xsd:element name="VersionStatus" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMProductType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMProductPricingType" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ProductDefTypeCode" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ModId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AccountType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AliasName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AllocateBelowSafetyFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AutoAllocateFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AutoExplodeFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CDAPageset" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CDAPagesetId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CDAProject" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CDAProjectId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgActiveFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgComplexProductId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgEndDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgLatestReleasedFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgObjectDefLastVersion" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgReleasedFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgStartDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgVersion" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ClassVersion" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Description" type="xsdLocal:string255" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Name" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NetworkElementType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Occurrence" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Part" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ProductId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ProductLevel" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="XAClassId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="XAClassName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AatExists" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ProductAttribute" type="xsdLocal:ProductAttribute"
+                minOccurs="0" maxOccurs="unbounded"/>
+   <xsd:element name="IssClassVodBuscomp" type="xsdLocal:IssClassVodBuscomp"
+                minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="ProductAttribute">
+  <xsd:sequence>
+   <xsd:element name="AttributeId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AttributeName" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DataType" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="DefaultValue" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DisplayName" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Name2" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="AttributeVodBuscomp" type="xsdLocal:AttributeVodBuscomp"
+                minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="IssClassVodBuscomp">
+  <xsd:sequence>
+   <xsd:element name="VODVersion2" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="VODName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CfgIssSubObjects" type="xsdLocal:CfgIssSubObjects"
+                minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="AttributeVodBuscomp">
+  <xsd:sequence>
+   <xsd:element name="VODName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AttributeValues" type="xsdLocal:AttributeValues"
+                minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="CfgIssSubObjects">
+  <xsd:sequence>
+   <xsd:element name="ItemName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SOId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="AttributeValues">
+  <xsd:sequence>
+   <xsd:element name="Value" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:simpleType name="string50">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="50"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string255">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="255"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string30">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="30"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string100">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="100"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<project default="deploy" xmlns:oracle="antlib:oracle"
+         xmlns="antlib:org.apache.tools.ant"
+         xmlns:ivy="antlib:fr.jayasoft.ivy.ant" basedir=".">
+  
+  <property environment="env"/>
+  <loadproperties srcFile="../../config/scripts/build.properties"/>
+
+  <taskdef name="wldeploy" classname="weblogic.ant.taskdefs.management.WLDeploy">
+    <classpath> 
+      <pathelement location="${env.WLSHOME}/server/lib/weblogic.jar"/> 
+    </classpath>
+   </taskdef>
+
+ <property name="process.dir" value="${basedir}"/>
+ <property name="base.public.html.dir" value="${basedir}\public_html"/>
+ <property name="base.public.html.webinf.dir" value="${base.public.html.dir}\WEB-INF"/>
+ <property name="base.public.html.css.dir" value="${base.public.html.dir}\css"/>
+ <property name="base.public.html.script.dir" value="${base.public.html.dir}\script"/>
+ <property name="base.public.html.images.dir" value="${base.public.html.dir}\images"/>
+
+
+  <property name="base.src.dir" value="${basedir}\src"/>
+  <property name="base.public.html.webinf.classes" value="${base.public.html.webinf.dir}\classes"/>
+  <property name="base.webinf.public.html.lib.dir" value="${base.public.html.webinf.dir}\lib"/>
+
+  <property name="base.deploy.dir" value="${basedir}/deploy"/>
+  
+  <property name="app.name" value="EAIMonitorUI"/>
+  <property name="web.name" value="EAIMonitorUI"/>
+  
+  <path id="class.path">
+    <fileset dir="${base.webinf.public.html.lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>	
+	<fileset dir="${env.MWHOME}/wlserver_10.3/server/lib">
+      <include name="ojdbc6.jar"/>    	  
+    </fileset>	
+	<fileset dir="${env.ORACLE_HOME}/soa/modules/oracle.soa.fabric_11.1.1">
+      <include name="fabric-runtime.jar"/>	  
+    </fileset>
+	<fileset dir="${env.MWHOME}/oracle_common/modules/oracle.fabriccommon_11.1.1">
+      <include name="fabric-common.jar"/>	  
+    </fileset>	
+	<fileset dir="${env.MWHOME}/oracle_common/soa/modules/oracle.soa.mgmt_11.1.1">
+      <include name="soa-infra-mgmt.jar"/>	  
+    </fileset>	
+	<!--fileset dir="${env.MWHOME}/oracle_common/modules/oracle.xdk_11.1.0">
+      <include name="xml.jar"/>	  
+	  <include name="xmlparserv2.jar"/>	  
+    </fileset-->	
+	<fileset dir="${env.MWHOME}/modules">
+      <include name="javax.jsp_1.1.0.0_2-1.jar"/>	  
+	  <include name="javax.servlet_1.0.0.0_2-5.jar"/>	  
+    </fileset>
+    <pathelement path="${base.public.html.webinf.classes}"/>
+  </path>
+
+
+  <target name="init">
+    <tstamp/>
+	<mkdir dir="${base.public.html.webinf.classes}"/>   
+    <mkdir dir="${base.deploy.dir}"/>
+  </target>
+
+   <target name="replace">
+  	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@trust.protocol@" value="${trust.protocol}"/>
+  	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@trust.host@" value="${trust.EAIMonitor.host}"/>
+  	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@siebel.protocol@" value="${siebel.protocol}"/>
+  	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@siebel.host@" value="${siebel.host}"/>
+	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@siebel.EAIMonitor.host@" value="${siebel.EAIMonitor.host}"/>
+  	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@soa.user@" value="${soa.user}"/>
+  	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@soa.password@" value="${soa.password}"/>
+  	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@t3.lb.url@" value="${t3.lb.url}"/>
+	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@soa.host@" value="${soa.host}"/>
+	<replace file="${basedir}/public_html/WEB-INF/EAIMonitorUI.properties" token="@soa.port@" value="${soa.port}"/>
+	<copy todir="${base.public.html.webinf.classes}">
+		<fileset dir="${base.public.html.webinf.dir}" includes="EAIMonitorUI.properties"/>
+	</copy>
+  	</target>
+  
+	<target name="compile" depends="init">
+		<javac srcdir="${base.src.dir}" destdir="${base.public.html.webinf.classes}" classpathref="class.path" />
+	</target>
+
+
+	<target name="package-web">
+		<war destfile="${base.deploy.dir}/${web.name}.war" webxml="${base.public.html.webinf.dir}/web.xml" >			
+			<zipfileset dir="${base.public.html.webinf.dir}" prefix="WEB-INF">
+				<exclude name="application.xml"/>			
+			</zipfileset>
+			<zipfileset dir="${base.public.html.webinf.dir}" prefix="WEB-INF">
+				<exclude name="weblogic-application.xml"/>			
+			</zipfileset>
+			<zipfileset dir="${base.public.html.dir}" >
+				 <include name="**/*.jsp"/>
+			</zipfileset>
+			<zipfileset dir="${base.public.html.css.dir}" prefix="css">
+				<include name="**/*.css"/>
+			</zipfileset>
+			<zipfileset dir="${base.public.html.script.dir}" prefix="script">
+				<include name="**/*.js"/>
+			</zipfileset>
+			<zipfileset dir="${base.public.html.images.dir}" prefix="images">
+				 <include name="**/*.jpg"/>
+			</zipfileset>
+		</war>
+	</target>
+
+	<target name="package-app" depends="package-web">
+		 <ear destfile="${base.deploy.dir}/${app.name}.ear" appxml="${base.public.html.webinf.dir}/application.xml">
+				<metainf dir="${base.public.html.webinf.dir}" includes="weblogic-application.xml"> </metainf>
+				<fileset dir="${base.deploy.dir}" includes="**/*.war"/>
+		 </ear>
+	</target>
+	
+	<target name="undeploy">
+
+<echo message="${admin.user} ${admin.password} t3://${admin.host}:${admin.port} targets:${wls.cluster}"/>
+		    <wldeploy action="undeploy"
+                     		name="${app.name}"
+                                user="${admin.user}"
+                                password="${admin.password}"
+                                verbose="true" 
+                                usenonexclusivelock="true"  
+				adminurl="t3://${admin.host}:${admin.port}" targets="${wls.cluster}"
+                                failonerror="false" graceful="false"/>
+ 	
+	 </target>
+	 
+	<target name="deploy" depends="undeploy,clean,init,replace,compile,package-app">
+
+<echo message="${admin.user} ${admin.password} t3://${admin.host}:${admin.port} targets:${wls.cluster}"/>
+		  <wldeploy action="deploy"
+				upload="true"
+					name="${app.name}"
+					source="${base.deploy.dir}/${app.name}.ear"
+					user="${admin.user}"
+					password="${admin.password}"
+					verbose="true"
+					usenonexclusivelock="true"
+					adminurl="t3://${admin.host}:${admin.port}" targets="${wls.cluster}"
+					failonerror="true"/>	
+
+ 	
+	 </target>   
+
+	  <target name="clean">
+		<delete failonerror="false">
+		  <fileset dir="${base.public.html.webinf.classes}" includes="**/*"/>      
+		  <fileset dir="deploy" includes="**/*"/>
+		</delete>
+	  </target>
+ </project>

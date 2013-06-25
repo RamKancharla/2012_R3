@@ -1,0 +1,638 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  asynchronous BPEL Process
+  ******************Change History************************
+Version		Date		Author		Comments
+ 1.3            28/12/2009      Sreeja          Added the condition for releasing the sequence.Releasing the sequence for success & in case of errors for Update requests only.
+ 1.4            04/01/2010      Sreeja          Added releaseSequence=true conditon for releasing the sequence.
+ 1.5            22/02/2010      Meenal          Removed the condition for Sequence Releaser.
+ 1.6            01/04/2010      Sreeja          Mapped the fields IsPoRequired & PurchaseOrderNumber for the defect#35949 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="SFDCOP_Invoker" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/SFDC/OpportunityManagementServices" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="urn:enterprise.soap.sforce.com" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateINTERFACE_BUFFER/" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity" xmlns:ns2="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateINTERFACEBUFFER" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/db/SFDCOP_POLLING_V/" xmlns:ns7="http://soap.sforce.com/schemas/class/OpportunityManagement" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/external/SFDC/OpportunityManagementServices" xmlns:ns6="http://schemas.xmlsoap.org/ws/2003/03/addressing" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://xmlns.oracle.com/InterfaceManager" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" xmlns:ns14="http://xmlns.oracle.com/pcbpel/adapter/db/top/SFDCOPPOLLINGV" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns8="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink myRole="Soap_Role" name="salesforce" partnerRole="Soap_Role" partnerLinkType="ns5:Soap_PL"/>
+        <partnerLink myRole="OpportunityManagementPortType_Role" name="OpportunityManagement" partnerRole="OpportunityManagementPortType_Role" partnerLinkType="ns7:OpportunityManagementPortType_PL"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns8:SequenceReleaser"/>
+        <partnerLink name="InterfaceManager" partnerRole="InterfaceManagerProvider" partnerLinkType="ns11:InterfaceManager"/>
+        <partnerLink myRole="SFDCOP_POLLING_V_role" name="SFDCOP_POLLING_V" partnerLinkType="ns13:SFDCOP_POLLING_V_plt"/>
+        <partnerLink name="UpdateINTERFACE_BUFFER" partnerRole="UpdateINTERFACE_BUFFER_role" partnerLinkType="ns9:UpdateINTERFACE_BUFFER_plt"/>
+        <partnerLink myRole="CCRMOP_SubmitOpportunityRequester" name="CCRMOP_SubmitOpportunity" partnerRole="CCRMOP_SubmitOpportunityProvider" partnerLinkType="ns1:CCRMOP_SubmitOpportunity"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <!-- <variable name="outputVariable"
+                  messageType="client:SFDCOP_InvokerResponseMessage"/>-->
+        <variable name="nReceived" type="xsd:integer"/>
+        <variable name="nProcessed" type="xsd:integer"/>
+        <variable name="nErrors" type="xsd:integer"/>
+        <variable name="errorMsg" type="xsd:string"/>
+        <variable name="nFailures" type="xsd:integer"/>
+        <variable name="releaseSequence" type="xsd:boolean"/>
+        <variable name="updateSiebel" type="xsd:boolean"/>
+        <variable name="rawMessage" type="xsd:string"/>
+        <variable name="id" type="xsd:string"/>
+        <variable name="interfaceId" type="xsd:string"/>
+        <variable name="referenceId" type="xsd:string"/>
+        <variable name="created" type="xsd:string"/>
+        <variable name="parsedRawMessage" type="xsd:string"/>
+        <variable name="javaException" type="xsd:string"/>
+        <variable name="opportunityDetails" element="ns3:opportunityEvent"/>
+        <variable name="SiebelOpptyId" type="xsd:string"/>
+        <variable name="ExtendedOpportunityEvent" element="ns3:extendedOpportunityEvent"/>
+        <variable name="InvSalesforceLogin_InputVariable" messageType="ns5:loginRequest"/>
+        <variable name="InvSalesforceLogin_OutputVariable" messageType="ns5:loginResponse"/>
+        <variable name="headerRequest" messageType="ns5:Header"/>
+        <variable name="partnerReference" element="ns6:EndpointReference"/>
+        <variable name="InvOpportunityManagement_IV" messageType="ns7:publishOpportunityRequest"/>
+        <variable name="InvOpportunityManagement_OV" messageType="ns7:publishOpportunityResponse"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvReleaseSequenceIV" messageType="ns8:SequenceReleaserRequestMessage"/>
+        <variable name="state" type="xsd:string"/>
+        <variable name="RequestHealthCheckIV" messageType="ns11:InterfaceManagerRequestMessage"/>
+        <variable name="RequestHealthCheckOV" messageType="ns11:InterfaceManagerResponseMessage"/>
+        <variable name="SiebelAccountId" type="xsd:string"/>
+        <variable name="InputVariable" messageType="ns13:SfdcopPollingVCollection_msg"/>
+        <variable name="logindetails" type="xsd:string"/>
+        <variable name="test" type="xsd:string"/>
+        <variable name="InvInsertINTERFACE_BUFFERIV" messageType="ns9:InterfaceBuffer1Collection_msg"/>
+        <variable name="InstallToAccountId" type="xsd:string"/>
+        <variable name="InvCCRMOP_SubmitOpportunityIV" messageType="ns1:CCRMOP_SubmitOpportunityRequestMessage"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="AsgCustomFaultTitle" language="java" version="1.3">
+                <![CDATA[setCompositeInstanceTitle( getTitle() + ";Flt");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SFDCOP_Invoker.wsdl) -->
+        <receive name="receiveInput" portType="ns13:SFDCOP_POLLING_V_ptt" variable="InputVariable" createInstance="yes" partnerLink="SFDCOP_POLLING_V" operation="receive"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitialVariables">
+            <copy>
+                <from expression="count(bpws:getVariableData('InputVariable','SfdcopPollingVCollection','/ns14:SfdcopPollingVCollection/ns14:SfdcopPollingV'))"/>
+                <to variable="nReceived"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nProcessed"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nErrors"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nFailures"/>
+            </copy>
+            <copy>
+                <from expression="'false'"/>
+                <to variable="releaseSequence"/>
+            </copy>
+            <copy>
+                <from expression="'false'"/>
+                <to variable="updateSiebel"/>
+            </copy>
+            <copy>
+                <from expression="'null'"/>
+                <to variable="logindetails"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="errorMsg"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="SetInitialTitle" language="java" version="1.3">
+            <![CDATA[setCompositeInstanceTitle("Processing " + getVariableData("nReceived") + " messages");]]>
+        </bpelx:exec>
+        <scope name="SalesForceLogin">
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="Sequence_11">
+                        <assign name="IncrementFailedInRetry">
+                            <copy>
+                                <from expression="bpws:getVariableData('nFailures')+1"/>
+                                <to variable="nFailures"/>
+                            </copy>
+                        </assign>
+                        <assign name="AsgState-RETRYABLE-DoNotRelease">
+                            <copy>
+                                <from expression="'R'"/>
+                                <to variable="state"/>
+                            </copy>
+                            <copy>
+                                <from expression="'true'"/>
+                                <to variable="releaseSequence"/>
+                            </copy>
+                            <copy>
+                                <from expression="'INVALID_LOGIN Fault'"/>
+                                <to variable="logindetails"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="SeqSalesForceLogin">
+                <assign name="AsgCredentials">
+                    <copy>
+                        <from expression="ora:getPreference(&quot;loginId&quot;)"/>
+                        <to variable="InvSalesforceLogin_InputVariable" part="parameters" query="/ns5:login/ns5:username"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getPreference(&quot;password&quot;)"/>
+                        <to variable="InvSalesforceLogin_InputVariable" part="parameters" query="/ns5:login/ns5:password"/>
+                    </copy>
+                </assign>
+                <invoke name="InvSalesforceLogin" partnerLink="salesforce" portType="ns5:Soap" operation="login" inputVariable="InvSalesforceLogin_InputVariable" outputVariable="InvSalesforceLogin_OutputVariable"/>
+                <assign name="readSessionConfig">
+                    <copy>
+                        <from variable="InvSalesforceLogin_OutputVariable" part="parameters" query="/ns5:loginResponse/ns5:result/ns5:sessionId"/>
+                        <to variable="headerRequest" part="SessionHeader" query="/ns5:SessionHeader/ns5:sessionId"/>
+                    </copy>
+                    <copy>
+                        <from>
+                            <EndpointReference xmlns="http://schemas.xmlsoap.org/ws/2003/03/addressing">
+                                <Address/>
+                            </EndpointReference>
+                        </from>
+                        <to variable="partnerReference"/>
+                    </copy>
+                    <copy>
+                        <from expression="string(bpws:getVariableData('InvSalesforceLogin_OutputVariable','parameters','/ns5:loginResponse/ns5:result/ns5:serverUrl'))"/>
+                        <to variable="partnerReference" query="/ns6:EndpointReference/ns6:Address"/>
+                    </copy>
+                    <copy>
+                        <from variable="partnerReference"/>
+                        <to partnerLink="salesforce"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+        <while name="While_1" condition="bpws:getVariableData('nProcessed') &lt; bpws:getVariableData('nReceived')">
+            <sequence name="Sequence_1">
+                <assign name="AsgSFDCOPToLocalVariables">
+                    <copy>
+                        <from part="SfdcopPollingVCollection" query="/ns14:SfdcopPollingVCollection/ns14:SfdcopPollingV[bpws:getVariableData('nProcessed')+1]/ns14:payload" variable="InputVariable"/>
+                        <to variable="rawMessage"/>
+                    </copy>
+                    <copy>
+                        <from part="SfdcopPollingVCollection" query="/ns14:SfdcopPollingVCollection/ns14:SfdcopPollingV[bpws:getVariableData('nProcessed')+1]/ns14:id" variable="InputVariable"/>
+                        <to variable="id"/>
+                    </copy>
+                    <copy>
+                        <from part="SfdcopPollingVCollection" query="/ns14:SfdcopPollingVCollection/ns14:SfdcopPollingV[bpws:getVariableData('nProcessed')+1]/ns14:interfaceId" variable="InputVariable"/>
+                        <to variable="interfaceId"/>
+                    </copy>
+                    <copy>
+                        <from part="SfdcopPollingVCollection" query="/ns14:SfdcopPollingVCollection/ns14:SfdcopPollingV[bpws:getVariableData('nProcessed')+1]/ns14:referenceId" variable="InputVariable"/>
+                        <to variable="referenceId"/>
+                    </copy>
+                    <copy>
+                        <from part="SfdcopPollingVCollection" query="/ns14:SfdcopPollingVCollection/ns14:SfdcopPollingV[bpws:getVariableData('nProcessed')+1]/ns14:created" variable="InputVariable"/>
+                        <to variable="created"/>
+                    </copy>
+                </assign>
+                <bpelx:exec name="ReplaceUnsafeCharactersInRawMessage" language="java" version="1.3">
+                    <![CDATA[try {                            
+    setVariableData("parsedRawMessage", ((String)getVariableData("rawMessage")).replaceAll("&", "&amp;") );      
+    } catch (Exception e) {                         
+        setVariableData("javaException", e.getMessage() );                  
+    }]]>
+                </bpelx:exec>
+                <switch name="Switch_1">
+                    <case condition="bpws:getVariableData('javaException') != ''">
+                        <bpelx:annotation>
+                            <bpelx:pattern>Failed state</bpelx:pattern>
+                        </bpelx:annotation>
+                        <sequence name="Sequence_18">
+                            <empty name="TODOThrow"/>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <empty name="DoNothing"/>
+                    </otherwise>
+                </switch>
+                <assign name="AsgParsedOpportunity">
+                    <copy>
+                        <from expression="ora:parseEscapedXML(bpws:getVariableData('parsedRawMessage'))"/>
+                        <to variable="opportunityDetails"/>
+                    </copy>
+                    <copy>
+                        <from variable="logindetails"/>
+                        <to variable="test"/>
+                    </copy>
+                </assign>
+                <scope name="Scope_3">
+                    <switch name="Switch_3">
+                        <case condition=" bpws:getVariableData('logindetails')!='INVALID_LOGIN Fault'">
+                            <sequence name="Sequence_16">
+                                <scope name="ScpLookUpTRUSTOpptyANDAcctId">
+                                    <faultHandlers>
+                                        <catchAll>
+                                            <sequence name="Sequence_10">
+                                                <!--<bpelx:exec name="AsgCustomTitleOnInvalidSiebelAccount"
+                                            language="java" version="1.3">
+                                    <![CDATA[String siebelOppID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("opportunityDetails","/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID")).getFirstChild().getNodeValue();                  
+                                    String Title=("siebelOptyID: " +siebelOppID+"; SF-OP-XRef Flt");                    
+                                    setCompositeInstanceTitle(Title);]]>
+                                </bpelx:exec>-->
+                                                <assign name="IncrementFailed">
+                                                    <copy>
+                                                        <from expression="bpws:getVariableData('nErrors') + 1"/>
+                                                        <to variable="nErrors"/>
+                                                    </copy>
+                                                </assign>
+                                                <assign name="AsgState-ERROR-Release">
+                                                    <copy>
+                                                        <from expression="ora:getPreference(&quot;BusinessFaultStatus&quot;)"/>
+                                                        <to variable="state"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from expression="bpws:getVariableData('opportunityDetails','/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID')"/>
+                                                        <to variable="referenceId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from expression="'true'"/>
+                                                        <to variable="releaseSequence"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                                        <to variable="errorMsg"/>
+                                                    </copy>
+                                                </assign>
+                                            </sequence>
+                                        </catchAll>
+                                    </faultHandlers>
+                                    <sequence name="Sequence_12">
+                                        <assign name="AsgInitVariables">
+                                            <copy>
+                                                <from expression="bpws:getVariableData('opportunityDetails','/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID')"/>
+                                                <to variable="SiebelOpptyId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xref:lookupXRef(&quot;oramds:/apps/EAIMetaData/Xref/CRM_SFDC_OPPTYXREF.xref&quot;,&quot;SIEBELOPPTYID&quot;,bpws:getVariableData('SiebelOpptyId'),&quot;SFDCOPPTYID&quot;,false())"/>
+                                                <to variable="opportunityDetails" query="/ns3:opportunityEvent/ns3:opportunity/ns3:SFDCOptyID"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="opportunityDetails" query="/ns3:opportunityEvent/ns3:opportunity/ns3:siebelAccountID"/>
+                                                <to variable="SiebelAccountId"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="LookUpTRUSTAcctId">
+                                            <copy>
+                                                <from expression="xref:lookupXRef(&quot;oramds:/apps/EAIMetaData/Xref/CRM_SFDC_ACCTXREF.xref&quot;,&quot;SIEBELID&quot;,bpws:getVariableData('SiebelAccountId'),&quot;SFDCID&quot;,true())"/>
+                                                <to variable="opportunityDetails" query="/ns3:opportunityEvent/ns3:opportunity/ns3:SFDCAccountID"/>
+                                            </copy>
+                                        </assign>
+                                    </sequence>
+                                </scope>
+                                <scope name="Scope_1">
+                                    <switch name="Switch_2">
+                                        <case condition="bpws:getVariableData('referenceId')!=concat(bpws:getVariableData('opportunityDetails','/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID'),&quot; ;SF-OP-XRef Fault&quot;) ">
+                                            <sequence name="Sequence_13">
+                                                <assign name="TransUsingXrefData">
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <copy>
+                                                        <from expression="ora:processXSLT('TransUsingXrefData.xsl',bpws:getVariableData('opportunityDetails'))"/>
+                                                        <to variable="ExtendedOpportunityEvent"/>
+                                                    </copy>
+                                                </assign>
+                                                <scope name="Scope_2">
+                                                    <sequence name="Sequence_14">
+                                                        <scope name="CreateOpportunityProducts">
+                                                            <faultHandlers>
+                                                                <catchAll>
+                                                                    <sequence name="Sequence_9">
+                                                                        <assign name="IncrementFailedInRetry">
+                                                                            <copy>
+                                                                                <from expression=" bpws:getVariableData('nFailures') +1"/>
+                                                                                <to variable="nFailures"/>
+                                                                            </copy>
+                                                                        </assign>
+                                                                        <assign name="AsgState-RETRYABLE-DoNotRelease">
+                                                                            <copy>
+                                                                                <from expression="'R'"/>
+                                                                                <to variable="state"/>
+                                                                            </copy>
+                                                                            <copy>
+                                                                                <from expression="'true'"/>
+                                                                                <to variable="releaseSequence"/>
+                                                                            </copy>
+                                                                            <copy>
+                                                                                <from expression="bpws:getVariableData('opportunityDetails','/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID')"/>
+                                                                                <to variable="referenceId"/>
+                                                                            </copy>
+                                                                            <copy>
+                                                                                <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                                                                <to variable="errorMsg"/>
+                                                                            </copy>
+                                                                        </assign>
+                                                                    </sequence>
+                                                                </catchAll>
+                                                            </faultHandlers>
+                                                            <sequence name="SeqCreateOpportunityProducts">
+                                                                <assign name="TransExtededOpptyEventToCreateOpptyProducts">
+                                                                    <bpelx:annotation>
+                                                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                                                    </bpelx:annotation>
+                                                                    <copy>
+                                                                        <from expression="ora:processXSLT('TransExtededOpptyEventToCreateOpptyProducts.xsl',bpws:getVariableData('ExtendedOpportunityEvent'))"/>
+                                                                        <to variable="InvOpportunityManagement_IV" part="parameters"/>
+                                                                    </copy>
+                                                                </assign>
+                                                                <invoke name="InvOpportunityManagement" partnerLink="OpportunityManagement" portType="ns7:OpportunityManagementPortType" operation="publishOpportunity" inputVariable="InvOpportunityManagement_IV" outputVariable="InvOpportunityManagement_OV" bpelx:inputHeaderVariable="headerRequest"/>
+                                                            </sequence>
+                                                        </scope>
+                                                        <switch name="FilterForSFDCID">
+                                                            <case condition="bpws:getVariableData('InvOpportunityManagement_OV','parameters','/ns7:publishOpportunityResponse/ns7:result/ns7:StatusCode')='Error'">
+                                                                <bpelx:annotation>
+                                                                    <bpelx:pattern>Error from SFDC</bpelx:pattern>
+                                                                </bpelx:annotation>
+                                                                <sequence name="Sequence_2">
+                                                                    <bpelx:exec name="AsgCustomTitleOnTrustError" language="java" version="1.3">
+                                                                        <![CDATA[String siebelOppID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("opportunityDetails","/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID")).getFirstChild().getNodeValue(); 
+ 
+String Title=("siebelOptyID: " +siebelOppID+ ";SF-OP-Flt");                       
+setCompositeInstanceTitle(Title);]]>
+                                                                    </bpelx:exec>
+                                                                    <assign name="AsgState-WARNING-Release">
+                                                                        <copy>
+                                                                            <from expression="ora:getPreference(&quot;BusinessFaultStatus&quot;)"/>
+                                                                            <to variable="state"/>
+                                                                        </copy>
+                                                                        <copy>
+                                                                            <from expression="bpws:getVariableData('opportunityDetails','/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID')"/>
+                                                                            <to variable="referenceId"/>
+                                                                        </copy>
+                                                                        <copy>
+                                                                            <from variable="InvOpportunityManagement_OV" part="parameters" query="/ns7:publishOpportunityResponse/ns7:result/ns7:StatusDescription"/>
+                                                                            <to variable="opportunityDetails" query="/ns3:opportunityEvent/ns3:eaiHeader/ns4:messageHistory"/>
+                                                                        </copy>
+                                                                        <copy>
+                                                                            <from expression="ora:getContentAsString(bpws:getVariableData('opportunityDetails'))"/>
+                                                                            <to variable="rawMessage"/>
+                                                                        </copy>
+                                                                    </assign>
+                                                                </sequence>
+                                                            </case>
+                                                            <otherwise>
+                                                                <switch name="FilterOnPopulateXref">
+                                                                    <case condition="string-length(bpws:getVariableData('opportunityDetails','/ns3:opportunityEvent/ns3:opportunity/ns3:SFDCOptyID')) >0">
+                                                                        <bpelx:annotation>
+                                                                            <bpelx:pattern>No SFDC ID sent from Siebel</bpelx:pattern>
+                                                                        </bpelx:annotation>
+                                                                        <sequence name="Sequence_6">
+                                                                            <empty name="DoNothing"/>
+                                                                            <assign name="AsgState-COMPLETE-Release">
+                                                                                <copy>
+                                                                                    <from expression="'C'"/>
+                                                                                    <to variable="state"/>
+                                                                                </copy>
+                                                                            </assign>
+                                                                        </sequence>
+                                                                    </case>
+                                                                    <otherwise>
+                                                                        <sequence name="Sequence_17">
+                                                                            <scope name="ScpPopulateXrefData">
+                                                                                <faultHandlers>
+                                                                                    <catchAll>
+                                                                                        <sequence name="Sequence_8">
+                                                                                            <bpelx:exec name="AsgCustomTitleOnInvalidResponse" language="java" version="1.3">
+                                                                                                <![CDATA[String siebelOppID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("opportunityDetails","/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID")).getFirstChild().getNodeValue();                  
+              
+String Title=("siebelOptyID: " +siebelOppID+"; Flt");                        
+setCompositeInstanceTitle(Title);]]>
+                                                                                            </bpelx:exec>
+                                                                                            <assign name="IncrementFailed">
+                                                                                                <copy>
+                                                                                                    <from expression="bpws:getVariableData('nErrors') + 1"/>
+                                                                                                    <to variable="nErrors"/>
+                                                                                                </copy>
+                                                                                            </assign>
+                                                                                            <assign name="AsgState-ERROR-Release">
+                                                                                                <copy>
+                                                                                                    <from expression="ora:getPreference(&quot;BusinessFaultStatus&quot;)"/>
+                                                                                                    <to variable="state"/>
+                                                                                                </copy>
+                                                                                                <copy>
+                                                                                                    <from expression="'true'"/>
+                                                                                                    <to variable="releaseSequence"/>
+                                                                                                </copy>
+                                                                                                <copy>
+                                                                                                    <from expression="bpws:getVariableData('opportunityDetails','/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID')"/>
+                                                                                                    <to variable="referenceId"/>
+                                                                                                </copy>
+                                                                                                <copy>
+                                                                                                    <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                                                                                    <to variable="errorMsg"/>
+                                                                                                </copy>
+                                                                                            </assign>
+                                                                                        </sequence>
+                                                                                    </catchAll>
+                                                                                </faultHandlers>
+                                                                                <sequence name="SeqDatatoXRefAndReleaseSequence">
+                                                                                    <assign name="TransdataToxref">
+                                                                                        <bpelx:annotation>
+                                                                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                                                                        </bpelx:annotation>
+                                                                                        <bpelx:annotation>
+                                                                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                                                                        </bpelx:annotation>
+                                                                                        <copy>
+                                                                                            <from expression="ora:processXSLT('TransdataToxref.xsl',bpws:getVariableData('InvOpportunityManagement_OV','parameters'))"/>
+                                                                                            <to variable="InvOpportunityManagement_OV" part="parameters"/>
+                                                                                        </copy>
+                                                                                    </assign>
+                                                                                    <!--<bpelx:exec name="AppendSFDCIdForNewOppties"
+                                                    language="java"
+                                                    version="1.3">
+                                            <![CDATA[String siebelOppID  = ((oracle.xml.parser.v2.XMLElement) getVariableData("opportunityDetails","/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID")).getFirstChild().getNodeValue();              
+          
+  
+String SFDCOppId = ((oracle.xml.parser.v2.XMLElement) getVariableData("InvOpportunityManagement_OV","parameters","/ns7:publishOpportunityResponse/ns7:result/ns7:SFDCId")).getFirstChild().getNodeValue();    
+						 
+String Title=("siebelOptyID: "+siebelOppID+";SFId "+SFDCOppId);       
+setCompositeInstanceTitle(Title);]]>
+                                        </bpelx:exec>-->
+                                                                                    <assign name="AsgnTRSUTOpptyIDToSiebel">
+                                                                                        <copy>
+                                                                                            <from expression="&quot;UpdateSFDCOpptyID&quot;"/>
+                                                                                            <to variable="InvCCRMOP_SubmitOpportunityIV" part="OpportunityStatus" query="/ns2:RCRMOpportunityPublish/ns2:ActionCode"/>
+                                                                                        </copy>
+                                                                                        <copy>
+                                                                                            <from variable="InvOpportunityManagement_OV" part="parameters" query="/ns7:publishOpportunityResponse/ns7:result/ns7:SFDCId"/>
+                                                                                            <to variable="InvCCRMOP_SubmitOpportunityIV" part="OpportunityStatus" query="/ns2:RCRMOpportunityPublish/ns2:Opportunity/ns2:RCRMSFDCOpptyId"/>
+                                                                                        </copy>
+                                                                                        <copy>
+                                                                                            <from variable="InvOpportunityManagement_OV" part="parameters" query="/ns7:publishOpportunityResponse/ns7:result/ns7:SFDCOpptyNumber"/>
+                                                                                            <to variable="InvCCRMOP_SubmitOpportunityIV" part="OpportunityStatus" query="/ns2:RCRMOpportunityPublish/ns2:Opportunity/ns2:OptyNumber"/>
+                                                                                        </copy>
+                                                                                        <copy>
+                                                                                            <from variable="InvOpportunityManagement_OV" part="parameters" query="/ns7:publishOpportunityResponse/ns7:result/ns7:SiebelId"/>
+                                                                                            <to variable="InvCCRMOP_SubmitOpportunityIV" part="OpportunityStatus" query="/ns2:RCRMOpportunityPublish/ns2:Opportunity/ns2:Id"/>
+                                                                                        </copy>
+                                                                                    </assign>
+                                                                                    <invoke name="InvCCRMOP_SubmitOpportunity" partnerLink="CCRMOP_SubmitOpportunity" portType="ns1:CCRMOP_SubmitOpportunity" operation="sendOpportunity" inputVariable="InvCCRMOP_SubmitOpportunityIV"/>
+                                                                                    <assign name="AsgState-COMPLETE-Release">
+                                                                                        <copy>
+                                                                                            <from expression="'C'"/>
+                                                                                            <to variable="state"/>
+                                                                                        </copy>
+                                                                                    </assign>
+                                                                                </sequence>
+                                                                            </scope>
+                                                                        </sequence>
+                                                                    </otherwise>
+                                                                </switch>
+                                                            </otherwise>
+                                                        </switch>
+                                                    </sequence>
+                                                </scope>
+                                            </sequence>
+                                        </case>
+                                        <otherwise>
+                                            <empty name="DoNothing"/>
+                                        </otherwise>
+                                    </switch>
+                                </scope>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <assign name="LoginFailedDetails">
+                                <copy>
+                                    <from expression="bpws:getVariableData('opportunityDetails','/ns3:opportunityEvent/ns3:opportunity/ns3:siebelOptyID')"/>
+                                    <to variable="referenceId"/>
+                                </copy>
+                            </assign>
+                        </otherwise>
+                    </switch>
+                </scope>
+                <assign name="TransOpportunityDetailsToSequenceRelease">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransOpportunityDetailsToSequenceRelease.xsl',bpws:getVariableData('opportunityDetails'))"/>
+                        <to variable="InvReleaseSequenceIV" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvReleaseSequence" partnerLink="SequenceReleaser" portType="ns8:SequenceReleaser" operation="releaseSequence" inputVariable="InvReleaseSequenceIV"/>
+                <sequence name="Sequence_4">
+                    <assign name="TransBlankUpdateMessage">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransBlankUpdateMessage.xsl',bpws:getVariableData('InvInsertINTERFACE_BUFFERIV','InterfaceBuffer1Collection'))"/>
+                            <to variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection"/>
+                        </copy>
+                    </assign>
+                    <assign name="AsgInsertedValues">
+                        <copy>
+                            <from variable="id"/>
+                            <to variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection" query="/ns10:InterfaceBuffer1Collection/ns10:InterfaceBuffer1/ns10:id"/>
+                        </copy>
+                        <copy>
+                            <from variable="created"/>
+                            <to variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection" query="/ns10:InterfaceBuffer1Collection/ns10:InterfaceBuffer1/ns10:created"/>
+                        </copy>
+                        <copy>
+                            <from variable="rawMessage"/>
+                            <to variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection" query="/ns10:InterfaceBuffer1Collection/ns10:InterfaceBuffer1/ns10:payload"/>
+                        </copy>
+                        <copy>
+                            <from variable="interfaceId"/>
+                            <to variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection" query="/ns10:InterfaceBuffer1Collection/ns10:InterfaceBuffer1/ns10:interfaceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="referenceId"/>
+                            <to variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection" query="/ns10:InterfaceBuffer1Collection/ns10:InterfaceBuffer1/ns10:referenceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="state"/>
+                            <to variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection" query="/ns10:InterfaceBuffer1Collection/ns10:InterfaceBuffer1/ns10:state"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCompositeInstanceId()"/>
+                            <to variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection" query="/ns10:InterfaceBuffer1Collection/ns10:InterfaceBuffer1/ns10:updatedBy"/>
+                        </copy>
+                        <bpelx:remove>
+                            <bpelx:target variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection" query="/ns10:InterfaceBuffer1Collection/ns10:InterfaceBuffer1/ns10:lastUpdated"/>
+                        </bpelx:remove>
+                        <copy>
+                            <from variable="errorMsg"/>
+                            <to variable="InvInsertINTERFACE_BUFFERIV" part="InterfaceBuffer1Collection" query="/ns10:InterfaceBuffer1Collection/ns10:InterfaceBuffer1/ns10:errorMessage"/>
+                        </copy>
+                    </assign>
+                    <invoke name="updateINTERFACE_BUFFER" inputVariable="InvInsertINTERFACE_BUFFERIV" partnerLink="UpdateINTERFACE_BUFFER" portType="ns9:UpdateINTERFACE_BUFFER_ptt" operation="update"/>
+                </sequence>
+                <assign name="IncrementProcessed">
+                    <copy>
+                        <from expression="bpws:getVariableData('nProcessed') + 1 "/>
+                        <to variable="nProcessed"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <bpelx:exec name="SetCompletedTitle" language="java" version="1.3">
+            <![CDATA[setCompositeInstanceTitle("Completed R:P:E:F=" + getVariableData("nReceived") + ":" + getVariableData("nProcessed") + ":" + getVariableData("nErrors") + ":" + getVariableData("nFailures"));]]>
+        </bpelx:exec>
+        <switch name="SwitchOnOutcome">
+            <case condition="bpws:getVariableData('nProcessed')=bpws:getVariableData('nFailures')">
+                <bpelx:annotation>
+                    <bpelx:pattern>All Failed</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_5">
+                    <assign name="AsgHealthCheckParams">
+                        <copy>
+                            <from expression="'doHealthCheck'"/>
+                            <to variable="RequestHealthCheckIV" part="payload" query="/ns11:InterfaceManagerProcessRequest/ns11:operation"/>
+                        </copy>
+                        <copy>
+                            <from expression="'SFDCOP'"/>
+                            <to variable="RequestHealthCheckIV" part="payload" query="/ns11:InterfaceManagerProcessRequest/ns11:interfaceConfig/ns12:id"/>
+                        </copy>
+                    </assign>
+                    <invoke name="RequestHealthCheck" partnerLink="InterfaceManager" portType="ns11:InterfaceManager" operation="process" inputVariable="RequestHealthCheckIV" outputVariable="RequestHealthCheckOV"/>
+                    <terminate name="Terminate"/>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

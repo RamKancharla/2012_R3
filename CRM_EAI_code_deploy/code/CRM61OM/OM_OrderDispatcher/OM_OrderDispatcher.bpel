@@ -1,0 +1,1094 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+* Module:      OM_OrderDispatcher.bpel 
+* Type:        BPEL FILE 
+* Description: Asynchronous BPEL Process to filter the order lines and pass it to down stream components
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  0.1         18/09/07     Geratayya P             Initial Version 
+*  0.2         28/09/07     Geratayya P             Added DVM Lookup to get the reference data and Fault sensors.Changed the data (as CRM Order Number) to be stored in sensor data appropriately.
+*  0.3         19/10/07     Sunil V                 Modified switch condition to handle Billing maintenance as part of PBI-126 
+*  0.4         29/10/07     Suryanarayana G         Modified to receive the UserStatus and routes the order accordingly.  
+*  0.5         02/01/08     Satish Patel            Modified the Custom Title and Sensors 
+*  0.6         25/01/08     Satish Patel            Modified switch condition to handle Abort orders as part of PBI-294
+*  0.7         28/01/08     Suryanarayana G         Added Decision Service to decide next action
+*  0.8         28/01/08     Sunil Vuppala           Added Code for AmendAKR and SubAccountSwap
+*  0.9         11/02/08     Suryanarayana G         Sending "User Created" status to FulfilmentStatus to be sent instead of Order Line Status.  
+*  1.0         19/02/08     Hemamalini T            Added RootItemId to the payload sent to Siebel after successful user creation
+*  1.1         23/02/08     Suryanarayana G         Modified the rules according to new state model and included 2 actions.
+*  1.3         10/03/08     Suryanarayana G         Removed while loop and added transforms inside the decide activity
+*  1.4         31/03/08     Satish Patel            Modified the firstname lastname mapping to truncate them to 20 and 30 chars as  fix for defect 12956
+*  1.5         07/04/08     Surya Gannavarapu       Modified the Decision Service to include Configured attributes
+*  1.6         16/07/08     Hemamalini.T.S          Added another flow for Special Price Changeand added Action code OM40 in DVM          
+                                                    Setting spaces for startStopBillingDate and AKR fields to identify that request is for Special price change in transformation.    
+*  1.7         09/09/08     Rob Billington          Removed the transform that upserted the order details to order cache because this is now done in CCRMOM_OrderRequestValidator           
+*  1.8         18/02/10     Sreeja                  Mapped oldContactUserId to field2 in TransExtendedOrderRequestToRuleFacts.xsl for PBI-381.
+*  1.9         15/03/10     Surya G		    Modified the xslt TransOrderRequesttoExtendedOrderRequest.xsl to map the subscriber elements correctly
+*  2.0 	       17/03/10     Sreeja Prasad	    Re-created the Amend AKR flow as a fix for the defect QC#35673
+*  2.1         18/03/10     Surya G                 Added the InstallTo and BillTo flow for PBI-421
+*  2.2         30/03/10     Sreeja                  Re-created the flow for SubAccount.
+*  2.3	       10/04/10     Surya G		    Added SAP flows to CDM code
+*  2.4         12/05/10     Damodar                 Removed Duplicate parellel flows for SAP. 
+*  2.5         30/03/10     Surya                  Recreated flows for SpecialPriceChange,AmendPermission Date and AKR Change
+*  2.6         12/04/10     Sreeja                  Fixed the defect for Athena mixed orders where Field3 is mapped to actionCode in TransFilterAthenaCreateOrderLines.xsl.
+*  2.7         16/04/10     Swathi                   Recreated flows for  TransFilterSubAccountReq,TransFilterAthenaCreateOrderLineReqTransFilterCPfGFulfilmentReq 
+*  2.8         20/04/10     Swathi                   Remove the code for permBillFlag code and did the one to one mapping.
+*  2.9         04/05/10     Swathi                   Added new flow as per PBI-500
+*  3.0         04/05/10     Surya		    Added switch case for AthenaCreateUser and AthenaManualCreate flows before calling CSOM_OrderSplitter
+*  3.1         05/05/10     Surya		    Final code where all flows are working after PBI-500
+*  3.2         05/06/10     Satish Patel            Modified the transformations as part of PBI-537 changes 
+*  3.3         01/07/10     Mallesh                 Modified the transformations as part of CR119 changes  
+*  3.4         22/07/10	    Sreeja		    Modified the xsl's TransOrderRequestToExtendedOrderRequest.xsl & TransExtendedOrderRequestToRuleFacts.xsl and schema's for CR - 5862(SEA auto perm).
+*  3.5         24/09/10	    Swathi		    Modified the xsl TransFilterInstallToBillToForFTConversion,created new xsl's and changed the .bpel file for installTOBillTo Flow as part of CR 9634
+*  3.6         29/09/10	    Swathi		    Modified the .bpel file as a part of defect 50195
+*  3.7	       11/10/10	    Swathi		    Set the billing status to be billing for RTB flow as part of defect #50320 in the TransFilterRTBLines.xsl file
+*  3.8	       12/01/11	    Divya		    Added the TransDistinctNextActions.xsl and DistinctNextAction.xsd and modified the code as part of CR12420(OM Order Dispatcher Optimization)
+*  3.9	       21/01/11	    Divya		    Modified the TransDistinctNextActions.xsl and DistinctNextAction.xsd as part of CR12420(OM Order Dispatcher Optimization)
+*  3.10	       08/04/11	    Tanmay		    Modified for CR-15630
+*  4.0	       02/05/11	    Tanmay		    Removed rule invoke activity.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="OM_OrderDispatcher" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns16="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRM" xmlns:ns5="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/DeriveNextAction" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" xmlns:ns17="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns15="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OrderRequest" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OM/Exception" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns20="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager" xmlns:ns13="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://xmlns.oracle.com/bpel" xmlns:ns23="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter" xmlns:ns18="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM" xmlns:l="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRMCM_PropagateOrderStatus" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/DeriveNextAction" xmlns:ns22="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns19="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM" xmlns:ns14="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns21="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest" xmlns:ns8="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/correlationset" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToOrderDispatcher" partnerLinkType="client:OM_OrderDispatcher" myRole="OM_OrderDispatcherProvider" partnerRole="OM_OrderDispatcherRequester"/>
+        <partnerLink myRole="CCRMOM_ProxyPropagateOrderStatusRequester" name="CCRMOM_ProxyPropagateOrderStatus" partnerRole="CCRMOM_ProxyPropagateOrderStatusProvider" partnerLinkType="ns18:CCRMOM_ProxyPropagateOrderStatus"/>
+        <partnerLink myRole="CSOM_OrderSplitterRequester" name="CSOM_OrderSplitter" partnerRole="CSOM_OrderSplitterProvider" partnerLinkType="ns13:CSOM_OrderSplitter"/>
+        <partnerLink myRole="SAPOM_EventManagerRequester" name="SAPOM_EventManager" partnerRole="SAPOM_EventManagerProvider" partnerLinkType="ns20:SAPOM_EventManager"/>
+        <partnerLink myRole="ATHOM_OrderSplitterRequester" name="ATHOM_OrderSplitter" partnerRole="ATHOM_OrderSplitterProvider" partnerLinkType="ns19:ATHOM_OrderSplitter"/>
+        <partnerLink myRole="CPFGOM_OrderSplitterRequester"
+                     name="CPFGOM_OrderSplitter"
+                     partnerRole="CPFGOM_OrderSplitterProvider"
+                     partnerLinkType="ns23:CPFGOM_OrderSplitter"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <!--<variable name="UserFulfilmentIV"
+                  messageType="ns5:CSOM_UserFulfilmentRequestMessage"/>-->
+        <!--BAU R3 Merge on25-May-2010 -->
+        <!--BAU R3 Merge on 25-May-2010 END-->
+        <variable name="orderRequest" messageType="client:OM_OrderDispatcherRequestMessage"/>
+        <variable name="successResponseCode" type="xsd:string"/>
+        <variable name="createActionCode" type="xsd:string"/>
+        <variable name="billingActionCode" type="xsd:string"/>
+        <variable name="unknownError" type="xsd:string"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="BillingMaintenanceActionCode" type="xsd:string"/>
+        <variable name="index" type="xsd:nonNegativeInteger"/>
+        <variable name="ExtendedOrderRequest" messageType="client:ExtendedOrderRequestMessageType"/>
+        <variable name="isGoodToGo" type="xsd:string"/>
+        <variable name="noOfOrderLines" type="xsd:nonNegativeInteger"/>
+        <variable name="InvCSOM_OrderSplitter_splitOrder_InputVariable" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+        <variable name="InvAthenaManualOrderLinesIV" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+        <variable name="InvAthenaModifyRequestIV" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+        <variable name="varDistNextActionElement" element="ns1:distinctNextActions"/>
+        <variable name="StartTimeStamp" type="xsd:dateTime"/>
+        <variable name="EndTimeStamp" type="xsd:dateTime"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.3">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+   
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java"
+                        version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+ 
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+  
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:conflictingReceive" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnConflictingRecieve" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+       
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:DecideNextActionRemoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnDecideNextActionFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                   
+        
+                                
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");   
+   
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+  
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+            <assign name="AsgUnknownError">
+                <copy>
+                    <from variable="unknownError"/>
+                    <to variable="runtimeFault" part="code"/>
+                </copy>
+            </assign>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in OM_OrderDispatcher.wsdl) -->
+        <receive name="rcvOrderRequest" partnerLink="anchorToOrderDispatcher" portType="client:OM_OrderDispatcher" operation="dispatchOrder" variable="ExtendedOrderRequest" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitialVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','CRMOrderCreateActionCode','Value', 'Create')"/>
+                <to variable="createActionCode"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','CRMBillingReleaseActionCode','Value', 'Billing')"/>
+                <to variable="billingActionCode"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="successResponseCode"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','CRMBillingMaintenanceActionCode','Value', 'AmendBillDate')"/>
+                <to variable="BillingMaintenanceActionCode"/>
+            </copy>
+            <copy>
+                <from expression="'Unknown Error'"/>
+                <to variable="unknownError"/>
+            </copy>
+            <copy>
+                <from expression="1"/>
+                <to variable="index"/>
+            </copy>
+            <copy>
+                <from expression="'0'"/>
+                <to variable="isGoodToGo"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                
+                        getVariableData("ExtendedOrderRequest", "extendedOrderRequest", "/ns1:extendedOrderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                   
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");      
+ setCompositeInstanceTitle(title);]]>
+        </bpelx:exec>
+        <!--assign name="TransOrderRequestToExtendedOrderRequest">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransOrderRequestToExtendedOrderRequest.xsl',bpws:getVariableData('orderRequest','orderRequest'))"/>
+                <to variable="ExtendedOrderRequest"
+                    part="extendedOrderRequest"/>
+            </copy>
+        </assign-->
+        <!--assign name="TransExtendedOrderRequestToRuleFacts">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransExtendedOrderRequestToRuleFacts.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                <to variable="RuleFacts" part="facts"/>
+            </copy>
+        </assign>
+        <scope name="DecideNextStatus">
+            <bpelx:annotation>
+                <bpelx:pattern patternName="bpelx:decide"></bpelx:pattern>
+            </bpelx:annotation>
+            <variables>
+                <variable name="com_reuters_ns__2007__01__25_gcap_eai_ordermanagement_OrderLineRepository_i"
+                          element="ns1:orderLineRepository"/>
+                <variable name="com_reuters_ns__2007__01__25_gcap_eai_ordermanagement_OrderLineRepository_o"
+                          element="ns1:orderLineRepository"/>
+                <variable name="dsIn"
+                          messageType="ns5:assertExecuteWatchStatelessMessage"/>
+                <variable name="dsOut"
+                          messageType="ns5:assertExecuteWatchStatelessDecisionMessage"/>
+            </variables>
+            <sequence name="SeqDecideNextAction">
+                <assign name="TransBPELVarToFacts">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransBPELVarToFacts.xsl',bpws:getVariableData('RuleFacts','facts'))"/>
+                        <to variable="com_reuters_ns__2007__01__25_gcap_eai_ordermanagement_OrderLineRepository_i"/>
+                    </copy>
+                </assign>
+                <assign name="TransFactsToRuleService">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransFactsToRuleService.xsl',bpws:getVariableData('com_reuters_ns__2007__01__25_gcap_eai_ordermanagement_OrderLineRepository_i'))"/>
+                        <to variable="dsIn" part="payload"/>
+                    </copy>
+                </assign>
+                <assign name="BPEL_Header">
+                    <copy>
+                        <from expression="'DeriveNextAction'"/>
+                        <to variable="dsIn" part="payload"
+                            query="/ns5:assertExecuteWatchStateless/@name"/>
+                    </copy>
+                    <copy>
+                        <from expression="concat(ora:getProcessURL(), '/decisionservices.decs')"/>
+                        <to variable="dsIn" part="payload"
+                            query="/ns5:assertExecuteWatchStateless/ns5:configURL"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getProcessId()"/>
+                        <to variable="dsIn" part="payload"
+                            query="/ns5:assertExecuteWatchStateless/ns5:bpelInstance/ns12:processId"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getProcessVersion()"/>
+                        <to variable="dsIn" part="payload"
+                            query="/ns5:assertExecuteWatchStateless/ns5:bpelInstance/ns12:processVersion"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getDomainId()"/>
+                        <to variable="dsIn" part="payload"
+                            query="/ns5:assertExecuteWatchStateless/ns5:bpelInstance/ns12:domainId"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getProcessURL()"/>
+                        <to variable="dsIn" part="payload"
+                            query="/ns5:assertExecuteWatchStateless/ns5:bpelInstance/ns12:processURL"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getInstanceId()"/>
+                        <to variable="dsIn" part="payload"
+                            query="/ns5:assertExecuteWatchStateless/ns5:bpelInstance/ns12:instanceId"/>
+                    </copy>
+                </assign>
+                <invoke name="Invoke" partnerLink="DeriveNextActionPL"
+                        portType="ns5:IDecisionService"
+                        operation="assertExecuteWatchStateless"
+                        inputVariable="dsIn" outputVariable="dsOut"/>
+                <assign name="TransRuleServiceToFacts">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransRuleServiceToFacts.xsl',bpws:getVariableData('dsOut','payload'))"/>
+                        <to variable="com_reuters_ns__2007__01__25_gcap_eai_ordermanagement_OrderLineRepository_o"/>
+                    </copy>
+                </assign>
+                <assign name="TransFactsToBPELVar">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransFactsToBPELVar.xsl',bpws:getVariableData('com_reuters_ns__2007__01__25_gcap_eai_ordermanagement_OrderLineRepository_o'))"/>
+                        <to variable="RuleFacts" part="facts"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+        <assign name="TransRuleFactsToExtendedOrderRequest">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransRuleFactsToExtendedOrderRequest.xsl',bpws:getVariableData('RuleFacts','facts'))"/>
+                <to variable="ExtendedOrderRequest"
+                    part="extendedOrderRequest"/>
+            </copy>
+        </assign>
+        <assign name="AsgHeaderToExtendedOrderRequest">
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:eaiHeader/ns2:applicationId"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:applicationId"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:eaiHeader/ns2:transactionId"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:transactionId"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:eaiHeader/ns2:messageId"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:messageId"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:eaiHeader/ns2:messageHistory"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:messageHistory"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:eaiHeader/ns2:tracingId"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:tracingId"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:eaiHeader/ns2:timeToLive"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:timeToLive"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:payloadVersion"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCurrentDateTime()"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:timeStamp"/>
+            </copy>
+            <copy>
+                <from expression="ora:getInstanceId()"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:instanceId"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:logicalCountry"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:logicalCountry"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:messageHeader/ns1:version"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:messageHeader/ns1:version"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:messageHeader/ns1:userId"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:messageHeader/ns1:userId"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:CRMOrderNumber"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:installDate"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:installDate"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:removalDate"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:removalDate"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:orderNote"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:orderNote"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:orderStatus"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:orderStatus"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:po"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:po"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:ssPersonId"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:ssPersonId"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:slPersonId"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:slPersonId"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:RCRMSAPConCountry"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:RCRMSAPConCountry"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest"
+                      query="/ns1:orderRequest/ns1:orderHeader/ns1:pricelistCurrency"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"
+                    query="/ns1:extendedOrderRequest/ns1:orderHeader/ns1:pricelistCurrency"/>
+            </copy>
+        </assign-->
+        <assign name="AsgStartTimeStamp">
+            <copy>
+                <from expression="ora:getCurrentDateTime(&quot;yyyy-MM-dd-HH-mm-ss-SSS&quot;)"/>
+                <to variable="StartTimeStamp"/>
+            </copy>
+        </assign>
+        <assign name="TransformDistinctNextActions">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransDistinctNextActions.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                <to variable="varDistNextActionElement"/>
+            </copy>
+        </assign>
+        <assign name="AsgEndTimeStamp">
+            <copy>
+                <from expression="ora:getCurrentDateTime(&quot;yyyy-MM-dd-HH-mm-ss-SSS&quot;)"/>
+                <to variable="EndTimeStamp"/>
+            </copy>
+        </assign>
+        <scope name="ScpOrderFulfilment">
+            <variables>
+                <variable name="dispatchOrderRequestToAmendBillDatebeforeRTB" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestForAbort" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestForAmendPermissionDate" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestForFTConversion" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestForSubAccountSwap" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestForAmendAKR" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestForAmendBillDate" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequest" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestForRTBLines" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="ProxyPropagateOrderStatusIV" messageType="ns18:CCRMOM_ProxyPropagateOrderStatusRequestMessage"/>
+                <variable name="dispatchOrderRequestForAthenaOrder" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchAmendAKRRequest" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestBillToInstallTo" messageType="client:ExtendedOrderRequestMessageType"/>
+                <variable name="dispatchOrderRequestInstallToOLI" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestforBillTo" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestForSubAccount" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchInstallToBillToOrderRequestForFTConversionLines" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestForSpecialPriceChange" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderReqAthenaManual" messageType="client:ExtendedOrderRequestMessageType"/>
+                <variable name="dispatchOrderReqBillNInstall" messageType="client:ExtendedOrderRequestMessageType"/>
+                <variable name="dispatchSAPAmendBillingNote" messageType="ns20:SAPOM_EventManagerRequestMessage"/>
+                <variable name="dispatchSAPAmendBillAcc" messageType="ns20:SAPOM_EventManagerRequestMessage"/>
+                <variable name="dispatchSAPAmendBillDate" messageType="ns20:SAPOM_EventManagerRequestMessage"/>
+                <variable name="dispatchSAPFTConversionLines" messageType="ns20:SAPOM_EventManagerRequestMessage"/>
+                <variable name="dispatchSAPUserSwp" messageType="ns20:SAPOM_EventManagerRequestMessage"/>
+                <variable name="dispatchSAPSpecialPriceChange" messageType="ns20:SAPOM_EventManagerRequestMessage"/>
+                <variable name="dispatchSAPOrderRequest" messageType="ns20:SAPOM_EventManagerRequestMessage"/>
+                <variable name="dispatchSAPAmendAKRLines" messageType="ns20:SAPOM_EventManagerRequestMessage"/>
+                <variable name="ExtendedAmendBillDateOrderRequest" messageType="client:ExtendedOrderRequestMessageType"/>
+                <variable name="dispatchOrderRequestCreateOrder" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchOrderRequestToSEA" messageType="ns19:ATHOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchNonFTConvLines" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="dispatchFTLines" messageType="ns13:CSOM_OrderSplitterRequestMessage"/>
+                <variable name="CPFGOM_OrderSplitterIV" messageType="ns23:CPFGOM_OrderSplitterRequestMessage"/>
+            </variables>
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrRemoteFault" faultName="bpelx:remoteFault" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <flow name="OrderFulfilment">
+                <sequence name="SeqSEAOrderLines">
+                    <switch name="CheckFilteredSEAOLIs">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction4')),'Create Athena Perm Order')">
+                            <sequence name="Seq_ATHOM_OrderSplitter">
+                                <assign name="TransFilterSEAOrder">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterSEAOrder.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchOrderRequestToSEA" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvATHOM_OrderSplitter" partnerLink="ATHOM_OrderSplitter" portType="ns19:ATHOM_OrderSplitter" operation="splitOrder" inputVariable="dispatchOrderRequestToSEA"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="seqFilterSAPAmendAKRLines">
+                    <switch name="CheckFilterSAPAmendAKRLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'SAP AKR Amend') or  contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'SAP User Swap') or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'SAP Special Price') or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'SAP FT Conversion') or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'SAP Bill Date Change') or  contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'SAP Billing Account Change') or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'SAP Billing Note Change')">
+                            <sequence name="Seq_SAPLines">
+                                <assign name="TransFilterSAPLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterSAPLines.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchSAPAmendAKRLines" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="invSAPLines" partnerLink="SAPOM_EventManager" portType="ns20:SAPOM_EventManager" operation="initiate" inputVariable="dispatchSAPAmendAKRLines"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="SAPLinesLEmpty"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="seqFilterSAPCreateOrderLines">
+                    <switch name="CheckFilterSAPCreateOrderLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'SAP Release Billing')or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'Create SAP Abort Order')">
+                            <sequence name="Seq_SAPCreateOrderLines">
+                                <assign name="TransFilterSAPCreateOrderLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterSAPCreateOrderLines.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchSAPOrderRequest" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="invSAPCreateOrderLines" partnerLink="SAPOM_EventManager" portType="ns20:SAPOM_EventManager" operation="initiate" inputVariable="dispatchSAPOrderRequest"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="SAPCreateEmpty"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqFilterSpecialPriceChange">
+                    <switch name="CheckSPCLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Special Price Change')">
+                            <sequence name="Seq_OrderSplitterForSPCLines">
+                                <assign name="TransFilterSpecialPriceChangeLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterSpecialPriceChange.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchOrderRequestForSpecialPriceChange" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvOrderSplitterForSPCLines" partnerLink="CSOM_OrderSplitter" portType="ns13:CSOM_OrderSplitter" operation="splitOrder" inputVariable="dispatchOrderRequestForSpecialPriceChange"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoSPCLines"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqInstallToBillToOrders">
+                    <switch name="CheckInstallToOrBillToOrderLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Create Order')or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Create Install Order')or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction3')),'Create Bill Order')">
+                            <sequence name="SeqInstallToOLIAndBillToOLI">
+                                <assign name="TransFillterInstallToNBillTo">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFillterInstallToNBillTo.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchOrderRequestBillToInstallTo" part="extendedOrderRequest"/>
+                                    </copy>
+                                </assign>
+                                <flow name="CreateInstallToAndBillToOLIs">
+                                    <sequence name="CreateOrderOLIs">
+                                        <assign name="TransCreateOrderLines">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransFilterCreateOrderLines.xsl',bpws:getVariableData('dispatchOrderRequestBillToInstallTo','extendedOrderRequest'))"/>
+                                                <to variable="dispatchOrderRequestCreateOrder" part="orderRequest"/>
+                                            </copy>
+                                        </assign>
+                                    </sequence>
+                                    <sequence name="CreateBillToOLIs">
+                                        <assign name="TransBillToOLI">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransBillToOLI.xsl',bpws:getVariableData('dispatchOrderRequestBillToInstallTo','extendedOrderRequest'))"/>
+                                                <to variable="dispatchOrderRequestforBillTo" part="orderRequest"/>
+                                            </copy>
+                                        </assign>
+                                    </sequence>
+                                    <sequence name="CreateInstallToOLIs">
+                                        <assign name="TransInstallToOLI">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransInstallToOLI.xsl',bpws:getVariableData('dispatchOrderRequestBillToInstallTo','extendedOrderRequest'))"/>
+                                                <to variable="dispatchOrderRequestInstallToOLI" part="orderRequest"/>
+                                            </copy>
+                                        </assign>
+                                    </sequence>
+                                </flow>
+                                <switch name="Switch_3">
+                                    <case condition="count(bpws:getVariableData('dispatchOrderRequestInstallToOLI','orderRequest','/ns15:CSOrderRequest/ns15:orderLineItem'))>0">
+                                        <sequence name="SeqInstallTo">
+                                            <assign name="AppendBillOrderToInstallOrder">
+                                                <bpelx:append>
+                                                    <bpelx:from variable="dispatchOrderRequestforBillTo" part="orderRequest" query="/ns15:CSOrderRequest/ns15:orderLineItem"/>
+                                                    <bpelx:to variable="dispatchOrderRequestInstallToOLI" part="orderRequest" query="/ns15:CSOrderRequest"/>
+                                                </bpelx:append>
+                                                <bpelx:append>
+                                                    <bpelx:from variable="dispatchOrderRequestCreateOrder" part="orderRequest" query="/ns15:CSOrderRequest/ns15:orderLineItem"/>
+                                                    <bpelx:to variable="dispatchOrderRequestInstallToOLI" part="orderRequest" query="/ns15:CSOrderRequest"/>
+                                                </bpelx:append>
+                                            </assign>
+                                            <assign name="TransMergedOLItoOrderRequest">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransMergedOLItoOrderRequest.xsl',bpws:getVariableData('dispatchOrderRequestInstallToOLI','orderRequest'))"/>
+                                                    <to variable="dispatchOrderRequest" part="orderRequest"/>
+                                                </copy>
+                                            </assign>
+                                        </sequence>
+                                    </case>
+                                    <otherwise>
+                                        <sequence name="SeqBillTo">
+                                            <assign name="AppendInstallOrderToBillTolOrder">
+                                                <bpelx:append>
+                                                    <bpelx:from variable="dispatchOrderRequestInstallToOLI" part="orderRequest" query="/ns15:CSOrderRequest/ns15:orderLineItem"/>
+                                                    <bpelx:to variable="dispatchOrderRequestforBillTo" part="orderRequest" query="/ns15:CSOrderRequest"/>
+                                                </bpelx:append>
+                                                <bpelx:append>
+                                                    <bpelx:from variable="dispatchOrderRequestCreateOrder" part="orderRequest" query="/ns15:CSOrderRequest/ns15:orderLineItem"/>
+                                                    <bpelx:to variable="dispatchOrderRequestforBillTo" part="orderRequest" query="/ns15:CSOrderRequest"/>
+                                                </bpelx:append>
+                                            </assign>
+                                            <assign name="TransMergedOLItoOrderSplitter">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransMergedOLItoOrderSplitter.xsl',bpws:getVariableData('dispatchOrderRequestforBillTo','orderRequest'))"/>
+                                                    <to variable="dispatchOrderRequest" part="orderRequest"/>
+                                                </copy>
+                                            </assign>
+                                        </sequence>
+                                    </otherwise>
+                                </switch>
+                                <assign name="TransFilterInstallToBillToForFTConversion">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterInstallToBillToForFTConversion.xsl',bpws:getVariableData('dispatchOrderRequest','orderRequest'))"/>
+                                        <to variable="dispatchInstallToBillToOrderRequestForFTConversionLines" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <flow name="FlowForFTNNonFTLines">
+                                    <sequence name="SeqNonFTFilterLines">
+                                        <assign name="TransOrderRequestForNonFTConversionInstallToBillTo">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransOrderRequestForNonFTInstallToBillTo.xsl',bpws:getVariableData('dispatchInstallToBillToOrderRequestForFTConversionLines','orderRequest'))"/>
+                                                <to variable="dispatchNonFTConvLines" part="orderRequest"/>
+                                            </copy>
+                                        </assign>
+                                    </sequence>
+                                    <sequence name="SeqFTFilterLines">
+                                        <assign name="TransFTConversion">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TranFTConversion.xsl',bpws:getVariableData('dispatchInstallToBillToOrderRequestForFTConversionLines','orderRequest'))"/>
+                                                <to variable="dispatchFTLines" part="orderRequest"/>
+                                            </copy>
+                                        </assign>
+                                        <assign name="TransSortInstallToBillToForFTConversion">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransSortInstallToBillToForFTLines.xsl',bpws:getVariableData('dispatchFTLines','orderRequest'))"/>
+                                                <to variable="dispatchFTLines" part="orderRequest"/>
+                                            </copy>
+                                        </assign>
+                                    </sequence>
+                                </flow>
+                                <switch name="SwitchFTNonFTLines">
+                                    <case condition="count(bpws:getVariableData('dispatchFTLines','orderRequest','/ns15:CSOrderRequest/ns15:orderLineItem'))>0">
+                                        <sequence name="SeqFTOrderLines">
+                                            <assign name="AsgAppendNonFTLines">
+                                                <bpelx:append>
+                                                    <bpelx:from variable="dispatchNonFTConvLines" part="orderRequest" query="/ns15:CSOrderRequest/ns15:orderLineItem"/>
+                                                    <bpelx:to variable="dispatchFTLines" part="orderRequest" query="/ns15:CSOrderRequest"/>
+                                                </bpelx:append>
+                                            </assign>
+                                            <assign name="TransMergeNonFTLines">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransMergeNonFTOrderLines.xsl',bpws:getVariableData('dispatchFTLines','orderRequest'))"/>
+                                                    <to variable="dispatchOrderRequest" part="orderRequest"/>
+                                                </copy>
+                                            </assign>
+                                        </sequence>
+                                    </case>
+                                    <otherwise>
+                                        <sequence name="SeqNonFTOrderLines">
+                                            <assign name="AsgAppendFTLines">
+                                                <bpelx:append>
+                                                    <bpelx:from variable="dispatchFTLines" part="orderRequest" query="/ns15:CSOrderRequest/ns15:orderLineItem"/>
+                                                    <bpelx:to variable="dispatchNonFTConvLines" part="orderRequest" query="/ns15:CSOrderRequest"/>
+                                                </bpelx:append>
+                                            </assign>
+                                            <assign name="TransMergeFTToNnFTLine">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransMergeFTToNnFTLines.xsl',bpws:getVariableData('dispatchNonFTConvLines','orderRequest'))"/>
+                                                    <to variable="dispatchNonFTConvLines" part="orderRequest"/>
+                                                </copy>
+                                            </assign>
+                                        </sequence>
+                                    </otherwise>
+                                </switch>
+                                <invoke name="InvCSOMOrderSplitterForInstallToOrBillToOLI" partnerLink="CSOM_OrderSplitter" portType="ns13:CSOM_OrderSplitter" operation="splitOrder" inputVariable="dispatchOrderRequest"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoInstallToOrBillToOLIs"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="Sequence_FilterAthenaManualandModify">
+                    <switch name="CheckAthenaLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Create Athena User')or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Create Athena Order') or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Athena Manual Permission')or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')) ,'Athena Create AKR')">
+                            <sequence name="Seq_CreateAthenaManualandModifyAction">
+                                <assign name="TransFilterAthenaManualandModify">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterAthenaManualandModify.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchOrderReqAthenaManual" part="extendedOrderRequest"/>
+                                    </copy>
+                                </assign>
+                                <flow name="CreateAthenaManualAndModifyAction">
+                                    <sequence name="Sequence_2">
+                                        <assign name="TransAthenaModifyLines">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransAthenaModifyLines.xsl',bpws:getVariableData('dispatchOrderReqAthenaManual','extendedOrderRequest'))"/>
+                                                <to variable="InvAthenaModifyRequestIV" part="orderRequest"/>
+                                            </copy>
+                                        </assign>
+                                        <switch name="CheckAthenaCreateOrderLines">
+                                            <case condition="count(bpws:getVariableData('InvAthenaModifyRequestIV','orderRequest','/ns15:CSOrderRequest/ns15:orderLineItem'))>0">
+                                                <invoke name="InvAthenaModifyRequest" partnerLink="CSOM_OrderSplitter" portType="ns13:CSOM_OrderSplitter" operation="splitOrder" inputVariable="InvAthenaModifyRequestIV"/>
+                                            </case>
+                                            <otherwise>
+                                                <empty name="NoAthenaCreateLines"/>
+                                            </otherwise>
+                                        </switch>
+                                    </sequence>
+                                    <sequence name="Sequence_2">
+                                        <assign name="TransAthenaManualCreateOrders">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransAthenaManualCreateOrders.xsl',bpws:getVariableData('dispatchOrderReqAthenaManual','extendedOrderRequest'))"/>
+                                                <to variable="InvAthenaManualOrderLinesIV" part="orderRequest"/>
+                                            </copy>
+                                        </assign>
+                                        <switch name="Switch_8">
+                                            <case condition="count(bpws:getVariableData('InvAthenaManualOrderLinesIV','orderRequest','/ns15:CSOrderRequest/ns15:orderLineItem'))>0">
+                                                <invoke name="InvAthenaManualOrderLines" partnerLink="CSOM_OrderSplitter" portType="ns13:CSOM_OrderSplitter" operation="splitOrder" inputVariable="InvAthenaManualOrderLinesIV"/>
+                                            </case>
+                                            <otherwise>
+                                                <empty name="NoAthenaManualPermLines"/>
+                                            </otherwise>
+                                        </switch>
+                                    </sequence>
+                                </flow>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoAthenaManualAndModifyOrderLines"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqFilterSubAccount">
+                    <switch name="Switch_4">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Amend Billing Account')">
+                            <sequence name="Seq_CSOM_OrderSplitter">
+                                <assign name="TransFilterSubAccountReq">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterSubAccountReq.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="InvCSOM_OrderSplitter_splitOrder_InputVariable" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvCSOM_OrderSplitter" partnerLink="CSOM_OrderSplitter" portType="ns13:CSOM_OrderSplitter" operation="splitOrder" inputVariable="InvCSOM_OrderSplitter_splitOrder_InputVariable"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoSubAccountSwap"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqCPFGEF_ElectronicFulfilmentRequestManager">
+                    <switch name="CheckFilteredCPfGFulfilmentRequests">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'CPfG Fulfilment') or contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction4')),'CPfG Fulfilment')">
+                            <sequence name="Seq_CPFGOM_OrderSplitter">
+                                <assign name="TransFilterCPfGFulfilmentReq">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterCPfGFulfilmentReq.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="CPFGOM_OrderSplitterIV" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvCPFGOM_OrderSplitter" portType="ns23:CPFGOM_OrderSplitter" inputVariable="CPFGOM_OrderSplitterIV"
+                                        partnerLink="CPFGOM_OrderSplitter"
+                                        operation="initiate"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoCPfGLines"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="AmendAKRFlow">
+                    <switch name="CheckNumberOfAKRAmendLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Amend AKR')">
+                            <sequence name="Seq_AmendAKRforOrderSplitter">
+                                <assign name="TransAmendAKRLinestoOrderSplitter">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterAmendAKR.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchOrderRequestForAmendAKR" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvAmendAKRforOrderSplitter" partnerLink="CSOM_OrderSplitter" portType="ns13:CSOM_OrderSplitter" operation="splitOrder" inputVariable="dispatchOrderRequestForAmendAKR"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoAmendAKRLines"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqAmendPermissionDateLines">
+                    <switch name="CheckAmendPermissionDateLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Amend Permission Date')">
+                            <sequence name="Seq_AmendPermissionDateRequest">
+                                <assign name="TransFilterAmendPermissionDateLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterAmendPermissionDates.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchOrderRequestForAmendPermissionDate" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvAmendPermissionDateRequest" partnerLink="CSOM_OrderSplitter" portType="ns13:CSOM_OrderSplitter" operation="splitOrder" inputVariable="dispatchOrderRequestForAmendPermissionDate"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoAmendPermisionDateLines"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqFilterSpecialPriceChange">
+                    <switch name="CheckSPCLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Special Price Change')">
+                            <sequence name="Seq_OrderSplitterForSPCLines">
+                                <assign name="TransFilterSpecialPriceChangeLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterSpecialPriceChange.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchOrderRequestForSpecialPriceChange" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvOrderSplitterForSPCLines" partnerLink="CSOM_OrderSplitter" portType="ns13:CSOM_OrderSplitter" operation="splitOrder" inputVariable="dispatchOrderRequestForSpecialPriceChange"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoSPCLines"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqFTConversion">
+                    <switch name="CheckNoOfFTConversionLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'FT Conversion')">
+                            <sequence name="SeqSortFTConversion">
+                                <assign name="TransFilterFTConversionLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterFTConversionLines.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to part="orderRequest" variable="dispatchOrderRequestForFTConversion"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransSortFTConversionLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransSortFTConversionLines.xsl',bpws:getVariableData('dispatchOrderRequestForFTConversion','orderRequest'))"/>
+                                        <to part="orderRequest" variable="dispatchOrderRequestForFTConversion"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvXRefServiceForFTConversion" portType="ns13:CSOM_OrderSplitter" partnerLink="CSOM_OrderSplitter" operation="splitOrder" inputVariable="dispatchOrderRequestForFTConversion"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoFTConversionLines"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqFilterAmendBillDateOrderLines">
+                    <switch name="CheckFilteredAmendBillDateOrderLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'Amend Bill Date')">
+                            <sequence name="Seq_ApplyXRefOnOrderRequestForAmendBillDate">
+                                <assign name="TransFilterAmendBillDateOrderLines.xsl">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterAmendBillDateOrderLines.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="ExtendedAmendBillDateOrderRequest" part="extendedOrderRequest"/>
+                                    </copy>
+                                </assign>
+                                <assign name="TransAmendBillDateOrderLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransAmendBillDateOrderLines.xsl',bpws:getVariableData('ExtendedAmendBillDateOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchOrderRequestToAmendBillDatebeforeRTB" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvApplyXRefOnOrderRequestForAmendBillDate" portType="ns13:CSOM_OrderSplitter" partnerLink="CSOM_OrderSplitter" operation="splitOrder" inputVariable="dispatchOrderRequestToAmendBillDatebeforeRTB"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoLinesForAmendBillDate"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqFilterReplyToSiebelLines">
+                    <switch name="CheckReplyToSiebelLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction2')),'Reply to Siebel')">
+                            <sequence name="Seq_ReplyToSiebel">
+                                <assign name="TransFilterReplyToSiebelLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterReplyToSiebelLines.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="ProxyPropagateOrderStatusIV" part="orderStatus"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvReplyToSiebel" partnerLink="CCRMOM_ProxyPropagateOrderStatus" portType="ns18:CCRMOM_ProxyPropagateOrderStatus" operation="initiate" inputVariable="ProxyPropagateOrderStatusIV"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqFilterRTBLines">
+                    <switch name="CheckFilteredRTBLines">
+                        <case condition="contains(ora:getContentAsString(bpws:getVariableData('varDistNextActionElement','/ns1:distinctNextActions/ns1:nextAction/ns1:nextAction1')),'RTB')">
+                            <sequence name="Seq_ApplyXRefOnOrderRequestForRTB">
+                                <assign name="TransFilterRTBLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterRTBLines.xsl',bpws:getVariableData('ExtendedOrderRequest','extendedOrderRequest'))"/>
+                                        <to variable="dispatchOrderRequestForRTBLines" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvApplyXRefOnOrderRequestForRTB" portType="ns13:CSOM_OrderSplitter" partnerLink="CSOM_OrderSplitter" operation="splitOrder" inputVariable="dispatchOrderRequestForRTBLines"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NoRTBLines"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </flow>
+        </scope>
+    </sequence>
+</process>

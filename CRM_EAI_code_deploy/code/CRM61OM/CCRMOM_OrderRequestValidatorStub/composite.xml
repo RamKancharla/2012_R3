@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOM_OrderRequestValidatorStub" revision="1.0" state="on">
+    <import location="CCRMOM_OrderRequestValidatorStub.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM"/>
+    <service name="client" ui:wsdlLocation="CCRMOM_OrderRequestValidatorStub.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_OrderRequestValidatorStub)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.endpoint(CCRMOM_OrderRequestValidatorStub/CCRMOM_OrderRequestValidatorStub)"/>
+    </service>
+    <component name="CCRMOM_OrderRequestValidatorStub">
+        <implementation.bpel src="CCRMOM_OrderRequestValidatorStub.bpel"/>
+        <property name="bpel.config.inMemoryOptimization">true</property>
+        <property name="bpel.config.completionPersistPolicy">off</property>
+    </component>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMOM_OrderRequestValidatorStub/client</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

@@ -1,0 +1,255 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Mar 15 19:14:29 GMT+05:30 2010
+  Author:  SP56467
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="SAPOM_TransformOrderStatusProcess" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus/correlationset" xmlns:ns1="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OM/OrderManagement" xmlns:ns2="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="SAPOM_TransformOrderStatus" partnerLinkType="client:SAPOM_TransformOrderStatus" myRole="SAPOM_TransformOrderStatusProvider" partnerRole="SAPOM_TransformOrderStatusRequester"/>
+        <partnerLink name="OM_ManageOrderLineStatus" partnerLinkType="ns10:OM_ManageOrderLineStatus" myRole="OM_ManageOrderLineStatusRequester" partnerRole="OM_ManageOrderLineStatusProvider"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <!--  <variable name="InvPropOrderStatusIV"
+                  messageType="ns5:CCRMOM_ProxyPropagateOrderStatusRequestMessage"/>-->
+        <variable name="TransformOrderStatusIV" messageType="client:SAPOM_TransformOrderStatusRequestMessage"/>
+        <variable name="outputVariable" messageType="client:SAPOM_TransformOrderStatusResponseMessage"/>
+        <variable name="Success_Response" type="xsd:string"/>
+        <variable name="SchemaToValidator" type="xsd:string"/>
+        <variable name="sensorMessage" type="xsd:string"/>
+        <variable name="errorMessage" type="xsd:string"/>
+        <variable name="CRMOrderNumber" type="xsd:string"/>
+        <variable name="UniqueId" type="xsd:string"/>
+        <variable name="FirstOrderLineStatus" type="xsd:string"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvMngOrdLineStatusIV" messageType="ns10:OM_ManageOrderLineStatusRequestMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="SequencerCorrelationSet" properties="ns9:PropSequencerCorrelationSet"/>
+    </correlationSets>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <faultHandlers>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForBindingFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                
+          
+String firstOrderLineStatus = (String)getVariableData("FirstOrderLineStatus");          
+firstOrderLineStatus = (firstOrderLineStatus!=null ? ("ST: "+firstOrderLineStatus) : ".;");          
+String Title = orderNumber+";"+firstOrderLineStatus+";Fault";          
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForRemoteFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                
+          
+String firstOrderLineStatus = (String)getVariableData("FirstOrderLineStatus");          
+firstOrderLineStatus = (firstOrderLineStatus!=null ? ("ST: "+firstOrderLineStatus) : ".;");          
+String Title = orderNumber+";"+firstOrderLineStatus+";Fault";          
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForSelectionFailure" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                 
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                 
+           
+String firstOrderLineStatus = (String)getVariableData("FirstOrderLineStatus");           
+firstOrderLineStatus = (firstOrderLineStatus!=null ? ("ST: "+firstOrderLineStatus) : ".;");           
+String Title = orderNumber+";"+firstOrderLineStatus+";Fault";           
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:invalidVariables" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForInvalidVariables" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                
+          
+String firstOrderLineStatus = (String)getVariableData("FirstOrderLineStatus");          
+firstOrderLineStatus = (firstOrderLineStatus!=null ? ("ST: "+firstOrderLineStatus) : ".;");          
+String Title = orderNumber+";"+firstOrderLineStatus+";Fault";          
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+            <assign name="AsgSchemaValidationFault">
+                <copy>
+                    <from variable="runTimeFault" part="summary"/>
+                    <to variable="errorMessage"/>
+                </copy>
+            </assign>
+        </catch>
+        <catch faultName="ns8:SequenceCheckerError" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForSequenceCheckerError" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                  
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                  
+            
+String firstOrderLineStatus = (String)getVariableData("FirstOrderLineStatus");            
+firstOrderLineStatus = (firstOrderLineStatus!=null ? ("ST: "+firstOrderLineStatus) : ".;");            
+String Title = orderNumber+";"+firstOrderLineStatus+";Fault";            
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:conflictingReceive" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForConflictingRecieve" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                  
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                  
+            
+String firstOrderLineStatus = (String)getVariableData("FirstOrderLineStatus");            
+firstOrderLineStatus = (firstOrderLineStatus!=null ? ("ST: "+firstOrderLineStatus) : ".;");            
+String Title = orderNumber+";"+firstOrderLineStatus+";Fault";            
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleForGenericFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                
+          
+String firstOrderLineStatus = (String)getVariableData("FirstOrderLineStatus");          
+firstOrderLineStatus = (firstOrderLineStatus!=null ? ("ST: "+firstOrderLineStatus) : ".;");          
+String Title = orderNumber+";"+firstOrderLineStatus+";Fault";          
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+            <assign name="AsgGenericFault">
+                <copy>
+                    <from expression="'Unknown Error'"/>
+                    <to variable="errorMessage"/>
+                </copy>
+            </assign>
+        </catchAll>
+    </faultHandlers>
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SAPOM_TransformOrderStatus.wsdl) -->
+        <receive name="receiveInput" partnerLink="SAPOM_TransformOrderStatus" portType="client:SAPOM_TransformOrderStatus" operation="processStatus" variable="TransformOrderStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="Success_Response"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','CSOrderStatusSchemaforXMLValidation','Value','EAI.MSG.CS.OM.126_OrderStatus.xsd')"/>
+                <to variable="SchemaToValidator"/>
+            </copy>
+            <copy>
+                <from variable="TransformOrderStatusIV" part="payload" query="/ns3:orderStatus/ns3:orderLineItem[1]/ns3:ORDER_NO"/>
+                <to variable="CRMOrderNumber"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="UniqueId"/>
+            </copy>
+            <copy>
+                <from variable="TransformOrderStatusIV" part="payload" query="/ns3:orderStatus/ns3:orderLineItem[1]/ns3:STAT_CODE"/>
+                <to variable="FirstOrderLineStatus"/>
+            </copy>
+            <copy>
+                <from variable="TransformOrderStatusIV" part="payload" query="/ns3:orderStatus/ns3:orderLineItem[1]/ns3:MESSAGE"/>
+                <to variable="errorMessage"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderNumber = (String)getVariableData("CRMOrderNumber");                   
+orderNumber=(orderNumber!=null ? (orderNumber) : ".;");                   
+             
+String firstOrderLineStatus = (String)getVariableData("FirstOrderLineStatus");             
+//firstOrderLineStatus = (firstOrderLineStatus!=null ? ("ST: "+firstOrderLineStatus) : ".;");             
+//String Title = orderNumber+";"+firstOrderLineStatus;             
+//setCompositeInstanceTitle(Title);  
+setCompositeInstanceTitle(orderNumber);]]>
+        </bpelx:exec>
+        <scope name="OMOrderLineStatus">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                    <throw name="ThrMngOrdLineStatusRemoteFault" faultName="bpelx:remoteFault" faultVariable="runTimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="Sequence_1">
+                <assign name="TransMngOrdLineStatus">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransMngOrdLineStatus.xsl',bpws:getVariableData('TransformOrderStatusIV','payload'))"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload"/>
+                    </copy>
+                </assign>
+                <assign name="AsgMngOrdLineStatus">
+                    <copy>
+                        <from expression="'EAI'"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload" query="/ns11:orderStatus/ns11:eaiHeader/ns4:applicationId"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getCompositeInstanceId()"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload" query="/ns11:orderStatus/ns11:eaiHeader/ns4:transactionId"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getCompositeInstanceId()"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload" query="/ns11:orderStatus/ns11:eaiHeader/ns4:messageId"/>
+                    </copy>
+                    <copy>
+                        <from expression="'EAI;'"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload" query="/ns11:orderStatus/ns11:eaiHeader/ns4:messageHistory"/>
+                    </copy>
+                    <copy>
+                        <from variable="UniqueId"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload" query="/ns11:orderStatus/ns11:eaiHeader/ns4:tracingId"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getCurrentDateTime()"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload" query="/ns11:orderStatus/ns11:eaiHeader/ns4:timeStamp"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getCompositeInstanceId()"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload" query="/ns11:orderStatus/ns11:eaiHeader/ns4:instanceId"/>
+                    </copy>
+                    <copy>
+                        <from expression="1"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload" query="/ns11:orderStatus/ns11:eaiHeader/ns4:timeToLive"/>
+                    </copy>
+                    <copy>
+                        <from expression="'V'"/>
+                        <to variable="InvMngOrdLineStatusIV" part="payload" query="/ns11:orderStatus/ns11:eaiHeader/ns4:payloadVersion"/>
+                    </copy>
+                </assign>
+                <invoke name="InvMngOrdLineStatus" partnerLink="OM_ManageOrderLineStatus" portType="ns10:OM_ManageOrderLineStatus" operation="manageOrderLineStatus" inputVariable="InvMngOrdLineStatusIV"/>
+            </sequence>
+        </scope>
+        <!--       <invoke name="callbackClient" partnerLink="SAPOM_TransformOrderStatus"
+                portType="client:SAPOM_TransformOrderStatusCallback"
+                operation="onResult" inputVariable="outputVariable"/>-->
+    </sequence>
+</process>

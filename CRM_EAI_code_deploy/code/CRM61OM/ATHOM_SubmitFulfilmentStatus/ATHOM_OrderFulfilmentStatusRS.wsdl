@@ -1,0 +1,30 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<definitions
+     name="OrderFulfilmentStatusRS"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/OM/ATHOM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/OM/ATHOM"
+     xmlns:out1="http://xml.netbeans.org/schema/BillingNotifyMessage"
+     xmlns:inp1="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+    >
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://sea.thomsonone.com/SEA/Service/2010-07-19" schemaLocation="EAI.MSG.ATH.UOM.306_OrderFulfilmentResponse.xsd" />
+      </schema>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://xml.netbeans.org/schema/BillingNotifyMessage" schemaLocation="EAI.MSG.ATH.UOM.274_UserOrderRequest.xsd" />
+      </schema>
+    </types>
+    <message name="UserProvisionResponse_request">
+        <part name="UserProvisionResponse" element="inp1:UserProvisionResponse"/>
+    </message>
+    <message name="billingInfoResponse_reply">
+        <part name="billingInfoResponse" element="out1:billingInfoResponse"/>
+    </message>
+    <portType name="orderFulfilmentStatus_ppt">
+        <operation name="orderFulfilmentStatus">
+            <input message="tns:UserProvisionResponse_request"/>
+            <output message="tns:billingInfoResponse_reply"/>
+        </operation>
+    </portType>
+</definitions>

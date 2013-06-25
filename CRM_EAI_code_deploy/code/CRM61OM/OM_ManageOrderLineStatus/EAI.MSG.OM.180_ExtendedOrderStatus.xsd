@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.OM.180_ExtendedOrderStatus.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:  	Order Status Schema with cached order details along with next action
+*
+*
+* Change History
+* Version		Date				Author									Description Of Change
+* =======	========	==================		===============================
+*  0.01			23/11/07		G PATCHIPULUSU				Initial Version
+*  0.02			26/11/07		G PATCHIPULUSU				Added order line action code and country
+*  0.03			26/11/07		G PATCHIPULUSU				Added status to be sent and order line action code
+*  0.04			21/01/08		S Vuppala								Added orderPermissionStatus and orderPermissionStatusToBeSent for PBI 190
+*  0.05			25/01/08		S Gannavarapu						Added Billing Integration Flag and Permissioning Integration Flag.  
+*  0.06			20/02/08		S Gannavarapu						Added permissioningSystem,maualPermissioningRequired,manualPermissioningComplete and autoPermissioningComplete,nextAction1,nextAction2 and removed nextAction
+*  0.07			12/03/08		S Gannavarapu				Added Business Case field to ExtCanonicalResponseOLI
+*  0.08                 18/08/08		Sreeja					Added SID in ExtCanonicalResponseOLI
+*  0.09			20/08/08		Surya Gannavarapu			Modified type of SID to String and added userIdType field.
+*  0.10			14/10/08		Surya Gannavarapu			Added Billing Platform and 3 buffer fields for the defect 19646.
+*  0.11                 11/02/10		Sreeja Prasad				Added PermBillFlag in ExtCanonicalResponseOLI for PBI -421.
+*  0.12			20/07/10		Venkatakrishna A			Added SAPOrderNumber and SAPItemNumber as part of B2CC
+*  0.13			06/10/10		Ramanjana			        Added serverID as part of CR 5862
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.10">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="orderStatus" type="xsdLocal:OrderStatus"/>
+	<xsd:complexType name="OrderStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="messageHeader" type="xsdLocal:CanonicalMessageHeader"/>
+			<xsd:element name="logicalCountry" type="xsd:string"/>
+			<xsd:element name="orderHeader" type="xsdLocal:CanonicalResponseOrderHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:ExtCanonicalResponseOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExtCanonicalResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+			<xsd:element name="businessCase" type="xsd:string"/>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="rootItemId" type="xsd:string"/>
+			<xsd:element name="itemNumber" type="xsd:string"/>
+                       
+                        <xsd:element name="SAPItemNumber" type="xsd:string"/>
+                        <xsd:element name="SAPOrderNumber" type="xsd:string"/>
+			
+                        <xsd:element name="ILA" type="xsd:string"/>
+			<xsd:element name="userNumber" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+			<xsd:element name="userIdType" type="xsd:string"/>
+			<xsd:element name="QUID" type="xsd:string"/>
+			<xsd:element name="orderLinestatus" type="xsd:string"/>
+			<xsd:element name="orderPermissionStatus" type="xsd:string"/>
+			<xsd:element name="requestStatus" type="xsd:string"/>
+			<xsd:element name="assetIntegrationId" type="xsd:string"/>
+			<xsd:element name="billingIntegrationFlag" type="xsd:string"/>
+			<xsd:element name="permissioningIntegrationFlag" type="xsd:string"/>
+			<xsd:element name="permissioningSystem" type="xsd:string"/>
+			<xsd:element name="manualPermissioningRequired" type="xsd:string"/>
+			<xsd:element name="STB" type="xsd:string"/>
+			<xsd:element name="freeTrailFlag" type="xsd:string"/>
+			<xsd:element name="manualPermissioningComplete" type="xsd:string"/>
+			<xsd:element name="autoPermissioningComplete" type="xsd:string"/>
+			<xsd:element name="nextAction1" type="xsd:string"/>
+			<xsd:element name="nextAction2" type="xsd:string"/>
+			<xsd:element name="billingStatusToBeSent" type="xsd:string"/>
+			<xsd:element name="orderPermissionStatusToBeSent" type="xsd:string"/>
+			<xsd:element name="SID" type="xsd:string"/>
+			<xsd:element name="billingPlatform" type="xsd:string"/>
+			<xsd:element name="field1" type="xsd:string"/>
+			<xsd:element name="field2" type="xsd:string"/>
+			<xsd:element name="field3" type="xsd:string"/>
+                        <xsd:element name="permBillFlag" type="xsd:string"/>
+                        <xsd:element name="serverId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalResponseOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="response" type="xsd:string"/>
+			<xsd:element name="requestStatus" type="xsd:string"/>
+			<xsd:element name="CRMOrderNumber" type="xsd:string"/>
+			<xsd:element name="orderNumber" type="xsd:string"/>
+			<xsd:element name="entrepriseCode" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

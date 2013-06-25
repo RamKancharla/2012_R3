@@ -1,0 +1,95 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Nov 06 22:02:36 GMT 2008
+  Author:  rob.billington
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFGPRD_FTPtoCPFG" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_FTPtoCPFG" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/ftp/CPfG/" xmlns:ns4="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/file/WriteToFile/" xmlns:ns5="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_FTPtoCPFG" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns11="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/ftp/BinaryFTP/" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/ftp/CPfG_FTPServer/" xmlns:ns3="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ProductManagementServices" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/ftp/SendToCPfG/" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/ftp/OpaqueFTP/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CPFGPRD_FTPtoCPFG" myRole="CPFGPRD_FTPtoCPFGProvider"/>
+        <partnerLink name="CPfG" partnerRole="Put_role" partnerLinkType="ns13:Put_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:CPFGPRD_FTPtoCPFGRequestMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvFTP_Put_InputVariable" messageType="ns13:productReferenceDataUpdate_msg"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CPFGPRD_FTPtoCPFG.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:CPFGPRD_FTPtoCPFG" operation="initiate" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <scope name="FTPScope">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <bpelx:exec name="AsgRemoteFaultTitle" language="java" version="1.3">
+                        <![CDATA[setCompositeInstanceTitle( getTitle() + ";Remote Fault");]]>
+                    </bpelx:exec>
+                </catch>
+                <catchAll>
+                    <bpelx:exec name="AsgFaultTitle" language="java" version="1.3">
+                        <![CDATA[setCompositeInstanceTitle( getTitle() + ";Fault");]]>
+                    </bpelx:exec>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="Sequence_1">
+                <bpelx:exec name="SetCustomTitle" language="java" version="1.3">
+                    <![CDATA[String title = "null"; 
+ 
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns2:productReferenceDataUpdate/productDefinitionUpdate/productID")).getFirstChild()) { 
+    title = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns2:productReferenceDataUpdate/productDefinitionUpdate/productID")).getFirstChild().getNodeValue(); 
+} 
+ 
+setCompositeInstanceTitle(title);]]>
+                </bpelx:exec>
+               <!-- <assign name="AsgInputToFTPoutput">
+                    <copy>
+                        <from variable="inputVariable" part="payload" query="/ns2:productReferenceDataUpdate"/>
+                        <to variable="InvFTP_Put_InputVariable" part="productReferenceDataUpdate" query="/ns2:productReferenceDataUpdate"/>
+                    </copy>
+                </assign> -->
+                <assign name="Transform1">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:doXSLTransformForDoc('xsl/InputVarProductToFTP.xsl', $inputVariable.payload)"/>
+                        <to variable="InvFTP_Put_InputVariable"
+                            part="productReferenceDataUpdate"/>
+                    </copy>
+                </assign>
+                <invoke name="InvFTP" partnerLink="CPfG" portType="ns13:Put_ptt" operation="Put" inputVariable="InvFTP_Put_InputVariable"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

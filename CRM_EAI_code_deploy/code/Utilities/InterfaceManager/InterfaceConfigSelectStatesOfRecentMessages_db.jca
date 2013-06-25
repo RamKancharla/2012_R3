@@ -1,0 +1,21 @@
+<adapter-config name="InterfaceConfigSelectStatesOfRecentMessages" adapter="Database Adapter" wsdlLocation="InterfaceConfigSelectStatesOfRecentMessages.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/OM" UIConnectionName="eaidev2_SOA_EAIOWNER" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.internal.databaseaccess.Oracle9Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//eaidev2:1521/EAIDEV2"/>
+      <property name="UserName" value="SOA_EAIOWNER"/>
+      <property name="Password" value="E8D26CEB17C942CF78415AE2B31C2AA9"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="InterfaceConfigSelectStatesOfRecentMessages_ptt" operation="InterfaceConfigSelectStatesOfRecentMessages">
+    <interaction-spec className="oracle.tip.adapter.db.DBPureSQLInteractionSpec">
+      <property name="SqlString" value="SELECT state, count(*) FROM (SELECT state FROM SOA_EAIOWNER.INTERFACE_BUFFER WHERE INTERFACE_ID = #interface1 AND LAST_UPDATED > SYSDATE - 1/24 AND STATE IN ('R','C','W','E','A') ORDER BY LAST_UPDATED DESC) WHERE ROWNUM &lt;=  (SELECT SHUTOFF_THRESHOLD_MESSAGES FROM INTERFACE_CONFIG WHERE ID=#interface2) GROUP BY state"/>
+    </interaction-spec>
+    <input/>
+    <output/>
+  </endpoint-interaction>
+
+</adapter-config>

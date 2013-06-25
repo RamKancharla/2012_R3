@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CSZ.PopulateActivityRS" wsdlTargetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CSZ/PopulateActivity" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="assignSolutionToSR">
+      <switch>
+         <case name="Case_1_CSZ.PopulateActivityRS.assignSolutionToSR" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TransActivityReqToEAIActivityRequest.xsl,$in.CSZPopulateSolutionRequest)" name="$out.EAICSZPopulateSolution"/>
+               </transform>
+               <assign/>
+               <invoke reference="CSZ.PopulateSoultionSOAPAdp" operation="assignSolutionToSR"/>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

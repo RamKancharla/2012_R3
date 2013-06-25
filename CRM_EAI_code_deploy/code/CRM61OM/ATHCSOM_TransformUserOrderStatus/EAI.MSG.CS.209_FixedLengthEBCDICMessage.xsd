@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    /*************************************************************************
+    * Module:       EAI.MSG.CS.209_FixedLengthEBCDICMessage
+    *               	Generic fixed length message
+    * Type:         XML Schema Document
+    * Description:  Used to read the message from MQ
+    *
+    * Change History
+    * Version		Date			Author			Description Of Change
+    * =======		========		===========		===============================
+    *  0.1		31/03/08		anvv sharma  		Initial Version
+    *
+    *************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01" nxsd:encoding="cp037" nxsd:stream="chars" nxsd:version="NXSD">
+	<xsd:element name="fixedLengthMessage">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="value" type="xsd:string" nxsd:style="terminated" nxsd:terminatedBy="${eol}"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

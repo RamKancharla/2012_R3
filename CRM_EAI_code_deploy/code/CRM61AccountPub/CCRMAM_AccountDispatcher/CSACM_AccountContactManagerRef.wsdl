@@ -1,0 +1,18 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="CSACM_AccountContactManager"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_AccountContactManager"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_AccountContactManager"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <plnk:partnerLinkType name="CSACM_AccountContactManager">
+        <plnk:role name="CSACM_AccountContactManagerProvider">
+            <plnk:portType name="client:CSACM_AccountContactManager"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <wsdl:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_AccountContactManager"
+         location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSACM_AccountContactManager/CSACM_AccountContactManager.wsdl"/>
+</wsdl:definitions>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGCM_ContactManager.wsdl" name="CPFGCM_ContactManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.interface(CPFGCM_ContactManager)" callbackInterface="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.interface(CPFGCM_ContactManagerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" name="AsyncSequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="WriteContact.wsdl" name="WriteContact">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/#wsdl.interface(WriteContact_ptt)"/>
+    </reference>
+</componentType>

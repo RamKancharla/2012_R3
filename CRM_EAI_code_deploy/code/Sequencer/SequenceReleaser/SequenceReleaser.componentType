@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="SequenceReleaser.wsdl" name="anchorToSeqReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </service>    
+    <reference ui:wsdlLocation="ReleaseSequenceDBAdapter.wsdl" name="ReleaseSequenceDBAdapter">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/ReleaseSequenceDBAdapter/#wsdl.interface(ReleaseSequenceDBAdapter_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="DynPLTosequenceReleaser.wsdl" name="DynPLToSequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/DynPLToSequenceReleaser#wsdl.interface(DynPLToSequenceReleaser)"/>
+    </reference>
+    <property name="preference.TF_ManageOrderLineStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.TRUSTAM_AccountManager" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.CSOM_TransformOrderStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.CCRMOM_ProxyPropagateOrderStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.CSOM_OrderBatcher" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.CPFGOM_UserOrderManager" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.CCRMOP_PublishOpportunity" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.SFDCAM_AccountEventManager" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.CCRMOM_SubmitUserOrderRequest" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.TOMCM_ContactManager" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.CPF_UpdateProfile" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.PropagatePriceUpdateStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.CPFGAM_AccountManager" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.TRUSTOP_OpportunityManager" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.AsyncSequenceChecker" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.TF_OrderDispatcher" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.TOMAM_AccountManager" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

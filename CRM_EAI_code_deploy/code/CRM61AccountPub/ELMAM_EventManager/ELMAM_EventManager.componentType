@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ELMAM_EventManager.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/ELMAM_EventManager#wsdl.interface(ELMAM_EventManager)" callbackInterface="http://xmlns.oracle.com/ELMAM_EventManager#wsdl.interface(ELMAM_EventManagerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="InsertToBuffer.wsdl" name="InsertToBuffer">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/InsertToBuffer/#wsdl.interface(InsertToBuffer_ptt)"/>
+    </reference>
+</componentType>

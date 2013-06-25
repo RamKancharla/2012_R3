@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGOM_OrderSplitter.wsdl" name="anchorToCPFGOMOrderSplitter">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter#wsdl.interface(CPFGOM_OrderSplitter)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter#wsdl.interface(CPFGOM_OrderSplitterCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_OrderManager/CPFGOM_OrderManager.wsdl" name="CPFGOM_OrderManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager#wsdl.interface(CPFGOM_OrderManager)"/>
+    </reference>
+</componentType>

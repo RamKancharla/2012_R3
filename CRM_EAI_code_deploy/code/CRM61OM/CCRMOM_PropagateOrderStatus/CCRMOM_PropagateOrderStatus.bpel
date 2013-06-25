@@ -1,0 +1,328 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Sep 20 12:25:46 BST 2007
+  Author:  geratayya.patchipulu
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+**************************************************************************/
+* Module:      CCRMOM_PropagateOrderStatus.bpel
+* Type:        BPEL FILE 
+* Description: Asynchronous BPEL Process 
+* IDD Reference: 
+* Change History 
+* Version      Date         Author             Description Of Change 
+*  1.0         20/09/07     Geratayya P        Initial Version 
+*  1.1         28/09/07     Geratayya P        Added DVM Lookup to get the reference data and Fault sensors. 
+*					       Changed the data (as CRM Order Number) to be stored in sensor data appropriately.
+*  1.2         10/10/07     Sunil V            Made the web service pointed to new dev environment given by Siebel.
+ 
+*  1.3         10/10/07     Surya Gannavarapu Added the Sequence releaser component.
+*  1.4         13/05/08     K.Harika Reddy     Added Auto Quids Logic
+*  1.5         22/08/08     Ruchi D            Changed transformations for SID
+*  1.6         9/9/08       Chandu R           Removed callback
+*  1.7         03/12/09     Surya Gannavarapu  Added lookup for Rootid in the xsl before invoking MQ adapter(Defect 33312 , BPT-4)
+*  1.8         06/10/10     Ramanjana          Added mapping for serverId in TransOrderStatusIVToEnqCSOrderUpdateIV.xsl as part of CR 5862
+-->
+<process name="CCRMOM_PropagateOrderStatus" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns12="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/correlationset" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueCSOrderUpdateStatus/" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRMOM" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRMCM_PropagateOrderStatus" xmlns:ns2="http://www.siebel.com/xml/RCRM%20Order%20Entry" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/mq/headerCSOrderUpdate/" xmlns:ns10="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRM" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToPropagateOrderStatus" partnerLinkType="client:CCRMOM_PropagateOrderStatus" myRole="CCRMOM_PropagateOrderStatusProvider" partnerRole="CCRMOM_PropagateOrderStatusRequester"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns5:SequenceReleaser"/>
+        <partnerLink name="CSOrderUpdate" partnerRole="Enqueue_role" partnerLinkType="ns8:Enqueue_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CCRMOM_PropagateOrderStatusResponseMessage"/>
+        <variable name="unknownError" type="xsd:string"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="SequenceReleaserIV" messageType="ns5:SequenceReleaserRequestMessage"/>
+        <!--   <variable name="orderStatusAck_OV"
+                  messageType="ns1:RCRMInboundCompassOrderOperation_Output"/> -->
+        <variable name="rcvOrderStatus_IV" messageType="client:CCRMOM_PropagateOrderStatusRequestMessage"/>
+        <variable name="InvCSOrderUpdateEnqIV" messageType="ns8:OrderRequest_msg"/>
+        <variable name="RcvCSOrderUpdateStatusIV" messageType="client:CSUpdateStatusMsg"/>
+        <variable name="noOf240OrderLineSets" type="xsd:int"/>
+        <variable name="orderLineRestrictionIndex" type="xsd:int"/>
+        <variable name="index" type="xsd:nonNegativeInteger"/>
+        <variable name="noOfOrderLines" type="xsd:nonNegativeInteger"/>
+        <variable name="ExtendedCSOrderUpdateStatusIV" messageType="client:CCRMOM_ExtendedPropagateOrderStatus"/>
+    </variables>
+   
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("rcvOrderStatus_IV","payload","/ns10:crmOrderStatus/ns10:orderHeader/ns10:CRMOrderNumber")).getFirstChild().getNodeValue();                   
+ setCompositeInstanceTitle((orderNumber!= null ? orderNumber : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("rcvOrderStatus_IV","payload","/ns10:crmOrderStatus/ns10:orderHeader/ns10:CRMOrderNumber")).getFirstChild().getNodeValue();                   
+ setCompositeInstanceTitle((orderNumber!= null ? orderNumber : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("rcvOrderStatus_IV","payload","/ns10:crmOrderStatus/ns10:orderHeader/ns10:CRMOrderNumber")).getFirstChild().getNodeValue();                   
+ setCompositeInstanceTitle((orderNumber!= null ? orderNumber : ".; ")+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqGenericError">
+                <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                    <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("rcvOrderStatus_IV","payload","/ns10:crmOrderStatus/ns10:orderHeader/ns10:CRMOrderNumber")).getFirstChild().getNodeValue();                   
+ setCompositeInstanceTitle((orderNumber!= null ? orderNumber : ".; ")+"; Fault");]]>
+                </bpelx:exec>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMOM_PropagateOrderStatus.wsdl) -->
+        <receive name="rcvOrderStatus" partnerLink="anchorToPropagateOrderStatus" portType="client:CCRMOM_PropagateOrderStatus" operation="sendOrderStatus" createInstance="yes" variable="rcvOrderStatus_IV"/>
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="ceiling(count(bpws:getVariableData('rcvOrderStatus_IV','payload','/ns10:crmOrderStatus/ns10:orderLineItem')) div 100)"/>
+                <to variable="noOf240OrderLineSets"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="orderLineRestrictionIndex"/>
+            </copy>
+            <copy>
+                <from expression="count(bpws:getVariableData('rcvOrderStatus_IV','payload','/ns10:crmOrderStatus/ns10:orderLineItem'))"/>
+                <to variable="noOfOrderLines"/>
+            </copy>
+            <copy>
+                <from expression="1"/>
+                <to variable="index"/>
+            </copy>
+        </assign>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <scope name="ScpSubmitOrder">
+            <sequence name="SeqSubmitOrder">
+                <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+                    <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                    
+                        getVariableData("rcvOrderStatus_IV","payload","/ns10:crmOrderStatus/ns10:orderHeader/ns10:CRMOrderNumber")).getFirstChild().getNodeValue();                       
+ setCompositeInstanceTitle(orderNumber!= null ? orderNumber : ".; ");]]>
+                </bpelx:exec>
+                <assign name="TransRcvPropagateOrderInIVToExtendedPropagateOrder">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransRcvPropagateOrderToExtendedPropagateOrder.xsl',bpws:getVariableData('rcvOrderStatus_IV','payload'))"/>
+                        <to variable="ExtendedCSOrderUpdateStatusIV" part="CCRMOM_ExtendedPropagateOrderStatusPart"/>
+                    </copy>
+                </assign>
+                <switch>
+                    <case condition="count(bpws:getVariableData('rcvOrderStatus_IV','payload','/ns10:crmOrderStatus/ns10:orderLineItem'))>0">
+                        <sequence name="SeqReplytoSiebel">
+                            <while name="While_1" condition="bpws:getVariableData('noOf240OrderLineSets') > 0 ">
+                                <sequence name="SeqSplitOrderOnNumberOfLines">
+                                
+                                
+                                <scope name="scpInvokePropagateOrderStatus">
+                                        <correlationSets>
+                                        <correlationSet name="CorrelationSet" properties="ns12:corrProp"/>
+                                        </correlationSets>
+                                 <sequence name="SeqInvokePropagateOrderStatus">
+                                
+                                
+                                    <assign name="AsgOrderLineSetIndexToOrder">
+                                        <copy>
+                                            <from variable="orderLineRestrictionIndex"/>
+                                            <to variable="ExtendedCSOrderUpdateStatusIV" part="CCRMOM_ExtendedPropagateOrderStatusPart" query="/ns10:ExtendedcrmOrderStatus/ns10:index"/>
+                                        </copy>
+                                    </assign>
+                                    <assign name="TransOrderStatusIVToEnqCSOrderUpdateIV">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransOrderStatusExtendedIVToEnqCSOrderUpdateIV.xsl',bpws:getVariableData('ExtendedCSOrderUpdateStatusIV','CCRMOM_ExtendedPropagateOrderStatusPart'))"/>
+                                            <to variable="InvCSOrderUpdateEnqIV" part="OrderRequest"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvCSOrderUpdate" partnerLink="CSOrderUpdate" portType="ns8:Enqueue_ptt" operation="Enqueue" inputVariable="InvCSOrderUpdateEnqIV">
+                                        <correlations>
+                                            <correlation initiate="yes" set="CorrelationSet" pattern="out"/>
+                                        </correlations>
+                                    </invoke>
+                                    <receive name="RcvCSOrderUpdateStatus" portType="client:CCRMOM_PropagateOrderStatus" variable="RcvCSOrderUpdateStatusIV" createInstance="no" partnerLink="anchorToPropagateOrderStatus" operation="updateOrderStatus">
+                                        <correlations>
+                                            <correlation initiate="no" set="CorrelationSet"/>
+                                        </correlations>
+                                    </receive>
+                                    <assign name="ChangeIndexVariables">
+                                        <copy>
+                                            <from expression="bpws:getVariableData('noOf240OrderLineSets')-1"/>
+                                            <to variable="noOf240OrderLineSets"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="bpws:getVariableData('orderLineRestrictionIndex') +1"/>
+                                            <to variable="orderLineRestrictionIndex"/>
+                                        </copy>
+                                    </assign>
+                                  </sequence> 
+                                  </scope>
+                                </sequence>
+                            </while>
+                            <switch name="CheckOrderAck">
+                                <case condition="bpws:getVariableData('RcvCSOrderUpdateStatusIV','CSUpdateStatus','/ns2:OrderRequest/ns2:ActionCode')='Success'">
+                                    <sequence name="NoErrorFromSiebel">
+                                        <scope name="ReleaseSequence">
+                                            <faultHandlers>
+                                                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                                    <empty name="SequenceReleaserRemoteFaultEmptyActivity"/>
+                                                </catch>
+                                            </faultHandlers>
+                                            <sequence name="SeqReleaseSequence">
+                                                <assign name="AsgSequenceReleaserIV">
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:applicationId" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:applicationId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:transactionId" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:transactionId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:messageId" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:messageId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:messageHistory" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:messageHistory"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:tracingId" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:tracingId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:timeStamp" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:timeStamp"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:instanceId" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:instanceId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:timeToLive" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:timeToLive"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:payloadVersion" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:payloadVersion"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:tracingId" variable="rcvOrderStatus_IV"/>
+                                                        <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:correlationID"/>
+                                                    </copy>
+                                                </assign>
+                                                <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns5:SequenceReleaser" operation="releaseSequence" inputVariable="SequenceReleaserIV"/>
+                                            </sequence>
+                                        </scope>
+                                    </sequence>
+                                </case>
+                                <otherwise>
+                                    <sequence name="SeqErrorFromSiebel">
+                                        <bpelx:exec name="AsgCustomTitleOnSiebelError" language="java" version="1.5">
+                                            <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                    
+                        getVariableData("rcvOrderStatus_IV","payload","/ns10:crmOrderStatus/ns10:orderHeader/ns10:CRMOrderNumber")).getFirstChild().getNodeValue();                    
+ setCompositeInstanceTitle(orderNumber!= null ? orderNumber+";SiebelFault"  : ";=");]]>
+                                        </bpelx:exec>
+                                        <empty name="SiebelErrorEmptyActivity"/>
+                                    </sequence>
+                                </otherwise>
+                            </switch>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <sequence name="SeqZeroOrderLines">
+                            <scope name="ScpZeroOrderLines">
+                                <sequence name="SeqNoOrderLines">
+                                    <assign name="AsgSequenceReleaserIVOnNoOrderLines">
+                                        <copy>
+                                            <from variable="rcvOrderStatus_IV" part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:tracingId"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:correlationID"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="rcvOrderStatus_IV" part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:applicationId"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:applicationId"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="rcvOrderStatus_IV" part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:transactionId"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:transactionId"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="rcvOrderStatus_IV" part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:messageId"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:messageId"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="ora:getCurrentDateTime()"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:timeStamp"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="ora:getCompositeInstanceId()"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:instanceId"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="rcvOrderStatus_IV" part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:tracingId"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:tracingId"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="rcvOrderStatus_IV" part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:timeToLive"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:timeToLive"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="rcvOrderStatus_IV" part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:payloadVersion"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:payloadVersion"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="rcvOrderStatus_IV" part="payload" query="/ns10:crmOrderStatus/ns10:eaiHeader/ns4:messageHistory"/>
+                                            <to variable="SequenceReleaserIV" part="payload" query="/ns6:releaseSequenceRequest/ns6:eaiHeader/ns4:messageHistory"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvSequenceReleaserOnNoOrderLines" partnerLink="SequenceReleaser" portType="ns5:SequenceReleaser" operation="releaseSequence" inputVariable="SequenceReleaserIV"/>
+                                </sequence>
+                            </scope>
+                        </sequence>
+                    </otherwise>
+                </switch>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

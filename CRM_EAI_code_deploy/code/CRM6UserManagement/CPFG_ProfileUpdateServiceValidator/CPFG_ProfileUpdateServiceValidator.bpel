@@ -1,0 +1,143 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Nov 11 10:45:12 GMT+05:30 2009
+  Author:  dk54958
+  Purpose: Synchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFG_ProfileUpdateServiceValidator" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator" xmlns:ns6="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/Exception" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+        <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+        <partnerLinks>
+                <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+                <partnerLink name="CPFG_ProfileUpdateService" partnerLinkType="client:CPFG_ProfileUpdateServiceValidator" myRole="CPFG_ProfileUpdateServiceValidatorProvider"/>
+                <partnerLink name="CPF_UpdateProfile"
+                             partnerRole="CPF_UpdateProfileProvider"
+                             partnerLinkType="ns7:CPF_UpdateProfile"/>
+        </partnerLinks>
+        <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+        <variables>
+                <!-- Reference to the message passed as input during initiation -->
+                <variable name="CPFGRequest" messageType="client:CPFG_ProfileUpdateServiceValidatorRequestMessage"/>
+                <!-- Reference to the message that will be returned to the requester-->
+                <variable name="CPFGResponse" messageType="client:CPFG_ProfileUpdateServiceValidatorResponseMessage"/>
+                <variable name="FaultVar" messageType="bpelx:RuntimeFaultMessage"/>
+                <variable name="InvCPFUpdateProfileIV" messageType="ns7:CPF_UpdateProfileRequestMessage"/>
+        </variables>
+        <faultHandlers>
+                <catch faultName="ns3:invalidActionCode" faultVariable="FaultVar">
+                        <sequence name="SequenceFaultActionCode">
+                                <assign name="AsgInvalidActionCodeErrors">
+                                        <copy>
+                                                <from variable="CPFGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader"/>
+                                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+                                        </copy>
+                                        <copy>
+                                                <from expression="orcl:lookup-table('EAI_RESPONSES','RESP_ID','00203','RESP_CODE','eai/ds/EAIReference')"/>
+                                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns4:responseCode"/>
+                                        </copy>
+                                        <copy>
+                                                <from expression="orcl:lookup-table('EAI_RESPONSES','RESP_ID','00203','RESP_MESSAGE','eai/ds/EAIReference')"/>
+                                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns4:responseMessage"/>
+                                        </copy>
+                                        <copy>
+                                                <from expression="ora:getPreference('Failure_Response')"/>
+                                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns4:response"/>
+                                        </copy>
+                                </assign>
+                                <!---Would respond back to the entry point ESB with ActionCodeFault specific Messages -->
+                                <reply name="ReplyForActionCodeExceptions" partnerLink="CPFG_ProfileUpdateService" portType="client:CPFG_ProfileUpdateServiceValidator" operation="UpdateUserProfile" variable="CPFGResponse"/>
+                                <!---Invokes Log Writer Service to log the messages describing the fault -->
+                        </sequence>
+                </catch>
+                <catchAll>
+                        <sequence name="RemoteFaultException">
+                                <assign name="AsgUknownErrors">
+                                        <copy>
+                                                <from variable="CPFGRequest" part="payload" query="/ns1:UpdateProfileRequest/ns1:eaiHeader"/>
+                                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+                                        </copy>
+                                        <copy>
+                                                <from expression="orcl:lookup-table('EAI_RESPONSES','RESP_ID','00300','RESP_CODE','eai/ds/EAIReference')"/>
+                                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns4:responseCode"/>
+                                        </copy>
+                                        <copy>
+                                                <from expression="orcl:lookup-table('EAI_RESPONSES','RESP_ID','00300','RESP_MESSAGE','eai/ds/EAIReference')"/>
+                                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns4:responseMessage"/>
+                                        </copy>
+                                        <copy>
+                                                <from expression="ora:getPreference('Failure_Response')"/>
+                                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns4:response"/>
+                                        </copy>
+                                </assign>
+                                <reply name="ReplyForUknownFaultExceptions" partnerLink="CPFG_ProfileUpdateService" portType="client:CPFG_ProfileUpdateServiceValidator" operation="UpdateUserProfile" variable="CPFGResponse"/>
+                                <!---Invokes Log Writer Service to log the messages describing the fault -->
+                        </sequence>
+                </catchAll>
+        </faultHandlers>
+        <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+        <sequence name="main">
+                <!-- Receive input from requestor. (Note: This maps to operation defined in CPFG_ProfileUpdateServiceValidator.wsdl) -->
+                <receive name="rcvCPFGRequest" partnerLink="CPFG_ProfileUpdateService" portType="client:CPFG_ProfileUpdateServiceValidator" operation="UpdateUserProfile" variable="CPFGRequest" createInstance="yes"/>
+                <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+                        <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)                                    
+                        getVariableData("CPFGRequest","payload","/ns1:UpdateProfileRequest/ns1:UpdateProfileUserDetails/ns1:UUID")).getFirstChild().getNodeValue();             
+setCompositeInstanceTitle(UUID);]]>
+                </bpelx:exec>
+                <!--Gets invoked when the validation is succesfull -->
+                <assign name="TransCPFGRequestToUpdateProfile">
+                        <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                                <from expression="ora:processXSLT('TransCPFGRequestToUpdateProfile.xsl',bpws:getVariableData('CPFGRequest','payload'))"/>
+                                <to variable="InvCPFUpdateProfileIV" part="payload"/>
+                        </copy>
+                </assign>
+                <invoke name="InvCPFUpdateProfile" portType="ns7:CPF_UpdateProfile" inputVariable="InvCPFUpdateProfileIV"
+                        partnerLink="CPF_UpdateProfile"
+                        operation="updateUserProfile"/>
+                <assign name="AsgResponse">
+                        <copy>
+                                <from variable="CPFGRequest" query="/ns1:UpdateProfileRequest/ns1:eaiHeader" part="payload"/>
+                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+                        </copy>
+                        <copy>
+                                <from expression="orcl:lookup-table('EAI_RESPONSES','RESP_ID','00101','RESP_CODE','eai/ds/EAIReference')"/>
+                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns4:responseCode"/>
+                        </copy>
+                        <copy>
+                                <from expression="orcl:lookup-table('EAI_RESPONSES','RESP_ID','00101','RESP_MESSAGE','eai/ds/EAIReference')"/>
+                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns4:responseMessage"/>
+                        </copy>
+                        <copy>
+                                <from expression="ora:getPreference('Success_Response')"/>
+                                <to variable="CPFGResponse" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns4:response"/>
+                        </copy>
+                </assign>
+                <!-- Generate reply to synchronous request -->
+                <reply name="CPFGResponse" partnerLink="CPFG_ProfileUpdateService" portType="client:CPFG_ProfileUpdateServiceValidator" operation="UpdateUserProfile" variable="CPFGResponse"/>
+        </sequence>
+</process>

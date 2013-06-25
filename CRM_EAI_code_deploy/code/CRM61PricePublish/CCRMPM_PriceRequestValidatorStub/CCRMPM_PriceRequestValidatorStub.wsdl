@@ -1,0 +1,34 @@
+<definitions
+     name="CCRMPM_PriceRequestValidatorStub"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub"
+                 schemaLocation="CCRMPM_PriceRequestValidatorStub.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.CCRM.PM.211_PriceUpdateRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMPM_PriceRequestValidatorStubRequestMessage">
+        <part name="payload" element="ns1:priceUpdateRequest"/>
+    </message>
+    <portType name="CCRMPM_PriceRequestValidatorStub">
+        <operation name="initiate">
+            <input message="client:CCRMPM_PriceRequestValidatorStubRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMPM_PriceRequestValidatorStub">
+        <plnk:role name="CCRMPM_PriceRequestValidatorStubProvider">
+            <plnk:portType name="client:CCRMPM_PriceRequestValidatorStub"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,77 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Mar 11 12:12:24 GMT+05:30 2011
+  Author:  rijoy.purayil
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="EDTKDAD_DequeuedraftQuote" targetNamespace="http://xmlns.oracle.com/EDTKDAD_DequeuedraftQuote" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2011/03/03/GCAP/EAI/eDTK/QM/DraftQuote" xmlns:ns7="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.siebel.com/xml/RCRMGenericQuoteInterface" xmlns:client="http://xmlns.oracle.com/EDTKDAD_DequeuedraftQuote" xmlns:ns6="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMsg" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueDADUpload/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/CCRMDAD_SubmitdraftQuote" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueDADService/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink myRole="Dequeue_role" name="DequeueDADService" partnerLinkType="ns2:Dequeue_plt"/>
+        <partnerLink myRole="CCRMDAD_SubmitDraftQuoteMessageRequester" name="CCRMDAD_SubmitDraftQuoteMessage" partnerRole="CCRMDAD_SubmitDraftQuoteMessageProvider" partnerLinkType="ns7:CCRMDAD_SubmitDraftQuoteMessage"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="receiveInput_Dequeue_InputVariable" messageType="ns2:DAD_msg"/>
+        <variable name="SubmitDraftQuoteVar" messageType="ns7:CCRMDAD_SubmitDraftQuoteMessageRequestMessage"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="setCustomTitleFault" language="java" version="1.3">
+                <![CDATA[setCompositeInstanceTitle("Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="DequeuedraftQuote">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in EDTKDAD_DequeuedraftQuote.wsdl) -->
+        <receive name="rcvDADUploadxml" portType="ns2:Dequeue_ptt" variable="receiveInput_Dequeue_InputVariable" createInstance="yes" partnerLink="DequeueDADService" operation="Dequeue"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+      -->
+        <bpelx:exec name="SetTitle_DADId" language="java" version="1.5">
+            <![CDATA[String DADId = "";         
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("receiveInput_Dequeue_InputVariable","DAD","/ns4:DAD/ns4:DADheader/ns4:DADId")).getFirstChild()){     
+    DADId = ((oracle.xml.parser.v2.XMLElement) getVariableData("receiveInput_Dequeue_InputVariable","DAD","/ns4:DAD/ns4:DADheader/ns4:DADId")).getFirstChild().getNodeValue();               
+ }     
+setCompositeInstanceTitle( "DAD Id:" + " " + DADId );]]>
+        </bpelx:exec>
+        <assign name="XformDADPayloadToDraftQuote">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('XformDADReq_To_DraftQuoteNew.xsl',bpws:getVariableData('receiveInput_Dequeue_InputVariable','DAD'))"/>
+                <to variable="SubmitDraftQuoteVar" part="payload"/>
+            </copy>
+        </assign>
+        <invoke name="InvCCRMDAD_SubmitDraftQuote" inputVariable="SubmitDraftQuoteVar" partnerLink="CCRMDAD_SubmitDraftQuoteMessage" portType="ns7:CCRMDAD_SubmitDraftQuoteMessage" operation="initiate"/>
+    </sequence>
+</process>

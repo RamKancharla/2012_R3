@@ -1,0 +1,207 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+**************************************************************************/
+* Module:     {Name of the file : SequenceChecker.bpel} 
+* Type:        {BPEL FILE} 
+* Description: {Synchronous BPEL Process  } 
+* IDD Reference: 
+* Change History 
+* Version      Date         Author          Description Of Change 
+*  1.0         30/10/07     Geratayya P     Initial Version 
+*  1.1         18/02/07     Geratayya P     Added conditions to not to sequence if the context id is empty
+*  1.2         27/02/07     Geratayya P     Changed the condition in java embedding to set title to NONE if context id is empty
+*  1.3         28/02/07     Geratayya P     Changed from ASync to Sync to avoid call back issues
+**************************************************************************/
+-->
+<process name="SequenceChecker" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/RegisterSequenceDBAdapter/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/EAIOWNER/MESSAGE_SEQUENCER/REGISTER_SEQ/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToSequencer" partnerLinkType="client:SequenceChecker" myRole="SequenceCheckerProvider"/>
+        <partnerLink name="RegisterSequenceDBAdapter" partnerRole="RegisterSequenceDBAdapter_role" partnerLinkType="ns1:RegisterSequenceDBAdapter_plt"/>
+    </partnerLinks>
+    <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="sequenceCheckRequest" messageType="client:SequenceCheckerRequestMessage"/>
+        <!-- Reference to the message that will be returned to the requester-->
+        <variable name="sequenceCheckResponse" messageType="client:SequenceCheckerResponseMessage"/>
+        <variable name="sequenceCheck_IV" messageType="ns1:args_in_msg"/>
+        <variable name="sequenceCheckResponse_OV" messageType="ns1:args_out_msg"/>
+    </variables>
+    <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SequenceChecker.wsdl) -->
+        <receive name="receiveInput" partnerLink="anchorToSequencer" portType="client:SequenceChecker" operation="checkSequence" variable="sequenceCheckRequest" createInstance="yes"/>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[try {    
+oracle.xml.parser.v2.XMLElement contextIDElement = (oracle.xml.parser.v2.XMLElement) getVariableData("sequenceCheckRequest", "payload", "/ns3:checkSequenceRequest/ns3:seqRequestDetails/ns3:contextId"); 
+String contextID = "NONE"; 
+if (contextIDElement != null) 
+ contextID = contextIDElement.getFirstChild().getNodeValue(); 
+  
+ setCompositeInstanceTitle(contextID);    
+  
+} catch (Exception e) {    
+    setCompositeInstanceTitle("NONE");    
+}]]>
+        </bpelx:exec>
+        <switch name="ChkContextID">
+            <case condition="string-length(bpws:getVariableData('sequenceCheckRequest','payload','/ns3:checkSequenceRequest/ns3:seqRequestDetails/ns3:contextId'))  != '0'">
+                <bpelx:annotation>
+                    <bpelx:pattern>Check whether sequence check required or not</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqChecker">
+                    <assign name="TransSequenceRequest">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransSequenceRequestCheck.xsl',bpws:getVariableData('sequenceCheckRequest','payload'))"/>
+                            <to variable="sequenceCheck_IV" part="InputParameters"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvRegisterSequenceDBAdapter" partnerLink="RegisterSequenceDBAdapter" portType="ns1:RegisterSequenceDBAdapter_ptt" operation="RegisterSequenceDBAdapter" inputVariable="sequenceCheck_IV" outputVariable="sequenceCheckResponse_OV"/>
+                    <switch name="ChkSeqCheckResponse">
+                        <case condition="not(starts-with(bpws:getVariableData('sequenceCheckResponse_OV','OutputParameters','/ns2:OutputParameters/ns2:P_OUTCOME'), 'ERROR'))">
+                            <bpelx:annotation>
+                                <bpelx:pattern>Continue / Wait</bpelx:pattern>
+                            </bpelx:annotation>
+                            <sequence name="SeqStatus">
+                                <bpelx:exec name="AsgCustomTitleWithStatus" language="java" version="1.5">
+                                    <![CDATA[try {       
+oracle.xml.parser.v2.XMLElement contextIDElement = (oracle.xml.parser.v2.XMLElement) getVariableData("sequenceCheckRequest", "payload", "/ns3:checkSequenceRequest/ns3:seqRequestDetails/ns3:contextId");    
+oracle.xml.parser.v2.XMLElement StatusOUT = (oracle.xml.parser.v2.XMLElement) getVariableData("sequenceCheckResponse_OV","OutputParameters","/ns2:OutputParameters/ns2:P_OUTCOME");    
+String contextID = "NONE";    
+String Status="NONE";  
+String Title="NONE";  
+if (contextIDElement != null)    
+ contextID = contextIDElement.getFirstChild().getNodeValue();    
+ Status = StatusOUT.getFirstChild().getNodeValue();  
+   
+ Title = contextID+" "+Status;  
+     
+ setCompositeInstanceTitle(Title);       
+     
+} catch (Exception e) {       
+    setCompositeInstanceTitle("NONE");       
+}]]>
+                                </bpelx:exec>
+                                <assign name="AsgSeqResponseOnContinueNWait">
+                                    <copy>
+                                        <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                                        <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:basicResponse/ns4:response"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                                        <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:basicResponse/ns4:responseCode"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="sequenceCheckResponse_OV" part="OutputParameters" query="/ns2:OutputParameters/ns2:P_OUTCOME"/>
+                                        <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:basicResponse/ns4:responseMessage"/>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <assign name="AsgSeqResponseOnError">
+                                <copy>
+                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;FailureCode&quot;,&quot;Value&quot;,&quot;1&quot;)"/>
+                                    <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:basicResponse/ns4:response"/>
+                                </copy>
+                                <copy>
+                                    <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;UnknownError&quot;,&quot;Value&quot;,&quot;00300-EAI-UNKNOWN-ERROR&quot;)"/>
+                                    <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:basicResponse/ns4:responseCode"/>
+                                </copy>
+                                <copy>
+                                    <from variable="sequenceCheckResponse_OV" part="OutputParameters" query="/ns2:OutputParameters/ns2:P_OUTCOME"/>
+                                    <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:basicResponse/ns4:responseMessage"/>
+                                </copy>
+                            </assign>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </case>
+            <otherwise>
+                <assign name="AsgContinue">
+                    <copy>
+                        <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                        <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:basicResponse/ns4:response"/>
+                    </copy>
+                    <copy>
+                        <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                        <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:basicResponse/ns4:responseCode"/>
+                    </copy>
+                    <copy>
+                        <from expression="'CONTINUE'"/>
+                        <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:basicResponse/ns4:responseMessage"/>
+                    </copy>
+                </assign>
+            </otherwise>
+        </switch>
+        <assign name="AsgEAIHeaderNResponseDetails">
+            <copy>
+                <from variable="sequenceCheckRequest" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:applicationId"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:applicationId"/>
+            </copy>
+            <copy>
+                <from variable="sequenceCheckRequest" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:transactionId"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:transactionId"/>
+            </copy>
+            <copy>
+                <from variable="sequenceCheckRequest" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:messageId"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:messageId"/>
+            </copy>
+            <copy>
+                <from variable="sequenceCheckRequest" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:messageHistory"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:messageHistory"/>
+            </copy>
+            <copy>
+                <from variable="sequenceCheckRequest" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:tracingId"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:tracingId"/>
+            </copy>
+            <copy>
+                <from variable="sequenceCheckRequest" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:timeToLive"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:timeToLive"/>
+            </copy>
+            <copy>
+                <from variable="sequenceCheckRequest" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:payloadVersion"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:payloadVersion"/>
+            </copy>
+            <copy>
+                <from expression="concat(bpws:getVariableData('sequenceCheckRequest','payload','/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:messageHistory'), 'SEQ;')"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:transactionId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="xp20:current-dateTime()"/>
+                <to variable="sequenceCheckResponse" part="payload" query="/ns6:basicResponse/ns6:eaiHeader/ns4:timeStamp"/>
+            </copy>
+        </assign>
+        <!-- Generate reply to synchronous request -->
+        <reply name="replyOutput" partnerLink="anchorToSequencer" portType="client:SequenceChecker" operation="checkSequence" variable="sequenceCheckResponse"/>
+    </sequence>
+</process>

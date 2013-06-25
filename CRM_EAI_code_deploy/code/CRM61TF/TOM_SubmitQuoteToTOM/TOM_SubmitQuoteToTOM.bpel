@@ -1,0 +1,343 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<process name="TOM_SubmitQuoteToTOM" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TOM" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://schemas.hp.com/SM/7/Common" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TOM/Exception" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/TOMQM_POLLING/" xmlns:ns1="http://schemas.hp.com/SM/7" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns15="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateInterfaceBuffer" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/top/TOMQMPOLLING" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://xmlns.oracle.com/InterfaceManager" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CommonQuoteTypes" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/db/Update_InterfaceBuffer/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TOM" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.w3.org/2005/05/xmlmime" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns14="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns8="http://servicecenter.peregrine.com/PWS" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="SubmitQuoteToTOM_Ptl" partnerRole="TOM_Role" partnerLinkType="ns1:TOM_PL"/>
+        <partnerLink myRole="TOMQM_POLLING_role" name="TOMQM_POLLING" partnerLinkType="ns9:TOMQM_POLLING_plt"/>
+        <partnerLink name="Update_InterfaceBuffer" partnerRole="Update_InterfaceBuffer_role" partnerLinkType="ns12:Update_InterfaceBuffer_plt"/>
+        <partnerLink name="InterfaceManager" partnerRole="InterfaceManagerProvider" partnerLinkType="ns13:InterfaceManager"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="vettingRequest" messageType="client:TOM_SubmitQuoteToTOMRequestMessage"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="errorMessage" type="xsd:string"/>
+        <variable name="InvSubmitQuoteToTOM_CreateQuote_InputVariable" messageType="ns1:CreateQuoteRequest"/>
+        <variable name="InvSubmitQuoteToTOM_CreateQuote_OutputVariable" messageType="ns1:CreateQuoteResponse"/>
+        <variable name="InvCreateQuoteProducts_CreateQuoteProducts_OV" messageType="ns1:CreateQuoteProductsResponse"/>
+        <variable name="InvCreateQuoteProducts_CreateQuoteProducts_IV" messageType="ns1:CreateQuoteProductsRequest"/>
+        <variable name="receive_IV" messageType="ns9:TomqmPollingVCollection_msg"/>
+        <variable name="rawMessage" type="xsd:string"/>
+        <variable name="parsedrawMessage" type="xsd:string"/>
+        <variable name="State" type="xsd:string"/>
+        <variable name="StatusMessage" type="xsd:string"/>
+        <variable name="InterfaceBuffer_update_IV" messageType="ns12:InterfaceBufferCollection_msg"/>
+        <variable name="Invoke_1_process_InputVariable" messageType="ns13:InterfaceManagerRequestMessage"/>
+        <variable name="Invoke_1_process_OutputVariable" messageType="ns13:InterfaceManagerResponseMessage"/>
+        <variable name="ID" type="xsd:integer"/>
+        <variable name="nReceived" type="xsd:integer"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TOM_SubmitQuoteToTOM.wsdl) -->
+        <receive name="receive_Quote" partnerLink="TOMQM_POLLING" portType="ns9:TOMQM_POLLING_ptt" operation="receive" variable="receive_IV" createInstance="yes"/>
+        <assign name="Assign_1">
+            <copy>
+                <from expression="ora:countNodes('receive_IV','TomqmPollingVCollection','/ns10:TomqmPollingVCollection/ns10:TomqmPollingV')"/>
+                <to variable="nReceived"/>
+            </copy>
+        </assign>
+        <switch name="Switch_5">
+            <case condition="bpws:getVariableData('nReceived') = 1">
+                <bpelx:annotation>
+                    <bpelx:pattern>nReceived = 1</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_10">
+                    <scope name="Scope_TOMInvokes">
+                        <faultHandlers>
+                            <!-- <catch faultName="bpws:selectionFailure"
+                       faultVariable="runTimeFault">
+                    <bpelx:exec name="AsgCustomTitleOnSelectionFailure"
+                                language="java" version="1.5">
+                        <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("vettingRequest","request","/ns2:vettingRequest/ns2:quoteHeader/ns7:quoteNumber")).getFirstChild().getNodeValue();                                     
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("vettingRequest","request","/ns2:vettingRequest/ns2:quoteHeader/ns7:quoteStatus")).getFirstChild().getNodeValue();           
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");
+setTitle("Q: " + quoteNumber + "; Fault");]]>
+                    </bpelx:exec>
+                </catch>
+                <catch faultName="bpelx:bindingFault"
+                       faultVariable="runTimeFault">
+                    <bpelx:exec name="AsgCustomTitleOnBindingFault"
+                                language="java" version="1.5">
+                        <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("vettingRequest","request","/ns2:vettingRequest/ns2:quoteHeader/ns7:quoteNumber")).getFirstChild().getNodeValue();                                     
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("vettingRequest","request","/ns2:vettingRequest/ns2:quoteHeader/ns7:quoteStatus")).getFirstChild().getNodeValue();           
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");
+setTitle("Q: " + quoteNumber + "; Fault");]]>
+                    </bpelx:exec>
+                </catch>  -->
+                            <catchAll>
+                                <sequence name="SeqGenericFault">
+                                    <assign name="AsgGenericFault">
+                                        <copy>
+                                            <from expression="'Unable To Process the Request'"/>
+                                            <to variable="errorMessage"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="'Faulted'"/>
+                                            <to variable="StatusMessage"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="'F'"/>
+                                            <to variable="State"/>
+                                        </copy>
+                                    </assign>
+                                    <!--  <bpelx:exec name="AsgCustomTitleOnGenericFault"
+                                    language="java" version="1.5">
+                            <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("vettingRequest","request","/ns2:vettingRequest/ns2:quoteHeader/ns7:quoteNumber")).getFirstChild().getNodeValue();                                    
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("vettingRequest","request","/ns2:vettingRequest/ns2:quoteHeader/ns7:quoteStatus")).getFirstChild().getNodeValue();          
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");
+setTitle("Q: " + quoteNumber + "; Fault");]]>
+                        </bpelx:exec>  -->
+                                </sequence>
+                            </catchAll>
+                        </faultHandlers>
+                        <sequence name="Sequence_3">
+                            <assign name="Assign_rawMessage">
+                                <copy>
+                                    <from variable="receive_IV" part="TomqmPollingVCollection" query="/ns10:TomqmPollingVCollection/ns10:TomqmPollingV/ns10:payload"/>
+                                    <to variable="rawMessage"/>
+                                </copy>
+                                <copy>
+                                    <from variable="receive_IV" part="TomqmPollingVCollection" query="/ns10:TomqmPollingVCollection/ns10:TomqmPollingV/ns10:id"/>
+                                    <to variable="ID"/>
+                                </copy>
+                            </assign>
+                            <bpelx:exec name="ReplaceUnsafeCharacters" language="java" version="1.3">
+                                <![CDATA[try {                            
+    setVariableData("parsedrawMessage", ((String)getVariableData("rawMessage")).replaceAll("&", "&amp;") );        
+    } catch (Exception e) {          
+        setVariableData("javaException", e.getMessage() );   
+    }]]>
+                            </bpelx:exec>
+                            <scope name="SubmitQuoteToTOM">
+                                <faultHandlers>
+                                    <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                                        <sequence name="Sequence_8">
+                                            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                                                <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                                   
+                        getVariableData("vettingRequest","request","/ns2:vettingRequest/ns2:quoteHeader/ns7:quoteNumber")).getFirstChild().getNodeValue();                                      
+setCompositeInstanceTitle("Q: " + quoteNumber + "; Fault");
+setTitle("Q: " + quoteNumber + "; Fault");]]>
+                                            </bpelx:exec>
+                                            <assign name="Assign_Retry">
+                                                <copy>
+                                                    <from expression="'R'"/>
+                                                    <to variable="State"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="'Remote Fault: Connection establishment Failed OR Un-authorized Credentials'"/>
+                                                    <to variable="StatusMessage"/>
+                                                </copy>
+                                            </assign>
+                                        </sequence>
+                                    </catch>
+                                </faultHandlers>
+                                <sequence name="SeqSubmitQuoteToTOM">
+                                    <assign name="AssignQuoteToVettingReq">
+                                        <copy>
+                                            <from expression="ora:parseEscapedXML(bpws:getVariableData('parsedrawMessage'))"/>
+                                            <to variable="vettingRequest" part="request" query="/ns2:vettingRequest"/>
+                                        </copy>
+                                    </assign>
+                                    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+                                        <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("vettingRequest","request","/ns2:vettingRequest/ns2:quoteHeader/ns7:quoteNumber")).getFirstChild().getNodeValue();                                   
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("vettingRequest","request","/ns2:vettingRequest/ns2:quoteHeader/ns7:quoteStatus")).getFirstChild().getNodeValue();         
+setCompositeInstanceTitle("Q: " + quoteNumber + "; ST: "+ quoteStatus);
+setTitle("Q: " + quoteNumber + "; ST: "+ quoteStatus);]]>
+                                    </bpelx:exec>
+                                    <assign name="TransVetRequestToCreateQuoteProducts">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransVettingRequestToCreateQuoteProductsInput.xsl',bpws:getVariableData('vettingRequest','request'))"/>
+                                            <to variable="InvCreateQuoteProducts_CreateQuoteProducts_IV" part="CreateQuoteProductsRequest"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvCreateQuoteProducts" partnerLink="SubmitQuoteToTOM_Ptl" portType="ns1:TOM" operation="CreateQuoteProducts" inputVariable="InvCreateQuoteProducts_CreateQuoteProducts_IV" outputVariable="InvCreateQuoteProducts_CreateQuoteProducts_OV"/>
+                                    <switch name="Switch_1">
+                                        <case condition="bpws:getVariableData('InvCreateQuoteProducts_CreateQuoteProducts_OV','CreateQuoteProductsResponse','/ns1:CreateQuoteProductsResponse/@returnCode') != 0">
+                                            <assign name="Assign_Error">
+                                                <copy>
+                                                    <from expression="'E'"/>
+                                                    <to variable="State"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="'Error - Invoking Create Product Quote'"/>
+                                                    <to variable="StatusMessage"/>
+                                                </copy>
+                                            </assign>
+                                        </case>
+                                        <case condition="bpws:getVariableData('InvCreateQuoteProducts_CreateQuoteProducts_OV','CreateQuoteProductsResponse','/ns1:CreateQuoteProductsResponse/@returnCode')='0'">
+                                            <sequence name="Sequence_1">
+                                                <assign name="TransVettingReqToCreateQuote">
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <copy>
+                                                        <from expression="ora:processXSLT('TransVettingRequestToCreateQuote.xsl',bpws:getVariableData('vettingRequest','request'))"/>
+                                                        <to variable="InvSubmitQuoteToTOM_CreateQuote_InputVariable" part="CreateQuoteRequest"/>
+                                                    </copy>
+                                                </assign>
+                                                <invoke name="InvSubmitQuoteToTOM" partnerLink="SubmitQuoteToTOM_Ptl" portType="ns1:TOM" inputVariable="InvSubmitQuoteToTOM_CreateQuote_InputVariable" outputVariable="InvSubmitQuoteToTOM_CreateQuote_OutputVariable" operation="CreateQuote"/>
+                                                <switch name="Switch_2">
+                                                    <case condition="bpws:getVariableData('InvSubmitQuoteToTOM_CreateQuote_OutputVariable','CreateQuoteResponse','/ns1:CreateQuoteResponse/@returnCode') != 0">
+                                                        <assign name="Asg_SubmitQuote_Error">
+                                                            <copy>
+                                                                <from expression="'E'"/>
+                                                                <to variable="State"/>
+                                                            </copy>
+                                                            <copy>
+                                                                <from expression="'Error'"/>
+                                                                <to variable="StatusMessage"/>
+                                                            </copy>
+                                                        </assign>
+                                                    </case>
+                                                    <case condition="bpws:getVariableData('InvSubmitQuoteToTOM_CreateQuote_OutputVariable','CreateQuoteResponse','/ns1:CreateQuoteResponse/@returnCode')='0'">
+                                                        <sequence name="Sequence_6">
+                                                            <assign name="Assign_Success">
+                                                                <copy>
+                                                                    <from expression="'C'"/>
+                                                                    <to variable="State"/>
+                                                                </copy>
+                                                                <copy>
+                                                                    <from expression="'Success'"/>
+                                                                    <to variable="StatusMessage"/>
+                                                                </copy>
+                                                            </assign>
+                                                        </sequence>
+                                                    </case>
+                                                    <otherwise>
+                                                        <sequence name="Sequence_5">
+                                                            <empty name="do_Nothing"/>
+                                                        </sequence>
+                                                    </otherwise>
+                                                </switch>
+                                            </sequence>
+                                        </case>
+                                        <otherwise>
+                                            <sequence name="Sequence_9">
+                                                <empty name="do_nothing"/>
+                                            </sequence>
+                                        </otherwise>
+                                    </switch>
+                                </sequence>
+                            </scope>
+                        </sequence>
+                    </scope>
+                </sequence>
+            </case>
+            <otherwise>
+                <terminate name="Terminate_InvalidCount"/>
+            </otherwise>
+        </switch>
+        <!-- 
+        <receive name="receiveQuoteRequest" variable="vettingRequest"
+                 createInstance="yes"/>
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="UpdateCustomTitle" language="java" version="1.3">
+            <![CDATA[String mystate = (String)getVariableData("State");     
+if(mystate.equalsIgnoreCase("C")){   
+ setCompositeInstanceTitle("SUCCESS: " + getTitle());
+ setTitle("SUCCESS: " + getTitle());  
+}  
+else if(mystate.equalsIgnoreCase("E")){  
+setCompositeInstanceTitle("ERROR: " + getTitle()); 
+setTitle("ERROR: " + getTitle()); 
+} 
+else 
+{ 
+setCompositeInstanceTitle("FAULT: " + getTitle()); 
+setTitle("FAULT: " + getTitle()); 
+}]]>
+        </bpelx:exec>
+        <assign name="TransVettReqToUpdateIntBuffer">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransVettingReqToInterfaceBufferUpdate.xsl',bpws:getVariableData('vettingRequest','request'))"/>
+                <to variable="InterfaceBuffer_update_IV" part="InterfaceBufferCollection"/>
+            </copy>
+        </assign>
+        <assign name="Asg_InterfaceAttributes">
+            <copy>
+                <from variable="ID"/>
+                <to variable="InterfaceBuffer_update_IV" part="InterfaceBufferCollection" query="/ns15:InterfaceBufferCollection/ns15:InterfaceBuffer/ns15:id"/>
+            </copy>
+            <copy>
+                <from variable="State"/>
+                <to variable="InterfaceBuffer_update_IV" part="InterfaceBufferCollection" query="/ns15:InterfaceBufferCollection/ns15:InterfaceBuffer/ns15:state"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="InterfaceBuffer_update_IV" part="InterfaceBufferCollection" query="/ns15:InterfaceBufferCollection/ns15:InterfaceBuffer/ns15:updatedBy"/>
+            </copy>
+            <copy>
+                <from variable="StatusMessage"/>
+                <to variable="InterfaceBuffer_update_IV" part="InterfaceBufferCollection" query="/ns15:InterfaceBufferCollection/ns15:InterfaceBuffer/ns15:errorMessage"/>
+            </copy>
+            <copy>
+                <from variable="receive_IV" part="TomqmPollingVCollection" query="/ns10:TomqmPollingVCollection/ns10:TomqmPollingV/ns10:interfaceId"/>
+                <to variable="InterfaceBuffer_update_IV" part="InterfaceBufferCollection" query="/ns15:InterfaceBufferCollection/ns15:InterfaceBuffer/ns15:interfaceId"/>
+            </copy>
+        </assign>
+        <invoke name="Update_InterfaceBuffer" partnerLink="Update_InterfaceBuffer" portType="ns12:Update_InterfaceBuffer_ptt" operation="update" inputVariable="InterfaceBuffer_update_IV"/>
+        <switch name="Switch_4">
+            <case condition="bpws:getVariableData('State') = 'R'">
+                <bpelx:annotation>
+                    <bpelx:pattern>Remote Fault Occurance</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_4">
+                    <assign name="Assign_HealthCheck">
+                        <copy>
+                            <from expression="'doHealthCheck'"/>
+                            <to variable="Invoke_1_process_InputVariable" part="payload" query="/ns13:InterfaceManagerProcessRequest/ns13:operation"/>
+                        </copy>
+                        <copy>
+                            <from expression="'TOMQM'"/>
+                            <to variable="Invoke_1_process_InputVariable" part="payload" query="/ns13:InterfaceManagerProcessRequest/ns13:interfaceConfig/ns14:id"/>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke_1" partnerLink="InterfaceManager" portType="ns13:InterfaceManager" operation="process" inputVariable="Invoke_1_process_InputVariable" outputVariable="Invoke_1_process_OutputVariable"/>
+                    <terminate name="Terminate_1"/>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="do_Nothing"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

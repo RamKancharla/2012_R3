@@ -1,0 +1,242 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Sat Aug 07 17:30:51 GMT+05:30 2010
+  Author:  albin.issac
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Change History
+	* Version     Date      Author             Description Of Change
+	* 0.1         30/08/10   Lavanya           Added Sequence named seqSAPAM to propogate accounts to SAP.
+   
+
+-->
+<process name="CCRMAM_AccountDispatcherProcess" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_AccountContactManager" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_AccountEventManager" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus" xmlns:ns10="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:ns11="http://xmlns.oracle.com/ELMAM_EventManager"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:socket="http://www.oracle.com/XSL/Transform/java/oracle.tip.adapter.socket.ProtocolTranslator"
+         xmlns:mhdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.mediator.service.common.functions.MediatorExtnFunction"
+         xmlns:med="http://schemas.oracle.com/mediator/xpath"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="CCRMAM_AccountDispatcher" partnerLinkType="client:CCRMAM_AccountDispatcher" myRole="CCRMAM_AccountDispatcherProvider"/>
+        <partnerLink myRole="SFDCAM_AccountEventManagerRequester" name="SFDCAM_AccountEventManager" partnerRole="SFDCAM_AccountEventManagerProvider" partnerLinkType="ns1:SFDCAM_AccountEventManager"/>
+        <partnerLink myRole="CPFGAM_AccountManagerRequester" name="CPFGAM_AccountManager" partnerRole="CPFGAM_AccountManagerProvider" partnerLinkType="ns4:CPFGAM_AccountManager"/>
+        <partnerLink myRole="TOMAM_AccountManagerRequester" name="TOMAM_AccountManager" partnerRole="TOMAM_AccountManagerProvider" partnerLinkType="ns5:TOMAM_AccountManager"/>
+        <partnerLink name="CSACM_AccountContactManager" partnerRole="CSACM_AccountContactManagerProvider" partnerLinkType="ns6:CSACM_AccountContactManager"/>
+        <partnerLink myRole="SAPAM_EventManagerRequester" name="SAPAM_EventManager" partnerRole="SAPAM_EventManagerProvider" partnerLinkType="ns10:SAPAM_EventManager"/>
+        <partnerLink myRole="CCRMACM_PropagateAccountContactPublishStatusRequester"
+                     name="CCRMACM_PropagateAccountContactPublishStatus"
+                     partnerRole="CCRMACM_PropagateAccountContactPublishStatusProvider"
+                     partnerLinkType="ns8:CCRMACM_PropagateAccountContactPublishStatus"/>
+        <partnerLink myRole="ELMAM_EventManagerRequester"
+                     name="ELMAM_EventManager"
+                     partnerRole="ELMAM_EventManagerProvider"
+                     partnerLinkType="ns11:ELMAM_EventManager"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:CCRMAM_AccountDispatcherRequestMessage"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMAM_AccountDispatcher.wsdl) -->
+        <receive name="RcvAccountRequest" partnerLink="CCRMAM_AccountDispatcher" portType="client:CCRMAM_AccountDispatcher" operation="dispatchAccount" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[try{     
+     
+String AccountID = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("inputVariable", "accountEvent", "/ns2:accountEvent/ns2:account/ns2:id")).getFirstChild().getNodeValue();                                    
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID) : ".;");                                           
+setCompositeInstanceTitle(Title);     
+}     
+catch(Exception e){     
+setCompositeInstanceTitle("AccountID: ");     
+}]]>
+        </bpelx:exec>
+        <scope name="ScpDispatchAccount">
+            <variables>
+                <variable name="InvSFDCAMInputVariable" messageType="ns1:SFDCAM_AccountEventManagerRequestMessage"/>
+                <variable name="InvCPFGAMInputVariable" messageType="ns4:CPFGAM_AccountManagerRequestMessage"/>
+                <variable name="InvTOMAMInputVariable" messageType="ns5:TOMAM_AccountManagerRequestMessage"/>
+                <variable name="InvCSACMInputVariable" messageType="ns6:CSACM_AccountContactManagerRequestMessage"/>
+                <variable name="InvPropagateAccountContactPublishStatusInputVariable" messageType="ns8:CCRMACM_PropagateAccountContactPublishStatusRequestMessage"/>
+                <variable name="InvSAPAM_IV" messageType="ns10:SAPAM_EventManagerRequestMessage"/>
+                <variable name="ELMAM_InputVariable"
+                          messageType="ns11:ELMAM_EventManagerRequestMessage"/>
+            </variables>
+            <faultHandlers>
+                <catchAll>
+                    <bpelx:exec name="AsgFailureTitle" language="java" version="1.5">
+                        <![CDATA[try{      
+      
+String AccountID = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("inputVariable", "accountEvent", "/ns2:accountEvent/ns2:account/ns2:id")).getFirstChild().getNodeValue();                                     
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID) : ".;");                                            
+setCompositeInstanceTitle(Title);      
+}      
+catch(Exception e){      
+setCompositeInstanceTitle("AccountID: ");      
+}]]>
+                    </bpelx:exec>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="SeqDispatchAccount">
+                <switch name="Switch_SFDC">
+                    <case condition="bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:eaiHeader/ns3:applicationId') != 'TRUST'">
+                        <sequence name="SeqSFDCAM">
+                            <assign name="AsgInputToSFDCAM">
+                                <copy>
+                                    <from variable="inputVariable"
+                                          part="accountEvent"/>
+                                    <to variable="InvSFDCAMInputVariable"
+                                        part="accountEvent"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvSFDCAM"
+                                    partnerLink="SFDCAM_AccountEventManager"
+                                    portType="ns1:SFDCAM_AccountEventManager"
+                                    operation="initiate"
+                                    inputVariable="InvSFDCAMInputVariable"/>
+                        </sequence>
+                    </case>
+                </switch>
+                <sequence name="SeqCPFGAM">
+                    <assign name="AsgInputToCPFGAM">
+                        <copy>
+                            <from variable="inputVariable" part="accountEvent"/>
+                            <to variable="InvCPFGAMInputVariable" part="accountEvent"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvCPFGAM" partnerLink="CPFGAM_AccountManager" portType="ns4:CPFGAM_AccountManager" operation="initiate" inputVariable="InvCPFGAMInputVariable"/>
+                </sequence>
+                <sequence name="SeqTOMAM">
+                    <assign name="AsgInputToTOMAM">
+                        <copy>
+                            <from variable="inputVariable" part="accountEvent"/>
+                            <to variable="InvTOMAMInputVariable" part="accountEvent"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvTOMAM" partnerLink="TOMAM_AccountManager" portType="ns5:TOMAM_AccountManager" operation="initiate" inputVariable="InvTOMAMInputVariable"/>
+                </sequence>
+                <sequence name="SeqCSAM">
+                    <switch name="chkSendToCS">
+                        <case condition="((bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:account/ns2:accountClass') = &quot;Billing&quot;) and (bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:account/ns2:csIntegrationFlag') = &quot;Y&quot;) and (bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:account/ns2:coreSuiteStatus') = 'Pending Submission')) or (bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:actionCode') = 'Delete')">
+                            <bpelx:annotation>
+                                <bpelx:pattern>SendToCS</bpelx:pattern>
+                            </bpelx:annotation>
+                            <sequence name="SendToCS">
+                                <assign name="TransformAccountContact_To_CSPublishAccountContactRequest">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransformAccountContact_To_CSPublishAccountContactRequest.xsl',bpws:getVariableData('inputVariable','accountEvent'))"/>
+                                        <to variable="InvCSACMInputVariable" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvCSACM" partnerLink="CSACM_AccountContactManager" portType="ns6:CSACM_AccountContactManager" operation="manageAccountContact" inputVariable="InvCSACMInputVariable"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NO_ACTION"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqPropagateAccountContactPublishStatus">
+                    <switch name="chkPropagateAccountStatus">
+                        <case condition="(bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:account/ns2:accountClass') = &quot;Billing&quot;) and (bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:account/ns2:csIntegrationFlag') = &quot;N&quot;) and (bpws:getVariableData('inputVariable','accountEvent','/ns2:accountEvent/ns2:account/ns2:coreSuiteStatus') = 'Pending Submission')">
+                            <bpelx:annotation>
+                                <bpelx:pattern>PropagateAccountStatus</bpelx:pattern>
+                            </bpelx:annotation>
+                            <sequence name="PropagateAccountStatus">
+                                <assign name="TransformAccountContact_To_PropagateACPubStatus">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransformAccountContact_To_PropagateACPubStatus.xsl',bpws:getVariableData('inputVariable','accountEvent'))"/>
+                                        <to variable="InvPropagateAccountContactPublishStatusInputVariable" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvPropagateAccountContactPublishStatus" portType="ns8:CCRMACM_PropagateAccountContactPublishStatus" inputVariable="InvPropagateAccountContactPublishStatusInputVariable"
+                                        partnerLink="CCRMACM_PropagateAccountContactPublishStatus"
+                                        operation="sendAccountContactStatus"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NO_ACTION"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="seqSAPAM">
+                    <assign name="TransformAccountContact_To_SAPAM">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransformAccountContact_To_SAPAM.xsl',bpws:getVariableData('inputVariable','accountEvent'))"/>
+                            <to variable="InvSAPAM_IV" part="payload"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvSAPAM" partnerLink="SAPAM_EventManager" portType="ns10:SAPAM_EventManager" operation="initiate" inputVariable="InvSAPAM_IV"/>
+                </sequence>
+                <sequence name="Seq_ELMAM">
+                    <switch name="Switch_1">
+                        <case condition='ora:getPreference("routeToELM")="ON"'>
+                            <sequence name="Seq_RouteToELM">
+                                <assign name="TransAccountToELM">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('xsl/TransAccountToELM.xsl',bpws:getVariableData('inputVariable','accountEvent'))"/>
+                                        <to variable="ELMAM_InputVariable"
+                                            part="payload"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvELMAM_EventManager"
+                                        inputVariable="ELMAM_InputVariable"
+                                        partnerLink="ELMAM_EventManager"
+                                        portType="ns11:ELMAM_EventManager"
+                                        operation="initiate"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

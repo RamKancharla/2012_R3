@@ -1,0 +1,256 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+* Module:      OM_OrderRuleManager.bpel 
+* Type:        BPEL FILE 
+* Description: Asynchronous BPEL Process to invoke rule engine and call OM_OrderDispatcher
+* Change History
+* Version      Date           Author                  Description Of Change 
+*  0.1         02/05/2011     Ramanjana               Initial Version 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="OM_OrderRuleManagerProcess" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" xmlns:ns24="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM_RuleManager" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns16="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRM" xmlns:ns5="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/DeriveNextAction" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" xmlns:ns17="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns15="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OrderRequest" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OM/Exception" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns20="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager" xmlns:ns13="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://xmlns.oracle.com/bpel" xmlns:ns23="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter" xmlns:ns18="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:l="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CCRMCM_PropagateOrderStatus" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/DeriveNextAction" xmlns:ns22="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns19="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM" xmlns:ns14="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns21="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest" xmlns:ns8="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM/correlationset" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:ns25="http://xmlns.oracle.com/OrderLineRequestDictionary141008/OrderLineRequestDictionary141008_DecisionService_1">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="OM_OrderRuleManager" partnerLinkType="client:OM_OrderRuleManager" myRole="OM_OrderRuleManagerProvider" partnerRole="OM_OrderRuleManagerRequester"/>
+        <partnerLink myRole="OM_OrderDispatcherRequester" name="OM_OrderDispatcher" partnerRole="OM_OrderDispatcherProvider" partnerLinkType="client:OM_OrderDispatcher"/>
+        <partnerLink name="OrderRequestRule"
+                     partnerLinkType="ns25:OrderRequestRule"
+                     partnerRole="IDecisionService"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <!--<variable name="UserFulfilmentIV"
+                  messageType="ns5:CSOM_UserFulfilmentRequestMessage"/>-->
+        <!--BAU R3 Merge on25-May-2010 -->
+        <!--BAU R3 Merge on 25-May-2010 END-->
+        <variable name="orderRequest" messageType="client:OM_OrderRuleManagerRequestMessage"/>
+        <variable name="successResponseCode" type="xsd:string"/>
+        <variable name="createActionCode" type="xsd:string"/>
+        <variable name="billingActionCode" type="xsd:string"/>
+        <variable name="unknownError" type="xsd:string"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="BillingMaintenanceActionCode" type="xsd:string"/>
+        <variable name="index" type="xsd:nonNegativeInteger"/>
+        <variable name="ExtendedOrderRequest" messageType="client:ExtendedOrderRequestMessageType"/>
+        <variable name="isGoodToGo" type="xsd:string"/>      
+        <variable name="noOfOrderLines" type="xsd:nonNegativeInteger"/>
+        <!--variable name="varDistNextActionElement" element="ns1:distinctNextActions"/-->
+        <variable name="StartTimeStamp" type="xsd:dateTime"/>
+        <variable name="EndTimeStamp" type="xsd:dateTime"/>
+        <variable name="InvOrderRequestRuleIn"
+                  messageType="ns25:callFunctionStatelessMessage"/>
+        <variable name="InvOrderRequestRuleOut"
+                  messageType="ns25:callFunctionStatelessDecisionMessage"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.3">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+   
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+ 
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+  
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:conflictingReceive" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnConflictingRecieve" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+       
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:DecideNextActionRemoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnDecideNextActionFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                   
+        
+                                
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");   
+   
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+       
+                               
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");  
+  
+ setCompositeInstanceTitle(title);]]>
+            </bpelx:exec>
+            <assign name="AsgUnknownError">
+                <copy>
+                    <from variable="unknownError"/>
+                    <to variable="runtimeFault" part="code"/>
+                </copy>
+            </assign>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in OM_OrderDispatcher.wsdl) -->
+        <receive name="rcvOrderRequest" partnerLink="OM_OrderRuleManager" portType="client:OM_OrderRuleManager" operation="dispatchOrder" variable="orderRequest" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitialVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','CRMOrderCreateActionCode','Value', 'Create')"/>
+                <to variable="createActionCode"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','CRMBillingReleaseActionCode','Value', 'Billing')"/>
+                <to variable="billingActionCode"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="successResponseCode"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','CRMBillingMaintenanceActionCode','Value', 'AmendBillDate')"/>
+                <to variable="BillingMaintenanceActionCode"/>
+            </copy>
+            <copy>
+                <from expression="'Unknown Error'"/>
+                <to variable="unknownError"/>
+            </copy>
+            <copy>
+                <from expression="1"/>
+                <to variable="index"/>
+            </copy>
+            <copy>
+                <from expression="'0'"/>
+                <to variable="isGoodToGo"/>
+            </copy>
+            <copy>
+                <from expression="count(bpws:getVariableData('orderRequest','orderRequest','/ns1:orderRequest/ns1:orderLineItem'))"/>
+                <to variable="noOfOrderLines"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)               
+                        getVariableData("orderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                  
+      
+                              
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");     
+ setCompositeInstanceTitle(title);]]>
+        </bpelx:exec>
+        <assign name="TransOrderRequestToExtendedOrderRequest">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransOrderRequestToExtendedOrderRequest.xsl',bpws:getVariableData('orderRequest','orderRequest'))"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"/>
+            </copy>
+        </assign>
+        <assign name="TransExtendedOrderRequestToRuleFacts">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:doXSLTransformForDoc('TransExtendedOrderRequestToRuleFacts.xsl', $ExtendedOrderRequest.extendedOrderRequest)"/>
+                <to variable="InvOrderRequestRuleIn" part="payload"/>
+            </copy>
+        </assign>
+        <invoke name="InvOrderRequestRule"
+                inputVariable="InvOrderRequestRuleIn"
+                outputVariable="InvOrderRequestRuleOut"
+                partnerLink="OrderRequestRule"
+                portType="ns25:IDecisionService"
+                operation="callFunctionStateless" bpelx:invokeAsDetail="no"/>
+        <assign name="TransRuleFactsToExtendedOrderRequest">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:doXSLTransformForDoc('TransRuleFactsToExtendedOrderRequest.xsl', $InvOrderRequestRuleOut.payload)"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest"/>
+            </copy>
+        </assign>
+        <assign name="AsgHeaderToExtendedOrderRequest">
+            <copy>
+                <from variable="orderRequest" part="orderRequest" query="/ns1:orderRequest/ns1:eaiHeader"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedOrderRequest/ns1:eaiHeader"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest" query="/ns1:orderRequest/ns1:logicalCountry"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedOrderRequest/ns1:logicalCountry"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest" query="/ns1:orderRequest/ns1:messageHeader"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedOrderRequest/ns1:messageHeader"/>
+            </copy>
+            <copy>
+                <from variable="orderRequest" part="orderRequest" query="/ns1:orderRequest/ns1:orderHeader"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedOrderRequest/ns1:orderHeader"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCurrentDateTime()"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:timeStamp"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="ExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedOrderRequest/ns1:eaiHeader/ns2:instanceId"/>
+            </copy>
+        </assign>
+                <invoke name="InvOrderDispatcher" partnerLink="OM_OrderDispatcher" portType="client:OM_OrderDispatcher" operation="dispatchOrder" inputVariable="ExtendedOrderRequest"/>
+    </sequence>
+</process>

@@ -1,0 +1,273 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Sun Feb 22 22:45:54 GMT 2009
+  Author:  surya.gannavarapu
+  Purpose: Asynchronous BPEL Process
+  
+*  0.1         06/10/10     Ramanjana          Added mapping for serverId in TransExtendedOrderStatusToPropogateOrderStatusIV.xsl as part of CR 5862
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOM_ProxyPropagateOrderStatus" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus/correlationset" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OM/Exception" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToProxyPropagateOrderStatus" partnerLinkType="client:CCRMOM_ProxyPropagateOrderStatus" myRole="CCRMOM_ProxyPropagateOrderStatusProvider" partnerRole="CCRMOM_ProxyPropagateOrderStatusRequester"/>
+        <partnerLink name="SequenceChecker" partnerRole="SequenceCheckerProvider" partnerLinkType="ns4:SequenceChecker"/>
+        <partnerLink name="CCRMOM_PropagateOrderStatus" partnerLinkType="ns8:CCRMOM_PropagateOrderStatus" myRole="CCRMOM_PropagateOrderStatusRequester" partnerRole="CCRMOM_PropagateOrderStatusProvider"/>
+        <partnerLink myRole="TF_OrderDispatcherRequester" name="TF_OrderDispatcher" partnerRole="TF_OrderDispatcherProvider" partnerLinkType="ns9:TF_OrderDispatcher"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="ProxyPropagateOrderStatusIV" messageType="client:CCRMOM_ProxyPropagateOrderStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CCRMOM_ProxyPropagateOrderStatusResponseMessage"/>
+        <variable name="processName" type="xsd:string"/>
+        <variable name="dataSource" type="xsd:string"/>
+        <variable name="sequencingTable" type="xsd:string"/>
+        <variable name="seqCheckRequest" messageType="client:SequenceCheckMessageType"/>
+        <variable name="SequenceCheckerIV" messageType="ns4:SequenceCheckerRequestMessage"/>
+        <variable name="SequenceCheckerOV" messageType="ns4:SequenceCheckerResponseMessage"/>
+        <variable name="UniqueId" type="xsd:string"/>
+        <variable name="UpdateReleaseStatus" messageType="client:ReleaseSequenceMessage"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="PropagateOrderStatusIV" messageType="ns8:CCRMOM_PropagateOrderStatusRequestMessage"/>
+        <variable name="TF_OrderDispatcherIV" messageType="ns9:TF_OrderDispatcherRequestMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="SeqCorrelationSet" properties="ns7:SeqCorrSetProp"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="ns6:SequenceCheckerError" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSequenceCheckerError" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                 
+                        getVariableData("ProxyPropagateOrderStatusIV", "orderStatus", "/ns1:orderStatus/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                    
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : "; Fault");   
+setCompositeInstanceTitle(orderNumber);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                 
+                        getVariableData("ProxyPropagateOrderStatusIV", "orderStatus", "/ns1:orderStatus/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                    
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : "; Fault");   
+setCompositeInstanceTitle(orderNumber);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:conflictingReceive" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnConfictingReceive" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                 
+                        getVariableData("ProxyPropagateOrderStatusIV", "orderStatus", "/ns1:orderStatus/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                    
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : "; Fault");   
+setCompositeInstanceTitle(orderNumber);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                 
+                        getVariableData("ProxyPropagateOrderStatusIV", "orderStatus", "/ns1:orderStatus/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                    
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : "; Fault");   
+setCompositeInstanceTitle(orderNumber);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnCatchAll" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                 
+                        getVariableData("ProxyPropagateOrderStatusIV", "orderStatus", "/ns1:orderStatus/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                    
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : "; Fault");   
+setCompositeInstanceTitle(orderNumber);]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMOM_ProxyPropagateOrderStatus.wsdl) -->
+        <receive name="RcvOrderStatus" partnerLink="anchorToProxyPropagateOrderStatus" portType="client:CCRMOM_ProxyPropagateOrderStatus" operation="initiate" variable="ProxyPropagateOrderStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                
+                        getVariableData("ProxyPropagateOrderStatusIV", "orderStatus", "/ns1:orderStatus/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();                   
+orderNumber=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");  
+setCompositeInstanceTitle(orderNumber);]]>
+        </bpelx:exec>
+        <assign name="AsgInitVariables">
+            <copy>
+                <from variable="ProxyPropagateOrderStatusIV" part="orderStatus" query="/ns1:orderStatus/ns1:eaiHeader"/>
+                <to variable="seqCheckRequest" part="seqCheck" query="/ns3:sequenceCheckRequest/ns3:eaiHeader"/>
+            </copy>
+            <copy>
+                <from variable="ProxyPropagateOrderStatusIV" part="orderStatus" query="/ns1:orderStatus/ns1:eaiHeader/ns2:tracingId"/>
+                <to variable="seqCheckRequest" part="seqCheck" query="/ns3:sequenceCheckRequest/ns3:seqRequestDetails/ns3:correlationID"/>
+            </copy>
+            <copy>
+                <from expression="&quot;&quot;"/>
+                <to variable="seqCheckRequest" part="seqCheck" query="/ns3:sequenceCheckRequest/ns3:seqRequestDetails/ns3:context"/>
+            </copy>
+            <copy>
+                <from expression="&quot;&quot;"/>
+                <to variable="seqCheckRequest" part="seqCheck" query="/ns3:sequenceCheckRequest/ns3:seqRequestDetails/ns3:process"/>
+            </copy>
+            <copy>
+                <from expression="&quot;Message_Seq_Inst&quot;"/>
+                <to variable="seqCheckRequest" part="seqCheck" query="/ns3:sequenceCheckRequest/ns3:seqRequestDetails/ns3:tableName"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;DataSourceNameforSequencer&quot;,&quot;Value&quot;,&quot;eai/ds/EAISOA&quot;)"/>
+                <to variable="seqCheckRequest" part="seqCheck" query="/ns3:sequenceCheckRequest/ns3:seqRequestDetails/ns3:dataSourceName"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;TransformOrderStatusBPELProcess&quot;,&quot;Value&quot;,&quot;CSOM_TransformOrderStatus&quot;)"/>
+                <to variable="processName"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="UniqueId"/>
+            </copy>
+        </assign>
+        <assign name="TransSeqCheckRequest">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransSeqCheckRequest.xsl',bpws:getVariableData('seqCheckRequest','seqCheck'))"/>
+                <to variable="seqCheckRequest" part="seqCheck"/>
+            </copy>
+        </assign>
+        <switch name="CheckforSequence">
+            <case condition="bpws:getVariableData('seqCheckRequest','seqCheck','/ns3:sequenceCheckRequest/ns3:seqRequestDetails/ns3:process') = bpws:getVariableData('processName')">
+                <empty name="DoNothing"/>
+            </case>
+            <otherwise>
+                <sequence name="SequenceStatusUpdateToSiebel">
+                    <scope name="CheckSequence">
+                        <faultHandlers>
+                            <catch faultName="bpws:conflictingReceive" faultVariable="runTimeFault">
+                                <throw name="ThrConflictingReceiveFault" faultName="bpws:conflictingReceive" faultVariable="runTimeFault"/>
+                            </catch>
+                            <catch faultName="ns6:SequenceCheckerError" faultVariable="runTimeFault">
+                                <throw name="ThrSequenceCheckerError" faultName="ns6:SequenceCheckerError" faultVariable="runTimeFault"/>
+                            </catch>
+                        </faultHandlers>
+                        <sequence name="SeqCheckSequence">
+                            <assign name="AsgSequenceCheckerIV">
+                                <copy>
+                                    <from variable="ProxyPropagateOrderStatusIV" part="orderStatus" query="/ns1:orderStatus/ns1:eaiHeader"/>
+                                    <to variable="SequenceCheckerIV" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader"/>
+                                </copy>
+                                <copy>
+                                    <from variable="UniqueId"/>
+                                    <to variable="SequenceCheckerIV" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns2:tracingId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCurrentDateTime()"/>
+                                    <to variable="SequenceCheckerIV" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns2:timeStamp"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="SequenceCheckerIV" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns2:instanceId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SequencerContextForOrderStatus','Value', 'OrderManagement.OrderStatus')"/>
+                                    <to variable="SequenceCheckerIV" part="payload" query="/ns3:checkSequenceRequest/ns3:seqRequestDetails/ns3:context"/>
+                                </copy>
+                                <copy>
+                                    <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SequencerMessageTypeCRM61OM','Value', 'Order.CRMOrderNumber')"/>
+                                    <to variable="SequenceCheckerIV" part="payload" query="/ns3:checkSequenceRequest/ns3:seqRequestDetails/ns3:messageType"/>
+                                </copy>
+                                <copy>
+                                    <from variable="ProxyPropagateOrderStatusIV" part="orderStatus" query="/ns1:orderStatus/ns1:orderHeader/ns1:CRMOrderNumber"/>
+                                    <to variable="SequenceCheckerIV" part="payload" query="/ns3:checkSequenceRequest/ns3:seqRequestDetails/ns3:contextId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getProcessId()"/>
+                                    <to variable="SequenceCheckerIV" part="payload" query="/ns3:checkSequenceRequest/ns3:seqRequestDetails/ns3:process"/>
+                                </copy>
+                                <copy>
+                                    <from variable="UniqueId"/>
+                                    <to variable="SequenceCheckerIV" part="payload" query="/ns3:checkSequenceRequest/ns3:seqRequestDetails/ns3:correlationID"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvSequenceChecker" partnerLink="SequenceChecker" portType="ns4:SequenceChecker" operation="checkSequence" inputVariable="SequenceCheckerIV" outputVariable="SequenceCheckerOV">
+                                <correlations>
+                                    <correlation initiate="yes" set="SeqCorrelationSet" pattern="out"/>
+                                </correlations>
+                            </invoke>
+                            <switch name="CheckSequenceCheckerResponse">
+                                <case condition="bpws:getVariableData('SequenceCheckerOV','payload','/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage')='WAIT'">
+                                    <receive name="RcvReleaseStatus" partnerLink="anchorToProxyPropagateOrderStatus" portType="client:CCRMOM_ProxyPropagateOrderStatus" operation="updateReleaseStatus" variable="UpdateReleaseStatus" createInstance="no">
+                                        <correlations>
+                                            <correlation initiate="no" set="SeqCorrelationSet"/>
+                                        </correlations>
+                                    </receive>
+                                </case>
+                                <case condition="bpws:getVariableData('SequenceCheckerOV','payload','/ns5:basicResponse/ns5:basicResponse/ns2:responseMessage')='CONTINUE'">
+                                    <empty name="NoSequenceToWait"/>
+                                </case>
+                                <otherwise>
+                                    <throw name="ThrSequenceCheckerException" faultName="ns6:SequenceCheckerError" faultVariable="runTimeFault"/>
+                                </otherwise>
+                            </switch>
+                            <assign name="AsgCorrelationIdToProxyPropagateOrderStatusIV">
+                                <copy>
+                                    <from variable="UniqueId"/>
+                                    <to variable="ProxyPropagateOrderStatusIV" part="orderStatus" query="/ns1:orderStatus/ns1:eaiHeader/ns2:tracingId"/>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </scope>
+                </sequence>
+            </otherwise>
+        </switch>
+        <flow name="CallPropagateOrderStatusAndTF_OrderDispatcher">
+            <sequence name="SeqTF_OrderDispatcher">
+                <assign name="TransExtendedOrderStatusToTF_OrderDispatcherIV">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransExtendedOrderStatusToTFOrderDispatcherIV.xsl',bpws:getVariableData('ProxyPropagateOrderStatusIV','orderStatus'))"/>
+                        <to variable="TF_OrderDispatcherIV" part="TOMOrderRequest"/>
+                    </copy>
+                </assign>
+                <invoke name="InvTF_OrderDispatcher" partnerLink="TF_OrderDispatcher" portType="ns9:TF_OrderDispatcher" operation="dispatchOrderToTOM" inputVariable="TF_OrderDispatcherIV"/>
+            </sequence>
+            <sequence name="SeqPropagateOrderStatus">
+                <assign name="TransExtendedOrderStatusToPropagateOrderStatus">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransExtendedOrderStatusToPropogateOrderStatusIV.xsl',bpws:getVariableData('ProxyPropagateOrderStatusIV','orderStatus'))"/>
+                        <to variable="PropagateOrderStatusIV" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvPropagateOrderStatus" partnerLink="CCRMOM_PropagateOrderStatus" portType="ns8:CCRMOM_PropagateOrderStatus" operation="sendOrderStatus" inputVariable="PropagateOrderStatusIV"/>
+            </sequence>
+        </flow>
+    </sequence>
+</process>

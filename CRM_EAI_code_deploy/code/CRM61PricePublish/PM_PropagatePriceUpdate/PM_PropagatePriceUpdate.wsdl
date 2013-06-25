@@ -1,0 +1,69 @@
+<definitions
+     name="PM_PropagatePriceUpdate"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns3="http://schemas.oracle.com/bpel/extension">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate"
+                 schemaLocation="PM_PropagatePriceUpdate.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.CCRM.PM.211_PriceUpdateRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.CS.PM.212_CSPriceUpdateRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="PM_PropagatePriceUpdateRequestMessage">
+        <part name="payload" element="ns1:priceUpdateRequest"/>
+    </message>
+    <message name="PM_PropagatePriceUpdateResponseMessage">
+        <part name="payload" element="ns2:priceUpdateRequest"/>
+    </message>
+    <portType name="PM_PropagatePriceUpdate">
+        <operation name="initiate">
+            <input message="client:PM_PropagatePriceUpdateRequestMessage"/>
+        </operation>
+    </portType>
+	<!-- portType implemented by the requester of PM_PropagatePriceUpdate BPEL process
+	for asynchronous callback purposes
+	-->
+	<portType name="PM_PropagatePriceUpdateCallback">
+		<operation name="onResult">
+			<input message="client:PM_PropagatePriceUpdateResponseMessage"/>
+		</operation>
+	</portType>  
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	the PM_PropagatePriceUpdate partnerLinkType binds the provider and
+	requester portType into an asynchronous conversation.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <plnk:partnerLinkType name="PM_PropagatePriceUpdate">
+        <plnk:role name="PM_PropagatePriceUpdateProvider">
+            <plnk:portType name="client:PM_PropagatePriceUpdate"/>
+        </plnk:role>
+        <plnk:role name="PM_PropagatePriceUpdateRequester">
+            <plnk:portType name="client:PM_PropagatePriceUpdateCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

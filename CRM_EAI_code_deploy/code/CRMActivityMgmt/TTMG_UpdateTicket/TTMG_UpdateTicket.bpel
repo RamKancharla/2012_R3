@@ -1,0 +1,90 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Apr 02 13:24:37 BST 2009
+  Author:  surya.gannavarapu
+  Purpose: Synchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TTMG_UpdateTicket" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigrationUpdate" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="client" partnerLinkType="client:TTMG_UpdateTicket" myRole="TTMG_UpdateTicketProvider"/>
+    <partnerLink myRole="CCRMG_PropagateTicketStatusRequester" name="CCRMG_PropagateTicketStatus" partnerRole="CCRMG_PropagateTicketStatusProvider" partnerLinkType="ns3:CCRMG_PropagateTicketStatus"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="MigrationStatusIV" messageType="client:TTMG_UpdateTicketRequestMessage"/>
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="MigrationStatusOV" messageType="client:TTMG_UpdateTicketResponseMessage"/>
+    <variable name="PropagateTicketStatusIV" messageType="ns3:CCRMG_PropagateTicketStatusRequestMessage"/>
+  </variables>
+  <faultHandlers>
+    <catchAll>
+      <empty name="DoNothing"/>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in TTMG_UpdateTicket.wsdl) -->
+    <receive name="RcvTicketUpdate" partnerLink="client" portType="client:TTMG_UpdateTicket" operation="process" variable="MigrationStatusIV" createInstance="yes"/>
+    <!-- Generate reply to synchronous request -->
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[try{ 
+String CRMActivityId = ((oracle.xml.parser.v2.XMLElement)          
+                    getVariableData("MigrationStatusIV","migrationStatus","/ns1:migrationStatus/ns1:CRMActivityID")).getFirstChild().getNodeValue();          
+String Title=(CRMActivityId!=null ? ("CRMActivityId: "+CRMActivityId) : ".;");                
+setCompositeInstanceTitle(Title); 
+} 
+catch(Exception e) 
+{ 
+setCompositeInstanceTitle("No Id Supplied; TTFault"); 
+ 
+}]]>
+    </bpelx:exec>
+    <assign name="TransUpdateTicketServiceToPropagateStatusIV">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:processXSLT('TransUpdateTicketServiceToPropagateStatusIV.xsl',bpws:getVariableData('MigrationStatusIV','migrationStatus'))"/>
+        <to variable="PropagateTicketStatusIV" part="crmMigrationStatus"/>
+      </copy>
+    </assign>
+    <invoke name="InvPropagateTicketStatus" partnerLink="CCRMG_PropagateTicketStatus" portType="ns3:CCRMG_PropagateTicketStatus" operation="propagateTicketStatus" inputVariable="PropagateTicketStatusIV"/>
+    <assign name="TransUpdateTicketStatusToMigrationStatusResponse">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:processXSLT('TransUpdateTicketStatusToMigrationStatusResponse.xsl',bpws:getVariableData('MigrationStatusIV','migrationStatus'))"/>
+        <to variable="MigrationStatusOV" part="migrationStatusResponse"/>
+      </copy>
+    </assign>
+    <reply name="ReplyMigrationStatusResponse" partnerLink="client" portType="client:TTMG_UpdateTicket" operation="process" variable="MigrationStatusOV"/>
+  </sequence>
+</process>

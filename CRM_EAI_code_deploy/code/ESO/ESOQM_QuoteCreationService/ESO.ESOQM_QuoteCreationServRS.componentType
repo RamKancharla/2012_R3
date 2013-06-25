@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="EAI.SRV.EXT.ESO.312_ReceiveESOQuotePublish.wsdl" name="ESO.ESOQM_QuoteCreationServRS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/ESO/QM/ESOQuotePublish#wsdl.interface(publishQuoteService)"/>
+    </service>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMSYNC/CCRMQM_PropagateQuoteRequestMsg/CCRMQM_PropagateQuoteRequestMsg.wsdl" name="ESO.PropagateQuoteRequestSoapService">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg#wsdl.interface(CCRMQM_PropagateQuoteRequestMsg)"/>
+    </reference>
+</componentType>

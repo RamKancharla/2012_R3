@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.TF.241_OrderStatus.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:  	Canonical Order Status Schema document including message header
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		24/06/08	Sreeja Prasad			Initial Version
+*  0.02		26/10/08	anvv sharma			Modified ComplexType 'QuoteNote' to 'TFManageOLSQuoteNote'
+								to avoid conflict between TF_OrderDispatcher and TF_ManageOrderLineStatus
+								at SequenceReleaser Component
+ * 0.03         23/02/09        Surya G                         Renamed the OrderStatus complex type to TechFulfilmentOrderStatus                                                               
+                                                                
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="techFulfilmentOrderStatus" type="xsdLocal:TechFulfilmentOrderStatus"/>
+	<xsd:complexType name="TechFulfilmentOrderStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="messageHeader" type="xsdLocal:CanonicalMessageHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:CanonicalRespOrderHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:CanonicalResponseOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+			<xsd:element name="rootItemId" type="xsd:string"/>
+			<xsd:element name="itemNumber" type="xsd:string"/>
+			<xsd:element name="ILA" type="xsd:string"/>
+			<xsd:element name="orderLineStatus" type="xsd:string"/>
+			<xsd:element name="orderPermissionStatus" type="xsd:string"/>
+			<xsd:element name="plannedInstallationDate" type="xsd:string"/>
+			<xsd:element name="actualInstallationDate" type="xsd:string"/>
+			<xsd:element name="technicalFulfilmentStatus" type="xsd:string"/>
+                        <xsd:element name="CSOrderNumber" type="xsd:string"/>
+                        
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalRespOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="orderNumber" type="xsd:string"/>
+			<xsd:element name="technicalOrderNo" type="xsd:string"/>
+			<xsd:element name="technicalFulfilmentStatusReason" type="xsd:string"/>
+			<xsd:element name="technicalFulfilmentStatus" type="xsd:string"/>
+			<xsd:element name="firstName" type="xsd:string"/>
+			<xsd:element name="lastname" type="xsd:string"/>
+			<xsd:element name="email" type="xsd:string"/>
+			<xsd:element name="phone" type="xsd:string"/>
+			<xsd:element name="plannedInstallationDate" type="xsd:string"/>
+			<xsd:element name="actualInstallationDate" type="xsd:string"/>
+			<xsd:element name="requestStatus" type="xsd:string"/>
+                        <xsd:element name="ExpectedTechnicallyReadyToMigrateDate" type="xsd:date" minOccurs="0"/>
+                        
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TFManageOLSQuoteNote">
+		<xsd:sequence>
+			<xsd:element name="field2" type="xsd:string"/>
+			<xsd:element name="field1" type="xsd:string"/>
+			<xsd:element name="type" type="xsd:string"/>
+			<xsd:element name="note" type="xsd:string"/>
+			<xsd:element name="installationNotes" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

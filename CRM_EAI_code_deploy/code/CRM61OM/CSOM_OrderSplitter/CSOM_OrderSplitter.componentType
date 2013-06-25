@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSOM_OrderSplitter.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitter)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitterCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderBatcher/CSOM_OrderBatcher.wsdl" name="CSOM_OrderBatcher">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher#wsdl.interface(CSOM_OrderBatcher)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_OrderBatcher#wsdl.interface(CSOM_OrderBatcherCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_UserFulfilment/CSOM_UserFulfilment.wsdl" name="CSOM_UserFulfilment">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.interface(CSOM_UserFulfilment)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment#wsdl.interface(CSOM_UserFulfilmentCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus.wsdl" name="CCRMOM_ProxyPropagateOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatusCallback)"/>
+    </reference>
+</componentType>

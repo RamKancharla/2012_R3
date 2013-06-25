@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMMG_SubmitTicketService" revision="1.0" state="on">
+    <import importType="wsdl" location="CCRMMG_SubmitTicketInRS.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/MigrationTicketServices"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMMG_SubmitTicket/CCRMMG_SubmitTicket.wsdl" importType="wsdl"/>
+    <service name="CCRMMG.SubmitTicketInRS_ep" ui:wsdlLocation="CCRMMG_SubmitTicketInRS.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/MigrationTicketServices#wsdl.interface(submitTicket_ppt)"/>
+        <binding.ws location="CCRMMG_SubmitTicketInRS.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/MigrationTicketServices#wsdl.endpoint(submitTicket_ppt/submitTicket_ppt_pt)"/>
+    </service>
+    <component name="CCRMMG.SubmitTicketInRS">
+        <implementation.mediator src="CCRMMG.SubmitTicketInRS.mplan"/>
+    </component>
+    <reference name="CCRMMG.SubmitTicketSOAPAdp" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMMG_SubmitTicket/CCRMMG_SubmitTicket.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket#wsdl.interface(CCRMMG_SubmitTicket)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket#wsdl.endpoint(CCRMMG_SubmitTicket/CCRMMG_SubmitTicket)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMMG_SubmitTicket/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CCRMMG.SubmitTicketInRS_ep</source.uri>
+        <target.uri>CCRMMG.SubmitTicketInRS/CCRMMG.SubmitTicketInRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMMG.SubmitTicketInRS/CCRMMG.SubmitTicketSOAPAdp</source.uri>
+        <target.uri>CCRMMG.SubmitTicketSOAPAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

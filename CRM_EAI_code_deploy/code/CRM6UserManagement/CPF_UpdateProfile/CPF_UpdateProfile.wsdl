@@ -1,0 +1,54 @@
+<definitions
+     name="CPF_UpdateProfile"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://schemas.xmlsoap.org/ws/2003/03/addressing"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile/correlationset"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:ns5="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>       
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://schemas.xmlsoap.org/ws/2003/03/addressing"
+             xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile/correlationset"
+             xmlns:ns5="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+                 schemaLocation="EAI.MSG.CCRM.124_UpdateProfileRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://schemas.xmlsoap.org/ws/2003/03/addressing"
+             xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile/correlationset"
+             xmlns:ns5="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>      
+    </types>
+    <message name="CPF_UpdateProfileRequestMessage">
+        <part name="payload" element="ns1:UpdateProfileRequest"/>
+    </message>
+    <message name="ConanicalMessageType">
+        <part name="payload" element="ns1:UpdateProfileRequest"/>
+    </message>
+    <portType name="CPF_UpdateProfile">
+        <operation name="updateUserProfile">
+            <input message="client:CPF_UpdateProfileRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPF_UpdateProfile">
+        <plnk:role name="CPF_UpdateProfileProvider">
+            <plnk:portType name="client:CPF_UpdateProfile"/>
+        </plnk:role>
+        <!--plnk:role name="CPF_UpdateProfileRequester">
+            <plnk:portType name="client:CPF_UpdateProfileCallback"/>
+        </plnk:role-->
+    </plnk:partnerLinkType>
+</definitions>

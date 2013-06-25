@@ -1,0 +1,46 @@
+<definitions
+     name="CPFGEF_PropagateFulfillmentStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus"
+                 schemaLocation="CPFGEF_PropagateFulfillmentStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" schemaLocation="EAI.MSG.CPFG.EF.208_FulfilmentStatusUpdate.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFGEF_PropagateFulfillmentStatusRequestMessage">
+        <part name="processStatus" element="ns1:PropagateCPFGStatusUpdateRequest"/>
+    </message>
+    <message name="CPFGEF_PropagateFulfillmentStatusResponseMessage">
+        <part name="payload" element="client:CPFGEF_PropagateFulfillmentStatusProcessResponse"/>
+    </message>
+    <portType name="CPFGEF_PropagateFulfillmentStatus">
+        <operation name="processStatus">
+            <input message="client:CPFGEF_PropagateFulfillmentStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="CPFGEF_PropagateFulfillmentStatusCallback">
+        <operation name="onResult">
+            <input message="client:CPFGEF_PropagateFulfillmentStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFGEF_PropagateFulfillmentStatus">
+        <plnk:role name="CPFGEF_PropagateFulfillmentStatusProvider">
+            <plnk:portType name="client:CPFGEF_PropagateFulfillmentStatus"/>
+        </plnk:role>
+        <plnk:role name="CPFGEF_PropagateFulfillmentStatusRequester">
+            <plnk:portType name="client:CPFGEF_PropagateFulfillmentStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

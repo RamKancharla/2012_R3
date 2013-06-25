@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.XSD.018_CommonServiceRequestTypes.xsd
+* Type:       	XSD Schema
+* Description: The schema used for Common Service Request
+*
+* Change History
+* Version     Date      Author             Description Of Change
+*
+*  0.1        11/07/08  Sunil Vuppala	   Initial Version
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CommonServiceRequestTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonServiceRequestTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.1">
+<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd"/>
+	<xsd:simpleType name="SRNumber">
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Abstract">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="SRType">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="SRSubType">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Component">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Product">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductVersion">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="DeliveryInfrastructure">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="MarketSector">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="DataGeography">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Description">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Resolution">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CustomerId">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CreatorId">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ContactFirstName">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ContactLastName">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ContactEmail">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Account">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Status">
+			<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+</xsd:schema>

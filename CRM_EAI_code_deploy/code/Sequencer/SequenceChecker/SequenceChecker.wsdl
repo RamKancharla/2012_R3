@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SequenceChecker"
+             targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" schemaLocation="EAI.MSG.UTL.185_CheckSequenceRequest.xsd" />
+		</schema>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd" />
+		</schema>
+	</types>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<message name="SequenceCheckerRequestMessage">
+		<part name="payload" element="ns1:checkSequenceRequest" />
+	</message>
+	<message name="SequenceCheckerResponseMessage">
+		<part name="payload" element="ns2:basicResponse" />
+	</message>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	<!-- portType implemented by the SequenceChecker BPEL process -->
+	<portType name="SequenceChecker">
+		<operation name="checkSequence">
+			<input  message="client:SequenceCheckerRequestMessage" />
+			<output message="client:SequenceCheckerResponseMessage"/>
+		</operation>
+	</portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ --> 
+	<plnk:partnerLinkType name="SequenceChecker">
+		<plnk:role name="SequenceCheckerProvider">
+			<plnk:portType name="client:SequenceChecker"/>
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

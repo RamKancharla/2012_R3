@@ -1,0 +1,23 @@
+<definitions
+     name="SI_Create_ContractOrder_OB_Async"
+     targetNamespace="http://trm.com:I004:OrderProcessing:CreateContractOrder_Send"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:p1="http://trm.com:I004:OrderProcessing:CreateContractOrder_Send"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <import namespace="http://trm.com:I004:OrderProcessing:CreateContractOrder_Send" location="SI_Create_ContractOrder_OB_Async.wsdl"/>
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+                 schemaLocation="EAI.MSG.SAP.OM.286_OrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <plnk:partnerLinkType name="SI_Create_ContractOrder_OB_Async_PL">
+        <plnk:role name="SI_Create_ContractOrder_OB_Async_Role">
+            <plnk:portType name="p1:SI_Create_ContractOrder_OB_Async"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

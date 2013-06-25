@@ -1,0 +1,128 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Aug 07 22:45:29 BST 2009
+  Author:  rob.billington
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="AsyncSequenceChecker" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/RegisterSequence/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/EAIOWNER/MESSAGE_SEQUENCER/REGISTER_SEQ/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker/correlationset" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:AsyncSequenceChecker" myRole="AsyncSequenceCheckerProvider" partnerRole="AsyncSequenceCheckerRequester"/>
+        <partnerLink name="RegisterSequence" partnerRole="RegisterSequence_role" partnerLinkType="ns4:RegisterSequence_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:AsyncSequenceCheckerRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="InvRegisterSequenceIV" messageType="ns4:args_in_msg"/>
+        <variable name="InvRegisterSequenceOV" messageType="ns4:args_out_msg"/>
+        <variable name="ReceiveReleaseMessageIV" messageType="client:ReleaseSequenceMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationID" properties="ns6:id"/>
+    </correlationSets>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in AsyncSequenceChecker.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:AsyncSequenceChecker" operation="initiate" variable="inputVariable" createInstance="yes">
+            <correlations>
+                <correlation initiate="yes" set="CorrelationID"/>
+            </correlations>
+        </receive>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="SetCustomTitle" language="java" version="1.5">
+            <![CDATA[try { 
+oracle.xml.parser.v2.XMLElement contextIDElement = (oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable", "payload", "/ns1:checkSequenceRequest/ns1:seqRequestDetails/ns1:contextId");   
+String contextID = "NONE";   
+if (contextIDElement != null)   
+ contextID = contextIDElement.getFirstChild().getNodeValue();   
+    
+ setCompositeInstanceTitle(contextID);      
+    
+} catch (Exception e) {      
+    setCompositeInstanceTitle("NONE");      
+}]]>
+        </bpelx:exec>
+        <switch name="CheckSequencingRequired">
+            <case condition="string-length(bpws:getVariableData('inputVariable','payload','/ns1:checkSequenceRequest/ns1:seqRequestDetails/ns1:contextId')) > 0">
+                <bpelx:annotation>
+                    <bpelx:pattern>ContextID Provided</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_1">
+                    <assign name="TransSequenceRequestCheck">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransSequenceRequestCheck.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                            <to variable="InvRegisterSequenceIV" part="InputParameters"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvRegisterSequence" partnerLink="RegisterSequence" portType="ns4:RegisterSequence_ptt" operation="RegisterSequence" inputVariable="InvRegisterSequenceIV" outputVariable="InvRegisterSequenceOV"/>
+                    <switch name="WaitOrContinue">
+                        <case condition="bpws:getVariableData('InvRegisterSequenceOV','OutputParameters','/ns5:OutputParameters/ns5:P_OUTCOME') = 'CONTINUE'">
+                            <bpelx:annotation>
+                                <bpelx:pattern>CONTINUE</bpelx:pattern>
+                            </bpelx:annotation>
+                            <empty name="DoNothing"/>
+                        </case>
+                        <otherwise>
+                            <receive name="ReceiveReleaseMessage" partnerLink="client" portType="client:AsyncSequenceChecker" operation="updateReleaseStatus" variable="ReceiveReleaseMessageIV" createInstance="no">
+                                <correlations>
+                                    <correlation initiate="no" set="CorrelationID"/>
+                                </correlations>
+                            </receive>
+                        </otherwise>
+                    </switch>
+                    <assign name="AsgResponseCONTINUE">
+                        <copy>
+                            <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessCode&quot;,&quot;Value&quot;,&quot;0&quot;)"/>
+                            <to variable="outputVariable" part="payload" query="/ns3:basicResponse/ns3:basicResponse/ns2:response"/>
+                        </copy>
+                        <copy>
+                            <from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;SuccessResponseCode&quot;,&quot;Value&quot;,&quot;00100-EAI-SUCCESS&quot;)"/>
+                            <to variable="outputVariable" part="payload" query="/ns3:basicResponse/ns3:basicResponse/ns2:responseCode"/>
+                        </copy>
+                        <copy>
+                            <from expression="'CONTINUE'"/>
+                            <to variable="outputVariable" part="payload" query="/ns3:basicResponse/ns3:basicResponse/ns2:responseMessage"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+        <invoke name="callbackClient" partnerLink="client" portType="client:AsyncSequenceCheckerCallback" operation="onResult" inputVariable="outputVariable"/>
+    </sequence>
+</process>

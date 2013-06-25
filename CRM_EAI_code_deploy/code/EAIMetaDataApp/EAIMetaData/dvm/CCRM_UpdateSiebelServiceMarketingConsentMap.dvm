@@ -1,0 +1,26 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="CCRM_UpdateSiebelServiceMarketingConsentMap" xmlns="http://xmlns.oracle.com/dvm">
+   <description>Maps EAI marketing Consent Values to those used in Siebel.Used by:CCRM_UpdateSiebelServiceCPFGUM_Invoker</description>
+   <columns>
+      <column name="SIEBEL"/>
+      <column name="LEGALCONSENT"/>
+      <column name="MARKETCONSENT"/>
+   </columns>
+   <rows>
+      <row>
+         <cell>No</cell>
+         <cell>false</cell>
+         <cell>true</cell>
+      </row>
+      <row>
+         <cell>Yes</cell>
+         <cell>true</cell>
+         <cell>true</cell>
+      </row>
+      <row>
+         <cell>Not Specified</cell>
+         <cell>true</cell>
+         <cell>false</cell>
+      </row>
+     </rows>
+</dvm>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMQM_SubmitQuoteInRs.wsdl" name="CCRMQM.SubmitQuoteInRs">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/QuoteManagementServices#wsdl.interface(execute_ppt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMTF_QuoteRequestValidator/CCRMTF_QuoteRequestValidator.wsdl" name="CCRMQM.CCRMTF_QuoteRequestValidatorService">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF#wsdl.interface(CCRMTF_QuoteRequestValidator)"/>
+    </reference>   
+</componentType>

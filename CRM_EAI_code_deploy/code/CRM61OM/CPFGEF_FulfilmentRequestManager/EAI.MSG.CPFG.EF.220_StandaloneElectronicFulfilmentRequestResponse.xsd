@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.EXT.111_BasicResponse.xsd
+* Type:        XSD Schema used within EAI to insulate EAI from the common type versions used in CPfG interfaces
+*
+* Change History
+* Version     Date      Author              			Description Of Change
+*
+* 0.1         15/4/2008 Rob Billington                          Initial Version
+**********************************************************************************-->
+<xsd:schema xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.1">
+	<xsd:complexType name="StandaloneBasicResponse">
+		<xsd:sequence>
+			<!-- EAI Header elements -->
+			<xsd:element name="applicationId" type="xsd:string"/>
+			<xsd:element name="transactionId" type="xsd:string"/>
+			<xsd:element name="messageId" type="xsd:string"/>
+			<xsd:element name="messageHistory" type="xsd:string"/>
+			<xsd:element name="tracingId" type="xsd:string" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="xsd:string" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="xsd:string"/>
+
+			<!-- Basic Response Elements -->
+			<xsd:element name="response" type="xsd:string"/>
+			<xsd:element name="responseCode" type="xsd:string"/>
+			<xsd:element name="responseMessage" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="standaloneBasicResponse" type="local:StandaloneBasicResponse"/>
+	
+</xsd:schema>

@@ -1,0 +1,50 @@
+<definitions
+     name="CSGPM_PropagateGPStatusLogs"
+     targetNamespace="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/GPM/PriceManagement"
+     xmlns:client="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs" schemaLocation="CSGPM_PropagateGPStatusLogs.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/GPM/PriceManagement"
+                 schemaLocation="EAI.MSG.CSGPM.243_PropagateGPStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CSGPM_PropagateGPStatusLogsResponseMessage">
+        <part name="payload" element="client:CSGPM_PropagateGPStatusLogsProcessResponse"/>
+    </message>
+    <message name="CSGPM_PropagateGPStatusLogsRequestMessage">
+        <part name="payload" element="ns1:EBCDICMessage"/>
+    </message>
+    <message name="FTPReqMsgType">
+        <part name="FTPReq" type="ns2:PropagateGPStatusReq"/>
+    </message>
+    <portType name="CSGPM_PropagateGPStatusLogsCallback">
+        <operation name="onResult">
+            <input message="client:CSGPM_PropagateGPStatusLogsResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CSGPM_PropagateGPStatusLogs">
+        <operation name="MailGPUpdateLog">
+            <input message="client:CSGPM_PropagateGPStatusLogsRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CSGPM_PropagateGPStatusLogs">
+        <plnk:role name="CSGPM_PropagateGPStatusLogsProvider">
+            <plnk:portType name="client:CSGPM_PropagateGPStatusLogs"/>
+        </plnk:role>
+        <plnk:role name="CSGPM_PropagateGPStatusLogsRequester">
+            <plnk:portType name="client:CSGPM_PropagateGPStatusLogsCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.SAP.OM.284_OrderStatus.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:  	Order Status Schema with cached order details along with next action
+*
+*
+* Change History
+* Version		Date				Author									Description Of Change
+* =======	========	==================		===============================
+*  0.01			23/11/07		G PATCHIPULUSU				Initial Version
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OM/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.10">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="orderStatus" type="xsdLocal:OrderStatus"/>
+	<xsd:complexType name="OrderStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+                        <xsd:element name="messageHeader" type="xsdLocal:MessageHeader"/>                    
+			<xsd:element name="orderLineItem" type="xsdLocal:ResponseOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="ORDER_NO" type="xsd:string"/>
+                        <xsd:element name="ORDER_ID" type="xsd:string"/>
+			<xsd:element name="ASSET_ID" type="xsd:string"/>
+			<xsd:element name="CTORDNO" type="xsd:string"/>
+			<xsd:element name="CTORDITMNO" type="xsd:string"/>
+			<xsd:element name="STAT_CODE" type="xsd:string"/>
+			<xsd:element name="ERROR_CODE" type="xsd:string"/>
+			<xsd:element name="MESSAGE" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+        <xsd:complexType name="MessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>     
+</xsd:schema>

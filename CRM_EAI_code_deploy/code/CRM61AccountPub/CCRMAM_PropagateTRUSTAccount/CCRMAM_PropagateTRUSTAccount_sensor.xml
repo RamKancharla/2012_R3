@@ -1,0 +1,43 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<sensors targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount" xmlns="http://xmlns.oracle.com/bpel/sensor" xmlns:tns="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount" xmlns:pc="http://xmlns.oracle.com/bpel/sensor" xmlns:ns1="http://www.siebel.com/xml/RCRM%20Account%20Publish">
+   <sensor sensorName="ActSenAsgCustomTitleOnInvalidFault" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="AsgCustomTitleOnInvalidFault">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string50" outputNamespace="http://www.siebel.com/xml/RCRM%20Account%20Publish" target="$rcvAccountStatusIV/accountStatus/ns1:AccountContactPublish/ns1:RcrmAccount-Thin/ns1:RCRMSFDCId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActSenAsgCustomTitleOnRemoteFault" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="AsgCustomTitleOnRemoteFault">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string50" outputNamespace="http://www.siebel.com/xml/RCRM%20Account%20Publish" target="$rcvAccountStatusIV/accountStatus/ns1:AccountContactPublish/ns1:RcrmAccount-Thin/ns1:RCRMSFDCId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActSenAsgCustomTitleOnBindingFault" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="AsgCustomTitleOnBindingFault">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string50" outputNamespace="http://www.siebel.com/xml/RCRM%20Account%20Publish" target="$rcvAccountStatusIV/accountStatus/ns1:AccountContactPublish/ns1:RcrmAccount-Thin/ns1:RCRMSFDCId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActSenAsgCustomtitleOnSelectionFault" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="AsgCustomtitleOnSelectionFault">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string50" outputNamespace="http://www.siebel.com/xml/RCRM%20Account%20Publish" target="$rcvAccountStatusIV/accountStatus/ns1:AccountContactPublish/ns1:RcrmAccount-Thin/ns1:RCRMSFDCId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActSenCustomTitleOnGenericFlt" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="AsgCustomTitleOnGenericFlt">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string50" outputNamespace="http://www.siebel.com/xml/RCRM%20Account%20Publish" target="$rcvAccountStatusIV/accountStatus/ns1:AccountContactPublish/ns1:RcrmAccount-Thin/ns1:RCRMSFDCId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActSenEnqueueAccountStatus" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="InvEnqueueAccountStatus">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string50" outputNamespace="http://www.siebel.com/xml/RCRM%20Account%20Publish" target="$rcvAccountStatusIV/accountStatus/ns1:AccountContactPublish/ns1:RcrmAccount-Thin/ns1:RCRMSFDCId"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActSenrcvTRUSTAccountUpdate" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="rcvTRUSTAccountUpdate">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema" target="$rcvTRUSTAccountUpdateIV/TRUSTUpdateAccount/ns1:AccountContactPublish/@MessageType"/>
+      </activityConfig>
+   </sensor>
+   <sensor sensorName="ActSenInvSequenceReleaser" classname="oracle.tip.pc.services.reports.dca.agents.BpelActivitySensorAgent" kind="activity" target="InvSequenceReleaser">
+      <activityConfig evalTime="completion">
+         <variable outputDataType="string50" outputNamespace="http://www.siebel.com/xml/RCRM%20Account%20Publish" target="$rcvAccountStatusIV/accountStatus/ns1:AccountContactPublish/ns1:RcrmAccount-Thin/ns1:RCRMSFDCId"/>
+      </activityConfig>
+   </sensor>
+</sensors>

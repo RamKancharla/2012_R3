@@ -1,0 +1,271 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+**************************************************************************/
+* Module:     {Name of the file – CSOM_COMPASSOrderFulfilment.bpel} 
+* Type:        {BPEL FILE} 
+* Description: {Asynchronous BPEL Process  } 
+* IDD Reference: 
+* Change History 
+* Version      Date         Author          Description Of Change 
+*  1.0         23/07/07     Geratayya P     Initial Version 
+*  1.1         25/07/07     Sunil Vuppala   Added different scopes, sequences, exception handling and log writer
+*  1.2         13/08/07     Sunil Vuppala   Changed the input schema from 125_OrderRequest to 132_OrderRequest
+*  1.3         12/09/07     Suryanarayana G Implemented Sensors in the place of LogWriter 
+*  1.4         28/09/07     Geratayya P     Added DVM Lookup to get the reference data and Fault sensors. 
+*					    Changed the data (as CRM Order Number) to be stored in sensor data appropriately.
+*  1.5         25/10/07     Suryanarayana G  Amended the process to call new TransformToCSFormat web service
+*  1.6         02/01/08     Satish Patel     Modified the Custom Title and sensors 
+*  1.7         17/08/09     Dasaradh         Added Switch Condition To Filter STB lines.
+*  1.8         22/02/10     Swathi N         Changed the title as a part of PBI421 .
+*  1.9         21/06/10     Surya G	     Added retries on WS failure.
+**************************************************************************/
+-->
+<process name="CSOM_COMPASSOrderFulfilment" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/Exception" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns12="http://xmlns.oracle.com/ias/pcbpel/NotificationService" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns11="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:ns3="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CSOM_COMPASSOrderFulfilment" myRole="CSOM_COMPASSOrderFulfilmentProvider" partnerRole="CSOM_COMPASSOrderFulfilmentRequester"/>
+        <partnerLink name="CSOM_SubmitOrderToCOMPASS" partnerRole="submitOrder_pptProvider" partnerLinkType="ns10:submitOrder_pptLT"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns11:SequenceReleaser"/>
+        <partnerLink name="TransformToCSFormat" partnerRole="TransformOrderRequest_Role" partnerLinkType="ns2:TransformOrderRequest_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="COMPASSOrderFulfilment_IV" messageType="client:CSOM_COMPASSOrderFulfilmentRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="errorMessage" type="xsd:string"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="Success_Response" type="xsd:string"/>
+        <variable name="InvSequenceReleaserIV" messageType="ns11:SequenceReleaserRequestMessage"/>
+        <variable name="SubmitOrderToCOMPASSIV" messageType="ns10:fixedLengthOrderRequest_request"/>
+        <variable name="TransformToCSFormatIV" messageType="ns2:OrderRequest"/>
+        <variable name="TransformToCSFormatOV" messageType="ns2:FLOrderRequest"/>
+        <variable name="FirstCRMOLIIdIntheRequest" type="xsd:string"/>
+        <variable name="FirstCRMOLIIdIntheResponse" type="xsd:string"/>
+        <variable name="TotalRetriesOnWSFailure" type="xsd:int"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("COMPASSOrderFulfilment_IV", "orderRequest", "/ns1:compassOrder/ns1:orderHeader/ns9:CRMOrderNumber")).getFirstChild().getNodeValue();                      
+          
+                                  
+ String Title=(orderNumber!=null ? (orderNumber+";Fault") : ".;");   
+  
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("COMPASSOrderFulfilment_IV", "orderRequest", "/ns1:compassOrder/ns1:orderHeader/ns9:CRMOrderNumber")).getFirstChild().getNodeValue();                      
+          
+                                  
+ String Title=(orderNumber!=null ? (orderNumber+";Fault") : ".;");   
+  
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("COMPASSOrderFulfilment_IV", "orderRequest", "/ns1:compassOrder/ns1:orderHeader/ns9:CRMOrderNumber")).getFirstChild().getNodeValue();                      
+          
+                                  
+ String Title=(orderNumber!=null ? (orderNumber+";Fault") : ".;");    
+  
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("COMPASSOrderFulfilment_IV", "orderRequest", "/ns1:compassOrder/ns1:orderHeader/ns9:CRMOrderNumber")).getFirstChild().getNodeValue();                      
+          
+                                  
+ String Title=(orderNumber!=null ? (orderNumber+";Fault") : ".;");    
+     
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+            <assign name="AsgGenericFault">
+                <copy>
+                    <from expression="'Unable To Process the Request'"/>
+                    <to variable="errorMessage"/>
+                </copy>
+            </assign>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CSOM_COMPASSOrderFulfilment.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:CSOM_COMPASSOrderFulfilment" operation="transformOrder" variable="COMPASSOrderFulfilment_IV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="Success_Response"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="COMPASSOrderFulfilment_IV" part="orderRequest" query="/ns1:compassOrder/ns1:eaiHeader/ns8:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="3"/>
+                <to variable="TotalRetriesOnWSFailure"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                      
+                        getVariableData("COMPASSOrderFulfilment_IV", "orderRequest", "/ns1:compassOrder/ns1:orderHeader/ns9:CRMOrderNumber")).getFirstChild().getNodeValue();                         
+             
+                                     
+ String Title=(orderNumber!=null ? (orderNumber) : ".;");      
+ setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <scope name="TransformToCSFormat">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                    <throw name="ThrTrannsformToCSFormatRemoteFault" faultName="ns7:TransformToCSFormatRemoteFault" faultVariable="runTimeFault"/>
+                </catch>
+                <!--<catch faultName="bpelx:replay" faultVariable="runTimeFault"/>-->
+            </faultHandlers>
+            <sequence name="SeqTransformToCSFormat">
+                <assign name="TransCOMPASSOrderFulfilmentIVToTransformToCSFormatIV">
+                    <bpelx:annotation>
+                        <bpelx:pattern>Transforms Order Request to TransformToCSFormat Input Variable</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransCOMPASSOrderFulfilmentIVToTransformToCSFormatIV.xsl',bpws:getVariableData('COMPASSOrderFulfilment_IV','orderRequest'))"/>
+                        <to variable="TransformToCSFormatIV" part="parameter"/>
+                    </copy>
+                </assign>
+                <invoke name="InvTransformToCSFormat" portType="ns2:TransformOrderRequest" inputVariable="TransformToCSFormatIV" outputVariable="TransformToCSFormatOV" partnerLink="TransformToCSFormat" operation="transfrom"/>
+                <assign name="AsgFirstOLIIds">
+                    <copy>
+                        <from variable="TransformToCSFormatIV" part="parameter" query="/ns1:CScompassOrder/ns1:orderLineItem[1]/ns1:CRMOLIId"/>
+                        <to variable="FirstCRMOLIIdIntheRequest"/>
+                    </copy>
+                    <copy>
+                        <from expression="orcl:right-trim(substring(bpws:getVariableData('TransformToCSFormatOV','parameter','/ns1:CSfixedLengthOrderRequest/ns1:message'),478,15))"/>
+                        <to variable="FirstCRMOLIIdIntheResponse"/>
+                    </copy>
+                </assign>
+                <switch name="CheckFirstCRMOLIIds">
+                    <case condition="bpws:getVariableData('FirstCRMOLIIdIntheRequest')!=bpws:getVariableData('FirstCRMOLIIdIntheResponse') and bpws:getVariableData('TotalRetriesOnWSFailure')=0">
+                        <assign name="AsgFailureResponseOnWSFailure">
+                            <copy>
+                                <from expression="'1'"/>
+                                <to variable="TransformToCSFormatOV" part="parameter" query="/ns1:CSfixedLengthOrderRequest/ns1:basicResponse/ns1:response"/>
+                            </copy>
+                        </assign>
+                    </case>
+                    <case condition="bpws:getVariableData('FirstCRMOLIIdIntheRequest')!=bpws:getVariableData('FirstCRMOLIIdIntheResponse') and bpws:getVariableData('TotalRetriesOnWSFailure')>0">
+                        <sequence name="SeqRetryWS">
+                            <assign name="DecrementTotalRetries">
+                                <copy>
+                                    <from expression="bpws:getVariableData('TotalRetriesOnWSFailure')-1"/>
+                                    <to variable="TotalRetriesOnWSFailure"/>
+                                </copy>
+                            </assign>
+                            <throw name="Re-executeTransfromToCSFormat" faultName="bpelx:replay" faultVariable="runTimeFault"/>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <empty name="DoNothing"/>
+                    </otherwise>
+                </switch>
+            </sequence>
+        </scope>
+        <switch name="CheckTransformToCSFormatResponse">
+            <bpelx:annotation>
+                <bpelx:documentation>Switches the input according to the
+                                     Response from the web service
+                                     TransformToCSFormat</bpelx:documentation>
+            </bpelx:annotation>
+            <case condition="bpws:getVariableData('TransformToCSFormatOV','parameter','/ns1:CSfixedLengthOrderRequest/ns1:basicResponse/ns1:response')=bpws:getVariableData('Success_Response')">
+                <bpelx:annotation>
+                    <bpelx:pattern>Case when TransformToCSFormat returns Success Response</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="TransformToCSFormatSuccess">
+                    <scope name="CSOM_SubmitOrderToCOMPASS">
+                        <faultHandlers>
+                            <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                                <throw name="ThrSubmitOrderToCOMPASSRemoteFault" faultName="ns7:SubmitOrderToCOMPASSRemoteFault" faultVariable="runTimeFault"/>
+                            </catch>
+                        </faultHandlers>
+                        <sequence name="SeqSubmitOrderToCOMPASS">
+                            <assign name="TransformToCSFormatOVToSubmitOrderToCOMPASSIV">
+                                <bpelx:annotation>
+                                    <!--Transforms the Output from TransformToCSFormat webservice to SubmitOrderToCOMPASS-->
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransformToCSFormatOVToSubmitOrderToCOMPASSIV.xsl',bpws:getVariableData('TransformToCSFormatOV','parameter'))"/>
+                                    <to variable="SubmitOrderToCOMPASSIV" part="fixedLengthOrderRequest"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvCSOM_SubmitOrderToCOMPASS" partnerLink="CSOM_SubmitOrderToCOMPASS" portType="ns10:submitOrder_ppt" operation="submitOrder" inputVariable="SubmitOrderToCOMPASSIV"/>
+                            <switch name="CheckTracingIdForSTBLines">
+                                <case condition="bpws:getVariableData('COMPASSOrderFulfilment_IV','orderRequest','/ns1:compassOrder/ns1:eaiHeader/ns8:tracingId')!=&quot;-999&quot;">
+                                    <sequence name="SeqNonSTBLines">
+                                        <assign name="TransCompassOrderFulfilmentIVToSequenceReleaserIV">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>transformation</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <copy>
+                                                <from expression="ora:processXSLT('TransCompassOrderFulfilmentIVToSequenceReleaserIV.xsl',bpws:getVariableData('COMPASSOrderFulfilment_IV','orderRequest'))"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns11:SequenceReleaser" operation="releaseSequence" inputVariable="InvSequenceReleaserIV"/>
+                                    </sequence>
+                                </case>
+                                <otherwise>
+                                    <empty name="NoSTBLinesToSeqRelease"/>
+                                </otherwise>
+                            </switch>
+                        </sequence>
+                    </scope>
+                </sequence>
+            </case>
+            <otherwise>
+                <bpelx:annotation>
+                    <bpelx:documentation>Case when TransformToCSFormat returns
+                                         Other than Success Response</bpelx:documentation>
+                </bpelx:annotation>
+                <bpelx:exec name="AsgCustomTitleWhenFault" language="java" version="1.5">
+                    <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                    
+                        getVariableData("COMPASSOrderFulfilment_IV", "orderRequest", "/ns1:compassOrder/ns1:orderHeader/ns9:CRMOrderNumber")).getFirstChild().getNodeValue();                       
+           
+                                   
+ String Title=(orderNumber!=null ? ("ORD: " + orderNumber + "; Fault") : ".; Fault");    
+ setCompositeInstanceTitle(Title);]]>
+                </bpelx:exec>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

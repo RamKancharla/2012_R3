@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.siebel.com/xml/RCRM%20Quote%20External"
+            xmlns:xsdLocal="http://www.siebel.com/xml/RCRM%20Quote%20External"
+            attributeFormDefault="unqualified" elementFormDefault="qualified">
+ <xsd:annotation>
+  <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights
+                     reserved. Siebel XSD Generation</xsd:documentation>
+ </xsd:annotation>
+ <xsd:element name="quoteDetailsMessage" type="xsdLocal:quoteDetailsMessage"/>
+ <xsd:complexType name="quoteDetailsMessageTopElmt">
+  <xsd:sequence>
+   <xsd:element name="quoteDetailsMessage" type="xsdLocal:quoteDetailsMessage"
+                minOccurs="1" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="quoteDetailsMessage">
+  <xsd:sequence>
+   <xsd:element name="UserId" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Timestamp" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="TargetSystem" type="xsdLocal:string70" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SourceSystem" type="xsdLocal:string60" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MessageHistory" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MessageId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ActionCode" type="xsdLocal:string4" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Quote" type="xsdLocal:Quote" minOccurs="0"
+                maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Quote">
+  <xsd:sequence>
+   <xsd:element name="QuoteNumber" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Revision" type="xsdLocal:string22" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Name" type="xsdLocal:string75" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMOrderType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCreatedBy" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="EndDate" type="xsdLocal:string7" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPONumber" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ClientRequestedDate" type="xsdLocal:string7" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AccountId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Status" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMFreeTrialDuration" type="xsdLocal:string22"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="LineItems" type="xsdLocal:LineItems" minOccurs="0"
+                maxOccurs="unbounded"/>
+   <xsd:element name="OrderNumber" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AssignedOMS" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Approvals" type="xsdLocal:Approvals" minOccurs="0"
+                maxOccurs="unbounded"/>
+   <xsd:element name="QuoteNote" type="xsdLocal:QuoteNote" minOccurs="0"
+                maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="LineItems">
+  <xsd:sequence>
+   <xsd:element name="PartNumber" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="QuantityRequested" type="xsdLocal:string22" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BillingAccountSubscriber" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string15" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="LineNumber" type="xsdLocal:string22" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RootQuoteItemId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AltInstallationAddBilAccId" type="xsdLocal:string15"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ActionCode" type="xsdLocal:string20" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BillingAccountId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AssetIntegrationId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ProductIntegrationId" type="xsdLocal:string15"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMFreeTrialDuration" type="xsdLocal:string22"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMLIInstallDate" type="xsdLocal:string7" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ParentQuoteItemId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ProductName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMMandatoryTechAppFlag" type="xsdLocal:string1" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMMandatoryTechFulfilmentFlag" type="xsdLocal:string1" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ItemXA" type="xsdLocal:ItemXA" minOccurs="0"
+                maxOccurs="unbounded"/>
+   </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Approvals">
+  <xsd:sequence>
+   <xsd:element name="ParentRowId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string15" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMApprovalDate" type="xsdLocal:string7" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMApprovalRequestedDate" type="xsdLocal:string7"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMApprovalComments" type="xsdLocal:string255"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMFailureReasonCode" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMFailureReasonComments" type="xsdLocal:string2000"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMVettingResult" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMAllocatedTo" type="xsdLocal:string300" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="QuoteNote">
+  <xsd:sequence>
+   <xsd:element name="Note" type="xsdLocal:string16383" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="QuoteId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="ItemXA">
+  <xsd:sequence>
+   <xsd:element name="ActionCode" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DisplayName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="XAId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Value" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Name" type="xsdLocal:string75" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:simpleType name="string300">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="300"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string2000">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="2000"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string7">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="7"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string50">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="50"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string60">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="60"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string255">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="255"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string15">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="15"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string75">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="75"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string30">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="30"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string16383">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="16383"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string22">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="22"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string100">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="100"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string70">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="70"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string20">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="20"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string4">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="4"/>
+  </xsd:restriction>
+  
+ </xsd:simpleType>
+ <xsd:simpleType name="string1">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="1"/>
+  </xsd:restriction>
+  
+ </xsd:simpleType>
+</xsd:schema>

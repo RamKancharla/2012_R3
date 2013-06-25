@@ -1,0 +1,65 @@
+<definitions
+     name="SequenceReleaser"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.xmlsoap.org/ws/2003/03/addressing"
+     xmlns:ns5="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+             xmlns:ns3="http://schemas.xmlsoap.org/ws/2003/03/addressing" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+                 schemaLocation="SequenceReleaser.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+             xmlns:ns3="http://schemas.xmlsoap.org/ws/2003/03/addressing" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" schemaLocation="EAI.MSG.UTL.187_ReleaseSequenceRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.xmlsoap.org/ws/2003/03/addressing"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.xmlsoap.org/ws/2003/03/addressing"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer">
+            <xsd:import namespace="http://schemas.xmlsoap.org/ws/2003/03/addressing" schemaLocation="oramds:/soa/shared/common/ws-addressing.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SequenceReleaserRequestMessage">
+        <part name="payload" element="ns1:releaseSequenceRequest"/>
+    </message>
+    <message name="SequenceReleaserResponseMessage">
+        <part name="payload" element="ns2:basicResponse"/>
+    </message>
+    <portType name="SequenceReleaser">
+        <operation name="releaseSequence">
+            <input message="client:SequenceReleaserRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="SequenceReleaserCallback">
+        <operation name="onResult">
+            <input message="client:SequenceReleaserResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SequenceReleaser">
+        <plnk:role name="SequenceReleaserProvider">
+            <plnk:portType name="client:SequenceReleaser"/>
+        </plnk:role>
+        <plnk:role name="SequenceReleaserRequester">
+            <plnk:portType name="client:SequenceReleaserCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

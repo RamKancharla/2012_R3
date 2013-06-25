@@ -1,0 +1,111 @@
+<definitions
+     name="CCRMPM_PropagatePriceUpdateStatus"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus"
+     xmlns:ns5="http://www.siebel.com/xml/Price%20List"
+     xmlns:pns1="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus/correlationset"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus"
+    >
+    <import namespace="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus/correlationset"
+         location="CCRMPM_PropagatePriceUpdateStatus_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:pns1="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus/correlationset"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus"
+                 schemaLocation="CCRMPM_PropagatePriceUpdateStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:pns1="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus/correlationset"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.CS.PM.221_PriceStatus.xsd"/>
+        </xsd:schema>
+        <!--xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:pns1="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus/correlationset"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus"
+             xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema-->
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:pns1="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus/correlationset">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus"
+                 xmlns:pns1="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus/correlationset"
+                 schemaLocation="EAI.MSG.CCRM.PM.224_PriceUpdateStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension" xmlns:pns1="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus/correlationset"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.siebel.com/xml/Price%20List" schemaLocation="EAI.MSG.EXT.CCRM.PM.223_PriceUpdateRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMPM_PropagatePriceUpdateStatusRequestMessage">
+        <part name="payload" element="ns1:priceStatus"/>
+    </message>
+    <message name="PriceUpdateStatusMessg">
+        <part name="priceUpdateStatus" element="ns5:PricePublish"/>
+    </message>
+    <message name="ReleaseSequenceMessage">
+        <part name="releaseSequence" element="ns4:basicResponse"/>
+    </message>
+    <message name="CCRMPM_PropagatePriceUpdateStatusResponseMessage">
+        <part name="payload" element="ns3:priceStatus"/>
+    </message>
+    <portType name="CCRMPM_PropagatePriceUpdateStatus">
+        <operation name="sendPriceUpdateStatus">
+            <input message="client:CCRMPM_PropagatePriceUpdateStatusRequestMessage"/>
+        </operation>
+        <operation name="updatePriceStatus">
+            <input message="client:PriceUpdateStatusMessg"/>
+        </operation>
+        <operation name="updateReleaseStatus">
+            <input name="input" message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMPM_PropagatePriceUpdateStatusCallback">
+        <operation name="onResult">
+            <input message="client:CCRMPM_PropagatePriceUpdateStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMPM_PropagatePriceUpdateStatus">
+        <plnk:role name="CCRMPM_PropagatePriceUpdateStatusProvider">
+            <plnk:portType name="client:CCRMPM_PropagatePriceUpdateStatus"/>
+        </plnk:role>
+        <plnk:role name="CCRMPM_PropagatePriceUpdateStatusRequester">
+            <plnk:portType name="client:CCRMPM_PropagatePriceUpdateStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:PriceCorelationProp" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueuePriceUpdateStatus/"
+         messageType="ns6:PricePublish_msg" part="PricePublish" query="/ns5:PricePublish/@MessageId"/>
+    <bpws:propertyAlias propertyName="pns1:PriceCorelationProp" messageType="client:PriceUpdateStatusMessg"
+         part="priceUpdateStatus" query="/ns5:PricePublish/@MessageId"/>
+    <bpws:propertyAlias propertyName="pns1:PriceCorelationProp" xmlns:ns8="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns8:SequenceCheckerRequestMessage" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns7:tracingId"
+         xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"/>
+    <bpws:propertyAlias propertyName="pns1:PriceCorelationProp" messageType="client:ReleaseSequenceMessage"
+         part="releaseSequence" query="/ns4:basicResponse/ns4:eaiHeader/ns6:tracingId" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+</definitions>

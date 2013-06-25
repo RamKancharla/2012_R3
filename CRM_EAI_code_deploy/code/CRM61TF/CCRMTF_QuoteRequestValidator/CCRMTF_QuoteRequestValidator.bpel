@@ -1,0 +1,163 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Oct 16 16:36:51 GMT+05:30 2007
+  Author:  as37583
+  Purpose: Synchronous BPEL Process
+* Module:      CCRMTF_QuoteRequestvalidator.bpel 
+* Type:        BPEL FILE 
+* Description: Synchronous BPEL Process to validate the input from SIEBEL
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         16/10/07     ANVV Sharma             Initial Version 
+*  1.1         05/11/07     Sunil V                 changed the payload to the sensor.
+*  1.2         07/02/08     Raju V                  Removed XML validator and added the stub for validation.
+*  1.3         29/02/08     Sreeja Prasad           Modified the xsl files for PBI-327(additonal fields from Siebel).
+*  1.4         03/03/08     Rob Billington          Removed the commented-out code that used to call XMLValidator.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMTF_QuoteRequestValidator" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/XMLValidator" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/Exception" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TechFul" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonQuoteTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://xmlns.oracle.com/CCRMTF_ValidateQuoteRequestStub" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="anchorToQuoteRequestValidator" partnerLinkType="client:CCRMTF_QuoteRequestValidator" myRole="CCRMTF_QuoteRequestValidatorProvider"/>
+    <partnerLink name="TF_ManageQuote" partnerRole="TF_ManageQuoteProvider" partnerLinkType="ns7:TF_ManageQuote" myRole="TF_ManageQuoteRequester"/>
+    <partnerLink name="CCRMTF_ValidateQuoteRequestStub" partnerRole="CCRMTF_ValidateQuoteRequestStubProvider" partnerLinkType="ns8:CCRMTF_ValidateQuoteRequestStub"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="validateQuoteRequest" messageType="client:CCRMTF_QuoteRequestValidatorRequestMessage"/>
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="validateQuoteResponse" messageType="client:CCRMTF_QuoteRequestValidatorResponseMessage"/>
+    <variable name="successResponseCode" type="xsd:string"/>
+    <variable name="unknownError" type="xsd:string"/>
+    <variable name="schemaNameToXMLValidator" type="xsd:string"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="manageQuoteIV" messageType="ns7:TF_ManageQuoteRequestMessage"/>
+    <variable name="InvValidateQuoteRequestIV" messageType="ns8:CCRMTF_ValidateQuoteRequestStubRequestMessage"/>
+    <variable name="InvValidateQuoteRequestOV" messageType="ns8:CCRMTF_ValidateQuoteRequestStubResponseMessage"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMTF_QuoteRequestValidator.wsdl) -->
+    <scope name="ScopeQuoteRequestValidator">
+      <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+          <empty name="RemoteFaultEmptyActivity"/>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+          <empty name="SelectionFaultEmptyActivity"/>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+          <empty name="BindingFaultEmptyActivity"/>
+        </catch>
+        <catchAll>
+          <assign name="AsgUnknownError">
+            <copy>
+              <from expression="'Unable To Process the Request'"/>
+              <to variable="unknownError"/>
+            </copy>
+          </assign>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="SeqQuoteRequestValidator">
+        <receive name="rcvValidateQuoteRequest" partnerLink="anchorToQuoteRequestValidator" portType="client:CCRMTF_QuoteRequestValidator" operation="validateQuote" variable="validateQuoteRequest" createInstance="yes"/>
+        <assign name="AsgInitialVariables">
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value','0')"/>
+            <to variable="successResponseCode"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','UnknownError','Value', 'UnknownError')"/>
+            <to variable="unknownError"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="validateQuoteRequest" part="validateQuoteRequest" query="/ns1:vettingRequest/ns1:eaiHeader/ns2:instanceId"/>
+          </copy>
+        </assign>
+        <scope name="ScopeManageQuote">
+          <faultHandlers>
+            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+              <throw name="ThrManageQuoteRemotefault" faultName="bpelx:ManageQuoteRemotefault" faultVariable="runtimeFault"/>
+            </catch>
+            <catchAll>
+              <assign name="TransInvalidQuoteResponse">
+                <bpelx:annotation>
+                  <bpelx:pattern>transformation</bpelx:pattern>
+                </bpelx:annotation>
+                <copy>
+                  <from expression="ora:processXSLT('TransInvalidQuoteResponse.xsl',bpws:getVariableData('validateQuoteRequest','validateQuoteRequest'))"/>
+                  <to variable="validateQuoteResponse" part="validateQuoteResponse"/>
+                </copy>
+              </assign>
+            </catchAll>
+          </faultHandlers>
+          <sequence name="SeqManageQuote">
+            <assign name="TransValidateQuoteReqToValidateQuoteReqIV">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransValidateQuoteReqToValidateQuoteReqIV.xsl',bpws:getVariableData('validateQuoteRequest','validateQuoteRequest'))"/>
+                <to variable="InvValidateQuoteRequestIV" part="payload"/>
+              </copy>
+            </assign>
+            <invoke name="InvValidateQuoteRequestStub" partnerLink="CCRMTF_ValidateQuoteRequestStub" portType="ns8:CCRMTF_ValidateQuoteRequestStub" operation="process" inputVariable="InvValidateQuoteRequestIV" outputVariable="InvValidateQuoteRequestOV"/>
+            <assign name="TransQuoteRequestToManageQuote">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransQuoteRequestToManageQuote.xsl',bpws:getVariableData('validateQuoteRequest','validateQuoteRequest'))"/>
+                <to variable="manageQuoteIV" part="manageQuoteRequest"/>
+              </copy>
+            </assign>
+            <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+              <![CDATA[String quoteNumber = ((oracle.xml.parser.v2.XMLElement)                              
+                        getVariableData("validateQuoteRequest","validateQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteNumber")).getFirstChild().getNodeValue();                                 
+String quoteStatus = ((oracle.xml.parser.v2.XMLElement)                              
+                        getVariableData("validateQuoteRequest","validateQuoteRequest","/ns1:vettingRequest/ns1:quoteHeader/ns3:quoteStatus")).getFirstChild().getNodeValue();       
+setCompositeInstanceTitle("Q: " + quoteNumber + "; ST: "+ quoteStatus);]]>
+            </bpelx:exec>
+            <invoke name="InvManageQuote" partnerLink="TF_ManageQuote" portType="ns7:TF_ManageQuote" operation="manageQuote" inputVariable="manageQuoteIV"/>
+            <assign name="TransQuoteValidationResp">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransQuoteValidationResp.xsl',bpws:getVariableData('validateQuoteRequest','validateQuoteRequest'))"/>
+                <to variable="validateQuoteResponse" part="validateQuoteResponse"/>
+              </copy>
+            </assign>
+          </sequence>
+        </scope>
+      </sequence>
+    </scope>
+    <!-- Generate reply to synchronous request -->
+    <reply name="rlyValidateQuoteResponse" partnerLink="anchorToQuoteRequestValidator" portType="client:CCRMTF_QuoteRequestValidator" operation="validateQuote" variable="validateQuoteResponse"/>
+  </sequence>
+</process>

@@ -1,0 +1,192 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMPM_PropagatePriceUpdatesToCRM.bpel 
+* Type:        BPEL FILE 
+* Description: Asynchronous BPEL Process that invokes the Siebel HQ Node and returns the price udpate status from HQ Node.
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         01/08/08     Sreeja                Initial Version 
+*  1.1	       31/08/08	    Surya                 Modified Custom Title as part of PBI-718
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMPM_PropagatePriceUpdatesToCRM" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" xmlns:ns7="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PM/Exception" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM" xmlns:ns6="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/2008/07/23/GCAP/RCRM" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus" xmlns:ns10="http://www.siebel.com/xml/Price%20List" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToCCRMPM_PropagatePriceUpdatesToCRM" partnerLinkType="client:CCRMPM_PropagatePriceUpdatesToCRM" myRole="CCRMPM_PropagatePriceUpdatesToCRMProvider" partnerRole="CCRMPM_PropagatePriceUpdatesToCRMRequester"/>
+        <partnerLink name="RCRMHQNode" partnerRole="RCRM_spcHQ_spcPrice_spcPublish_spcPort_Role" partnerLinkType="ns2:RCRM_spcHQ_spcPrice_spcPublish_spcPort_PL"/>
+        <partnerLink myRole="CCRMPM_PropagatePriceUpdateStatusRequester" name="CCRMPM_PropagatePriceUpdateStatus" partnerRole="CCRMPM_PropagatePriceUpdateStatusProvider" partnerLinkType="ns8:CCRMPM_PropagatePriceUpdateStatus"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="priceUpdateRequestIV" messageType="client:CCRMPM_PropagatePriceUpdatesToCRMRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="CCRMPM_PropagatePriceUpdateStatusIV" messageType="ns8:CCRMPM_PropagatePriceUpdateStatusRequestMessage"/>
+        <variable name="InvRCRMHQNodePricePublishIV" messageType="ns2:RCRMHQNodePricePublish_Input"/>
+        <variable name="InvPriceUpdateResponseOV" messageType="ns2:RCRMHQNodePricePublish_Output"/>
+        <variable name="err_Message" type="xsd:string"/>
+        <variable name="IntegrationId" type="xsd:string"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="ns5:RCRMHQNodeRemoteFault" faultVariable="runtimeFault">
+            <sequence name="SeqRemoteFault">
+                <bpelx:exec name="AsgRemoteFault" language="java" version="1.5">
+                    <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceUpdateRequestIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                       
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();    
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; SiebelFault");]]>
+                </bpelx:exec>
+                <assign name="AsnErrorMessage">
+                    <copy>
+                        <from variable="runtimeFault" part="detail"/>
+                        <to variable="InvRCRMHQNodePricePublishIV" part="RCRMHQNodePricePublish_Input" query="/ns2:RCRMHQNodePricePublish_Input/ns2:Error_spcMessage"/>
+                    </copy>
+                    <copy>
+                        <from expression="substring-after(bpws:getVariableData('InvRCRMHQNodePricePublishIV','RCRMHQNodePricePublish_Input','/ns2:RCRMHQNodePricePublish_Input/ns2:Error_spcMessage'),':&amp;quot;')   "/>
+                        <to variable="err_Message"/>
+                    </copy>
+                    <copy>
+                        <from expression="substring-before(bpws:getVariableData('err_Message'),'&amp;quot;(')   "/>
+                        <to variable="InvRCRMHQNodePricePublishIV" part="RCRMHQNodePricePublish_Input" query="/ns2:RCRMHQNodePricePublish_Input/ns2:Error_spcMessage"/>
+                    </copy>
+                    <copy>
+                        <from variable="runtimeFault" part="detail"/>
+                        <to variable="IntegrationId"/>
+                    </copy>
+                    <copy>
+                        <from expression="substring-after(bpws:getVariableData('IntegrationId'),'Id] = &quot;')"/>
+                        <to variable="InvPriceUpdateResponseOV" part="RCRMHQNodePricePublish_Output" query="/ns2:RCRMHQNodePricePublish_Output/ns2:Error_spcCode"/>
+                    </copy>
+                    <copy>
+                        <from expression="substring-before(bpws:getVariableData('InvPriceUpdateResponseOV','RCRMHQNodePricePublish_Output','/ns2:RCRMHQNodePricePublish_Output/ns2:Error_spcCode'),&quot;&amp;quot;'&quot;)"/>
+                        <to variable="IntegrationId"/>
+                    </copy>
+                    <copy>
+                        <from variable="IntegrationId"/>
+                        <to variable="InvRCRMHQNodePricePublishIV" part="RCRMHQNodePricePublish_Input" query="/ns2:RCRMHQNodePricePublish_Input/ns2:Error_spcCode"/>
+                    </copy>
+                </assign>
+                <assign name="TransHQPriceUpdateStatusToCCRM">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransHQPriceUpdateErrStatusToCCRM.xsl',bpws:getVariableData('InvRCRMHQNodePricePublishIV','RCRMHQNodePricePublish_Input'))"/>
+                        <to variable="CCRMPM_PropagatePriceUpdateStatusIV" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvCCRMPM_PropagatePriceUpdStatus" partnerLink="CCRMPM_PropagatePriceUpdateStatus" portType="ns8:CCRMPM_PropagatePriceUpdateStatus" operation="sendPriceUpdateStatus" inputVariable="CCRMPM_PropagatePriceUpdateStatusIV"/>
+            </sequence>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgBindingFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceUpdateRequestIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                       
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();    
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgSelectionFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceUpdateRequestIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                       
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();    
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="ns5:PriceUpdateStatusRemoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgPriceUpdateStatusRemoteFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceUpdateRequestIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                       
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();    
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgGenericFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceUpdateRequestIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                       
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();    
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMPM_PropagatePriceUpdatesToCRM.wsdl) -->
+        <receive name="rcvPriceUpdateToCRM" partnerLink="anchorToCCRMPM_PropagatePriceUpdatesToCRM" portType="client:CCRMPM_PropagatePriceUpdatesToCRM" operation="propagatePriceUpdate" variable="priceUpdateRequestIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceUpdateRequestIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                      
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();   
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId);]]>
+        </bpelx:exec>
+        <scope name="PriceUpdateToHQNodeNStatusUpdate">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrRCRMHQNodeRemoteFault" faultName="ns5:RCRMHQNodeRemoteFault" faultVariable="runtimeFault"/>
+                </catch>
+                <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+                    <throw name="ThrRCRMHQNodeRemoteFaultOnBindingFault" faultName="ns5:RCRMHQNodeRemoteFault" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqRCRMHQNode">
+                <assign name="TransPriceUpdateReqToRCRMHQPriceRequest.xsl">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransPriceUpdateReqToRCRMHQPriceRequest.xsl',bpws:getVariableData('priceUpdateRequestIV','payload'))"/>
+                        <to variable="InvRCRMHQNodePricePublishIV" part="RCRMHQNodePricePublish_Input"/>
+                    </copy>
+                </assign>
+                <invoke name="InvRCRMHQNode" partnerLink="RCRMHQNode" portType="ns2:RCRM_spcHQ_spcPrice_spcPublish_spcPort" operation="RCRMHQNodePricePublish" inputVariable="InvRCRMHQNodePricePublishIV" outputVariable="InvPriceUpdateResponseOV"/>
+            </sequence>
+        </scope>
+        <scope name="PriceUpdateStatus">
+            <faultHandlers>
+                <!--<catch faultName="bpelx:remoteFault"
+                       faultVariable="runtimeFault">
+                    <throw name="ThrPriceUpdateStatus"
+                           faultName="ns5:PriceUpdateStatusRemoteFault"
+                           faultVariable="runtimeFault"/>
+                </catch>-->
+                <catchAll>
+                    <throw name="ThrPriceUpdateStatus" faultName="ns5:PriceUpdateStatusRemoteFault" faultVariable="runtimeFault"/>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="SeqPriceUpdateStatus">
+                <assign name="TransHQPriceUpdateStatusToCCRM">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransHQPriceUpdateStatusToCCRM.xsl',bpws:getVariableData('InvRCRMHQNodePricePublishIV','RCRMHQNodePricePublish_Input'))"/>
+                        <to variable="CCRMPM_PropagatePriceUpdateStatusIV" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvCCRMPM_PropagatePriceUpdateStatus" partnerLink="CCRMPM_PropagatePriceUpdateStatus" portType="ns8:CCRMPM_PropagatePriceUpdateStatus" operation="sendPriceUpdateStatus" inputVariable="CCRMPM_PropagatePriceUpdateStatusIV"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

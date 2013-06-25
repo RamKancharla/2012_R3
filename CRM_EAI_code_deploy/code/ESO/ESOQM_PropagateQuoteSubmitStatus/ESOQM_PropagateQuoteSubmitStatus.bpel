@@ -1,0 +1,144 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Sep 29 23:49:18 GMT+05:30 2011
+  Author:  Rijoy.Purayil
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ESOQM_PropagateQuoteSubmitStatus" targetNamespace="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="urn:enterprise.soap.sforce.com" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessageStatus" xmlns:ns2="http://soap.sforce.com/schemas/class/EAItoESO" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:ESOQM_PropagateQuoteSubmitStatus" myRole="ESOQM_PropagateQuoteSubmitStatusProvider" partnerRole="ESOQM_PropagateQuoteSubmitStatusRequester"/>
+        <partnerLink myRole="Soap_Role" name="ESO_SFDCLogin" partnerRole="Soap_Role" partnerLinkType="ns1:Soap_PL"/>
+        <partnerLink myRole="EAItoESOPortType_Role" name="ESO_QuoteStatusServ" partnerRole="EAItoESOPortType_Role" partnerLinkType="ns2:EAItoESOPortType_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:ESOQM_PropagateQuoteSubmitStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:ESOQM_PropagateQuoteSubmitStatusResponseMessage"/>
+        <variable name="Inv_ESOQuoteRequestInputVar" messageType="ns2:mtrfUpdateESOQuoteRequestRequest"/>
+        <variable name="Inv_QuoteStatus_mtrfUpdateESOQuoteRequestIVar" messageType="ns2:mtrfUpdateESOQuoteRequestRequest"/>
+        <variable name="Inv_QuoteStatus_mtrfUpdateESOQuoteRequestOVar" messageType="ns2:mtrfUpdateESOQuoteRequestResponse"/>
+        <variable name="headerRequest" element="ns1:SessionHeader"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <sequence name="Sequence_1">
+                <bpelx:exec name="SetFaultTitle" language="java" version="1.5">
+                    <![CDATA[String quoteNumber ="";       
+String transactionID = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:TransactionId")).getFirstChild().getNodeValue();        
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:QuoteNumber")).getFirstChild()){            
+        quoteNumber = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:QuoteNumber")).getFirstChild().getNodeValue();         
+    }     
+    
+String Title=(transactionID!=null ? (transactionID+":"+quoteNumber) : ":")+" - Failed";                   
+setTitle(Title); 
+setCompositeInstanceTitle(Title);]]>
+                </bpelx:exec>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ESOQM_PropagateQuoteSubmitStatus.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:ESOQM_PropagateQuoteSubmitStatus" operation="initiate" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="SetTitle" language="java" version="1.5">
+            <![CDATA[String transactionId = "";        
+String quoteNumber = "-";        
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:TransactionId")).getFirstChild()){                  
+     transactionId = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:TransactionId")).getFirstChild().getNodeValue();                            
+         
+     if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:QuoteNumber")).getFirstChild()){           
+        quoteNumber = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:QuoteNumber")).getFirstChild().getNodeValue();        
+    }        
+ }                  
+setCompositeInstanceTitle(transactionId+":"+quoteNumber);]]>
+        </bpelx:exec>
+        <scope name="Scp_SFDCLogin">
+            <variables>
+                <variable name="InvESO_SFDCLogin_login_IVar" messageType="ns1:loginRequest"/>
+                <variable name="InvESO_SFDCLogin_login_OVar" messageType="ns1:loginResponse"/>
+            </variables>
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="Login_Failure">
+                        <bpelx:exec name="SetFaultLogin" language="java" version="1.5">
+                            <![CDATA[String quoteNumber ="";       
+String transactionID = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:TransactionId")).getFirstChild().getNodeValue();        
+  if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:QuoteNumber")).getFirstChild()){            
+        quoteNumber = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns3:UpdateQuoteStatusRequest/ns3:updateQuoteStatusRequest/ns3:QuoteNumber")).getFirstChild().getNodeValue();         
+    }       
+String Title=(transactionID!=null ? (transactionID+":"+quoteNumber) : ":")+" - Failed";                     
+setCompositeInstanceTitle(Title);]]>
+                        </bpelx:exec>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="Seq_SFDCLogin">
+                <assign name="AsgLoginCredentials">
+                    <copy>
+                        <from expression="ora:getPreference(&quot;loginId&quot;)"/>
+                        <to variable="InvESO_SFDCLogin_login_IVar" part="parameters" query="/ns1:login/ns1:username"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getPreference(&quot;password&quot;)"/>
+                        <to variable="InvESO_SFDCLogin_login_IVar" part="parameters" query="/ns1:login/ns1:password"/>
+                    </copy>
+                </assign>
+                <invoke name="InvESO_SFDCLogin" partnerLink="ESO_SFDCLogin" portType="ns1:Soap" operation="login" inputVariable="InvESO_SFDCLogin_login_IVar" outputVariable="InvESO_SFDCLogin_login_OVar"/>
+                <assign name="Assign_SessionId">
+                    <copy>
+                        <from variable="InvESO_SFDCLogin_login_OVar" part="parameters" query="/ns1:loginResponse/ns1:result/ns1:sessionId"/>
+                        <to variable="headerRequest" query="/ns1:SessionHeader/ns1:sessionId"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+        <assign name="Trans_QuoteStatusToESOQuoteStatus">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransQuoteStatusToESOQuoteStatus1.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="Inv_QuoteStatus_mtrfUpdateESOQuoteRequestIVar" part="parameters"/>
+            </copy>
+        </assign>
+        <invoke name="Inv_QuoteStatus" partnerLink="ESO_QuoteStatusServ" portType="ns2:EAItoESOPortType" operation="mtrfUpdateESOQuoteRequest" inputVariable="Inv_QuoteStatus_mtrfUpdateESOQuoteRequestIVar" outputVariable="Inv_QuoteStatus_mtrfUpdateESOQuoteRequestOVar" bpelx:inputHeaderVariable="headerRequest"/>
+        <assign name="Assign_QuoteStatusResp">
+            <copy>
+                <from variable="Inv_QuoteStatus_mtrfUpdateESOQuoteRequestOVar" part="parameters" query="/ns2:mtrfUpdateESOQuoteRequestResponse/ns2:result"/>
+                <to variable="outputVariable" part="payload" query="/ns3:UpdateQuoteStatusResponse/ns3:updateQuoteStatusResponse/ns3:result"/>
+            </copy>
+        </assign>
+        <invoke name="callbackClient" partnerLink="client" portType="client:ESOQM_PropagateQuoteSubmitStatusCallback" operation="onResult" inputVariable="outputVariable"/>
+    </sequence>
+</process>

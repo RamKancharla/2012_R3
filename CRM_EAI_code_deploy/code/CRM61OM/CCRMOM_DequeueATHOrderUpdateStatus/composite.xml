@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOM_DequeueATHOrderUpdateStatus" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="DequeueATHOrderAck.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueATHOrderAck/"/>
+    <import namespace="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateUserOrderRequest/CCRMOM_PropagateUserOrderRequest.wsdl"
+            importType="wsdl"/>
+    <service name="DequeueATHOrderAck" ui:wsdlLocation="DequeueATHOrderAck.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueATHOrderAck/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeueATHOrderAck_mq.jca"/>
+    </service>
+    <component name="CCRMOM_DequeueATHOrderUpdateStatus">
+        <implementation.bpel src="CCRMOM_DequeueATHOrderUpdateStatus.bpel"/>
+    </component>
+    <reference name="CCRMOM_PropagateUserOrderRequest"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateUserOrderRequest/CCRMOM_PropagateUserOrderRequest.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.interface(CCRMOM_PropagateUserOrderRequest)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.interface(CCRMOM_PropagateUserOrderRequestCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.endpoint(CCRMOM_PropagateUserOrderRequest/CCRMOM_PropagateUserOrderRequest)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateUserOrderRequest/anchorToPropagateUserOrderRequest?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest#wsdl.endpoint(CCRMOM_PropagateUserOrderRequest/CCRMOM_PropagateUserOrderRequestCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>DequeueATHOrderAck</source.uri>
+        <target.uri>CCRMOM_DequeueATHOrderUpdateStatus/DequeueATHOrderAck</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_DequeueATHOrderUpdateStatus/CCRMOM_PropagateUserOrderRequest</source.uri>
+        <target.uri>CCRMOM_PropagateUserOrderRequest</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

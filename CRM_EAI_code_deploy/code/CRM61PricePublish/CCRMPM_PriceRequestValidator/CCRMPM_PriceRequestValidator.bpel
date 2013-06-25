@@ -1,0 +1,233 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMPM_PublishPriceRequestValidator.bpel 
+* Type:        BPEL FILE 
+* Description: Synchronous BPEL Process that validates the xml and invokes the compass price list fulfilment. 
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         04/04/08     Hema                     Initial Version 
+*  1.1         08/04/08     Sreeja                   Modified the code.
+*  1.2         09/03/08     Hema                     Re created the xsl.
+*  1.3	       31/08/08	    Surya 		     Modified the custom title as part of PBI-718
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMPM_PriceRequestValidator" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate" xmlns:ns12="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdate" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS" xmlns:ns10="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="anchorToPricerequestValidator" partnerLinkType="client:CCRMPM_PriceRequestValidator" myRole="CCRMPM_PriceRequestValidatorProvider"/>
+    <partnerLink name="CCRMPM_PriceRequestValidatorStub" partnerRole="CCRMPM_PriceRequestValidatorStubProvider" partnerLinkType="ns12:CCRMPM_PriceRequestValidatorStub"/>
+    <partnerLink name="PM_PropagatePriceUpdate" partnerRole="PM_PropagatePriceUpdateProvider" partnerLinkType="ns5:PM_PropagatePriceUpdate"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="priceRequestValidatorIV" messageType="client:CCRMPM_PriceRequestValidatorRequestMessage"/>
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="priceRequestValidatorOV" messageType="client:CCRMPM_PriceRequestValidatorResponseMessage"/>
+    <variable name="successResponse" type="xsd:string"/>
+    <variable name="unknownError" type="xsd:string"/>
+    <variable name="errorMessage" type="xsd:string"/>
+    <variable name="sucessCode" type="xsd:string"/>
+    <variable name="failureCode" type="xsd:string"/>
+    <variable name="PriceRequestValidatorStubIV" messageType="ns12:CCRMPM_PriceRequestValidatorStubRequestMessage"/>
+    <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="InvPropagatePriceUpdateIV" messageType="ns5:PM_PropagatePriceUpdateRequestMessage"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMPM_PriceRequestValidator.wsdl) -->
+    <scope name="ScpPriceRequestValidator">
+      <faultHandlers>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+          <bpelx:exec name="AsgCustomTitleonSelectionFailure" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceRequestValidatorIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                      
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();   
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+          </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+          <bpelx:exec name="AsgCustomTitleonBindingFault" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceRequestValidatorIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                      
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();   
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+          </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:invalidVariables" faultVariable="runTimeFault">
+          <sequence name="SeqHandleError">
+            <bpelx:exec name="AsgCustomTitleOnInvalidVariables" language="java" version="1.5">
+              <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceRequestValidatorIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                      
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();   
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+            <assign name="AsgFailureResponseToValidationResponse">
+              <!--   <copy>
+                <from variable="priceRequestValidatorIV" part="payload"
+                      query="/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"/>
+                <to variable="priceRequestValidatorOV" part="payload"
+                    query="/ns2:priceReqUpdateSubmissionStatus/ns2:submissionStatus/ns4:CRMPLI"/>
+              </copy>-->
+              <copy>
+                <from variable="priceRequestValidatorIV" part="payload" query="/ns1:priceUpdateRequest/ns1:eaiHeader"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:eaiHeader"/>
+              </copy>
+              <copy>
+                <from variable="priceRequestValidatorIV" part="payload" query="/ns1:priceUpdateRequest/ns1:messageHeader"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:messageHeader"/>
+              </copy>
+              <copy>
+                <from expression="'1'"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:submissionStatus/ns4:response"/>
+              </copy>
+              <copy>
+                <from variable="runTimeFault" part="summary"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:submissionStatus/ns4:requestStatus"/>
+              </copy>
+              <copy>
+                <from variable="priceRequestValidatorIV" part="payload" query="/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:submissionStatus/ns4:CRMPLHId"/>
+              </copy>
+            </assign>
+          </sequence>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+          <bpelx:exec name="AsgCustomTitleonremoteFault" language="java" version="1.3">
+            <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceRequestValidatorIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                       
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();    
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+          </bpelx:exec>
+        </catch>
+        <catchAll>
+          <assign name="AsgGenericFault">
+            <copy>
+              <from expression="'Unable To Process the Request'"/>
+              <to variable="errorMessage"/>
+            </copy>
+          </assign>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="SeqPriceRequestValidator">
+        <receive name="rcvValidatePriceRequest" partnerLink="anchorToPricerequestValidator" portType="client:CCRMPM_PriceRequestValidator" operation="validatePricingUpdateRequest" variable="priceRequestValidatorIV" createInstance="yes"/>
+        <assign name="AsgPublishVariables">
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessResponseCode','Value', '0')"/>
+            <to variable="successResponse"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','UnknownError','Value','00300-EAI-UNKNOWN-ERROR')"/>
+            <to variable="unknownError"/>
+          </copy>
+          <copy>
+            <from expression="'Error'"/>
+            <to variable="errorMessage"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+            <to variable="sucessCode"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','FailureCode','Value', '0')"/>
+            <to variable="failureCode"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:eaiHeader/ns3:instanceId"/>
+          </copy>
+        </assign>
+        <scope name="ValidateXML">
+          <faultHandlers>
+            <catch faultName="bpelx:invalidvariables" faultVariable="runTimeFault">
+              <throw name="Thrinvalidvariables" faultName="bpelx:invalidvariables" faultVariable="runTimeFault"/>
+            </catch>
+          </faultHandlers>
+          <sequence name="SeqValidateXMLStub">
+            <assign name="TransPriceRequestValidatorIVToStubIV">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransPriceRequestValidatorIVToStubIV.xsl',bpws:getVariableData('priceRequestValidatorIV','payload'))"/>
+                <to part="payload" variable="PriceRequestValidatorStubIV"/>
+              </copy>
+            </assign>
+            <invoke name="InvXMLValidatorStub" partnerLink="CCRMPM_PriceRequestValidatorStub" portType="ns12:CCRMPM_PriceRequestValidatorStub" operation="initiate" inputVariable="PriceRequestValidatorStubIV"/>
+            <!-- <bpelx:exec name="AsgCustomTitlePLCountry" language="java" version="1.5">
+              <![CDATA[String priceListNum = ((oracle.xml.parser.v2.XMLElement) getVariableData("priceRequestValidatorIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:rcrmCompassPriceListNumber")).getFirstChild().getNodeValue();                                       
+String Country = ((oracle.xml.parser.v2.XMLElement) getVariableData("priceRequestValidatorIV","payload","/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:rcrmCountry")).getFirstChild().getNodeValue();    
+    
+String Title=(priceListNum!=null ? ("PL: "+Country+"-"+priceListNum) : ".;");                    
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>-->
+            <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+              <![CDATA[/*Write your java code below e.g.    
+	System.out.println("Hello, World");   
+*/   
+org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("priceRequestValidatorIV", "payload", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"));                     
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();  
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId);]]>
+            </bpelx:exec>
+            <assign name="AsgSuccessResponseToValidationResponse">
+              <copy>
+                <from variable="priceRequestValidatorIV" part="payload" query="/ns1:priceUpdateRequest/ns1:eaiHeader"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:eaiHeader"/>
+              </copy>
+              <copy>
+                <from variable="priceRequestValidatorIV" part="payload" query="/ns1:priceUpdateRequest/ns1:messageHeader"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:messageHeader"/>
+              </copy>
+              <copy>
+                <from expression="0"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:submissionStatus/ns4:response"/>
+              </copy>
+              <copy>
+                <from variable="successResponse"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:submissionStatus/ns4:requestStatus"/>
+              </copy>
+              <copy>
+                <from variable="priceRequestValidatorIV" part="payload" query="/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns4:CRMPLHId"/>
+                <to variable="priceRequestValidatorOV" part="payload" query="/ns2:priceReqUpdateSubmissionStatus/ns2:submissionStatus/ns4:CRMPLHId"/>
+              </copy>
+            </assign>
+          </sequence>
+        </scope>
+        <scope name="ScpInspectXMLValidationResponse">
+          <sequence name="PropagatePriceRequest">
+            <assign name="TransPriceRequestValidatorToPropagatePriceUpdate">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransPriceRequestValidatorToPropagatePriceUpdate.xsl',bpws:getVariableData('priceRequestValidatorIV','payload'))"/>
+                <to variable="InvPropagatePriceUpdateIV" part="payload"/>
+              </copy>
+            </assign>
+            <invoke name="InvPropagatePriceUpdate" partnerLink="PM_PropagatePriceUpdate" portType="ns5:PM_PropagatePriceUpdate" operation="initiate" inputVariable="InvPropagatePriceUpdateIV"/>
+          </sequence>
+        </scope>
+      </sequence>
+    </scope>
+    <!-- Generate reply to synchronous request -->
+    <reply name="replyOutput" partnerLink="anchorToPricerequestValidator" portType="client:CCRMPM_PriceRequestValidator" operation="validatePricingUpdateRequest" variable="priceRequestValidatorOV"/>
+  </sequence>
+</process>

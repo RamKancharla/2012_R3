@@ -1,0 +1,45 @@
+<definitions
+     name="SAPAM_Invoker"
+     targetNamespace="http://www.reuters.com/ns/2010/07/10/SAMI/EAI/SAP/SAPAM_Invoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2010/07/10/SAMI/EAI/SAP/SAPAM_Invoker"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2010/07/10/SAMI/EAI/SAP/SAPAM_Invoker">
+            <import namespace="http://www.reuters.com/ns/2010/07/10/SAMI/EAI/SAP/SAPAM_Invoker"
+                 schemaLocation="SAPAM_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2010/07/10/SAMI/EAI/SAP/SAPAM_Invoker">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+                 schemaLocation="EAI.MSG.SAP.AM.292_PublishAccount.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SAPAM_InvokerRequestMessage">
+        <part name="payload" element="client:SAPAM_InvokerProcessRequest"/>
+    </message>
+    <message name="SAPAM_InvokerResponseMessage">
+        <part name="payload" element="client:SAPAM_InvokerProcessResponse"/>
+    </message>
+    <portType name="SAPAM_Invoker">
+        <operation name="initiate">
+            <input message="client:SAPAM_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="SAPAM_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:SAPAM_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SAPAM_Invoker">
+        <plnk:role name="SAPAM_InvokerProvider">
+            <plnk:portType name="client:SAPAM_Invoker"/>
+        </plnk:role>
+        <plnk:role name="SAPAM_InvokerRequester">
+            <plnk:portType name="client:SAPAM_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

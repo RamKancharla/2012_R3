@@ -1,0 +1,224 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMOM_DequeueNValidateOrderRequest.bpel 
+* Type:        BPEL FILE 
+* Description: Empty BPEL Process that validates the xml and enqueues the account message into JMS queue.
+* Change History
+* Version      Date         Author                      Description Of Change 
+*  1.0         15/10/08     Vidya Sagar Amirineni       Initial Version 
+*  1.1         12/02/09     Sreeja Prasad               Modified the TransOrderReqIVToValidationMsg.xsl 
+                                                        for the defect 23270, Added the DVM for the validation failure.   
+*  1.2	       04/03/10	    Surya Gannavarapu		Modified the TransOrderRequestToTFOrderDispatcher.xsl and TransOrderRequestToDispatcher.xsl for PBI-421
+*  1.3         23/03/10     Damodar                     Modified for the SAP Integration
+*  1.4	       23/04/10	    Sreeja  		        Modified the TransRcvOrderRequestToValidateOrderRequest.xsl and TransOrderRequestToDispatcher.xsl for PBI-500(Athena Manual perm)                                                       
+*  1.5	       16/06/10	    Sreeja  		        Added the AssetCacheDBAdapter to resolve X002 error.
+*  1.6	       23/06/10	    Sreeja  		        Modified the datasource and string length conditon in the xsl's TransLookupAssetCacheTable.xsl & TransExtendOrderReqToOrderReqValidator.xsl.
+*  1.7	       22/07/10	    Sreeja  		        Modified the schemas and xsl for CR 5862(SEA auto perm integration). 
+*  1.8	       25/07/10	    Swathi  		        Modified the schemas and xsl for CR 5374
+*  1.9	       04/07/10	    Sreeja  		        Modified the xsl to  map the map the RCRMField7 to isDelete(identifier for SEA delete) for CR 5862
+*  2.0	       05/04/11	    Ramanjana Reddy  	        Split this bpel into 2 components. Removed DB operations ( Asset Cache and Order Cache) and routing the message to dispatchers.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOM_DequeueNValidateOrderRequest" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/OM" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/mq/headerUpdateCSValidationMessage/" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOrderRequest/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/OrderManagement" xmlns:ns14="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher" xmlns:ns2="http://www.siebel.com/xml/RCRM%20Order%20Entry" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:ns7="http://xmlns.oracle.com/CCRMOM_DequeueNValidateOrderRequest">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink myRole="Dequeue_role" name="DequeueOrderRequest" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink name="UpdateEAIValidationMessage" partnerRole="Enqueue_role" partnerLinkType="ns12:Enqueue_plt"/>
+    <partnerLink name="CCRMOM_OrderRequestValidatorStub" partnerRole="CCRMOM_OrderRequestValidatorStubProvider" partnerLinkType="ns6:CCRMOM_OrderRequestValidatorStub"/>
+    <partnerLink myRole="CCRMOM_RouteToDispatcherRequester" name="CCRMOM_RouteToDispatcher" partnerRole="CCRMOM_RouteToDispatcherProvider" partnerLinkType="ns14:CCRMOM_RouteToDispatcher"/>
+    <partnerLink myRole="CCRMOM_DequeueNValidateOrderRequestProvider"
+                 name="AnchorToDeque"
+                 partnerLinkType="ns7:CCRMOM_DequeueNValidateOrderRequest"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <variable name="RcvOrderRequest_IV" messageType="ns1:OrderRequest_msg"/>
+    <variable name="successResponseCode" type="xsd:string"/>
+    <variable name="unknownError" type="xsd:string"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="InvUpdateEAIValidation" messageType="ns12:OrderRequest_msg"/>
+    <variable name="InvOrderReqValidatorIV" messageType="ns6:CCRMOM_OrderRequestValidatorStubRequestMessage"/>
+    <variable name="OnMessage_initiate_InputVariable"
+              messageType="ns7:OrderRequest_msg"/>
+  </variables>
+  <faultHandlers>
+    <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+      <sequence name="Sequence_1">
+        <assign name="TransOrderReqIVToValidationFailureMsg">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransOrderReqIVToValidationMsg.xsl',bpws:getVariableData('RcvOrderRequest_IV','OrderRequest'))"/>
+            <to variable="InvUpdateEAIValidation" part="OrderRequest"/>
+          </copy>
+        </assign>
+        <invoke name="InvUpdateEAIValidationFailureMessage" partnerLink="UpdateEAIValidationMessage" portType="ns12:Enqueue_ptt" operation="Enqueue" inputVariable="InvUpdateEAIValidation"/>
+      </sequence>
+    </catch>
+    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+        <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                
+                        getVariableData("RcvOrderRequest_IV","OrderRequest","/ns2:OrderRequest/ns2:OrderEntry-Orders/ns2:OrderNumber")).getFirstChild().getNodeValue();                   
+        
+                                
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");   
+    
+ setCompositeInstanceTitle(title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.3">
+        <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                
+                        getVariableData("RcvOrderRequest_IV","OrderRequest","/ns2:OrderRequest/ns2:OrderEntry-Orders/ns2:OrderNumber")).getFirstChild().getNodeValue();                   
+        
+                                
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");   
+    
+ setCompositeInstanceTitle(title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.3">
+        <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                
+                        getVariableData("RcvOrderRequest_IV","OrderRequest","/ns2:OrderRequest/ns2:OrderEntry-Orders/ns2:OrderNumber")).getFirstChild().getNodeValue();                   
+        
+                                
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");   
+    
+ setCompositeInstanceTitle(title);]]>
+      </bpelx:exec>
+    </catch>
+    <catchAll>
+      <sequence name="Sequence_2">
+        <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+          <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                 
+                        getVariableData("RcvOrderRequest_IV","OrderRequest","/ns2:OrderRequest/ns2:OrderEntry-Orders/ns2:OrderNumber")).getFirstChild().getNodeValue();                    
+         
+                                 
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");    
+     
+ setCompositeInstanceTitle(title);]]>
+        </bpelx:exec>
+        <assign name="AsgUnknownError">
+          <copy>
+            <from expression="'Unknown Error'"/>
+            <to variable="runtimeFault" part="code"/>
+          </copy>
+        </assign>
+      </sequence>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <pick name="Pick_1" createInstance="yes">
+      <onMessage variable="RcvOrderRequest_IV"
+                 partnerLink="DequeueOrderRequest" portType="ns1:Dequeue_ptt"
+                 operation="Dequeue">
+        <empty name="DoNothing"/>
+      </onMessage>
+      <onMessage variable="OnMessage_initiate_InputVariable"
+                 partnerLink="AnchorToDeque"
+                 portType="ns7:CCRMOM_DequeueNValidateOrderRequest"
+                 operation="initiate">
+        <bpelx:annotation>
+          <bpelx:pattern></bpelx:pattern>
+        </bpelx:annotation>
+        <assign name="Assign_OrderPayload">
+          <copy>
+            <from variable="OnMessage_initiate_InputVariable"
+                  part="OrderRequest" query="/ns2:OrderRequest"/>
+            <to variable="RcvOrderRequest_IV" part="OrderRequest"
+                query="/ns2:OrderRequest"/>
+          </copy>
+        </assign>
+      </onMessage>
+    </pick>
+    <assign name="AsgInitialVariables">
+      <copy>
+        <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+        <to variable="successResponseCode"/>
+      </copy>
+      <copy>
+        <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','UnknownError','Value', '00300-EAI-UNKNOWN-ERROR')"/>
+        <to variable="unknownError"/>
+      </copy>
+    </assign>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[try{      
+      
+String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("RcvOrderRequest_IV","OrderRequest","/ns2:OrderRequest/ns2:OrderEntry-Orders/ns2:OrderNumber")).getFirstChild().getNodeValue();                      
+                           
+   
+String Country = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("RcvOrderRequest_IV", "OrderRequest", "/ns2:OrderRequest/ns2:OrderEntry-Orders/ns2:PrimaryAccountCountry")).getFirstChild().getNodeValue();                                     
+                          
+ String title=(orderNumber!=null ? (orderNumber+"; "+Country) : ".;");      
+       
+ setCompositeInstanceTitle(title);  
+                                         
+     
+}      
+catch(Exception e){  
+String orderNumber = ((oracle.xml.parser.v2.XMLElement)                   
+                        getVariableData("RcvOrderRequest_IV","OrderRequest","/ns2:OrderRequest/ns2:OrderEntry-Orders/ns2:OrderNumber")).getFirstChild().getNodeValue();  
+setCompositeInstanceTitle("orderNumber: "+orderNumber);      
+}]]>
+    </bpelx:exec>
+    <scope name="ValidateXML">
+      <faultHandlers>
+        <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+          <throw name="ThrInvalidVariablesException" faultName="bpelx:invalidVariables" faultVariable="runtimeFault"/>
+        </catch>
+      </faultHandlers>
+      <sequence name="SeqValidateXML">
+        <assign name="TransRcvOrderRequestToValidateOrderRequest">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:doXSLTransformForDoc('TransRcvOrderRequestToValidateOrderRequest.xsl', $RcvOrderRequest_IV.OrderRequest)"/>
+            <to variable="InvOrderReqValidatorIV" part="payload"/>
+          </copy>
+        </assign>
+        <invoke name="InvOrderRequestValidatorStub" inputVariable="InvOrderReqValidatorIV" partnerLink="CCRMOM_OrderRequestValidatorStub" portType="ns6:CCRMOM_OrderRequestValidatorStub" operation="initiate"/>
+      </sequence>
+    </scope>
+    <scope name="Scp_RouteToDipatcher">
+      <variables>
+        <variable name="varRouteToDispatcher" messageType="ns14:CCRMOM_RouteToDispatcherRequestMessage"/>
+      </variables>
+      <sequence name="Seq_RouteToDispatcher">
+        <assign name="Trans_RouteToDipatcher">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransRouteToDispatcher.xsl',bpws:getVariableData('InvOrderReqValidatorIV','payload'))"/>
+            <to variable="varRouteToDispatcher" part="payload"/>
+          </copy>
+        </assign>
+        <invoke name="Inv_CCRMOM_RouteToDispatcher" partnerLink="CCRMOM_RouteToDispatcher" portType="ns14:CCRMOM_RouteToDispatcher" operation="initiate" inputVariable="varRouteToDispatcher"/>
+      </sequence>
+    </scope>
+  </sequence>
+</process>

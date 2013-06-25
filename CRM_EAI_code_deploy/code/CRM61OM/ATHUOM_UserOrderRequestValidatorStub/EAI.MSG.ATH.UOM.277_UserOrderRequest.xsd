@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.ATH.UOM.277_UserOrderRequest.xsd
+	* Type:        XSD Schema
+	* Description: The schema used in EAI components to publish the account data to subscribers
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         12/06/09  Sreeja			Initial version
+	* 0.2	      16/06/09  Sreeja		    Added a new complex type MoveToSubscriber and renamed the userRequest to UserDetail
+	* 0.3	      22/06/09  Sreeja		    Modified the type for actionCode and sourceSystem.
+	* 0.4	      04/08/09  Sreeja		    Added  minOccurs="0" for ServiceInfo and removed subId from MoveToSubscriber.
+        * 0.5         12/02/10  Sreeja		    Added anonymous and Phone in UserDetail for PBI-433
+	* 0.6         18/02/10  Sreeja		    Added anonymousFlagReason for PBI-433
+        * 0.7         23/09/11  Ramanjana	    Added jobFunction
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+	xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+	xmlns:gcap-cuot="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes"
+	xmlns:gcap-nuot="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.6">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.019_CommonUserOrderTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.020_NillableUserOrderTypes.xsd" />
+	<xsd:element name="UserOrderRequest" type="local:ATHUserOrderRequest" />
+	<xsd:complexType name="ATHUserOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader" />
+			<xsd:element name="messageHeader" type="local:MessageHeader" />
+			<xsd:element name="moveToSubscriber" type="local:MoveToSubscriber" />
+			<xsd:element name="userDetail" type="local:UserDetail"  minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="MoveToSubscriber">
+		<xsd:sequence>
+			<xsd:element name="subscriberId" type="gcap-nuot:Subscriber" />
+			<xsd:element name="subAccountId" type="gcap-nuot:SubAccount" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="MessageHeader">
+		<xsd:sequence>
+			<xsd:element name="transactionId" type="gcap-cuot:TransactionId" />
+			<xsd:element name="sourceSystem" type="gcap-cuot:RequestSystem" />
+			<xsd:element name="subscriberNumber" type="gcap-cuot:Subscriber"/>
+			<xsd:element name="subAccount" type="gcap-cuot:SubAccount"/>
+			<xsd:element name="requestDate" type="gcap-nuot:EffectiveDateTime"/>
+			<xsd:element name="orderNumber" type="gcap-nuot:SiebelOrderNumber"/>
+			<xsd:element name="systemName" type="gcap-nuot:SystemName"/>
+			<xsd:element name="actionCode" type="gcap-cuot:AthActionCode"/>
+			<xsd:element name="adminName" type="gcap-nuot:FirstName"/>
+			<xsd:element name="adminEmail" type="gcap-nuot:EmailId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="UserDetail">
+		<xsd:sequence>
+			<xsd:element name="transactionId" type="gcap-cuot:TransactionId" />
+			<xsd:element name="AthenaSubId" type="gcap-nuot:AthenaSubId"/>
+			<xsd:element name="AKR" type="gcap-nuot:AKR"/>
+			<xsd:element name="firstName" type="gcap-nuot:FirstName"/>
+			<xsd:element name="lastName" type="gcap-nuot:LastName"/>
+			<xsd:element name="TSAID" type="gcap-nuot:TSAID"/>
+			<xsd:element name="emailId" type="gcap-nuot:EmailId"/>
+			<xsd:element name="anonymous" type="gcap-nuot:AnonymousFlag"/>
+			<xsd:element name="anonymousFlagReason" type="gcap-nuot:AnonymousFlagReason"/>
+			<xsd:element name="phone" type="gcap-nuot:Phone"/>
+                        <xsd:element name="jobFunction" type="gcap-nuot:JobFunction"/>
+			<xsd:element name="ServiceInfo" type="local:ATHServiceInfo"  minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ATHServiceInfo">
+		<xsd:sequence>		
+			<xsd:element name="PLINumber" type="gcap-nuot:PLI"/>
+			<xsd:element name="effectiveDate" type="gcap-nuot:EffectiveDate"/>
+			<xsd:element name="hardStopFlag" type="gcap-nuot:HardStopFlag"/>
+			<xsd:element name="operation" type="gcap-nuot:InstallRemoveInd"/>
+			<xsd:element name="UOLIId" type="gcap-nuot:UOLIId"/>
+			<xsd:element name="itemNumber" type="gcap-nuot:ItemNumber"/>
+                 </xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

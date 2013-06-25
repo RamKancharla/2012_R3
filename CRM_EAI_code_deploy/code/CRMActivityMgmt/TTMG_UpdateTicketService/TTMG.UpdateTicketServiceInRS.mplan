@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="TTMG.UpdateTicketServiceInRS" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigration" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="propagateStatus">
+      <switch>
+         <case name="Case_1_TTMG.UpdateTicketServiceInRS.propagateStatus" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TTMigrationStatus_To_TTUpdateTicket.xsl,$in.parameter)" name="$out.migrationStatus"/>
+               </transform>
+               <assign/>
+               <invoke reference="TTMG.UpdateTicket" operation="process">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/migrationStatus_To_migrationStatus.xsl,$in.migrationStatusResponse)" name="$out.parameter"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

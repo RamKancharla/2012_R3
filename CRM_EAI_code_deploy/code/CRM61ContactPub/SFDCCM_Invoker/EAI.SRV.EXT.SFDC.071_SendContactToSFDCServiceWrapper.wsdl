@@ -1,0 +1,17 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+    
+     targetNamespace="http://soap.sforce.com/schemas/class/ContactManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://soap.sforce.com/schemas/class/ContactManagement"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <plnk:partnerLinkType name="ContactManagement">
+        <plnk:role name="ContactManagementPortType">
+            <plnk:portType name="tns:ContactManagementPortType"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <wsdl:import namespace="http://soap.sforce.com/schemas/class/ContactManagement" location="EAI.SRV.EXT.SFDC.071_SendContactToSFDCService.wsdl"/>
+</wsdl:definitions>

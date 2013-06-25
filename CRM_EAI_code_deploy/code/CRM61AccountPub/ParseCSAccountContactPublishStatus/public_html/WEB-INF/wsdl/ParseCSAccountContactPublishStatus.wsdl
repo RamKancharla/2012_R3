@@ -1,0 +1,48 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns:osns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:fixns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+         location="EAI.MSG.CS.ACM.230_FixedLengthEBCDICMessage.xsd"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+         location="EAI.MSG.CS.ACM.231_AccountContactStatus.xsd"/>
+    <message name="FLAccountContactPublishStatus">
+        <part name="parameter" element="tns:fixedLengthMessage"/>
+    </message>
+    <message name="AccountContactPublishStatus">
+        <part name="parameter" element="tns:CSAccountContactPublish"/>
+    </message>
+    <portType name="ParseCSAccountContactPublishStatus">
+        <operation name="ParseAccountContactPublishStatus">
+            <input message="tns:FLAccountContactPublishStatus"/>
+            <output message="tns:AccountContactPublishStatus"/>
+        </operation>
+    </portType>
+    <binding name="ParseCSAccountContactPublishStatusSOAP" type="tns:ParseCSAccountContactPublishStatus">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="ParseAccountContactPublishStatus">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ParseCSAccountContactPublishStatus">
+        <port name="ParseAccountContactPublishStatus" binding="tns:ParseCSAccountContactPublishStatusSOAP">
+            <soap:address location="http://10.2.136.238:8888/CRM61PricePublish-ParseCSAccountContactPublishStatus-context-root/ParseAccountContactPublishStatus"/>
+        </port>
+    </service>
+</definitions>

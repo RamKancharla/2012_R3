@@ -1,0 +1,206 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish" elementFormDefault="qualified"
+     attributeFormDefault="unqualified" version="0.7" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish" xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+     xmlns:gcap-cut="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+     xmlns:gcap-NAT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes">
+    <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.003_CommonAccountTypes.xsd"/>
+    <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.002_CommonUserTypes.xsd"/>
+    <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+    <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.009_NillableAccountTypes.xsd"/>
+    <xsd:element name="contactEvent" type="local:ContactEvent"/>
+    <xsd:complexType name="ContactEvent">
+        <xsd:sequence>
+            <xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+            <xsd:element name="actionCode" type="gcap-cmt:ActionCode"/>
+            <xsd:element name="contact" type="local:Contact"/>
+            <xsd:element name="contactUserId" type="local:ContactUserId" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Contact">
+        <xsd:sequence>
+            <xsd:element name="UUID" type="gcap-cut:UUID"/>
+            <xsd:element name="primaryUUID" type="gcap-cut:PrimaryUUID" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="userType" type="gcap-cut:UserType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="extraInfo" type="xsd:anyType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="parentAccountID" type="gcap-NAT:AccountID"/>
+            <xsd:element name="masterAccountID" type="gcap-NAT:AccountID"/>
+            <xsd:element name="firstName" type="gcap-cut:FirstName"/>
+            <xsd:element name="lastName" type="gcap-cut:LastName"/>
+            <xsd:element name="telNumber" type="gcap-cut:PhoneNumber"/>
+            <xsd:element name="emailAddress" type="gcap-cut:EmailAddress"/>
+            <xsd:element name="contactSubType" type="gcap-cut:ContactSubType"/>
+            <xsd:element name="RelationshipType" type="gcap-cut:RelationshipType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMStatus" type="gcap-cut:Status" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMErrorMessage" type="gcap-cut:ErrorMessage" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMCoreSuiteStatus" type="gcap-cut:CoreSuiteStatus" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="PrimaryPositionId" type="gcap-cut:PrimaryPositionId" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="PersonUId" type="gcap-cut:PersonUId" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="PartyUID3" type="gcap-cut:PartyUID3" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="PartyTypeCD" type="gcap-cut:PartyTypeCD" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="MM" type="gcap-cut:MM" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="JobTitle" type="gcap-cut:JobTitle" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="Id" type="gcap-cut:Id" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="EmployeeFlag" type="gcap-cut:EmployeeFlag" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="CellularPhone" type="gcap-cut:CellularPhone" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="Function" type="local:Function" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="ContactAccount" type="local:ContactAccount" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="clientContactJobFunctionList" type="local:ClientContactJobFunctionList"
+                 minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="clientContactAccountList" type="local:AccountList"/>
+            <xsd:element name="employeePositionList" type="local:EmployeePositionList"/>
+            <xsd:element name="reutersMessagingId" type="gcap-cut:ReutersMessagingId" minOccurs="0"
+                 maxOccurs="1"/>
+            <xsd:element name="marketFocus" type="gcap-cut:MarketFocus" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="legalConsentGiven" type="gcap-cut:LegalConsentGiven" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="legalConsentGivenOn" type="gcap-cut:LegalConsentGivenOn" minOccurs="0"
+                 maxOccurs="1"/>
+            <xsd:element name="marketingConsentGiven" type="gcap-cut:MarketingConsentGiven" minOccurs="0"
+                 maxOccurs="1"/>
+            <xsd:element name="marketingConsentGivenOn" type="gcap-cut:MarketingConsentGivenOn" minOccurs="0"
+                 maxOccurs="1"/>
+            <xsd:element name="_FTLCompleted" type="gcap-cut:_FTLCompleted" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="_FTLCompletedOn" type="gcap-cut:_FTLCompletedOn" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="localFirstName" type="gcap-cut:LocalFirstName" nillable="true"/>
+            <xsd:element name="localLastName" type="gcap-cut:LocalLastName" nillable="true"/>
+            <xsd:element name="preferredServiceLanguage" type="gcap-cut:PreferredServiceLanguage"
+                 nillable="true"/>
+            <xsd:element name="localDACSID" type="gcap-cut:LocalDACSID" nillable="true"/>
+            <xsd:element name="endUserActivity" type="gcap-cut:EndUserActivity" nillable="true"/>
+            <xsd:element name="lastUpdatedByAAAOn" type="gcap-cut:LastUpdatedByAAAOn" nillable="true"
+                 minOccurs="0"/>
+            <xsd:element name="lastUpdatedSiebelOn" type="gcap-cut:LastUpdatedSiebelOn" nillable="true"
+                 minOccurs="0"/>
+            <xsd:element name="_CPFGUserId" type="gcap-cut:UserID" nillable="true" minOccurs="0"/>
+            <xsd:element name="RCRMPublishContactToSAP" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMContactStatus" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMField4" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="ContactRowId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMTimeStamp" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMSourceSystem" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMLastUpdatedBy" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMDepartment" type="gcap-cut:Department" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="FaxPhone" type="gcap-cut:FaxPhone" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMContactFloor" type="gcap-cut:ContactFloor" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMVIP" type="gcap-cut:VIP" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMSegGrpSecondaryAssetClass" type="gcap-cut:SegGrpSecondaryAssetClass"
+                 minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMAssetFocus3" type="gcap-cut:AssetFocus3" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMLastTrainedDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMPreferredLanguage" type="gcap-cut:PreferredLanguage" minOccurs="0"
+                 maxOccurs="1"/>
+            <xsd:element name="RCRMSegGrpPrimaryAssetClass" type="gcap-cut:SegGrpPrimaryAssetClass"
+                 minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMSegGrpBSCSide" type="gcap-cut:SegGrpBSCSide" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMLocalSalutation" type="gcap-cut:LocalSalutation" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="ContactNumber" type="gcap-cut:ContactNumber" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="ComplianceJobRole" type="gcap-cut:ComplianceJobRole" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="PrimaryAccountNumber" type="gcap-cut:PrimaryAccountNumber" minOccurs="0"
+                 maxOccurs="1"/>
+            <xsd:element name="PrimaryAccountClass" type="gcap-cut:PrimaryAccountClass" minOccurs="0"
+                 maxOccurs="1"/>
+            <xsd:element name="PrimaryAccountId" type="gcap-cut:PrimaryAccountId" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ContactUserId">
+        <xsd:sequence>
+            <xsd:element name="CPfGStatusReason" type="gcap-cut:CPfGStatusReason" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="CPfGStatus" type="gcap-cut:CPfGStatus" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="CPfGTempURL" type="gcap-cut:CPfGTempURL" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="CPFGUserId" type="gcap-cut:UserID" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="Id" type="gcap-cut:CPfGId" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="ContactUUID" type="gcap-cut:UUID" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="FTLCompleteFlag" type="gcap-cut:FTLCompleteFlag" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="FTLFlagSetDate" type="gcap-cut:FTLFlagSetDate" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="LocalDACSId" type="gcap-cut:LocalDACSID" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="EmployeePosition">
+        <xsd:sequence>
+            <xsd:element name="name" type="gcap-cut:EmployeePositionName"/>
+            <xsd:element name="isPrimaryPosition" type="xsd:boolean"/>
+            <xsd:element name="accountList" type="local:AccountList"/>
+            <xsd:element name="PositionAccount" type="local:PositionAccount" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PositionAccount">
+        <xsd:sequence>
+            <xsd:element name="Id" type="gcap-cat:Id" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Account">
+        <xsd:sequence>
+            <xsd:element name="id" type="gcap-cat:AccountID"/>
+            <xsd:element name="isPrimaryPosition" type="xsd:boolean"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ClientContactJobFunctionList">
+        <xsd:sequence>
+            <xsd:element name="clientContactJobFunction" type="gcap-cut:ContactJobFunction" maxOccurs="1"
+                 minOccurs="0"/>
+            <xsd:element name="AccountId" type="gcap-NAT:AccountID" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="AccountList">
+        <xsd:sequence>
+            <xsd:element name="account" type="local:Account" maxOccurs="unbounded" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="EmployeePositionList">
+        <xsd:sequence>
+            <xsd:element name="employeePosition" type="local:EmployeePosition" maxOccurs="unbounded" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Function">
+        <xsd:sequence>
+            <xsd:element name="Name" type="gcap-cut:Name" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="AccountId" type="gcap-NAT:AccountID" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMAccountNumber" type="gcap-cat:AccountNumber" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="FunctionPrimaryFlag" type="gcap-cat:FunctionPrimaryFlag" minOccurs="0"
+                 maxOccurs="1"/>
+            <xsd:element name="RCRMAccountClass" type="gcap-cat:RCRMAccountClass" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMField1" type="gcap-cut:Field1" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMField2" type="gcap-cut:Field2" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ContactAccount">
+        <xsd:sequence>
+            <xsd:element name="Id" type="gcap-cut:Id" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMSAPPublishedFlag" type="gcap-cat:SAPPublishedFlag" minOccurs="0"
+                 maxOccurs="1"/>
+            <xsd:element name="RCRMAccountNumber" type="gcap-cat:AccountNumber" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMAccountClass" type="gcap-cat:RCRMAccountClass" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="AccountPrimaryFlag" type="gcap-cat:AccountPrimaryFlag" minOccurs="0"
+                 maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
+<!--********************************************************************************
+    * Module:      EAI.MSG.CM.197_ContactEvent.xsd
+    * Type:        XSD Schema
+    * Description: Schema used to publish notifications of events on CRM contacts to an internal EAI queue.
+    *
+    * Change History
+    * Version           Date      Author             Description Of Change
+    *
+    * 0.1               22/01/08  Rob Billington     Initial version without associated accounts or logons
+    * 0.2               24/01/08  Rob Billington     Added job functions, account and positions
+    *                                                Corrected type for emailAddress.
+    * 0.3               30/01/08  Rob Billington     Replaced EmployeeFlag with ContactSubType
+    * 0.4               05/02/08  Rob Billington     Replaced local references to common type schemas to use the eaidev1 network store
+    * 0.5               18/02/08  Sreeja	     Replaced gcap-cat:AccountID with gcap-NAT:AccountID for nillable elements 
+    *                						     parentAccountId and masterAccountId 
+    * 0.6               05/09/08 Shanker Reddy       Changed Schema for Contact defect
+    * 0.7               10/10/2008 Rob Billington    Added reutersMessagingId, marketFocus, legalConsentGiven, legalConsentGivenOn,
+                                                   marketingConsentGiven, marketingConsentGivenOn, _FTLCompleted, _FTLCompletedOn,
+                                                   localFirstName, localLastName, preferredServiceLanguage, localDACSID, endUserActivity
+                                                   lastUpdatedByAAAOn, lastUpdatedSiebelOn, _CPFGUserId
+        *                                          Removed UUID
+        
+   * 0.8                27/04/10   Surya Gannavarapu Added AccountId to the ClientContactJobFunctionList for CRM_PBI_0278 , sprint10 , Release3
+   * 0.9                08/07/10   Sreeja         Added ContactUserId complex type for CR - 5317 
+   * 1.0                15/07/10   Rijoy          Added isPrimaryPosition under complex type Account for CR - 7248  
+   * 1.1                11/06/10   Mallesh        Added RCRMPublishContactToSAP, RCRMContactStatus to the Contact as part of SAP integration
+   * 1.1                11/06/10   Rijoy        Added primaryUUID, userType , extraInfo to the Contact as part CR -9851
+   * 1.2                05/01/11   Albin I        Added ContactRowId, RCRMAccountNumber and  RCRMSAPPublishedFlag as part of Contact Sync.
+    **********************************************************************************-->

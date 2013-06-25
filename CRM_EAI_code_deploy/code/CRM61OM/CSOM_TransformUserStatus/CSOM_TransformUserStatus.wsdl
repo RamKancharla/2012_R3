@@ -1,0 +1,56 @@
+<definitions
+     name="CSOM_TransformUserStatus"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus"
+                 schemaLocation="CSOM_TransformUserStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.163_UserStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CSOM_TransformUserStatusResponseMessage">
+        <part name="payload" element="client:CSOM_TransformUserStatusProcessResponse"/>
+    </message>
+    <message name="CSOM_TransformUserStatusRequestMessage">
+        <part name="fixedLengthUserStatus" element="ns1:EBCDICMessage"/>
+    </message>
+    <portType name="CSOM_TransformUserStatusCallback">
+        <operation name="onResult">
+            <input message="client:CSOM_TransformUserStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CSOM_TransformUserStatus">
+        <operation name="processUser">
+            <input message="client:CSOM_TransformUserStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CSOM_TransformUserStatus">
+        <plnk:role name="CSOM_TransformUserStatusProvider">
+            <plnk:portType name="client:CSOM_TransformUserStatus"/>
+        </plnk:role>
+        <plnk:role name="CSOM_TransformUserStatusRequester">
+            <plnk:portType name="client:CSOM_TransformUserStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

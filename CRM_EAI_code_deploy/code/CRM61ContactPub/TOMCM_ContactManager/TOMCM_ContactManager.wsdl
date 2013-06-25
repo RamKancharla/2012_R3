@@ -1,0 +1,49 @@
+<definitions
+     name="TOMCM_ContactManager"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager"
+     xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager"
+                 schemaLocation="TOMCM_ContactManager.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish" schemaLocation="EAI.MSG.TOM.CM.198_PublishContactEventRequest.xsd"/>
+        </xsd:schema>        
+         <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.CM.197_ContactEvent.xsd"/>
+        </schema>
+    </types>
+    <message name="TOMCM_ContactManagerResponseMessage">
+        <part name="payload" element="client:TOMCM_ContactManagerProcessResponse"/>
+    </message>
+    <message name="TOMCM_ContactManagerRequestMessage">
+        <part name="contactEvent" element="imp1:contactEvent"/>
+    </message>
+    <portType name="TOMCM_ContactManagerCallback">
+        <operation name="onResult">
+            <input message="client:TOMCM_ContactManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="TOMCM_ContactManager">
+        <operation name="initiate">
+            <input message="client:TOMCM_ContactManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TOMCM_ContactManager">
+        <plnk:role name="TOMCM_ContactManagerProvider">
+            <plnk:portType name="client:TOMCM_ContactManager"/>
+        </plnk:role>
+        <plnk:role name="TOMCM_ContactManagerRequester">
+            <plnk:portType name="client:TOMCM_ContactManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

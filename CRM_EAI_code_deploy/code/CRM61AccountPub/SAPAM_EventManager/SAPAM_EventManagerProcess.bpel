@@ -1,0 +1,252 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   Purpose: BPEL AsynProcess
+  * Version	      Date		Author		Description Of Change
+  * 0.1             26/05/2011	        Lavanya 	modified the condition for VATCode.
+  * 0.2             26/05/2011          Lavanya         As part of Wave3,modified the code for State fileld of Address Element in TransCRMtoEAI.xsl.
+  * 0.3             26/05/2011          Shruthi         As part of Wave3,modified the code for Country fileld of Address Element in TransCRMtoEAI.xsl.
+  
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="SAPAM_EventManagerProcess" targetNamespace="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/WriteBuffer/" xmlns:client="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/top/WriteBuffer" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:socket="http://www.oracle.com/XSL/Transform/java/oracle.tip.adapter.socket.ProtocolTranslator"
+         xmlns:mhdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.mediator.service.common.functions.MediatorExtnFunction"
+         xmlns:med="http://schemas.oracle.com/mediator/xpath"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="SAPAM_EventManager" partnerLinkType="client:SAPAM_EventManager" myRole="SAPAM_EventManagerProvider" partnerRole="SAPAM_EventManagerRequester"/>
+        <partnerLink myRole="AsyncSequenceCheckerRequester" name="AsyncSequenceChecker" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns4:AsyncSequenceChecker"/>
+        <partnerLink name="WriteBuffer" partnerRole="WriteBuffer_role" partnerLinkType="ns5:WriteBuffer_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="rcvAccountPub_IV" messageType="client:SAPAM_EventManagerRequestMessage"/>
+        <variable name="FaultVar" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="AccountEvent" messageType="client:AccEvent"/>
+        <variable name="AccountPub" messageType="client:publish"/>
+        <variable name="instanceId" type="xsd:string"/>
+        <variable name="invSeqChecker_IV" messageType="ns4:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="rcvSequenceRelease_OV" messageType="ns4:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="writeBuffer_IV" messageType="ns5:InterfaceBufferCollection_msg"/>
+        <variable name="billingAddress"
+                  messageType="client:SAPAM_EventManagerRequestMessage"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="FaultVar">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.3">
+                <![CDATA[try{        
+        
+String AccountID = ((oracle.xml.parser.v2.XMLElement)                                    
+                        getVariableData("rcvAccountPub_IV","payload","/ns2:accountEvent/ns2:account/ns2:id")).getFirstChild().getNodeValue();                                       
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID) : ".;");                                              
+setCompositeInstanceTitle(Title);        
+}        
+catch(Exception e){        
+setCompositeInstanceTitle("AccountID: ");        
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="FaultVar">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.3">
+                <![CDATA[try{        
+        
+String AccountID = ((oracle.xml.parser.v2.XMLElement)                                    
+                        getVariableData("rcvAccountPub_IV","payload","/ns2:accountEvent/ns2:account/ns2:id")).getFirstChild().getNodeValue();                                       
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID) : ".;");                                              
+setCompositeInstanceTitle(Title);        
+}        
+catch(Exception e){        
+setCompositeInstanceTitle("AccountID: ");        
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="FaultVar">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.3">
+                <![CDATA[try{        
+        
+String AccountID = ((oracle.xml.parser.v2.XMLElement)                                    
+                        getVariableData("rcvAccountPub_IV","payload","/ns2:accountEvent/ns2:account/ns2:id")).getFirstChild().getNodeValue();                                       
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID) : ".;");                                              
+setCompositeInstanceTitle(Title);        
+}        
+catch(Exception e){        
+setCompositeInstanceTitle("AccountID: ");        
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.3">
+                <![CDATA[try{        
+        
+String AccountID = ((oracle.xml.parser.v2.XMLElement)                                    
+                        getVariableData("rcvAccountPub_IV","payload","/ns2:accountEvent/ns2:account/ns2:id")).getFirstChild().getNodeValue();                                       
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID) : ".;");                                              
+setCompositeInstanceTitle(Title);        
+}        
+catch(Exception e){        
+setCompositeInstanceTitle("AccountID: ");        
+}]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in SAPAM_EventManager.wsdl) -->
+        <receive name="rcvAccountPub" partnerLink="SAPAM_EventManager" portType="client:SAPAM_EventManager" operation="initiate" variable="rcvAccountPub_IV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVar">
+            <!--  <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="rcvAccountPub_IV" part="payload"
+                    query="/ns2:accountEvent/ns2:eaiHeader/ns3:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="rcvAccountPub_IV" part="payload"
+                    query="/ns2:accountEvent/ns2:eaiHeader/ns3:instanceId"/>
+            </copy>-->
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="rcvAccountPub_IV" part="payload" query="/ns2:accountEvent/ns2:eaiHeader/ns3:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="instanceId"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="rcvAccountPub_IV" part="payload" query="/ns2:accountEvent/ns2:eaiHeader/ns3:tracingId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustTitle" language="java" version="1.5">
+            <![CDATA[String AccountID = ((oracle.xml.parser.v2.XMLElement)                                      
+                        getVariableData("rcvAccountPub_IV","payload","/ns2:accountEvent/ns2:account/ns2:id")).getFirstChild().getNodeValue();                                         
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID) : ".;");                                                
+setCompositeInstanceTitle(Title);          
+        
+//catch(Exception e){          
+//setCompositeInstanceTitle("AccountID: ");          
+//}]]>
+        </bpelx:exec>
+        <assign name="TransBillingAddressCheck">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:doXSLTransformForDoc('TransBillingAddressValueCheck.xsl', $rcvAccountPub_IV.payload)"/>
+                <to variable="billingAddress" part="payload"/>
+            </copy>
+        </assign>
+        <switch name="AccountSwitch">
+            <case condition="bpws:getVariableData('rcvAccountPub_IV','payload','/ns2:accountEvent/ns2:publishAccountToSAP') = 'Y' and count(bpws:getVariableData('billingAddress','payload','/ns2:accountEvent/ns2:accountAddress')) > 0">                                                                                                                 
+                <sequence name="PropagateToSAP">
+                    <assign name="Trans176To293Schema">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('Trans176To293Schema.xsl',bpws:getVariableData('rcvAccountPub_IV','payload'))"/>
+                            <to variable="AccountEvent" part="event"/>
+                        </copy>
+                    </assign>
+                    <bpelx:exec name="SubstrIndustryTypes" language="java" version="1.5">
+                        <![CDATA[/*Write your java code below e.g.                            
+	System.out.println("Hello, World");                           
+    industry type and industry subtypes values will be expected as D - Diversified Financial Services                           
+    the value should need to be changed as Diversified Financial Services, since in the DVM for the fields having same field value.                           
+    Please refer SAPAMIndustryCode DVM for the values                           
+*/                                             
+    try {   
+        String industryType = "";   
+        String industrySubType = "";   
+        industryType = ((oracle.xml.parser.v2.XMLElement)getVariableData("AccountEvent","event","/ns2:extendedaccountEvent/ns2:account/ns2:trbcFields/ns2:industryType")).getFirstChild().getNodeValue();                      
+        if(industryType!=null && industryType.substring(0,3).equals("D -")){             
+            setVariableData("AccountEvent","event","/ns2:extendedaccountEvent/ns2:account/ns2:trbcFields/ns2:industryType",industryType.substring(4));               
+        }             
+        industrySubType=((oracle.xml.parser.v2.XMLElement) getVariableData("AccountEvent","event","/ns2:extendedaccountEvent/ns2:account/ns2:trbcFields/ns2:industrySubType")).getFirstChild().getNodeValue();                     
+        if(industrySubType!=null && industrySubType.substring(0,3).equals("D -")){             
+            setVariableData("AccountEvent","event","/ns2:extendedaccountEvent/ns2:account/ns2:trbcFields/ns2:industrySubType",industrySubType.substring(4));               
+        }   
+    }catch(Exception e){}]]>
+                    </bpelx:exec>
+                    <assign name="TransCRMtoEAI">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransCRMtoEAI.xsl',bpws:getVariableData('AccountEvent','event'))"/>
+                            <to variable="AccountPub" part="accPub"/>
+                        </copy>
+                    </assign>
+                    <assign name="TransEAItoSChecker">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransEAItoSChecker.xsl',bpws:getVariableData('AccountEvent','event'))"/>
+                            <to variable="invSeqChecker_IV" part="payload"/>
+                        </copy>
+                    </assign>
+                    <invoke name="invSeqChecker" partnerLink="AsyncSequenceChecker" portType="ns4:AsyncSequenceChecker" operation="initiate" inputVariable="invSeqChecker_IV"/>
+                    <receive name="rcvSequenceRelease" partnerLink="AsyncSequenceChecker" portType="ns4:AsyncSequenceCheckerCallback" operation="onResult" variable="rcvSequenceRelease_OV" createInstance="no"/>
+                    <assign name="AsgEAItoInterface">
+                        <copy>
+                            <from expression="&quot;N&quot;"/>
+                            <to variable="writeBuffer_IV" part="InterfaceBufferCollection" query="/ns6:InterfaceBufferCollection/ns6:InterfaceBuffer/ns6:state"/>
+                        </copy>
+                        <copy>
+                            <from variable="AccountPub" part="accPub" query="/ns1:AccountPublish/ns1:Id"/>
+                            <to variable="writeBuffer_IV" part="InterfaceBufferCollection" query="/ns6:InterfaceBufferCollection/ns6:InterfaceBuffer/ns6:referenceId"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getContentAsString(bpws:getVariableData('AccountPub','accPub','/ns1:AccountPublish'))"/>
+                            <to variable="writeBuffer_IV" part="InterfaceBufferCollection" query="/ns6:InterfaceBufferCollection/ns6:InterfaceBuffer/ns6:payload"/>
+                        </copy>
+                        <copy>
+                            <from expression="&quot;SAPAM&quot;"/>
+                            <to variable="writeBuffer_IV" part="InterfaceBufferCollection" query="/ns6:InterfaceBufferCollection/ns6:InterfaceBuffer/ns6:interfaceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="instanceId"/>
+                            <to variable="writeBuffer_IV" part="InterfaceBufferCollection" query="/ns6:InterfaceBufferCollection/ns6:InterfaceBuffer/ns6:createdBy"/>
+                        </copy>
+                    </assign>
+                    <invoke name="writeBuffer" portType="ns5:WriteBuffer_ptt" inputVariable="writeBuffer_IV" partnerLink="WriteBuffer" operation="insert"/>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TOMOM_UpdateOrderRequestValidator.wsdl" name="anchorToTOMOM_UpdateOrderRequestValidator">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator#wsdl.interface(TOMOM_UpdateOrderRequestValidator)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TOMOM_UpdateOrderRequestValidatorStub/TOMOM_UpdateOrderRequestValidatorStub.wsdl" name="TOMOM_UpdateOrderRequestValidatorStub">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub#wsdl.interface(TOMOM_UpdateOrderRequestValidatorStub)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMOMInvoker/TOMOMInvoker.wsdl" name="TOMOMInvoker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvoker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvokerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/TF_ManageOrderLineStatus.wsdl" name="TF_ManageOrderLineStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus#wsdl.interface(TF_ManageOrderLineStatus)"/>
+    </reference>
+</componentType>

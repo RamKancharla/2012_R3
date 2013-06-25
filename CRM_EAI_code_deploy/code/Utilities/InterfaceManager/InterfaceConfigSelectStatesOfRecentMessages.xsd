@@ -1,0 +1,22 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xs:schema targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectStatesOfRecentMessages" xmlns="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectStatesOfRecentMessages" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="InterfaceConfigSelectStatesOfRecentMessagesInput" type="InterfaceConfigSelectStatesOfRecentMessagesInput"/>
+   <xs:complexType name="InterfaceConfigSelectStatesOfRecentMessagesInput">
+      <xs:sequence>
+         <xs:element name="interface1" type="xs:string" nillable="true"/>
+         <xs:element name="interface2" type="xs:string" nillable="true"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:element name="InterfaceConfigSelectStatesOfRecentMessagesOutputCollection" type="InterfaceConfigSelectStatesOfRecentMessagesOutputCollection"/>
+   <xs:complexType name="InterfaceConfigSelectStatesOfRecentMessagesOutputCollection">
+      <xs:sequence>
+         <xs:element name="InterfaceConfigSelectStatesOfRecentMessagesOutput" type="InterfaceConfigSelectStatesOfRecentMessagesOutput" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="InterfaceConfigSelectStatesOfRecentMessagesOutput">
+      <xs:sequence>
+         <xs:element name="state" type="xs:string" nillable="true"/>
+         <xs:element name="COUNT___" type="xs:decimal" nillable="true"/>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>

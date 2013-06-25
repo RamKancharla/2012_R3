@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ELMCM_EventManager"
+                  targetNamespace="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:client="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager"
+                  xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+                  xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+                  xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest">
+ <wsdl:types>
+  <!--schema xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager"
+           schemaLocation="xsd/ELMCM_EventManager.xsd"/>
+  </schema-->
+  <schema xmlns="http://www.w3.org/2001/XMLSchema"
+          xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+          xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+          xmlns:client="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager">
+   <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+           schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.CM.197_ContactEvent.xsd"/>
+  </schema>
+  <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest">
+   <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest"
+               schemaLocation="xsd/EAI.MSG.ELM.CM.289_PublishContactRequest.xsd"/>
+  </xsd:schema>
+ </wsdl:types>
+ <wsdl:message name="ELMCM_EventManagerRequestMessage">
+  <wsdl:part name="payload" element="ns1:contactEvent"/>
+ </wsdl:message>
+ <wsdl:message name="ELMCM_EventManagerResponseMessage">
+  <wsdl:part name="payload" element="ns2:ContactRequest"/>
+ </wsdl:message>
+ <wsdl:portType name="ELMCM_EventManager">
+  <wsdl:operation name="initiate">
+   <wsdl:input message="client:ELMCM_EventManagerRequestMessage"/>
+  </wsdl:operation>
+ </wsdl:portType>
+ <!--wsdl:portType name="ELMCM_EventManagerCallback">
+  <wsdl:operation name="processResponse">
+   <wsdl:input message="client:ELMCM_EventManagerResponseMessage"/>
+  </wsdl:operation>
+ </wsdl:portType-->
+ <plnk:partnerLinkType name="ELMCM_EventManager">
+  <plnk:role name="ELMCM_EventManagerProvider">
+   <plnk:portType name="client:ELMCM_EventManager"/>
+  </plnk:role>
+  <!--plnk:role name="ELMCM_EventManagerRequester">
+   <plnk:portType name="client:ELMCM_EventManagerCallback"/>
+  </plnk:role-->
+ </plnk:partnerLinkType>
+</wsdl:definitions>

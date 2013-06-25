@@ -1,0 +1,21 @@
+<?binding.jca OrderStatusMonitorMQAdp_mq.jca?>
+<definitions name="OrderStatusMonitorMQAdp" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerOrderStatusMonitorMQAdp/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/mq/header" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/headerOrderStatusMonitorMQAdp/" xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="monitorOrderStatus_plt">
+        <plt:role name="monitorOrderStatus_role">
+            <plt:portType name="tns:monitorOrderStatus_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" schemaLocation="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+        </schema>
+    </types>
+    <message name="EBCDICMessage_msg">
+        <part name="EBCDICMessage" element="imp1:EBCDICMessage"/>
+    </message>
+    <portType name="monitorOrderStatus_ptt">
+        <operation name="monitorOrderStatus">
+            <input message="tns:EBCDICMessage_msg"/>
+        </operation>
+    </portType>
+</definitions>

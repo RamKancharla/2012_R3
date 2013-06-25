@@ -1,0 +1,32 @@
+<definitions
+     name="ATHOM_OrderFulfillmentStatusStub"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub"
+                 schemaLocation="ATHOM_OrderFulfillmentStatusStub.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.ATH.UOM.304_UserOrderResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHOM_OrderFulfillmentStatusStubRequestMessage">
+        <part name="payload" element="ns1:userProvisionResponse"/>
+    </message>
+    <portType name="ATHOM_OrderFulfillmentStatusStub">
+        <operation name="validateUserProvision">
+            <input message="client:ATHOM_OrderFulfillmentStatusStubRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHOM_OrderFulfillmentStatusStub">
+        <plnk:role name="ATHOM_OrderFulfillmentStatusStubProvider">
+            <plnk:portType name="client:ATHOM_OrderFulfillmentStatusStub"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

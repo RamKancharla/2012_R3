@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TRUSTAM_AccountManager.wsdl" name="TRUSTAM_AccountManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.interface(TRUSTAM_AccountManager)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.interface(TRUSTAM_AccountManagerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccount.wsdl" name="CCRMAM_PropagateTRUSTAccount">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccount)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccountCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" name="SequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+    </reference>
+</componentType>

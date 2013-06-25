@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0"
+           targetNamespace="http://account.service.eai.trls.thomsonreuters.com/"
+           xmlns:tns="http://account.service.eai.trls.thomsonreuters.com/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="onData" type="tns:onData"/>
+  <xs:element name="onDataResponse" type="tns:onDataResponse"/>
+  <xs:complexType name="onData">
+    <xs:sequence>
+      <xs:element name="arg0" type="tns:accountEntry" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="accountEntry">
+    <xs:sequence>
+      <xs:element name="sourcesystem" type="xs:string" minOccurs="0"/>
+      <xs:element name="targetsystem" type="xs:string" minOccurs="0"/>
+      <xs:element name="messageid" type="xs:string" minOccurs="0"/>
+      <xs:element name="timestamp" type="xs:string" minOccurs="0"/>
+      <xs:element name="account" type="xs:string" minOccurs="0"/>
+      <xs:element name="site" type="xs:string" minOccurs="0"/>
+      <xs:element name="siebelAccountRowId" type="xs:string" minOccurs="0"/>
+      <xs:element name="address" type="xs:string" minOccurs="0"/>
+      <xs:element name="city" type="xs:string" minOccurs="0"/>
+      <xs:element name="subscriberNo" type="xs:string" minOccurs="0"/>
+      <xs:element name="state" type="xs:string" minOccurs="0"/>
+      <xs:element name="country" type="xs:string" minOccurs="0"/>
+      <xs:element name="accountNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="accountHeirachyType" type="xs:string" minOccurs="0"/>
+      <xs:element name="accountFamily" type="xs:string" minOccurs="0"/>
+      <xs:element name="status" type="xs:string" minOccurs="0"/>
+      <xs:element name="region" type="xs:string" minOccurs="0"/>
+      <xs:element name="internalAccountFlag" type="xs:boolean"/>
+      <xs:element name="field1" type="xs:string" minOccurs="0"/>
+      <xs:element name="field2" type="xs:string" minOccurs="0"/>
+      <xs:element name="field3" type="xs:string" minOccurs="0"/>
+      <xs:element name="field4" type="xs:string" minOccurs="0"/>
+      <xs:element name="field5" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="onDataResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:dataStatus" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dataStatus">
+    <xs:sequence>
+      <xs:element name="status" type="xs:string" minOccurs="0"/>
+      <xs:element name="errorcode" type="xs:string" minOccurs="0"/>
+      <xs:element name="errormessage" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

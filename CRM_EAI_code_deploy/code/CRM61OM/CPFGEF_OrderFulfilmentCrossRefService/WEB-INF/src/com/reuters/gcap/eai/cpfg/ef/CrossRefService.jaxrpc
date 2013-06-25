@@ -1,0 +1,112 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<jdevws:WebService xmlns:jdevws="http://xmlns.oracle.com/jdeveloper/10130/webservice">
+   <list n="CHILD_NODES">
+      <url path="CrossRefServicePortType.java"/>
+      <url path="SplitOrderRequest.java"/>
+      <url path="EaiHeader.java"/>
+      <url path="CanonicalOrder.java"/>
+      <url path="CanonicalOrderHeader.java"/>
+      <url path="CanonicalOLI.java"/>
+      <url path="CanonicalConfiguredAttribute.java"/>
+      <url path="SplitOrderResponse.java"/>
+      <url path="ElectronicFulfilmentRequest.java"/>
+      <url path="ModifyUserEntitlements.java"/>
+      <url path="Entitlement.java"/>
+      <url path="AttributeValuePair.java"/>
+      <url path="GetOrderDetailsRequest.java"/>
+      <url path="GetOrderDetailsResponse.java"/>
+      <url path="Example.java"/>
+      <url path="../../../../../../../../public_html/WEB-INF/CrossRefService-java-wsdl-mapping.xml"/>
+      <url path="CrossRefServicePortTypeImpl.java"/>
+      <url path="../../../../../../../../public_html/WEB-INF/wsdl/CrossRefService.wsdl"/>
+   </list>
+   <hash n="DATA_MODEL">
+      <value n="ATTACHMENT_ENCODING" v="ATTACHMENT_MIME"/>
+      <list n="BD_">
+         <hash>
+            <value n="BOUND_PORT_TYPE" v="{http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService}CrossRefServicePortType"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPBinding"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService}CrossRefServiceSplitOrderSOAP"/>
+            <list n="OP_BINDINGS">
+               <hash>
+                  <value n="BD_SOAP_ACTION" v="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService/getOrderDetails"/>
+                  <value n="BD_SOAP_INPUT_USE" v="1"/>
+                  <value n="BD_SOAP_OUTPUT_USE" v="1"/>
+                  <value n="BD_SOAP_STYLE" v="1"/>
+                  <value n="BOUND_OPERATION" v="com.reuters.gcap.eai.cpfg.ef.GetOrderDetailsResponse.getOrderDetails.java.lang.String.com.reuters.gcap.eai.cpfg.ef.EaiHeader.java.lang.String"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPOperationBinding"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+               <hash>
+                  <value n="BD_SOAP_ACTION" v="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService/splitOrder"/>
+                  <value n="BD_SOAP_INPUT_USE" v="1"/>
+                  <value n="BD_SOAP_OUTPUT_USE" v="1"/>
+                  <value n="BD_SOAP_STYLE" v="1"/>
+                  <value n="BOUND_OPERATION" v="com.reuters.gcap.eai.cpfg.ef.SplitOrderResponse.splitOrder.com.reuters.gcap.eai.cpfg.ef.EaiHeader.com.reuters.gcap.eai.cpfg.ef.CanonicalOrder"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPOperationBinding"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+         </hash>
+      </list>
+      <list n="custom_schema_urls">
+         <url path="../../../../../../../../EAI.MSG.CPFG.EF.215_SplitOrderRequest.xsd"/>
+         <url path="../../../../../../../../EAI.MSG.CPFG.EF.216_SplitOrderResponse.xsd"/>
+         <url path="../../../../../../../../EAI.MSG.CPFG.EF.217_GetOrderDetailsRequest.xsd"/>
+         <url path="../../../../../../../../EAI.MSG.CPFG.EF.218_GetOrderDetailsResponse.xsd"/>
+      </list>
+      <value n="GUID" v="51b796ea-0119-1000-8001-0a0289437cff"/>
+      <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaWebService"/>
+      <list n="PO_">
+         <hash>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPPort"/>
+            <value n="NAME" v="CrossRefServiceSplitOrderSOAPPort"/>
+            <value n="PORT_BINDING_NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService}CrossRefServiceSplitOrderSOAP"/>
+            <list n="PORT_OPS">
+               <hash>
+                  <value n="EXPOSED_BD_OPERATION" v="com.reuters.gcap.eai.cpfg.ef.GetOrderDetailsResponse.getOrderDetails.java.lang.String.com.reuters.gcap.eai.cpfg.ef.EaiHeader.java.lang.String"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.PortOperation"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+               <hash>
+                  <value n="EXPOSED_BD_OPERATION" v="com.reuters.gcap.eai.cpfg.ef.SplitOrderResponse.splitOrder.com.reuters.gcap.eai.cpfg.ef.EaiHeader.com.reuters.gcap.eai.cpfg.ef.CanonicalOrder"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.PortOperation"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+            <url n="URL" protocol="http" host="10.15.61.72" port="8888" path="/Utilities-CPFGEF_OrderFulfilmentCrossRefService-context-root/CrossRefServiceSplitOrderSOAPPort"/>
+         </hash>
+      </list>
+      <hash n="PROPERTY_GROUPS">
+         <hash n="WSDL_TO_JAVA_PROPERTIES">
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.WSDLToJavaProperties"/>
+         </hash>
+      </hash>
+      <list n="PT_">
+         <hash>
+            <value n="AUTO_SERVICE_INTERFACE"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaPortType"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService}CrossRefServicePortType"/>
+            <hash n="PROPERTY_GROUPS"/>
+            <value n="PT_CLASS" v="com.reuters.gcap.eai.cpfg.ef.CrossRefServicePortTypeImpl"/>
+            <value n="PT_SERVICE_INTERFACE" v="com.reuters.gcap.eai.cpfg.ef.CrossRefServicePortType"/>
+         </hash>
+      </list>
+      <url n="TARGET_PROJECT" path="../../../../../../../../CPFGEF_OrderFulfilmentCrossRefService.jpr"/>
+      <url n="WS_MAPPING_FILE" path="../../../../../../../../public_html/WEB-INF/CrossRefService-java-wsdl-mapping.xml"/>
+      <value n="WS_TARGET_NAMESPACE" v="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"/>
+      <value n="WS_URI" v="CrossRefService"/>
+      <list n="WSDL_DEPENDENT_FILES">
+         <url path="../../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CPFG.EF.218_GetOrderDetailsResponse.xsd"/>
+         <url path="../../../../../../../../public_html/WEB-INF/wsdl/EAI.XSD.015_CPFGEF_OrderFulfilmentCrossRefServiceCommonStructures.xsd"/>
+         <url path="../../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CPFG.EF.215_SplitOrderRequest.xsd"/>
+         <url path="../../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CPFG.EF.217_GetOrderDetailsRequest.xsd"/>
+         <url path="../../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CPFG.EF.216_SplitOrderResponse.xsd"/>
+      </list>
+   </hash>
+</jdevws:WebService>

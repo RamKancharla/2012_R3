@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="SAPPLI.SAPPLIReceive_RS" wsdlTargetNamespace="http://trm.com:I002:OrderProcessing:ProductPricing_Receive" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="OP_ProductPricing_Receive_Async">
+      <switch>
+         <case name="Case_1_SAPPLI.SAPPLIReceive_RS.OP_ProductPricing_Receive_Async" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TransPLIRequest.xsl,$in.MT_ProductPricing_Receive)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="SAPPLI.CCRMPLI_EnqueueRequestSOAPAdp" operation="initiate"/>
+            </action>
+         </case>        
+      </switch>
+   </operation>
+</Mediator>

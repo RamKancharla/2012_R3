@@ -1,0 +1,14 @@
+<adapter-config name="Update_Interfacebuffer" adapter="Database Adapter" wsdlLocation="Update_Interfacebuffer.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="InterfaceBuffer_SOAEAIOWNER" adapterRef=""/>
+  <endpoint-interaction portType="Update_Interfacebuffer_ptt" operation="update">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="Update_Interfacebuffer.InterfaceBuffer"/>
+      <property name="DmlType" value="update"/>
+      <property name="MappingsMetaDataURL" value="Update_Interfacebuffer-or-mappings.xml"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="GetActiveUnitOfWork" value="false"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

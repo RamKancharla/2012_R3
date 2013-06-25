@@ -1,0 +1,21 @@
+<?binding.jca SIEBEL_ACCOUNT_STG_db.jca?>
+<definitions name="SIEBEL_ACCOUNT_STG" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/SIEBEL_ACCOUNT_STG/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/SIEBEL_ACCOUNT_STG/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/SIEBELACCOUNTSTG">
+    <plt:partnerLinkType name="SIEBEL_ACCOUNT_STG_plt">
+        <plt:role name="SIEBEL_ACCOUNT_STG_role">
+            <plt:portType name="tns:SIEBEL_ACCOUNT_STG_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/SIEBELACCOUNTSTG" schemaLocation="SIEBELACCOUNTSTG_table.xsd"/>
+        </schema>
+    </types>
+    <message name="SiebelAccountStgCollection_msg">
+        <part name="SiebelAccountStgCollection" element="top:SiebelAccountStgCollection"/>
+    </message>
+    <portType name="SIEBEL_ACCOUNT_STG_ptt">
+        <operation name="receive">
+            <input message="tns:SiebelAccountStgCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

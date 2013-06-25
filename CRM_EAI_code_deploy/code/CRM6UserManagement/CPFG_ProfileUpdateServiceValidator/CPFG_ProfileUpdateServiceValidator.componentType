@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFG_ProfileUpdateServiceValidator.wsdl" name="CPFG_ProfileUpdateService">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPFG_ProfileUpdateServiceValidator#wsdl.interface(CPFG_ProfileUpdateServiceValidator)"/>
+    </service>
+    <reference name="CPF_UpdateProfile"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UpdateProfile.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.interface(CPF_UpdateProfile)"/>
+    </reference>
+    <property name="preference.CPFGOM_UserOrderManagerURL" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.EAI" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.Success_Response" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.UpdateCPfGTemporaryURL" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.UpdateProfile" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.Failure_Response" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.validationStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.UpdateProfileSchema" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.variableStatus_1" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.FTL" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.BPELProcessName" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.FTLSchema" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.UpdateCPfGStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.InputSchema" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

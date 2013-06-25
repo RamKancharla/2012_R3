@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+    * Module:      EAI.MSG.OM.245_TOMOrderLineRequestFacts.xsd
+    * Type:        XSD Schema
+    * Description: Schema used to define the facts for rule engine on TOM Order Request Side
+    *
+    * Change History
+    * Version	Date		Author				Description Of Change
+    * =======	========	==================		===============================
+    *  0.01	14/07/08	Jyothirmayi			Initial Version
+    *  0.02	14/07/08	Rob Billington			Fields add/removed and types and elements renamed
+    *                                                           to comply with EAI naming standards.
+    *                                                           Changed target namespace to reduce risk of type collision
+    *  0.03     15/07/08        Jyothirmayi                     Removed duplication for productIntegrationId field   
+    *  0.04     03/11/08        Sreeja Prasad                   Added firstName and lastName fields to OrderLineRequestFactsType for defect# 21360.
+       **********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/TF/TOM" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/TF/TOM" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.04">
+<xsd:element name="orderLineRepository" type="xsdLocal:OrderLineRepositoryType"/>
+	
+	<xsd:complexType name="OrderLineRepositoryType">
+          <xsd:sequence>
+            <xsd:element name="orderLineRequestFacts"   type="xsdLocal:OrderLineRequestFactsType" 
+		minOccurs="0" maxOccurs="unbounded"/>
+	  </xsd:sequence>
+	</xsd:complexType>
+
+	
+	<xsd:complexType name="OrderLineRequestFactsType">
+		<xsd:sequence>
+		        <xsd:element name="messageHeaderActionCode" type="xsd:string"/>
+		        <xsd:element name="orderBusinessCase" type="xsd:string"/>
+		        <xsd:element name="orderStatus" type="xsd:string"/>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+                        <xsd:element name="parentOrderItemId" type="xsd:string"/>
+			<xsd:element name="rootItemId" type="xsd:string"/>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="businessCase" type="xsd:string"/>
+			<xsd:element name="PLI" type="xsd:string"/>
+			<xsd:element name="AKR" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+                        <xsd:element name="userIDtype" type="xsd:string"/>
+			<xsd:element name="installDate" type="xsd:string"/>
+			<xsd:element name="removalDate" type="xsd:string"/>
+			<xsd:element name="QUID" type="xsd:string"/>
+			<xsd:element name="assetIntegrationId" type="xsd:string"/>
+			<xsd:element name="orderLineStatus" type="xsd:string"/>
+			<xsd:element name="permissioningStatus" type="xsd:string"/>
+                        <xsd:element name="productIntegrationId" type="xsd:string"/>
+                        <xsd:element name="configuredAttribute" type="xsdLocal:ConfiguredAttribute" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="technicalFulfilmentReq" type="xsd:string"/>
+			<xsd:element name="technicalApprovalReq" type="xsd:string"/>
+			<xsd:element name="billingAccountId" type="xsd:string"/>
+			<xsd:element name="quantity" type="xsd:string"/>
+			<xsd:element name="productName" type="xsd:string"/>
+			<xsd:element name="altInstalBillingId" type="xsd:string"/>
+			<xsd:element name="ILA" type="xsd:string"/>
+			<xsd:element name="orderPermissionStatus" type="xsd:string"/>
+			<xsd:element name="CSOrderNumber" type="xsd:string"/>
+			<xsd:element name="lastUpdateDate" type="xsd:string"/>
+			<xsd:element name="mandatorytechFulfilmentFlag" type="xsd:string"/>
+                        <xsd:element name="freeTrialDuration" type="xsd:string"/>
+			<xsd:element name="technicalVettingFlag" type="xsd:string"/>
+			<xsd:element name="actualInstallationDate" type="xsd:string"/>
+			<xsd:element name="interfaceForBilling" type="xsd:string"/>
+			<xsd:element name="interfaceForFulfilment" type="xsd:string"/>
+			<xsd:element name="manualPermissioningComplete" type="xsd:string"/>
+			<xsd:element name="autoPermissioningComplete" type="xsd:string"/>
+			<xsd:element name="TechFfmtAction" type="xsd:string"/>
+			<xsd:element name="nextAction2" type="xsd:string"/>
+			<xsd:element name="techFfmtStatusToBeSent" type="xsd:string"/>
+                        <xsd:element name="freeTrialEndDate" type="xsd:string"/>
+			<xsd:element name="firstName" type="xsd:string"/>
+			<xsd:element name="lastname" type="xsd:string"/>
+                        </xsd:sequence>
+	</xsd:complexType>
+        
+        <xsd:complexType name="ConfiguredAttribute">
+                <xsd:sequence>
+                    <xsd:element name="attributeIntegrationId" type="xsd:string"/>
+                    <xsd:element name="value" type="xsd:string"/>
+                    <xsd:element name="attributeName" type="xsd:string"/>
+                    <xsd:element name="valueIntegrationId" type="xsd:string"/>
+                </xsd:sequence>
+        </xsd:complexType>
+</xsd:schema>
+
+
+

@@ -1,0 +1,73 @@
+<definitions
+     name="SAPCM_EventManager"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest"
+     xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager/correlationset"
+     xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest"
+             xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager/correlationset">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager"
+                 schemaLocation="SAPCM_EventManager.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager"
+             xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest"
+             xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.CM.197_ContactEvent.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest"
+             xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+                 schemaLocation="EAI.MSG.CM.287_CreateContactRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest"
+             xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager/correlationset"
+             xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest"
+                 schemaLocation="EAI.MSG.CM.288_CreateContactRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SAPCM_EventManagerResponseMessage">
+        <part name="payload" element="client:SAPCM_EventManagerProcessResponse"/>
+    </message>
+    <message name="SAPCM_EventManagerRequestMessage">
+        <part name="contactEvent" element="ns1:contactEvent"/>
+    </message>
+    <portType name="SAPCM_EventManagerCallback">
+        <operation name="onResult">
+            <input message="client:SAPCM_EventManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="SAPCM_EventManager">
+        <operation name="initiate">
+            <input message="client:SAPCM_EventManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SAPCM_EventManager">
+        <plnk:role name="SAPCM_EventManagerProvider">
+            <plnk:portType name="client:SAPCM_EventManager"/>
+        </plnk:role>
+        <plnk:role name="SAPCM_EventManagerRequester">
+            <plnk:portType name="client:SAPCM_EventManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

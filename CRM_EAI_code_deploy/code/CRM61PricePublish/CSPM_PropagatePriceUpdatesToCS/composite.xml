@@ -1,0 +1,50 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSPM_PropagatePriceUpdatesToCS" revision="1.0" state="on">
+    <import location="TransformPriceUpdateToCSFormat.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/PM/PriceUpdateRequestFormatter"/>
+    <import location="CSPM_PropagatePriceUpdatesToCS.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS"/>
+    <import location="DBAdpStorePriceListCountry.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/DBAdpStorePriceListCountry/"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" location="CSOM_SubmitOrderToCOMPASSRSWrapper.wsdl" importType="wsdl"/>
+    <service name="anchorToCSPM_PropagatePriceUpdatesToCS" ui:wsdlLocation="CSPM_PropagatePriceUpdatesToCS.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.interface(CSPM_PropagatePriceUpdatesToCSCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.interface(CSPM_PropagatePriceUpdatesToCS)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.endpoint(CSPM_PropagatePriceUpdatesToCS/CSPM_PropagatePriceUpdatesToCS)"/>
+    </service>
+    <component name="CSPM_PropagatePriceUpdatesToCS">
+        <implementation.bpel src="CSPM_PropagatePriceUpdatesToCS.bpel"/>
+        
+        
+    </component>
+    <reference name="TransformPriceUpdateToCSFormat" ui:wsdlLocation="TransformPriceUpdateToCSFormat.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/PM/PriceUpdateRequestFormatter#wsdl.interface(TransformPriceUpdateRequest)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="TransformPriceUpdateToCSFormat.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/CS/PM/PriceUpdateRequestFormatter#wsdl.endpoint(TransformPriceUpdateToCSFormat/PriceUpdateRequest)"/>
+    </reference>
+    <reference name="CSOM_SubmitOrderToCompass" ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSWrapper.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.endpoint(submitOrder_ppt/submitOrder_ppt_pt)" location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CSOM_SubmitOrderToCOMPASS/CSOM.SubmitOrderToCOMPASSRS_ep?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="DBAdpStorePriceListCountry" ui:wsdlLocation="DBAdpStorePriceListCountry.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/DBAdpStorePriceListCountry/#wsdl.interface(DBAdpStorePriceListCountry_ptt)"/>
+        <binding.jca config="DBAdpStorePriceListCountry_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>anchorToCSPM_PropagatePriceUpdatesToCS</source.uri>
+        <target.uri>CSPM_PropagatePriceUpdatesToCS/anchorToCSPM_PropagatePriceUpdatesToCS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSPM_PropagatePriceUpdatesToCS/TransformPriceUpdateToCSFormat</source.uri>
+        <target.uri>TransformPriceUpdateToCSFormat</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSPM_PropagatePriceUpdatesToCS/DBAdpStorePriceListCountry</source.uri>
+        <target.uri>DBAdpStorePriceListCountry</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSPM_PropagatePriceUpdatesToCS/CSOM_SubmitOrderToCompass</source.uri>
+        <target.uri>CSOM_SubmitOrderToCompass</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

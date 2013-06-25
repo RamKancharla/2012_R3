@@ -1,0 +1,25 @@
+<?binding.jca XREF_DATA_db.jca?>
+<definitions name="XREF_DATA" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/XREF_DATA/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:db="http://xmlns.oracle.com/pcbpel/adapter/db/XREF_DATA" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/XREF_DATA/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="XREF_DATA_plt">
+        <plt:role name="XREF_DATA_role">
+            <plt:portType name="tns:XREF_DATA_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/XREF_DATA" schemaLocation="XREF_DATA.xsd"/>
+        </schema>
+    </types>
+    <message name="XREF_DATAInput_msg">
+        <part name="XREF_DATAInput_msg" element="db:XREF_DATAInput"/>
+    </message>
+    <message name="XREF_DATAOutputCollection_msg">
+        <part name="XREF_DATAOutputCollection" element="db:XREF_DATAOutputCollection"/>
+    </message>
+    <portType name="XREF_DATA_ptt">
+        <operation name="XREF_DATA">
+            <input message="tns:XREF_DATAInput_msg"/>
+            <output message="tns:XREF_DATAOutputCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

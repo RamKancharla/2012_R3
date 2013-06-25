@@ -1,0 +1,37 @@
+<definitions
+     name="TTMG_UpdateTicket"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigrationUpdate"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigrationUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket"
+                 schemaLocation="TTMG_UpdateTicket.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigrationUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_UpdateTicket">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/MST/XtraMigrationUpdate" schemaLocation="EAI.MSG.TT.MG.272_MigrationStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TTMG_UpdateTicketRequestMessage">
+        <part name="migrationStatus" element="ns1:migrationStatus"/>
+    </message>
+    <message name="TTMG_UpdateTicketResponseMessage">
+        <part name="migrationStatusResponse" element="ns1:migrationStatus"/>
+    </message>
+    <portType name="TTMG_UpdateTicket">
+        <operation name="process">
+            <input message="client:TTMG_UpdateTicketRequestMessage"/>
+            <output message="client:TTMG_UpdateTicketResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TTMG_UpdateTicket">
+        <plnk:role name="TTMG_UpdateTicketProvider">
+            <plnk:portType name="client:TTMG_UpdateTicket"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

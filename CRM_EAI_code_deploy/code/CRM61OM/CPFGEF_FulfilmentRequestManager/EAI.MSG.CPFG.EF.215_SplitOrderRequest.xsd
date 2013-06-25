@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *****************************************************************************************************************
+ *   Module:        EAI.MSG.CPFG.EF.215_SplitOrderRequest
+ *   Type:          XSD Schema										         
+ *   Description:   Schema used within EAI for requests to the CPFGEF_OrderFulfilmentCrossRefService                           
+ *													        
+ *   Change History											        
+ *   Version        Date     	Author                                  Description Of Change                   
+ *												                
+ *   0.1            10/04/08    Rob Billington                          Initial Version					        
+ *   0.2            14/04/08    anvv sharma                             Modified Schema to refer Local Element
+ *   0.3            17/04/08    Rob Billington                          Added reference to common structures and changed
+ *                                                                      encoding to UTF-8
+ *   0.4            18/04/08    Rob Billington                          Replaced xsd:import with xsd:include
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+            xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+            elementFormDefault="qualified" version="0.4">
+ <xsd:include schemaLocation="EAI.XSD.015_CPFGEF_OrderFulfilmentCrossRefServiceCommonStructures.xsd"/>
+
+ <xsd:element name="splitOrderRequest" type="tns:SplitOrderRequest"/>
+ <xsd:complexType name="SplitOrderRequest">
+  <xsd:sequence>
+   <xsd:element name="eaiHeader" type="tns:EaiHeader"/>
+   <xsd:element name="crmOrder" type="tns:CanonicalOrder"/>
+  </xsd:sequence>
+ </xsd:complexType>
+</xsd:schema>

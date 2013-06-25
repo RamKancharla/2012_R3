@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHUOM_UserOrderRequestValidatorStub"
+           revision="1.1" state="on">
+    <import location="ATHUOM_UserOrderRequestValidatorStub.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub"/>
+    <service name="anchorToATHUOM_UserOrderRequestValidatorStub" ui:wsdlLocation="ATHUOM_UserOrderRequestValidatorStub.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub#wsdl.interface(ATHUOM_UserOrderRequestValidatorStub)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub#wsdl.endpoint(ATHUOM_UserOrderRequestValidatorStub/ATHUOM_UserOrderRequestValidatorStub)"/>
+    </service>
+    <component name="ATHUOM_UserOrderRequestValidatorStub">
+        <implementation.bpel src="ATHUOM_UserOrderRequestValidatorStub.bpel"/>
+        <property name="bpel.config.inMemoryOptimization">true</property>
+        <property name="bpel.config.completionPersistPolicy">off</property>
+    </component>
+    <wire>
+        <source.uri>anchorToATHUOM_UserOrderRequestValidatorStub</source.uri>
+        <target.uri>ATHUOM_UserOrderRequestValidatorStub/anchorToATHUOM_UserOrderRequestValidatorStub</target.uri>
+    </wire>
+<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>
+</composite>

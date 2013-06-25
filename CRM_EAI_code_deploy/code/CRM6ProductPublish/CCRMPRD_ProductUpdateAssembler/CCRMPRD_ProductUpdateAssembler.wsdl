@@ -1,0 +1,61 @@
+<definitions
+     name="CCRMPRD_ProductUpdateAssembler"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.siebel.com/xml/Test%20Product"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://www.siebel.com/xml/UDA%20Dynamic%20Matrix"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler/correlationset"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler/correlationset"
+         location="CCRMPRD_ProductUpdateAssembler_Properties.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns1="http://www.siebel.com/xml/Test%20Product" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns2="http://www.siebel.com/xml/UDA%20Dynamic%20Matrix" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler/correlationset"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler">
+            <import namespace="http://www.siebel.com/xml/Test%20Product" schemaLocation="EAI.MSG.CCRM.264_RCRMCpfgProductPublish.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns1="http://www.siebel.com/xml/Test%20Product" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns2="http://www.siebel.com/xml/UDA%20Dynamic%20Matrix" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler/correlationset"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler">
+            <import namespace="http://www.siebel.com/xml/UDA%20Dynamic%20Matrix" schemaLocation="EAI.MSG.CCRM.265_RCRMDynamicMatrixPublish.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/PRD/CCRMPRD_ProductUpdateAssembler"
+                 schemaLocation="StandaloneProductReferenceDataUpdate.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMPRD_ProductUpdateAssemblerRequestMessage">
+        <part name="payload" element="ns1:Product"/>
+    </message>
+    <message name="DynamicAttributesMessage">
+        <part name="payload" element="ns2:PSPDynamicMatrix"/>
+    </message>
+    <message name="StandaloneProductUpdateMessage">
+        <part name="payload" type="client:ProductDefinitionUpdate"/>
+    </message>
+    <portType name="CCRMPRD_ProductUpdateAssembler">
+        <operation name="processProductDefinition">
+            <input message="client:CCRMPRD_ProductUpdateAssemblerRequestMessage"/>
+        </operation>
+        <operation name="processProductConfigurations">
+            <input message="client:DynamicAttributesMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMPRD_ProductUpdateAssembler">
+        <plnk:role name="CCRMPRD_ProductUpdateAssemblerProvider">
+            <plnk:portType name="client:CCRMPRD_ProductUpdateAssembler"/>
+        </plnk:role>
+        <plnk:role name="CCRMPRD_ProductUpdateAssemblerRequester">
+            <plnk:portType name="client:CCRMPRD_ProductUpdateAssemblerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:ProductIntegrationID" messageType="client:CCRMPRD_ProductUpdateAssemblerRequestMessage"
+         part="payload" query="/ns1:Product/ns1:Id"/>
+    <bpws:propertyAlias propertyName="pns1:ProductIntegrationID" messageType="client:DynamicAttributesMessage"
+         part="payload" query="/ns2:PSPDynamicMatrix/ns2:ProdIntegrationId"/>
+</definitions>

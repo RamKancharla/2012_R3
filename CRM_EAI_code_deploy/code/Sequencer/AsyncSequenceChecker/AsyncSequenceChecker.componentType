@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="AsyncSequenceChecker.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="RegisterSequence.wsdl" name="RegisterSequence">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/RegisterSequence/#wsdl.interface(RegisterSequence_ptt)"/>
+    </reference>
+</componentType>

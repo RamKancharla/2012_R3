@@ -1,0 +1,42 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSACM_TransformAccountContactPublishStatus" revision="1.0" state="on">
+    <import location="ParseCSAccountContactPublishStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"/>
+    <import location="CSACM_TransformAccountContactPublishStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMACM_PropagateAccountContactPublishStatus/CCRMACM_PropagateAccountContactPublishStatus.wsdl" importType="wsdl"/>
+    <service name="CSACM_TransformAccountContactPublishStatus" ui:wsdlLocation="CSACM_TransformAccountContactPublishStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus#wsdl.interface(CSACM_TransformAccountContactPublishStatusCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus#wsdl.interface(CSACM_TransformAccountContactPublishStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus#wsdl.endpoint(CSACM_TransformAccountContactPublishStatus/CSACM_TransformAccountContactPublishStatus)"/>
+    </service>
+    <component name="CSACM_TransformAccountContactPublishStatusProcess">
+        <implementation.bpel src="CSACM_TransformAccountContactPublishStatusProcess.bpel"/>
+        
+        
+    </component>
+    <reference name="ParseCSAccountContactPublishStatus" ui:wsdlLocation="ParseCSAccountContactPublishStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish#wsdl.interface(ParseCSAccountContactPublishStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="ParseCSAccountContactPublishStatus.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish#wsdl.endpoint(ParseCSAccountContactPublishStatus/ParseAccountContactPublishStatus)"/>
+    </reference>
+    <reference name="CCRMACM_PropagateAccountContactPublishStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMACM_PropagateAccountContactPublishStatus/CCRMACM_PropagateAccountContactPublishStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatus)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.endpoint(CCRMACM_PropagateAccountContactPublishStatus/CCRMACM_PropagateAccountContactPublishStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMACM_PropagateAccountContactPublishStatus/AnchorCCRMACM_PropagateAccCntPublish?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.endpoint(CCRMACM_PropagateAccountContactPublishStatus/CCRMACM_PropagateAccountContactPublishStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>CSACM_TransformAccountContactPublishStatus</source.uri>
+        <target.uri>CSACM_TransformAccountContactPublishStatusProcess/CSACM_TransformAccountContactPublishStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSACM_TransformAccountContactPublishStatusProcess/CCRMACM_PropagateAccountContactPublishStatus</source.uri>
+        <target.uri>CCRMACM_PropagateAccountContactPublishStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSACM_TransformAccountContactPublishStatusProcess/ParseCSAccountContactPublishStatus</source.uri>
+        <target.uri>ParseCSAccountContactPublishStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

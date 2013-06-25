@@ -1,0 +1,204 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+**************************************************************************/
+* Module:     {Name of the file – CSOM_UserFulfilment.bpel} 
+* Type:        {BPEL FILE} 
+* Description: {Asynchronous BPEL Process  }This BPEL Process invokes the web service which converts User Request to fixed length CoreSuite format and submits the message to CoreSuite. 
+* IDD Reference: 
+* Change History 
+* Version      Date         Author              Description Of Change 
+*  1.0         23/07/07     Suryanarayana G     Initial Version 
+*  1.1         02/01/08     Satish Patel        Modified for Custom Title and Sensors 
+*  1.2         02/12/09     Sreeja Prasad       Removed the DVM for the actionCode from TransUserRequestToTransformUserToCSFormatIV.xsl and added in the 
+                                                TransSplitOrderReqToUserFulfilment.xsl of CSOM_OrderSplitter component for PBI_0311(AthenaCreate)
+**************************************************************************/
+-->
+<process name="CSOM_UserFulfilment" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" xmlns:ns7="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment" xmlns:ns6="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/Exception" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CSOM_UserFulfilment" myRole="CSOM_UserFulfilmentProvider" partnerRole="CSOM_UserFulfilmentRequester"/>
+        <partnerLink name="CSOM_SubmitOrderToCOMPASS" partnerRole="submitOrder_pptProvider" partnerLinkType="ns4:submitOrder_pptLT"/>
+        <partnerLink name="TransformUserToCSFormat" partnerRole="TransformUserRequest_Role" partnerLinkType="ns5:TransformUserRequest_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="UserFulfilmentIV" messageType="client:CSOM_UserFulfilmentRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="UserFulfilmentOV" messageType="client:CSOM_UserFulfilmentResponseMessage"/>
+        <variable name="SubmitUserToCOMPASSIV" messageType="ns4:fixedLengthOrderRequest_request"/>
+        <variable name="TransformUserToCSFormatIV" messageType="ns5:UserRequest"/>
+        <variable name="TransformUserToCSFormatOV" messageType="ns5:FLUserRequest"/>
+        <variable name="Success_Response" type="xsd:string"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="errorMessage" type="xsd:string"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)             
+                        getVariableData("UserFulfilmentIV", "userRequest", "/ns1:compassUser/ns1:userHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                
+                
+     
+                             
+ String Title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");                            
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)             
+                        getVariableData("UserFulfilmentIV", "userRequest", "/ns1:compassUser/ns1:userHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                
+                
+     
+                             
+ String Title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");                            
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)             
+                        getVariableData("UserFulfilmentIV", "userRequest", "/ns1:compassUser/ns1:userHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                
+                
+     
+                             
+ String Title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");                            
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)              
+                        getVariableData("UserFulfilmentIV", "userRequest", "/ns1:compassUser/ns1:userHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                 
+                 
+      
+                              
+ String Title=(orderNumber!=null ? ("ORD: "+orderNumber+";Fault") : ".;");                             
+ setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+            <assign name="AsgGenericFault">
+                <copy>
+                    <from expression="'Unable to Process the Request'"/>
+                    <to variable="errorMessage"/>
+                </copy>
+            </assign>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CSOM_UserFulfilment.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:CSOM_UserFulfilment" operation="transformUser" variable="UserFulfilmentIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="Success_Response"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)              
+                        getVariableData("UserFulfilmentIV", "userRequest", "/ns1:compassUser/ns1:userHeader/ns3:CRMOrderNumber")).getFirstChild().getNodeValue();                 
+     
+                             
+ String Title=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                            
+ setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <scope name="TransformUserToCSFormat">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                    <throw name="ThrTransformUserToCSFormatRemoteFault" faultName="ns10:TransformUserToCSFormatRemoteFault" faultVariable="runTimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqTransformUserToCSFormat">
+                <assign name="TransUserRequestToTransformUserToCSFormatIV">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransUserRequestToTransformUserToCSFormatIV.xsl',bpws:getVariableData('UserFulfilmentIV','userRequest'))"/>
+                        <to variable="TransformUserToCSFormatIV" part="parameter"/>
+                    </copy>
+                </assign>
+                <assign name="AsgInstanceIdToTransformUserToCSFormatIV">
+                    <copy>
+                        <from expression="ora:getCompositeInstanceId()"/>
+                        <to variable="TransformUserToCSFormatIV" part="parameter" query="/ns1:CSUserRequest/ns1:eaiHeader/ns1:instanceId"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:getCurrentDateTime()"/>
+                        <to variable="TransformUserToCSFormatIV" part="parameter" query="/ns1:CSUserRequest/ns1:eaiHeader/ns1:timeStamp"/>
+                    </copy>
+                </assign>
+                <invoke name="InvTransformUserToCSFormat" partnerLink="TransformUserToCSFormat" portType="ns5:TransformUserRequest" operation="transform" inputVariable="TransformUserToCSFormatIV" outputVariable="TransformUserToCSFormatOV"/>
+            </sequence>
+        </scope>
+        <switch name="CheckTransformUserToCSFormatResponses">
+            <case condition="bpws:getVariableData('TransformUserToCSFormatOV','parameter','/ns1:CSfixedLengthRequest/ns1:basicResponse/ns1:response')=bpws:getVariableData('Success_Response')">
+                <bpelx:annotation>
+                    <bpelx:pattern>Case when TransformUserToCSFormat sends the response as success</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqTransformUserToCSFormatSuccess">
+                    <scope name="CSOM_SubmitUserToCOMPASS">
+                        <faultHandlers>
+                            <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+                                <throw name="ThrSubmitUserToCOMPASSRemoteFault" faultName="ns10:SubmitUserToCOMPASSRemoteFault" faultVariable="runTimeFault"/>
+                            </catch>
+                        </faultHandlers>
+                        <sequence name="SeqSubmitUserToCOMPASS">
+                            <assign name="TransformUserToCSFormatOVToSubmitUserToCOMPASSIV">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransformUserToCSFormatOVToSubmitUserToCOMPASSIV.xsl',bpws:getVariableData('TransformUserToCSFormatOV','parameter'))"/>
+                                    <to variable="SubmitUserToCOMPASSIV" part="fixedLengthOrderRequest"/>
+                                </copy>
+                            </assign>
+                            <assign name="AsgInstanceIdToSubmitUserToCOMPASSIV">
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="SubmitUserToCOMPASSIV" part="fixedLengthOrderRequest" query="/ns1:fixedLengthOrderRequest/ns1:eaiHeader/ns2:instanceId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCurrentDateTime()"/>
+                                    <to variable="SubmitUserToCOMPASSIV" part="fixedLengthOrderRequest" query="/ns1:fixedLengthOrderRequest/ns1:eaiHeader/ns2:timeStamp"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvSubmitOrderToCOMPASS" partnerLink="CSOM_SubmitOrderToCOMPASS" portType="ns4:submitOrder_ppt" operation="submitOrder" inputVariable="SubmitUserToCOMPASSIV"/>
+                        </sequence>
+                    </scope>
+                </sequence>
+            </case>
+            <otherwise>
+                <bpelx:annotation>
+                    <bpelx:pattern>Case when TransformUserToCSFormat sends the response other than success</bpelx:pattern>
+                </bpelx:annotation>
+                <empty name="TransformUserToCSFormatFailureActivity"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

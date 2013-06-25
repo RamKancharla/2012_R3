@@ -1,0 +1,161 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Mar 20 20:54:51 GMT+05:30 2009
+  Author:  sg59930
+  Purpose: Synchronous BPEL Process
+   23-03-2010    Swathi  Added IsPoRequired & PurchaseOrderNumber for CRM_PBI_0478 and modified the TransPropOptyToOptyManager.xsl file
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TRUSTOP_PropagateOpportunityProcess" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="TRUSTOP_PropagateOpportunity" partnerLinkType="client:TRUSTOP_PropagateOpportunity" myRole="TRUSTOP_PropagateOpportunityProvider"/>
+    <partnerLink myRole="TRUSTOP_OpportunityManagerRequester" name="TRUSTOP_OpportunityManager" partnerRole="TRUSTOP_OpportunityManagerProvider" partnerLinkType="ns4:TRUSTOP_OpportunityManager"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="PropagateOpportunity_IV" messageType="client:TRUSTOP_PropagateOpportunityRequestMessage"/>
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="PropagateOpportunity_OV" messageType="client:TRUSTOP_PropagateOpportunityResponseMessage"/>
+    <variable name="ManageOppty_IV" messageType="ns4:TRUSTOP_OpportunityManagerRequestMessage"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+  </variables>
+  <faultHandlers>
+    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+      <sequence name="SeqRemoteFault">
+        <bpelx:exec name="AsgCustomTitleRemoteFault" language="java" version="1.3">
+          <![CDATA[String SFDCOptyID = null;              
+org.w3c.dom.Node SFDCOptyIDNode = null;               
+try {                        
+SFDCOptyIDNode = ((oracle.xml.parser.v2.XMLElement)                                                            
+                        getVariableData("PropagateOpportunity_IV","payload","/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID"));        
+SFDCOptyID = SFDCOptyIDNode == null ? "" : SFDCOptyIDNode.getFirstChild().getNodeValue();          
+setCompositeInstanceTitle("SFDC Opty ID : " + SFDCOptyID+";Fault");       
+} catch(Exception e) {                        
+SFDCOptyID = "NULL";       
+setCompositeInstanceTitle("SFDC Opty ID : " + SFDCOptyID+";Fault");       
+}]]>
+        </bpelx:exec>
+        <assign name="TransFailureResponseToOpportunity">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransFailureResponseToOpportunity.xsl',bpws:getVariableData('PropagateOpportunity_IV','payload'))"/>
+            <to variable="PropagateOpportunity_OV" part="payload"/>
+          </copy>
+        </assign>
+      </sequence>
+    </catch>
+    <catchAll>
+      <sequence name="SeqGenericFault">
+        <bpelx:exec name="AsgCutomTitleGenericError" language="java" version="1.5">
+          <![CDATA[String SFDCOptyID = null;              
+org.w3c.dom.Node SFDCOptyIDNode = null;               
+try {                        
+SFDCOptyIDNode = ((oracle.xml.parser.v2.XMLElement)                                                            
+                        getVariableData("PropagateOpportunity_IV","payload","/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID"));        
+SFDCOptyID = SFDCOptyIDNode == null ? "" : SFDCOptyIDNode.getFirstChild().getNodeValue();          
+setCompositeInstanceTitle("SFDC Opty ID : " + SFDCOptyID+";Fault");       
+} catch(Exception e) {                        
+SFDCOptyID = "NULL";           
+setCompositeInstanceTitle("SFDC Opty ID : " + SFDCOptyID+";Fault");       
+}]]>
+        </bpelx:exec>
+        <assign name="TransFailureResponseToOpportunity">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransFailureResponseToOpportunity.xsl',bpws:getVariableData('PropagateOpportunity_IV','payload'))"/>
+            <to variable="PropagateOpportunity_OV" part="payload"/>
+          </copy>
+        </assign>
+      </sequence>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in TRUSTOP_PropagateOpportunity.wsdl) -->
+    <receive name="rcvOpportunityInput" partnerLink="TRUSTOP_PropagateOpportunity" portType="client:TRUSTOP_PropagateOpportunity" operation="process" variable="PropagateOpportunity_IV" createInstance="yes"/>
+    <!-- Generate reply to synchronous request -->
+    <assign name="AsgInitVariables">
+      <copy>
+        <from expression="ora:getCompositeInstanceId()"/>
+        <to variable="PropagateOpportunity_IV" part="payload" query="/ns1:SFDCOpportunityEvent/ns1:eaiHeader/ns3:instanceId"/>
+      </copy>
+    </assign>
+    <scope name="ScopeCustomTitle">
+      <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+          <throw name="ThrCustomTitleFault" faultName="bpelx:remoteFault" faultVariable="runtimeFault"/>
+        </catch>
+      </faultHandlers>
+      <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+        <![CDATA[String SFDCOptyID = null;       
+org.w3c.dom.Node SFDCOptyIDNode = ((oracle.xml.parser.v2.XMLElement)       
+                        getVariableData("PropagateOpportunity_IV","payload","/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID"));      
+SFDCOptyID = SFDCOptyIDNode == null ? "" : SFDCOptyIDNode.getFirstChild().getNodeValue();      
+setCompositeInstanceTitle("SFDC Opty ID : " + SFDCOptyID);]]>
+      </bpelx:exec>
+    </scope>
+    <switch name="SwitchChkOpportunity">
+      <case condition="bpws:getVariableData('PropagateOpportunity_IV','payload','/ns1:SFDCOpportunityEvent/ns1:opportunityHeader/ns1:SFDCOptyID')!=&quot;&quot;">
+        <sequence name="Sequence_1">
+          <scope name="ScopeOpportunityManager">
+            <sequence name="SeqOpportunityManager">
+              <assign name="TransPropOptyToOptyManager">
+                <bpelx:annotation>
+                  <bpelx:pattern>transformation</bpelx:pattern>
+                </bpelx:annotation>
+                <copy>
+                  <from expression="ora:processXSLT('TransPropOptyToOptyManager.xsl',bpws:getVariableData('PropagateOpportunity_IV','payload'))"/>
+                  <to variable="ManageOppty_IV" part="manageOpportunity"/>
+                </copy>
+              </assign>
+              <invoke name="InvManageOpty" partnerLink="TRUSTOP_OpportunityManager" portType="ns4:TRUSTOP_OpportunityManager" operation="manageOppty" inputVariable="ManageOppty_IV"/>
+              <assign name="TransSuccessResponseToOpportunity">
+                <bpelx:annotation>
+                  <bpelx:pattern>transformation</bpelx:pattern>
+                </bpelx:annotation>
+                <copy>
+                  <from expression="ora:processXSLT('TransSuccessResponseToOpportunity.xsl',bpws:getVariableData('PropagateOpportunity_IV','payload'))"/>
+                  <to variable="PropagateOpportunity_OV" part="payload"/>
+                </copy>
+              </assign>
+            </sequence>
+          </scope>
+        </sequence>
+      </case>
+      <otherwise>
+        <empty name="DoNothing"/>
+      </otherwise>
+    </switch>
+    <reply name="replyOutput" partnerLink="TRUSTOP_PropagateOpportunity" portType="client:TRUSTOP_PropagateOpportunity" operation="process" variable="PropagateOpportunity_OV"/>
+  </sequence>
+</process>

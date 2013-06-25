@@ -1,0 +1,162 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri May 23 11:04:12 GMT+05:30 2008
+  Author:  rd52448
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMACM_PropagateAccountContactPublishStatus" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.siebel.com/xml/RCRM%20Account%20Publish" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/jms/EnqAccountStatus/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/mq/headerAccountUpdate/" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/jms/AccountRespEnqueue/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/jms/ProduceResMsg/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/NS/2007/01/25/GCAP/EAI" xmlns:ns9="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/2008/05/15/GCAP/RCRM" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/jms/EnqueueAccountResponse/" xmlns:ns8="http://oracle.com/esb/namespaces/CCRMAM" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="AnchorCCRMACM_PropagateAccCntPublish" partnerLinkType="client:CCRMACM_PropagateAccountContactPublishStatus" myRole="CCRMACM_PropagateAccountContactPublishStatusProvider" partnerRole="CCRMACM_PropagateAccountContactPublishStatusRequester"/>
+        <!--<partnerLink name="ProduceAccountResMsg"
+                     partnerRole="Publish_AccountResponse_pptProvider"
+                     partnerLinkType="ns11:Publish_AccountResponse_pptLT"/>-->
+        <partnerLink name="AccountUpdate" partnerRole="Enqueue_role" partnerLinkType="ns12:Enqueue_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:CCRMACM_PropagateAccountContactPublishStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <!-- <variable name="outputVariable"
+                  messageType="client:CCRMACM_PropagateAccountContactPublishStatusResponseMessage"/>-->
+        <variable name="unknownerror" type="xsd:string"/>
+        <variable name="rcvAccountContactStatusIV" messageType="client:CCRMACM_PropagateAccountContactPublishStatusRequestMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <!--<variable name="InvSubmitAccountContactStatusIV"
+                  messageType="ns1:RCRMCompassAccountContactPublishOperation_Input"/>
+        <variable name="InvSubmitAccountContactStatusOV"
+                  messageType="ns1:RCRMCompassAccountContactPublishOperation_Output"/>
+         <variable name="InvProduceAccountResponseMsgIV"
+                  messageType="ns11:AccountContactPublish_request"/>-->
+        <variable name="InvUpdateAccountIV" messageType="ns12:AccountContactPublish_msg"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[String rowNumber = ((oracle.xml.parser.v2.XMLElement) getVariableData("rcvAccountContactStatusIV","payload","/ns2:CSAccountContactStatus/ns2:accountRowId")).getFirstChild().getNodeValue();        
+   
+String Title=(rowNumber!=null ? ("AccountID: "+ rowNumber+ ";SiebelFault") : ".;");                                     
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String rowNumber = ((oracle.xml.parser.v2.XMLElement) getVariableData("rcvAccountContactStatusIV","payload","/ns2:CSAccountContactStatus/ns2:accountRowId")).getFirstChild().getNodeValue();       
+  
+String Title=(rowNumber!=null ? ("AccountID: "+ rowNumber+ ";SiebelFault") : ".;");                                    
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String rowNumber = ((oracle.xml.parser.v2.XMLElement) getVariableData("rcvAccountContactStatusIV","payload","/ns2:CSAccountContactStatus/ns2:accountRowId")).getFirstChild().getNodeValue();                         
+String Title=(rowNumber!=null ? ("AccountID: "+ rowNumber+ ";SiebelFault") : ".;");                                    
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqGenericError">
+                <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                    <![CDATA[String rowNumber = ((oracle.xml.parser.v2.XMLElement) getVariableData("rcvAccountContactStatusIV","payload","/ns2:CSAccountContactStatus/ns2:accountRowId")).getFirstChild().getNodeValue();        
+String Title=(rowNumber!=null ? ("AccountID: "+ rowNumber+ ";SiebelFault") : ".;");                                     
+setCompositeInstanceTitle(Title);]]>
+                </bpelx:exec>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMACM_PropagateAccountContactPublishStatus.wsdl) -->
+        <receive name="rcvAccountContactStatus" partnerLink="AnchorCCRMACM_PropagateAccCntPublish" portType="client:CCRMACM_PropagateAccountContactPublishStatus" operation="sendAccountContactStatus" createInstance="yes" variable="rcvAccountContactStatusIV"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[/*Write your java code below e.g.            
+	System.out.println("Hello, World");           
+*/           
+String rowNumber = ((oracle.xml.parser.v2.XMLElement) getVariableData("rcvAccountContactStatusIV","payload","/ns2:CSAccountContactStatus/ns2:accountRowId")).getFirstChild().getNodeValue();       
+//String Country = ((oracle.xml.parser.v2.XMLElement) getVariableData("rcvAccountContactStatusIV","payload","/ns2:CSAccountContactStatus/ns2:logicalCountry")).getFirstChild().getNodeValue();       
+                    
+String Title=(rowNumber!=null ? ("AccountID: "+ rowNumber) : ".;");                                    
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <switch name="SwitchPropagateAccountContactPublishStatus">
+            <!-- <case condition="ora:getPreference('type')='AQ'">
+                <bpelx:annotation>
+                    <bpelx:pattern> AQ for AQAdapter</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqProduceAccountResMsg">
+                    <assign name="TransAccountResStatus">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransAccountResStatus.xsl',bpws:getVariableData('rcvAccountContactStatusIV','payload'))"/>
+                            <to variable="InvProduceAccountResponseMsgIV"
+                                part="AccountContactPublish"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvProduceAccountResMsg"
+                            inputVariable="InvProduceAccountResponseMsgIV"
+                            partnerLink="ProduceAccountResMsg"
+                            portType="ns11:Publish_AccountResponse_ppt"
+                            operation="Publish_AccountResponse"/>
+                </sequence>
+            </case>-->
+            <case condition="ora:getPreference('type')='WS'">
+                <bpelx:annotation>
+                    <bpelx:pattern> WS for siebel WSDL</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqSubmitAccountContactStatus">
+                    <!-- <assign name="TransAccountContactstatus">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransCanAccountContactStatus.xsl',bpws:getVariableData('rcvAccountContactStatusIV','payload'))"/>
+                            <to variable="InvSubmitAccountContactStatusIV"
+                                part="SiebelMessage"/>
+                        </copy>
+                    </assign> -->
+                    <assign name="TransCanAccountContactStatus">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransCanAccountContactStatus.xsl',bpws:getVariableData('rcvAccountContactStatusIV','payload'))"/>
+                            <to variable="InvUpdateAccountIV" part="AccountContactPublish"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvUpdateAccount" portType="ns12:Enqueue_ptt" inputVariable="InvUpdateAccountIV" partnerLink="AccountUpdate" operation="Enqueue"/>
+                </sequence>
+            </case>
+        </switch>
+    </sequence>
+</process>

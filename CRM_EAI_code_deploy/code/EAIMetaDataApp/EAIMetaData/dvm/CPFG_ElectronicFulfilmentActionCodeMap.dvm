@@ -1,0 +1,12 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="CPFG_ElectronicFulfilmentActionCodeMap" xmlns="http://xmlns.oracle.com/dvm">
+<description>Translates CRM order line action codes into CPfG action codes.
+
+Used By:
+CPFG_ElectronicFulfilmentFacade</description><columns><column name="CRM_ActionCode"/><column name="CPFG_ActionCode"/></columns>
+<rows><row><cell>Add</cell><cell>EAI.SRV.EXT.005.ACT001</cell></row>
+<row><cell>Delete</cell><cell>EAI.SRV.EXT.005.ACT002</cell></row>
+<row><cell>Update</cell><cell>EAI.SRV.EXT.005.ACT004</cell></row>
+<row><cell>-</cell><cell>EAI.SRV.EXT.005.ACT003</cell></row>
+<row><cell>FTConversionAdd</cell><cell>EAI.SRV.EXT.005.ACT004</cell></row>
+</rows></dvm>

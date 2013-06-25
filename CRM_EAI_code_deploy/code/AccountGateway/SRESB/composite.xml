@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="SRESB" mode="active" revision="1.0" state="on" xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <import location="SiebelQuoteLineItem.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM" importType="wsdl"/>
+    <import location="SiebelAccountAction.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM" importType="wsdl"/>
+    <import location="SiebelSR.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM" importType="wsdl"/>
+    <import location="QuoteLineItem.wsdl" namespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/Quote/GetQuoteLineItems" importType="wsdl"/>
+    <import location="TrustServiceRequest.wsdl" namespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/SR/TRUSTServiceRequest" importType="wsdl"/>
+    <import location="TrustAccountAction.wsdl" namespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/AccountAction/TRUSTAccountActivity" importType="wsdl"/>
+    <service ui:wsdlLocation="QuoteLineItem.wsdl" name="AGATEWAY.QuoteLineItemRS_ep">
+        <interface.wsdl interface="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/Quote/GetQuoteLineItems#wsdl.interface(GetQuoteLineItemsServ)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/Quote/GetQuoteLineItems#wsdl.endpoint(GetQuoteLineItemsServ/GetQuoteLineItems)" location="QuoteLineItem.wsdl"/>
+    </service>
+    <service ui:wsdlLocation="TrustServiceRequest.wsdl" name="AGATEWAY.SRRS_ep">
+        <interface.wsdl interface="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/SR/TRUSTServiceRequest#wsdl.interface(getSRService)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/SR/TRUSTServiceRequest#wsdl.endpoint(getSRService/getSRRS)" location="TrustServiceRequest.wsdl"/>
+    </service>
+    <service ui:wsdlLocation="TrustAccountAction.wsdl" name="AGATEWAY.ActivityRS_ep">
+        <interface.wsdl interface="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/AccountAction/TRUSTAccountActivity#wsdl.interface(GetActivityHistoryServ)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/AccountAction/TRUSTAccountActivity#wsdl.endpoint(GetActivityHistoryServ/GetActivityHistory)" location="TrustAccountAction.wsdl"/>
+    </service>
+    <component name="AGATEWAY.QuoteLineItemRS">
+        <implementation.mediator src="AGATEWAY.QuoteLineItemRS.mplan"/>
+    </component>
+    <component name="AGATEWAY.SRRS">
+        <implementation.mediator src="AGATEWAY.SRRS.mplan"/>
+    </component>
+    <component name="AGATEWAY.ActivityRS">
+        <implementation.mediator src="AGATEWAY.ActivityRS.mplan"/>
+    </component>
+    <reference ui:wsdlLocation="SiebelQuoteLineItem.wsdl" name="AGATEWAY.QuoteLineItemSOAP">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.interface(RCRMQuoteLineItemData)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.endpoint(RCRM_spcQuote_spcLine_spcItem/RCRMQuoteLineItemData)" location="SiebelQuoteLineItem.wsdl"/>
+    </reference>
+    <reference ui:wsdlLocation="SiebelAccountAction.wsdl" name="AGATEWAY.ActivitySOAP">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.interface(RCRMAccoutActionData)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.endpoint(RCRM_spcAccount_spcAction/RCRMAccoutActionData)" location="SiebelAccountAction.wsdl"/>
+    </reference>
+    <reference ui:wsdlLocation="SiebelSR.wsdl" name="AGATEWAY.SRSOAP">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.interface(RCRMServiceRequestOutput)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.endpoint(RCRM_spcAccount_spcService_spcRequest_spcData/RCRMServiceRequestOutput)" location="SiebelSR.wsdl"/>
+    </reference>
+    <wire>
+        <source.uri>AGATEWAY.QuoteLineItemRS_ep</source.uri>
+        <target.uri>AGATEWAY.QuoteLineItemRS/AGATEWAY.QuoteLineItemRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AGATEWAY.QuoteLineItemRS/AGATEWAY.QuoteLineItemSOAP</source.uri>
+        <target.uri>AGATEWAY.QuoteLineItemSOAP</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AGATEWAY.SRRS_ep</source.uri>
+        <target.uri>AGATEWAY.SRRS/AGATEWAY.SRRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AGATEWAY.SRRS/AGATEWAY.SRSOAP</source.uri>
+        <target.uri>AGATEWAY.SRSOAP</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AGATEWAY.ActivityRS_ep</source.uri>
+        <target.uri>AGATEWAY.ActivityRS/AGATEWAY.ActivityRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AGATEWAY.ActivityRS/AGATEWAY.ActivitySOAP</source.uri>
+        <target.uri>AGATEWAY.ActivitySOAP</target.uri>
+    </wire>
+</composite>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sensors xmlns="http://xmlns.oracle.com/bpel/sensor">
+    <sensor sensorName="OrderId" kind="service" target="undefined" filter="" xmlns:order="http://www.siebel.com/xml/RCRM%20Order%20Entry">
+        <serviceConfig service="AnchorToDeque" expression="string($in.OrderRequest/order:OrderRequest/order:OrderEntry-Orders/order:OrderNumber)" operation="initiate" outputDataType="string" outputNamespace="http://www.w3.org/2001/XMLSchema"/>
+    </sensor>
+</sensors>

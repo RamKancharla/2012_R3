@@ -1,0 +1,123 @@
+<?xml version = '1.0' encoding = 'utf-8'?>
+<wsdl:definitions targetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/SR/TRUSTServiceRequest"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:s0="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/SR/TRUSTServiceRequest"
+                  xmlns:s="http://www.w3.org/2001/XMLSchema"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified"
+              targetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/SR/TRUSTServiceRequest">
+      <s:element name="getSRRSRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="rcrmAccountThin" type="s0:RcrmAccountThin"
+                       minOccurs="1" maxOccurs="1"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getSRRSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="getSRRSResult"
+                       type="s0:RCRMAccountServiceRequestData_Output"
+                       minOccurs="1" maxOccurs="1"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RcrmAccountThin">
+        <s:sequence>
+          <s:element name="RCRMFieldH2" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldH1" type="s:string" minOccurs="0"/>
+          <s:element name="Timestamp" type="s:string" minOccurs="0"/>
+          <s:element name="TargetSystem" type="s:string" minOccurs="0"/>
+          <s:element name="SourceSystem" type="s:string" minOccurs="0"/>
+          <s:element name="SrThinBc" type="s0:ArrayOfSrThinBc" minOccurs="0"/>
+          <s:element name="TotalNoOfRecords" type="s:string" minOccurs="0"/>
+          <s:element name="AccountSFDCId" type="s:string" minOccurs="0"/>
+          <s:element name="PageNumber" type="s:string" minOccurs="0"/>
+          <s:element name="AccountSiebelId" type="s:string" minOccurs="0"/>
+          <s:element name="AccountNumber" type="s:string" minOccurs="0"/>
+          <s:element name="MessageId" type="s:string" minOccurs="0"/>
+          <s:element name="SearchSpec" type="s:string" minOccurs="0"/>
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfSrThinBc">
+        <s:sequence>
+          <s:element name="SrThinBc" type="s0:SrThinBc" nillable="true"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SrThinBc">
+        <s:sequence>
+          <s:element name="RCRMFieldL5" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldL4" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldL3" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldL2" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldL1" type="s:string" minOccurs="0"/>
+          <s:element name="SRSubType" type="s:string" minOccurs="0"/>
+          <s:element name="Severity" type="s:string" minOccurs="0"/>
+          <s:element name="ContactFullName" type="s:string" minOccurs="0"/>
+          <s:element name="Created" type="s:string" minOccurs="0"/>
+          <s:element name="Abstract" type="s:string" minOccurs="0"/>
+          <s:element name="Age" type="s:string" minOccurs="0"/>
+          <s:element name="SRType" type="s:string" minOccurs="0"/>
+          <s:element name="Description" type="s:string" minOccurs="0"/>
+          <s:element name="FrontLineOwner" type="s:string" minOccurs="0"/>
+          <s:element name="Priority" type="s:string" minOccurs="0"/>
+          <s:element name="Status" type="s:string" minOccurs="0"/>
+          <s:element name="SRNumber" type="s:string" minOccurs="0"/>
+          <s:element name="SubStatus" type="s:string" minOccurs="0"/>
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RCRMAccountServiceRequestData_Output">
+        <s:sequence>
+          <s:element name="Error_spcCode" type="s:string" minOccurs="0"/>
+          <s:element name="Error_spcMessage" type="s:string" minOccurs="0"/>
+          <s:element name="Object_spcId" type="s:string" minOccurs="0"/>
+          <s:element name="Process_spcInstance_spcId" type="s:string"
+                     minOccurs="0"/>
+          <s:element name="Siebel_spcOperation_spcObject_spcId" type="s:string"
+                     minOccurs="0"/>
+          <s:element name="rcrmAccountThin" type="s0:RcrmAccountThin"
+                     minOccurs="0"/>
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="getSRRSSoapIn">
+    <wsdl:part name="parameters" element="s0:getSRRSRequest"/>
+  </wsdl:message>
+  <wsdl:message name="getSRRSSoapOut">
+    <wsdl:part name="parameters" element="s0:getSRRSResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="getSRService">
+    <wsdl:operation name="getSRRS">
+      <wsdl:input message="s0:getSRRSSoapIn"/>
+      <wsdl:output message="s0:getSRRSSoapOut"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="getSRRSSoap" type="s0:getSRService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getSRRS">
+      <soap:operation soapAction="getSRRS" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="getSRService">
+    <wsdl:port name="getSRRS" binding="s0:getSRRSSoap">
+      <soap:address location="http://inkaban3ua-eai01:7777/event/AGATEWAY/SRRS"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
+
+
+
+

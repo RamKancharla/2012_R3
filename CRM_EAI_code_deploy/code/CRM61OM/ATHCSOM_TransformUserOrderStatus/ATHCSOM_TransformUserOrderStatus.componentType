@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ATHCSOM_TransformUserOrderStatus.wsdl" name="anchorToATHCSOM_TransformUserOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus#wsdl.interface(ATHCSOM_TransformUserOrderStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus#wsdl.interface(ATHCSOM_TransformUserOrderStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="ParseUserOrderStatus.wsdl" name="ParseUserOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement#wsdl.interface(ParseCSUserOrderResponse)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHUOM_PropagateUserOrderStatus/ATHUOM_PropagateUserOrderStatus.wsdl" name="ATHUOM_PropagateUserOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.interface(ATHUOM_PropagateUserOrderStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.interface(ATHUOM_PropagateUserOrderStatusCallback)"/>
+    </reference>
+</componentType>

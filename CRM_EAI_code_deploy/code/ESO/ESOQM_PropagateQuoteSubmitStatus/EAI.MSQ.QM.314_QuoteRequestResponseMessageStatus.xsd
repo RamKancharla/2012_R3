@@ -1,0 +1,64 @@
+<!--/*************************************************************************
+* Module:	EAI.MSQ.QM.314_QuoteRequestResponseMessageStatus.xsd
+*				
+* Type:		XML Schema Document
+* Description:	Quote Response Status
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		27/09/2011	Harshitha Megha        		Initial Version
+*
+*
+*************************************************************************/-->
+<xsd:schema attributeFormDefault="unqualified" version="0.1"
+            targetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessageStatus"
+            elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.example.org"
+            xmlns:tns="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessageStatus"
+            xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">
+   <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+               schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+   <xsd:element name="UpdateQuoteStatusRequest" type="tns:UpdateQuoteStatusRequestType"/>
+   
+   <xsd:element name="UpdateQuoteStatusResponse" type="tns:UpdateQuoteStatusResponseType"/>
+   
+   <xsd:complexType name="UpdateQuoteStatusRequestType">
+      <xsd:sequence>
+         <xsd:element name="eaiHeader" type="cmt:EaiHeader" />
+         <xsd:element name="updateQuoteStatusRequest" minOccurs="0"
+                      maxOccurs="1" type="tns:UpdateQuoteStatusReq"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="UpdateQuoteStatusResponseType">
+      <xsd:sequence>
+         <xsd:element name="updateQuoteStatusResponse" minOccurs="0"
+                      maxOccurs="1" type="tns:UpdateQuoteStatusResp"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="UpdateQuoteStatusReq">
+      <xsd:sequence>
+         <xsd:element name="Actioncode" minOccurs="0" maxOccurs="1"
+                      type="xsd:string"/>
+         <xsd:element name="ErrorMessage" minOccurs="0" maxOccurs="1"
+                      type="xsd:string"/>
+         <xsd:element name="QuoteNumber" minOccurs="0" maxOccurs="1"
+                      type="xsd:string"/>
+         <xsd:element name="Sourcesystem" minOccurs="0" maxOccurs="1"
+                      type="xsd:string"/>
+         <xsd:element name="Timestamp" minOccurs="0" maxOccurs="1"
+                      type="xsd:string"/>
+         <xsd:element name="TransactionId" minOccurs="0" maxOccurs="1"
+                      type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="UpdateQuoteStatusResp">
+      <xsd:sequence>
+         <xsd:element name="result" minOccurs="0" maxOccurs="1"
+                      type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+</xsd:schema>
+

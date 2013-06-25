@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMQM_PropagateQuoteRequestMsg.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg#wsdl.interface(CCRMQM_PropagateQuoteRequestMsg)"/>
+    </service>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_EnqueueGenericQuoteMessage/CCRMQM_EnqueueGenericQuoteMessage.wsdl" name="CCRMQM_EnqueueGenericQuoteMessage">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage#wsdl.interface(CCRMQM_EnqueueGenericQuoteMessage)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage#wsdl.interface(CCRMQM_EnqueueGenericQuoteMessageCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcher.wsdl" name="CCRMQM_QuoteStatusDispatcher">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.interface(CCRMQM_QuoteStatusDispatcher)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.interface(CCRMQM_QuoteStatusDispatcherCallback)"/>
+    </reference>
+</componentType>

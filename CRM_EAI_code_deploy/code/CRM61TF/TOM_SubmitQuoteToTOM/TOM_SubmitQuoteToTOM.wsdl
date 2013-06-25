@@ -1,0 +1,45 @@
+<definitions
+     name="TOM_SubmitQuoteToTOM"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TOM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TOM"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul" schemaLocation="EAI.MSG.TOM.TF.153_VettingRequest.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </schema>
+    </types>
+    <message name="TOM_SubmitQuoteToTOMResponseMessage">
+        <part name="response" element="ns2:basicResponse"/>
+    </message>
+    <message name="TOM_SubmitQuoteToTOMRequestMessage">
+        <part name="request" element="ns1:vettingRequest"/>
+    </message>
+    <portType name="TOM_SubmitQuoteToTOMCallback">
+        <operation name="onResult">
+            <input message="client:TOM_SubmitQuoteToTOMResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="TOM_SubmitQuoteToTOM">
+        <operation name="vetQuote">
+            <input message="client:TOM_SubmitQuoteToTOMRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TOM_SubmitQuoteToTOM">
+        <plnk:role name="TOM_SubmitQuoteToTOMProvider">
+            <plnk:portType name="client:TOM_SubmitQuoteToTOM"/>
+        </plnk:role>
+        <plnk:role name="TOM_SubmitQuoteToTOMRequester">
+            <plnk:portType name="client:TOM_SubmitQuoteToTOMCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMQM_QuoteStatusDispatcher.wsdl" name="CCRMQM_QuoteStatusDispatcher">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.interface(CCRMQM_QuoteStatusDispatcher)" callbackInterface="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.interface(CCRMQM_QuoteStatusDispatcherCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ESOQM_PropagateQuoteSubmitStatus/ESOQM_PropagateQuoteSubmitStatus.wsdl" name="ESOQM_PropagateQuoteSubmitStatus">
+        <interface.wsdl interface="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus#wsdl.interface(ESOQM_PropagateQuoteSubmitStatus)"
+                        callbackInterface="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus#wsdl.interface(ESOQM_PropagateQuoteSubmitStatusCallback)"/>
+    </reference>
+</componentType>

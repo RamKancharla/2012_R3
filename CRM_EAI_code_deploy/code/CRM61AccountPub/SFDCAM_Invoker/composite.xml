@@ -1,0 +1,102 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SFDCAM_Invoker" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="enterpriseRef.wsdl" namespace="urn:enterprise.soap.sforce.com"/>
+    <import location="ReadSFDCAM_POLLING_V.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/ReadSFDCAM_POLLING_V/"/>
+    <import location="EAI.SRV.EXT.SFDC.049_SendAccountToSFDCServiceRef.wsdl" namespace="http://soap.sforce.com/schemas/class/AccountManagement"/>
+    <import location="Update_Interfacebuffer.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Interfacebuffer/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/InterfaceManager"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/CRM61AccountPub/SFDCAM_Invoker/enqueueAccountStatus"
+            location="enqueueAccountStatus.wsdl" importType="wsdl"/>
+    <service name="ReadSFDCAM_POLLING_V" ui:wsdlLocation="ReadSFDCAM_POLLING_V.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/ReadSFDCAM_POLLING_V/#wsdl.interface(ReadSFDCAM_POLLING_V_ptt)"/>
+        <binding.jca config="ReadSFDCAM_POLLING_V_db.jca"/>
+    </service>
+    <component name="SFDCAM_Invoker">
+        <implementation.bpel src="SFDCAM_Invoker.bpel"/>
+        <property name="preference.RemoteFaultStatus">E</property>
+        <property name="preference.password">${trust.Password}</property>
+        <property name="preference.loginId">${trust.UserName}</property>
+        <property name="preference.BusinessFaultStatus">E</property>
+        
+        
+    </component>
+    <reference name="SalesForce" ui:wsdlLocation="enterpriseRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="urn:enterprise.soap.sforce.com#wsdl.interface(Soap)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="enterpriseRef.wsdl" port="urn:enterprise.soap.sforce.com#wsdl.endpoint(SforceService/Soap)"/>
+    </reference>
+    <reference name="AccountManagement" ui:wsdlLocation="EAI.SRV.EXT.SFDC.049_SendAccountToSFDCServiceRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://soap.sforce.com/schemas/class/AccountManagement#wsdl.interface(AccountManagementPortType)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="EAI.SRV.EXT.SFDC.049_SendAccountToSFDCServiceRef.wsdl" port="http://soap.sforce.com/schemas/class/AccountManagement#wsdl.endpoint(AccountManagementService/AccountManagement)"/>
+    </reference>
+    <reference name="InterfaceManager"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+        <binding.ws port="http://xmlns.oracle.com/InterfaceManager#wsdl.endpoint(InterfaceManager/InterfaceManager)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="Update_Interfacebuffer" ui:wsdlLocation="Update_Interfacebuffer.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Interfacebuffer/#wsdl.interface(Update_Interfacebuffer_ptt)"/>
+        <binding.jca config="Update_Interfacebuffer_db.jca"/>
+    </reference>
+    <reference name="SequenceReleaser"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="enqueueAccountStatus"
+               ui:wsdlLocation="enqueueAccountStatus.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/CRM61AccountPub/SFDCAM_Invoker/enqueueAccountStatus#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="enqueueAccountStatus_mq.jca"/>
+        <property name="jca.retry.interval" type="xs:int" many="false"
+                  override="may">60</property>
+    </reference>
+    <wire>
+        <source.uri>ReadSFDCAM_POLLING_V</source.uri>
+        <target.uri>SFDCAM_Invoker/ReadSFDCAM_POLLING_V</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SFDCAM_Invoker/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SFDCAM_Invoker/Update_Interfacebuffer</source.uri>
+        <target.uri>Update_Interfacebuffer</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SFDCAM_Invoker/SalesForce</source.uri>
+        <target.uri>SalesForce</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SFDCAM_Invoker/InterfaceManager</source.uri>
+        <target.uri>InterfaceManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SFDCAM_Invoker/AccountManagement</source.uri>
+        <target.uri>AccountManagement</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>SFDCAM_Invoker/enqueueAccountStatus</source.uri>
+        <target.uri>enqueueAccountStatus</target.uri>
+    </wire>
+</composite>

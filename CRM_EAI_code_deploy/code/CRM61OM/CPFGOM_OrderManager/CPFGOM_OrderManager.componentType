@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service name="anchorToCPFGOMOrderManager1"
+             ui:wsdlLocation="CPFGOM_OrderManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager#wsdl.interface(CPFGOM_OrderManager)"/>
+    </service>
+    <reference name="CPFGOM_UserOrderManager"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_UserOrderManager/CPFGOM_UserOrderManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager#wsdl.interface(CPFGOM_UserOrderManager)"/>
+    </reference>
+</componentType>

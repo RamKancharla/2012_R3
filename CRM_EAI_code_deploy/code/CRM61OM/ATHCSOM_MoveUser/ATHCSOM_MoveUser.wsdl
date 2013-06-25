@@ -1,0 +1,50 @@
+<definitions
+     name="ATHCSOM_MoveUser"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://schemas.oracle.com/bpel/extension">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser"
+                 schemaLocation="ATHCSOM_MoveUser.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser"
+             xmlns:ns2="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.CS.UOM.280_MoveUserRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHCSOM_MoveUserResponseMessage">
+        <part name="payload" element="client:ATHCSOM_MoveUserProcessResponse"/>
+    </message>
+    <message name="ATHCSOM_MoveUserRequestMessage">
+        <part name="ATHMoveUser" element="ns1:MoveUser"/>
+    </message>
+    <portType name="ATHCSOM_MoveUserCallback">
+        <operation name="onResult">
+            <input message="client:ATHCSOM_MoveUserResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="ATHCSOM_MoveUser">
+        <operation name="moveUser">
+            <input message="client:ATHCSOM_MoveUserRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHCSOM_MoveUser">
+        <plnk:role name="ATHCSOM_MoveUserProvider">
+            <plnk:portType name="client:ATHCSOM_MoveUser"/>
+        </plnk:role>
+        <plnk:role name="ATHCSOM_MoveUserRequester">
+            <plnk:portType name="client:ATHCSOM_MoveUserCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

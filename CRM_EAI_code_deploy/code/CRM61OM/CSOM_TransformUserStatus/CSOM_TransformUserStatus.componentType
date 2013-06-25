@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSOM_TransformUserStatus.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus#wsdl.interface(CSOM_TransformUserStatus)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus#wsdl.interface(CSOM_TransformUserStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderSplitter/CSOM_OrderSplitter.wsdl" name="CSOM_OrderSplitter">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitter)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitterCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="ParseUserStatus.wsdl" name="ParseUserStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser#wsdl.interface(ParseCSUserStatus)"/>
+    </reference>
+</componentType>

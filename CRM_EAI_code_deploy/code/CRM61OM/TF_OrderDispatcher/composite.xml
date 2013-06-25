@@ -1,0 +1,82 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TF_OrderDispatcher" revision="1.0" state="on">
+    <import location="WriteTOMOrder.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteTOMOrder/"/>
+    <import location="TF_OrderDispatcher.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher"/>
+    <import location="UpdateOrderCache.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateOrderCache/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/TF_ManageOrderLineStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" importType="wsdl"/>
+    <service name="anchorToTFDispatcher" ui:wsdlLocation="TF_OrderDispatcher.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcherCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcher)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.endpoint(TF_OrderDispatcher/TF_OrderDispatcher)">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">NEVER</property>
+        </binding.ws>
+    </service>
+    <component name="TF_OrderDispatcher">
+        <implementation.bpel src="TF_OrderDispatcher.bpel"/>
+        
+        
+    </component>
+    <reference name="WriteTOMOrder" ui:wsdlLocation="WriteTOMOrder.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteTOMOrder/#wsdl.interface(WriteTOMOrder_ptt)"/>
+        <binding.jca config="WriteTOMOrder_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="UpdateOrderCache" ui:wsdlLocation="UpdateOrderCache.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateOrderCache/#wsdl.interface(UpdateOrderCache_ptt)"/>
+        <binding.jca config="UpdateOrderCache_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="SequenceReleaser" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="TF_ManageOrderLineStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/TF_ManageOrderLineStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus#wsdl.interface(TF_ManageOrderLineStatus)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus#wsdl.endpoint(TF_ManageOrderLineStatus/TF_ManageOrderLineStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageOrderLineStatus/anchorToTF_ManageOrderLineStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="AsyncSequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToTFDispatcher</source.uri>
+        <target.uri>TF_OrderDispatcher/anchorToTFDispatcher</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TF_OrderDispatcher/UpdateOrderCache</source.uri>
+        <target.uri>UpdateOrderCache</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TF_OrderDispatcher/TF_ManageOrderLineStatus</source.uri>
+        <target.uri>TF_ManageOrderLineStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TF_OrderDispatcher/WriteTOMOrder</source.uri>
+        <target.uri>WriteTOMOrder</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TF_OrderDispatcher/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TF_OrderDispatcher/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

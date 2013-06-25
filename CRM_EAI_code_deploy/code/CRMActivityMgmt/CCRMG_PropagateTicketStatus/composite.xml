@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMG_PropagateTicketStatus" revision="1.0" state="on">
+    <import location="EAI.SRV.CCRM.058_PropagateMigrationStatusServiceRef.wsdl" namespace="http://www.reuters.com/ns/2009/26/03/GCAP/RCRM"/>
+    <import location="CCRMG_PropagateTicketStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus"/>
+    <service name="client" ui:wsdlLocation="CCRMG_PropagateTicketStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatusCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.endpoint(CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatus)"/>
+    </service>
+    <component name="CCRMG_PropagateTicketStatus">
+        <implementation.bpel src="CCRMG_PropagateTicketStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="CRMMigrationStatus" ui:wsdlLocation="EAI.SRV.CCRM.058_PropagateMigrationStatusServiceRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2009/26/03/GCAP/RCRM#wsdl.interface(RCRMMSTInboundWF)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="EAI.SRV.CCRM.058_PropagateMigrationStatusServiceRef.wsdl" port="http://www.reuters.com/ns/2009/26/03/GCAP/RCRM#wsdl.endpoint(RCRMMSTInboundWS/RCRMMSTInboundWF)"/>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMG_PropagateTicketStatus/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMG_PropagateTicketStatus/CRMMigrationStatus</source.uri>
+        <target.uri>CRMMigrationStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

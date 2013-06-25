@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOM_DequeueNValidateOrderRequest" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="DequeueOrderRequest.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOrderRequest/"/>
+    <import location="UpdateCSValidationMessage.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerUpdateCSValidationMessage/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_OrderRequestValidatorStub/CCRMOM_OrderRequestValidatorStub.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_RouteToDispatcher/CCRMOM_RouteToDispatcher.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CCRMOM_DequeueNValidateOrderRequest"
+            location="CCRMOM_DequeueNValidateOrderRequest.wsdl"
+            importType="wsdl"/>
+    <service name="DequeueOrderRequest" ui:wsdlLocation="DequeueOrderRequest.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOrderRequest/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeueOrderRequest_mq.jca"/>
+    </service>
+    <service name="AnchorToDeque"
+             ui:wsdlLocation="CCRMOM_DequeueNValidateOrderRequest.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMOM_DequeueNValidateOrderRequest#wsdl.interface(CCRMOM_DequeueNValidateOrderRequest)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMOM_DequeueNValidateOrderRequest#wsdl.endpoint(AnchorToDeque/CCRMOM_DequeueNValidateOrderRequest_pt)"/>
+    </service>
+    <component name="CCRMOM_DequeueNValidateOrderRequest">
+        <implementation.bpel src="CCRMOM_DequeueNValidateOrderRequest.bpel"/>
+        <property name="partnerLink.CCRMOM_OrderRequestValidatorStub.validateXML"
+                  type="xs:string" many="false">true</property>
+    </component>
+    <reference name="CCRMOM_RouteToDispatcher"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_RouteToDispatcher/CCRMOM_RouteToDispatcher.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.interface(CCRMOM_RouteToDispatcher)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.interface(CCRMOM_RouteToDispatcherCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.endpoint(CCRMOM_RouteToDispatcher/CCRMOM_RouteToDispatcher)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_RouteToDispatcher/RouteToDispatcher?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.endpoint(CCRMOM_RouteToDispatcher/CCRMOM_RouteToDispatcherCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="UpdateEAIValidationMessage" ui:wsdlLocation="UpdateCSValidationMessage.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerUpdateCSValidationMessage/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="UpdateCSValidationMessage_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="CCRMOM_OrderRequestValidatorStub"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_OrderRequestValidatorStub/CCRMOM_OrderRequestValidatorStub.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_OrderRequestValidatorStub)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.endpoint(CCRMOM_OrderRequestValidatorStub/CCRMOM_OrderRequestValidatorStub)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_OrderRequestValidatorStub/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>DequeueOrderRequest</source.uri>
+        <target.uri>CCRMOM_DequeueNValidateOrderRequest/DequeueOrderRequest</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_DequeueNValidateOrderRequest/CCRMOM_RouteToDispatcher</source.uri>
+        <target.uri>CCRMOM_RouteToDispatcher</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_DequeueNValidateOrderRequest/CCRMOM_OrderRequestValidatorStub</source.uri>
+        <target.uri>CCRMOM_OrderRequestValidatorStub</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_DequeueNValidateOrderRequest/UpdateEAIValidationMessage</source.uri>
+        <target.uri>UpdateEAIValidationMessage</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>AnchorToDeque</source.uri>
+        <target.uri>CCRMOM_DequeueNValidateOrderRequest/AnchorToDeque</target.uri>
+    </wire>
+</composite>

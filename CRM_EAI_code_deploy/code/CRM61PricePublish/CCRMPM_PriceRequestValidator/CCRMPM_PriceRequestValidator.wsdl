@@ -1,0 +1,48 @@
+<definitions
+     name="CCRMPM_PriceRequestValidator"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdate"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator"
+                 schemaLocation="CCRMPM_PriceRequestValidator.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.CCRM.PM.211_PriceUpdateRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdate"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.CCRM.PM.214_PriceUpdateSubmissionStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMPM_PriceRequestValidatorRequestMessage">
+        <part name="payload" element="ns1:priceUpdateRequest"/>
+    </message>
+    <message name="CCRMPM_PriceRequestValidatorResponseMessage">
+        <part name="payload" element="ns2:priceReqUpdateSubmissionStatus"/>
+    </message>
+    <portType name="CCRMPM_PriceRequestValidator">
+        <operation name="validatePricingUpdateRequest">
+            <input message="client:CCRMPM_PriceRequestValidatorRequestMessage"/>
+            <output message="client:CCRMPM_PriceRequestValidatorResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMPM_PriceRequestValidator">
+        <plnk:role name="CCRMPM_PriceRequestValidatorProvider">
+            <plnk:portType name="client:CCRMPM_PriceRequestValidator"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

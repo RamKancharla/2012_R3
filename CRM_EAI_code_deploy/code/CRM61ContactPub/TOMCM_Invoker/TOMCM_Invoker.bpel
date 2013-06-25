@@ -1,0 +1,591 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Sep 24 15:42:44 GMT+05:30 2009
+  Author:  sg59930
+  Purpose: Asynchronous BPEL Process
+
+  *   1.0   28/04/10       Vasanthi        Updated the Schemas and transformations as per PBI-278
+  *   2.0   03/05/10	   Surya	   Added the missing part name to the syntax of TransEmployeetoTOMInput.xsl
+  *   3.0   16/07/10       Swapna           Updated the Schemas and transformations as per CR 7248
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TOMCM_Invoker" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/CM/TOMCM_Invoker" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/TOMCM_POLLING_V/" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/top/TOMCMPOLLINGV" xmlns:ns15="http://servicecenter.peregrine.com/PWS" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateINTERFACE_BUFFER/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/db/TOM_CONTACT_BUFFER_WRITE/" xmlns:ns7="http://schemas.hp.com/SM/7" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/db/TOM_ACCOUNT_BUFFER_WRITE/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/CM/TOMCM_Invoker" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateINTERFACEBUFFER" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns14="http://xmlns.oracle.com/pcbpel/adapter/db/top/TOMCONTACTBUFFERWRITE" xmlns:ns3="http://xmlns.oracle.com/InterfaceManager" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns8="http://schemas.hp.com/SM/7/Common" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="InterfaceManager" partnerRole="InterfaceManagerProvider" partnerLinkType="ns3:InterfaceManager"/>
+        <partnerLink name="TOM" partnerRole="TOM_Role" partnerLinkType="ns7:TOM_PL"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns9:SequenceReleaser"/>
+        <partnerLink myRole="TOMCM_POLLING_V_role" name="TOMCM_POLLING_V" partnerLinkType="ns1:TOMCM_POLLING_V_plt"/>
+        <partnerLink name="UpdateINTERFACE_BUFFER" partnerRole="UpdateINTERFACE_BUFFER_role" partnerLinkType="ns10:UpdateINTERFACE_BUFFER_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="nReceived" type="xsd:integer"/>
+        <variable name="nProcessed" type="xsd:integer"/>
+        <variable name="nErrors" type="xsd:integer"/>
+        <variable name="errorMsg" type="xsd:string"/>
+        <variable name="nFailures" type="xsd:string"/>
+        <variable name="state" type="xsd:string"/>
+        <variable name="rawMessage" type="xsd:string"/>
+        <variable name="parsedRawMessage" type="xsd:string"/>
+        <variable name="javaException" type="xsd:string"/>
+        <variable name="id" type="xsd:decimal"/>
+        <variable name="created" type="xsd:dateTime"/>
+        <variable name="interfaceId" type="xsd:string"/>
+        <variable name="referenceId" type="xsd:string"/>
+        <variable name="releaseSequence" type="xsd:boolean"/>
+        <variable name="updateSiebel" type="xsd:string"/>
+        <variable name="RequestHealthCheckIV" messageType="ns3:InterfaceManagerRequestMessage"/>
+        <variable name="RequestHealthCheckOV" messageType="ns3:InterfaceManagerResponseMessage"/>
+        <variable name="DenormalisedContact" element="ns5:generalContact"/>
+        <variable name="ContactInputIV" element="ns5:pubContactRequest"/>
+        <variable name="UnKnownError" type="xsd:string"/>
+        <variable name="InvTOMCMCreateCustomerContactsIV" messageType="ns7:CreateCustomerContactsRequest"/>
+        <variable name="InvTOMCMCreateCustomerContactsOV" messageType="ns7:CreateCustomerContactsResponse"/>
+        <variable name="InvTOMCMCreateInternalContactsIV" messageType="ns7:CreateInternalContactsRequest"/>
+        <variable name="InvTOMCMCreateInternalContactsOV" messageType="ns7:CreateInternalContactsResponse"/>
+        <variable name="releaseFlag" type="xsd:decimal"/>
+        <variable name="outputVariable" type="xsd:string"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvReleaseSequenceIV" messageType="ns9:SequenceReleaserRequestMessage"/>
+        <variable name="inputVariable" messageType="ns1:TomcmPollingVCollection_msg"/>
+        <variable name="InvINTERFACE_BUFFERIV" messageType="ns10:InterfaceBufferCollection_msg"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="AsgCustomFaultTitle" language="java" version="1.5">
+                <![CDATA[setCompositeInstanceTitle( getTitle() + ";Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TOMCM_Invoker.wsdl) -->
+        <receive name="receiveInput" portType="ns1:TOMCM_POLLING_V_ptt" variable="inputVariable" createInstance="yes" partnerLink="TOMCM_POLLING_V" operation="receive"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitialVariables">
+            <copy>
+                <from expression="count(bpws:getVariableData('inputVariable','TomcmPollingVCollection','/ns2:TomcmPollingVCollection/ns2:TomcmPollingV'))"/>
+                <to variable="nReceived"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nProcessed"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nErrors"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nFailures"/>
+            </copy>
+            <copy>
+                <from expression="'false'"/>
+                <to variable="releaseSequence"/>
+            </copy>
+            <copy>
+                <from expression="'false'"/>
+                <to variable="updateSiebel"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="errorMsg"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="SetInitialTitle" language="java" version="1.5">
+            <![CDATA[setCompositeInstanceTitle("Processing " + getVariableData("nReceived") + " messages");]]>
+        </bpelx:exec>
+        <bpelx:exec name="checkpoint" language="java" version="1.3">
+            <![CDATA[checkpoint();]]>
+        </bpelx:exec>
+        <while name="While_1" condition="bpws:getVariableData('nProcessed') &lt; bpws:getVariableData('nReceived')">
+            <sequence name="Sequence_2">
+                <assign name="AsgContactToLocalVariables">
+                    <copy>
+                        <from variable="inputVariable" part="TomcmPollingVCollection" query="/ns2:TomcmPollingVCollection/ns2:TomcmPollingV[bpws:getVariableData('nProcessed') + 1]/ns2:payload"/>
+                        <to variable="rawMessage"/>
+                    </copy>
+                    <copy>
+                        <from variable="inputVariable"
+                              part="TomcmPollingVCollection"
+                              query="/ns2:TomcmPollingVCollection/ns2:TomcmPollingV[bpws:getVariableData('nProcessed') + 1]/ns2:id"/>
+                        <to variable="id"/>
+                    </copy>
+                    <copy>
+                        <from variable="inputVariable"
+                              part="TomcmPollingVCollection"
+                              query="/ns2:TomcmPollingVCollection/ns2:TomcmPollingV[bpws:getVariableData('nProcessed') + 1]/ns2:interfaceId"/>
+                        <to variable="interfaceId"/>
+                    </copy>
+                    <copy>
+                        <from variable="inputVariable"
+                              part="TomcmPollingVCollection"
+                              query="/ns2:TomcmPollingVCollection/ns2:TomcmPollingV[bpws:getVariableData('nProcessed') + 1]/ns2:referenceId"/>
+                        <to variable="referenceId"/>
+                    </copy>
+                    <copy>
+                        <from variable="inputVariable"
+                              part="TomcmPollingVCollection"
+                              query="/ns2:TomcmPollingVCollection/ns2:TomcmPollingV[bpws:getVariableData('nProcessed') + 1]/ns2:created"/>
+                        <to variable="created"/>
+                    </copy>
+                </assign>
+                <bpelx:exec name="ReplaceUnsafeCharactersInRawMessage"
+                            language="java" version="1.5">
+                    <![CDATA[try {                            
+    setVariableData("parsedRawMessage", ((String)getVariableData("rawMessage")).replaceAll("&", "&amp;") );      
+    } catch (Exception e) {                         
+        setVariableData("javaException", e.getMessage() );                  
+    }]]>
+                </bpelx:exec>
+                <switch name="Switch_1">
+                    <case condition="bpws:getVariableData('javaException') != ''">
+                        <bpelx:annotation>
+                            <bpelx:pattern>Failed State</bpelx:pattern>
+                        </bpelx:annotation>
+                        <assign name="AsgState-ERROR-DoNotRelease">
+                            <copy>
+                                <from expression="'F'"/>
+                                <to variable="state"/>
+                            </copy>
+                            <copy>
+                                <from expression="'false'"/>
+                                <to variable="releaseSequence"/>
+                            </copy>
+                        </assign>
+                    </case>
+                    <otherwise>
+                        <sequence name="Sequence_4">
+                            <assign name="AsgParsedContact">
+                                <copy>
+                                    <from expression="ora:parseEscapedXML(bpws:getVariableData('parsedRawMessage'))"/>
+                                    <to variable="ContactInputIV"/>
+                                </copy>
+                            </assign>
+                            <scope name="ScpCheckContactType">
+                                <faultHandlers>
+                                    <catchAll>
+                                        <sequence name="SeqIncrementFailure">
+                                            <assign name="IncrementFailed">
+                                                <copy>
+                                                    <from expression="bpws:getVariableData('nFailures') + 1"/>
+                                                    <to variable="nFailures"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgState-RETRYABLE-DoNotRelease">
+                                                <copy>
+                                                    <from expression="'R'"/>
+                                                    <to variable="state"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="'false'"/>
+                                                    <to variable="releaseSequence"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                                    <to variable="errorMsg"/>
+                                                </copy>
+                                            </assign>
+                                        </sequence>
+                                    </catchAll>
+                                </faultHandlers>
+                                <sequence name="SeqCheckContactType">
+                                    <switch name="SwitchContactType">
+                                        <case condition="bpws:getVariableData('ContactInputIV','/ns5:pubContactRequest/ns5:contact/ns5:contactSubType') = ora:getPreference('EmployeeContact')">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>EmployeeContact</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <sequence name="Sequence_6">
+                                                <assign name="TransEmployeeToTOMInput">
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <copy>
+                                                        <from expression="ora:processXSLT('TransEmployeeToTOMInput.xsl',bpws:getVariableData('ContactInputIV'))"/>
+                                                        <to variable="InvTOMCMCreateInternalContactsIV"
+                                                            part="CreateInternalContactsRequest"/>
+                                                    </copy>
+                                                </assign>
+                                                <switch name="SwitchEmployeeAction">
+                                                    <case condition="bpws:getVariableData('InvTOMCMCreateInternalContactsIV','CreateInternalContactsRequest','/ns7:CreateInternalContactsRequest/ns7:model/ns7:instance/ns7:CRMAction') = 'ERROR'">
+                                                        <bpelx:annotation>
+                                                            <bpelx:pattern>Employee Unknown Action</bpelx:pattern>
+                                                        </bpelx:annotation>
+                                                        <sequence name="UnknownEmployeeAction">
+                                                            <empty name="IgnoreContactEvent"/>
+                                                            <assign name="AsgState-COMPLETE-Release">
+                                                                <copy>
+                                                                    <from expression="'C'"/>
+                                                                    <to variable="state"/>
+                                                                </copy>
+                                                                <copy>
+                                                                    <from expression="'true'"/>
+                                                                    <to variable="releaseSequence"/>
+                                                                </copy>
+                                                            </assign>
+                                                        </sequence>
+                                                    </case>
+                                                    <otherwise>
+                                                        <sequence name="SeqValidateEmployee">
+                                                            <invoke name="InvTOMCMInvokerInternalContact"
+                                                                    partnerLink="TOM"
+                                                                    portType="ns7:TOM"
+                                                                    inputVariable="InvTOMCMCreateInternalContactsIV"
+                                                                    outputVariable="InvTOMCMCreateInternalContactsOV"
+                                                                    operation="CreateInternalContacts"/>
+                                                            <assign name="AsgInternalContactReturnVal">
+                                                                <copy>
+                                                                    <from variable="InvTOMCMCreateInternalContactsOV"
+                                                                          part="CreateInternalContactsResponse"
+                                                                          query="/ns7:CreateInternalContactsResponse/@message"/>
+                                                                    <to variable="outputVariable"/>
+                                                                </copy>
+                                                                <copy>
+                                                                    <from variable="InvTOMCMCreateInternalContactsOV"
+                                                                          part="CreateInternalContactsResponse"
+                                                                          query="/ns7:CreateInternalContactsResponse/@returnCode"/>
+                                                                    <to variable="releaseFlag"/>
+                                                                </copy>
+                                                            </assign>
+                                                            <switch name="SwitchInternalContact">
+                                                                <case condition="bpws:getVariableData('InvTOMCMCreateInternalContactsOV','CreateInternalContactsResponse','/ns7:CreateInternalContactsResponse/@returnCode')=0">
+                                                                    <bpelx:annotation>
+                                                                        <bpelx:pattern>Success</bpelx:pattern>
+                                                                    </bpelx:annotation>
+                                                                    <assign name="AsgState-COMPLETE-Release">
+                                                                        <copy>
+                                                                            <from expression="'C'"/>
+                                                                            <to variable="state"/>
+                                                                        </copy>
+                                                                        <copy>
+                                                                            <from expression="'true'"/>
+                                                                            <to variable="releaseSequence"/>
+                                                                        </copy>
+                                                                    </assign>
+                                                                </case>
+                                                                <otherwise>
+                                                                    <assign name="AsgState-WARNING-Release">
+                                                                        <copy>
+                                                                            <from expression="'W'"/>
+                                                                            <to variable="state"/>
+                                                                        </copy>
+                                                                        <copy>
+                                                                            <from expression="'true'"/>
+                                                                            <to variable="releaseSequence"/>
+                                                                        </copy>
+                                                                    </assign>
+                                                                </otherwise>
+                                                            </switch>
+                                                        </sequence>
+                                                    </otherwise>
+                                                </switch>
+                                            </sequence>
+                                        </case>
+                                        <case condition="bpws:getVariableData('ContactInputIV','/ns5:pubContactRequest/ns5:contact/ns5:contactSubType') = ora:getPreference('ClientContact')">
+                                            <bpelx:annotation>
+                                                <bpelx:pattern>Client Contact</bpelx:pattern>
+                                            </bpelx:annotation>
+                                            <sequence name="Sequence_5">
+                                                <assign name="TransRemoveUnwantedJobRoles">
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <copy>
+                                                        <from expression="ora:processXSLT('TransRemoveUnwantedJobRoles.xsl',bpws:getVariableData('ContactInputIV'))"/>
+                                                        <to variable="ContactInputIV"/>
+                                                    </copy>
+                                                </assign>
+                                                <assign name="TransClientContactToTOMInput">
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <copy>
+                                                        <from expression="ora:processXSLT('TransClientContactToTOMInput.xsl',bpws:getVariableData('ContactInputIV'))"/>
+                                                        <to variable="InvTOMCMCreateCustomerContactsIV"
+                                                            part="CreateCustomerContactsRequest"/>
+                                                    </copy>
+                                                </assign>
+                                                <switch name="SwitchContactAction">
+                                                    <case condition="bpws:getVariableData('InvTOMCMCreateCustomerContactsIV','CreateCustomerContactsRequest','/ns7:CreateCustomerContactsRequest/ns7:model/ns7:instance/ns7:CRMAction') = 'ERROR' or bpws:getVariableData('InvTOMCMCreateCustomerContactsIV','CreateCustomerContactsRequest','/ns7:CreateCustomerContactsRequest/ns7:model/ns7:instance/ns7:intersection.data') = ''">
+                                                        <bpelx:annotation>
+                                                            <bpelx:pattern>Contact Unknown Action</bpelx:pattern>
+                                                        </bpelx:annotation>
+                                                        <sequence name="UnknownContactAction">
+                                                            <empty name="IgnoreContactEvent"/>
+                                                            <assign name="AsgState-COMPLETE-Release">
+                                                                <copy>
+                                                                    <from expression="'C'"/>
+                                                                    <to variable="state"/>
+                                                                </copy>
+                                                                <copy>
+                                                                    <from expression="'true'"/>
+                                                                    <to variable="releaseSequence"/>
+                                                                </copy>
+                                                            </assign>
+                                                        </sequence>
+                                                    </case>
+                                                    <otherwise>
+                                                        <switch name="ChooseActionCodeWhenJobFunctionsAreInvalid">
+                                                            <case condition="count(bpws:getVariableData('ContactInputIV','/ns5:pubContactRequest/ns5:contact/ns5:clientContactJobFunctionList/ns5:clientContactJobFunction'))>0 or ( (count(bpws:getVariableData('ContactInputIV','/ns5:pubContactRequest/ns5:contact/ns5:clientContactJobFunctionList/ns5:clientContactJobFunction')) = 0)  and (bpws:getVariableData('ContactInputIV','/ns5:pubContactRequest/ns5:actionCode')  = 'EAI.SRV.CCRM.27.ACT.003'  or 'EAI.SRV.CCRM.27.ACT.004') )">
+                                                                <bpelx:annotation>
+                                                                    <bpelx:pattern>If there are any relevant job roles for the contact, then we send the request to Peregrine.  If there are no relevant job roles, but the action code from Siebel was to Delete (ACT003) or an update following removal of a job function (ACT004) then we do also notify Peregrine.</bpelx:pattern>
+                                                                </bpelx:annotation>
+                                                                <sequence name="SeqValidData">
+                                                                    <invoke name="InvTOMCMInvokerCustomerContact"
+                                                                            partnerLink="TOM"
+                                                                            portType="ns7:TOM"
+                                                                            inputVariable="InvTOMCMCreateCustomerContactsIV"
+                                                                            outputVariable="InvTOMCMCreateCustomerContactsOV"
+                                                                            operation="CreateCustomerContacts"/>
+                                                                    <assign name="AsgCustomerContactReturnVal">
+                                                                        <copy>
+                                                                            <from variable="InvTOMCMCreateCustomerContactsOV"
+                                                                                  part="CreateCustomerContactsResponse"
+                                                                                  query="/ns7:CreateCustomerContactsResponse/@message"/>
+                                                                            <to variable="outputVariable"/>
+                                                                        </copy>
+                                                                        <copy>
+                                                                            <from variable="InvTOMCMCreateCustomerContactsOV"
+                                                                                  part="CreateCustomerContactsResponse"
+                                                                                  query="/ns7:CreateCustomerContactsResponse/@returnCode"/>
+                                                                            <to variable="releaseFlag"/>
+                                                                        </copy>
+                                                                    </assign>
+                                                                    <switch name="SwitchCustomerContact">
+                                                                        <case condition="bpws:getVariableData('InvTOMCMCreateCustomerContactsOV','CreateCustomerContactsResponse','/ns7:CreateCustomerContactsResponse/@returnCode')=0">
+                                                                            <assign name="AsgState-COMPLETE-Release">
+                                                                                <copy>
+                                                                                    <from expression="'C'"/>
+                                                                                    <to variable="state"/>
+                                                                                </copy>
+                                                                                <copy>
+                                                                                    <from expression="'true'"/>
+                                                                                    <to variable="releaseSequence"/>
+                                                                                </copy>
+                                                                            </assign>
+                                                                        </case>
+                                                                        <otherwise>
+                                                                            <assign name="AsgState-WARNING-Release">
+                                                                                <copy>
+                                                                                    <from expression="'W'"/>
+                                                                                    <to variable="state"/>
+                                                                                </copy>
+                                                                                <copy>
+                                                                                    <from expression="'true'"/>
+                                                                                    <to variable="releaseSequence"/>
+                                                                                </copy>
+                                                                            </assign>
+                                                                        </otherwise>
+                                                                    </switch>
+                                                                </sequence>
+                                                            </case>
+                                                            <otherwise>
+                                                                <sequence name="Sequence_3">
+                                                                    <empty name="SendNothingToPerigrine"/>
+                                                                    <assign name="AsgState-COMPLETE-Release">
+                                                                        <copy>
+                                                                            <from expression="'C'"/>
+                                                                            <to variable="state"/>
+                                                                        </copy>
+                                                                        <copy>
+                                                                            <from expression="'true'"/>
+                                                                            <to variable="releaseSequence"/>
+                                                                        </copy>
+                                                                    </assign>
+                                                                </sequence>
+                                                            </otherwise>
+                                                        </switch>
+                                                    </otherwise>
+                                                </switch>
+                                            </sequence>
+                                        </case>
+                                        <otherwise>
+                                            <sequence name="Sequence_7">
+                                                <assign name="AsgState-WARNING-Release">
+                                                    <copy>
+                                                        <from expression="'W'"/>
+                                                        <to variable="state"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from expression="'true'"/>
+                                                        <to variable="releaseSequence"/>
+                                                    </copy>
+                                                </assign>
+                                            </sequence>
+                                        </otherwise>
+                                    </switch>
+                                </sequence>
+                            </scope>
+                        </sequence>
+                    </otherwise>
+                </switch>
+                <switch name="ReleaseSequence">
+                    <case condition="bpws:getVariableData('releaseSequence') = 'true'">
+                        <sequence name="SeqReleaseSequence">
+                            <assign name="TransContactDetailsToSequenceRelease">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransContactDetailsToSequenceRelease.xsl',bpws:getVariableData('ContactInputIV'))"/>
+                                    <to variable="InvReleaseSequenceIV"
+                                        part="payload"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvReleaseSequence"
+                                    partnerLink="SequenceReleaser"
+                                    portType="ns9:SequenceReleaser"
+                                    operation="releaseSequence"
+                                    inputVariable="InvReleaseSequenceIV"/>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <empty name="DoNothing"/>
+                    </otherwise>
+                </switch>
+                <sequence name="SeqInterfaceBuffer">
+                    <assign name="TransBlankUpdateMessage">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransBlankUpdateMessage.xsl',bpws:getVariableData('InvINTERFACE_BUFFERIV','InterfaceBufferCollection'))"/>
+                            <to variable="InvINTERFACE_BUFFERIV"
+                                part="InterfaceBufferCollection"/>
+                        </copy>
+                    </assign>
+                    <assign name="AsgUpdateValues">
+                        <copy>
+                            <from variable="id"/>
+                            <to variable="InvINTERFACE_BUFFERIV"
+                                part="InterfaceBufferCollection"
+                                query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:id"/>
+                        </copy>
+                        <copy>
+                            <from variable="created"/>
+                            <to variable="InvINTERFACE_BUFFERIV"
+                                part="InterfaceBufferCollection"
+                                query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:created"/>
+                        </copy>
+                        <copy>
+                            <from variable="rawMessage"/>
+                            <to variable="InvINTERFACE_BUFFERIV"
+                                part="InterfaceBufferCollection"
+                                query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:payload"/>
+                        </copy>
+                        <copy>
+                            <from variable="interfaceId"/>
+                            <to variable="InvINTERFACE_BUFFERIV"
+                                part="InterfaceBufferCollection"
+                                query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:interfaceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="referenceId"/>
+                            <to variable="InvINTERFACE_BUFFERIV"
+                                part="InterfaceBufferCollection"
+                                query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:referenceId"/>
+                        </copy>
+                        <copy>
+                            <from variable="state"/>
+                            <to variable="InvINTERFACE_BUFFERIV"
+                                part="InterfaceBufferCollection"
+                                query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:state"/>
+                        </copy>
+                        <copy>
+                            <from expression="ora:getCompositeInstanceId()"/>
+                            <to variable="InvINTERFACE_BUFFERIV" part="InterfaceBufferCollection" query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:updatedBy"/>
+                        </copy>
+                        <bpelx:remove>
+                            <bpelx:target variable="InvINTERFACE_BUFFERIV"
+                                          part="InterfaceBufferCollection"
+                                          query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:lastUpdated"/>
+                        </bpelx:remove>
+                        <copy>
+                            <from variable="errorMsg"/>
+                            <to variable="InvINTERFACE_BUFFERIV"
+                                part="InterfaceBufferCollection"
+                                query="/ns11:InterfaceBufferCollection/ns11:InterfaceBuffer/ns11:errorMessage"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvINTERFACE_BUFFER"
+                            portType="ns10:UpdateINTERFACE_BUFFER_ptt"
+                            inputVariable="InvINTERFACE_BUFFERIV"
+                            partnerLink="UpdateINTERFACE_BUFFER"
+                            operation="update"/>
+                </sequence>
+                <assign name="IncrementProcessed">
+                    <copy>
+                        <from expression="bpws:getVariableData('nProcessed') + 1 "/>
+                        <to variable="nProcessed"/>
+                    </copy>
+                    <copy>
+                        <from expression="''"/>
+                        <to variable="errorMsg"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <bpelx:exec name="SetCompletedTitle" language="java" version="1.5">
+            <![CDATA[setCompositeInstanceTitle("Completed R:P:E:F=" + getVariableData("nReceived") + ":" + getVariableData("nProcessed") + ":" + getVariableData("nErrors") + ":" + getVariableData("nFailures"));]]>
+        </bpelx:exec>
+        <switch name="SwitchOnOutcome">
+            <case condition="bpws:getVariableData('nProcessed') = bpws:getVariableData('nFailures')">
+                <bpelx:annotation>
+                    <bpelx:pattern>case All Failed</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_1">
+                    <assign name="AsgHealthCheckParams">
+                        <copy>
+                            <from expression="'doHealthCheck'"/>
+                            <to variable="RequestHealthCheckIV" part="payload"
+                                query="/ns3:InterfaceManagerProcessRequest/ns3:operation"/>
+                        </copy>
+                        <copy>
+                            <from expression="'TOMCM'"/>
+                            <to variable="RequestHealthCheckIV" part="payload"
+                                query="/ns3:InterfaceManagerProcessRequest/ns3:interfaceConfig/ns4:id"/>
+                        </copy>
+                    </assign>
+                    <invoke name="RequestHealthCheck"
+                            partnerLink="InterfaceManager"
+                            portType="ns3:InterfaceManager" operation="process"
+                            inputVariable="RequestHealthCheckIV"
+                            outputVariable="RequestHealthCheckOV"/>
+                    <terminate name="Terminate"/>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

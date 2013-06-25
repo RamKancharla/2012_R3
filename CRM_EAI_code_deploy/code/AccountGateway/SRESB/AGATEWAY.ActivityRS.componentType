@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TrustAccountAction.wsdl" name="AGATEWAY.ActivityRS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/AccountAction/TRUSTAccountActivity#wsdl.interface(GetActivityHistoryServ)"/>
+    </service>
+    <reference ui:wsdlLocation="SiebelAccountAction.wsdl" name="AGATEWAY.ActivitySOAP">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.interface(RCRMAccoutActionData)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Module:      EAI.MSG.ELM.CM.289_PublishContactRequest.xsd
+    * Type:        XSD Schema
+    * Description: Schema used to publish contacts, from CRM to an internal EAI topic.
+    * Change History
+    * Version           Date        Author             Description Of Change
+    * 0.1               01/02/2012  Ramanjana         Initial version created for ELM contacts
+-->
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest"
+            xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:local="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            version="0.5">
+    <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+                schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+    <xsd:element name="ContactRequest" type="local:ContactRequest"/>
+    <xsd:complexType name="ContactRequest">
+        <xsd:sequence>
+            <xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+            <xsd:element name="Contact" type="local:Contact"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Contact">
+        <xsd:sequence>
+            <xsd:element name="ContactRowId" type="xsd:string"/>
+            <xsd:element name="UUID" type="xsd:string"/>
+            <xsd:element name="firstName" type="xsd:string"/>
+            <xsd:element name="lastName" type="xsd:string"/>
+            <xsd:element name="MM" type="xsd:string"/>
+            <xsd:element name="parentAccountId" type="xsd:string"/>
+            <xsd:element name="telephoneNumber" type="xsd:string"/>
+            <xsd:element name="emailAddress" type="xsd:string"/>
+            <xsd:element name="RCRMStatus" type="xsd:string"/>
+            <xsd:element name="ContactAccount" type="local:ContactAccount" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ContactAccount">
+        <xsd:sequence>
+            <xsd:element name="Id" type="xsd:string"/>
+            <xsd:element name="AccountId" type="xsd:string"/>
+            <xsd:element name="RCRMAccountNumber" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

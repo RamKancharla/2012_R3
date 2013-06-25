@@ -1,0 +1,44 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMTF_PropagateOrderStatus" revision="1.0" state="on">
+    <import location="UpdateOrderForTOM.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerUpdateOrderForTOM/"/>
+    <import location="CCRMTF_PropagateOrderStatus.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" importType="wsdl"/>
+    <service name="anchorToCCRMTF_PropagateOrderStatus" ui:wsdlLocation="CCRMTF_PropagateOrderStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus#wsdl.interface(CCRMTF_PropagateOrderStatusCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus#wsdl.interface(CCRMTF_PropagateOrderStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus#wsdl.endpoint(CCRMTF_PropagateOrderStatus/CCRMTF_PropagateOrderStatus)"/>
+    </service>
+    <component name="CCRMTF_PropagateOrderStatus">
+        <implementation.bpel src="CCRMTF_PropagateOrderStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="SequenceReleaser" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="UpdateOrderForTOM" ui:wsdlLocation="UpdateOrderForTOM.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerUpdateOrderForTOM/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="UpdateOrderForTOM_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>anchorToCCRMTF_PropagateOrderStatus</source.uri>
+        <target.uri>CCRMTF_PropagateOrderStatus/anchorToCCRMTF_PropagateOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMTF_PropagateOrderStatus/UpdateOrderForTOM</source.uri>
+        <target.uri>UpdateOrderForTOM</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMTF_PropagateOrderStatus/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

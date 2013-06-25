@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*************************************************************************
+* Module:	EAI.MSG.QM.313_QuoteRequestResponseMessage
+*				
+* Type:		XML Schema Document
+* Description:	Quote Request Response Message
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		18/09/2011	RIJOY PURAYIL        		Initial Version
+*
+*
+*************************************************************************/-->
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessage"
+elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.1"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:xsdLocal="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessage"
+xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">
+   <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+               schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+   <xsd:element name="GenerateQuote">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element name="eaiHeader" minOccurs="0" type="cmt:EaiHeader" nillable="true"/>
+            <xsd:element minOccurs="0" maxOccurs="1" name="quote" type="xsdLocal:Quote"/>
+         </xsd:sequence>
+      </xsd:complexType>
+   </xsd:element>
+   <xsd:complexType name="Quote">
+      <xsd:sequence>
+         <xsd:element minOccurs="0" maxOccurs="1" name="BillingAccountNumber" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="DePermissionDate" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ExternalSource" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="InterfaceName" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="LineItems" type="xsdLocal:ArrayOfLineItem"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="LocationAccountNumber" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="OpportunityId" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="PermissionDate" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ProjectContactId" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ProjectContactEmail" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ProjectContactFirstName" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ProjectContactRowId" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ProjectContactLastName" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ProjectContactPhone" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ProjectContactTitle" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="RequesterContactId" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="RequesterEmail" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="RequesterExternalFlag" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="RequesterFirstName" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="RequesterRowId" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="RequesterLastName" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="RequesterPhone" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="RequesterTitle" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="TransactionId" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="WinLossReason" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="DummyField1" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="DummyField2" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="DummyField3" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ArrayOfLineItem">
+      <xsd:sequence>
+         <xsd:element minOccurs="0" maxOccurs="unbounded" name="LineItem" nillable="true" type="xsdLocal:LineItem"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="LineItem">
+      <xsd:sequence>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ESOAction" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="AssetIntegrationId" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ApplyDate" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="Attributes" type="xsdLocal:ArrayOfAttribute"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="BillingAccountNumber" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ContactCJR" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ContactEmailAddress" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ContactFirstName" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ContactId" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ContactLanguage" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ContactLastName" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ContactPhone" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ContactRowId" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ContactTitle" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="FreeTrialFlag" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="LineNumber" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="LineNumber2" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="LocationAccountNumber" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="Operation" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="ProductReference" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="QuantityRequested" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="DummyField1" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="DummyField2" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="DummyField3" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ArrayOfAttribute">
+      <xsd:sequence>
+         <xsd:element minOccurs="0" maxOccurs="unbounded" name="Attribute" nillable="true" type="xsdLocal:Attribute"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="Attribute">
+      <xsd:sequence>
+         <xsd:element minOccurs="0" maxOccurs="1" name="Name" type="xsd:string"/>
+         <xsd:element minOccurs="0" maxOccurs="1" name="Value" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="GenerateQuoteResponse">
+      <xsd:complexType>
+         <xsd:sequence>
+            <xsd:element name="ResponseHeader" type="xsdLocal:BasicResponse"/>
+         </xsd:sequence>
+      </xsd:complexType>
+   </xsd:element>
+   <xsd:complexType name="BasicResponse">
+      <xsd:sequence>
+         <xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+         <xsd:element name="basicResponse" type="cmt:BasicResponse"/>
+      </xsd:sequence>
+   </xsd:complexType>
+</xsd:schema>

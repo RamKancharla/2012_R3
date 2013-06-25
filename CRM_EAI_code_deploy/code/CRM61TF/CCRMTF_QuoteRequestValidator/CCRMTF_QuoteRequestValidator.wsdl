@@ -1,0 +1,42 @@
+<definitions
+     name="CCRMTF_QuoteRequestValidator"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF" schemaLocation="CCRMTF_QuoteRequestValidator.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul" schemaLocation="EAI.MSG.CCRM.TF.151_VettingRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul" schemaLocation="EAI.MSG.CCRM.TF.159_VetRequestSubmissionStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMTF_QuoteRequestValidatorRequestMessage">
+        <part name="validateQuoteRequest" element="ns1:vettingRequest"/>
+    </message>
+    <message name="CCRMTF_QuoteRequestValidatorResponseMessage">
+        <part name="validateQuoteResponse" element="ns1:quoteSubmissionStatus"/>
+    </message>
+    <portType name="CCRMTF_QuoteRequestValidator">
+        <operation name="validateQuote">
+            <input message="client:CCRMTF_QuoteRequestValidatorRequestMessage"/>
+            <output message="client:CCRMTF_QuoteRequestValidatorResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMTF_QuoteRequestValidator">
+        <plnk:role name="CCRMTF_QuoteRequestValidatorProvider">
+            <plnk:portType name="client:CCRMTF_QuoteRequestValidator"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.CS.ACM.234_AccountContactStatus.xsd
+* Type:				XML Schema Document
+* Description:  	        Siebel Account Contact Status Schema 
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		18/05/08	anvv sharma			Initial Version
+*  0.02         22/05/08	Surya Gannavarapu		Renamed the MessageId to RequestStatus
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:xsdLocal="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish" 
+xmlns:gcap-NAT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes" 
+xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" 
+xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" 
+xmlns:gcap-NUT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes"
+xmlns:gcap-cut="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.003_CommonAccountTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.009_NillableAccountTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.016_NillableUserTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.002_CommonUserTypes.xsd" />
+	<xsd:element name="CSAccountContactStatus" type="xsdLocal:_CSAccountContactStatus"/>
+	<xsd:complexType name="_CSAccountContactStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+			<xsd:element name="logicalCountry" type="gcap-cat:CountryCode"/>
+			<xsd:element name="messageHeader" type="gcap-cmt:CompassMessageHeader"/>
+			<xsd:element name="messageStatus" type="gcap-cat:Response"/>
+			<xsd:element name="accountRequestStatus" type="gcap-cat:RequestStatus"/>
+			<xsd:element name="accountRowId" type="gcap-NAT:AccountId"/>
+			<xsd:element name="account" type="xsdLocal:_CSSubscriberData"/>
+			<xsd:element name="installationAddress" type="xsdLocal:_CSInstallationAddress"/>
+			<xsd:element name="billingAddress" type="xsdLocal:_CSBillingAddress"/>
+			<xsd:element name="contact" type="xsdLocal:_CSContact" maxOccurs="20"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="_CSSubscriberData">
+		<xsd:sequence>
+			<xsd:element name="subscriberNumber" type="gcap-cat:SubscriberNumber"/>
+			<xsd:element name="subscriberRequestStatus" type="gcap-cat:RequestStatus"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSInstallationAddress">
+		<xsd:sequence>
+		    <xsd:element name="subAccountNumber" type="gcap-NAT:SubAccountNumber"/>
+		    <xsd:element name="InstallAddressRequestStatus" type="gcap-cat:RequestStatus"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSBillingAddress">
+		<xsd:sequence>
+			<xsd:element name="subAccountNumber" type="gcap-NAT:SubAccountNumber"/>
+			<xsd:element name="BillingAddressRequestStatus" type="gcap-cat:RequestStatus"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSContact">
+		<xsd:sequence>
+		    <xsd:element name="ContactRowId" type="gcap-cut:RowId"/>
+		    <xsd:element name="ContactPersonId" type="gcap-cut:PersonUId"/>
+		    <xsd:element name="ContactType" type="gcap-cut:ContactSubType"/>
+		    <xsd:element name="ContactRequestStatus" type="gcap-cat:RequestStatus"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

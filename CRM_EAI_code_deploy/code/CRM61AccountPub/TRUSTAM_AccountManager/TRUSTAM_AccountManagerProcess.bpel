@@ -1,0 +1,205 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+* Module:      TRUSTAM_AccountManager.bpel
+* Description: Asynchronous BPEL Process that propagates the message to CCRMAM_PropagateTRUSTAccount and also invokes the Checker process
+*              to know the status of the current account id.
+* Change History
+* Version      Date         Author                  Description Of Change 
+   1.0        06/03/09      Sharma                  IntialVersion
+   1.1        14/08/09      Sreeja                  Modified TransAcountManagerToPropagateAccount.xsl for PBI- 167, Mapped the fields, CustomerJourney, IsPrimaryAccount and TCID.
+   1.2        23/03/10      Swathi                  Modified TransAcountManagerToPropagateAccount.xsl for PBI-483 mapped the fields RCRMNOMCustGroup     
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TRUSTAM_AccountManagerProcess" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager/correlationset" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.siebel.com/xml/RCRM%20Account%20Publish" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="TRUSTAM_AccountManager" partnerLinkType="client:TRUSTAM_AccountManager" myRole="TRUSTAM_AccountManagerProvider" partnerRole="TRUSTAM_AccountManagerRequester"/>
+        <partnerLink name="SequenceChecker" partnerRole="SequenceCheckerProvider" partnerLinkType="ns3:SequenceChecker"/>
+        <partnerLink myRole="CCRMAM_PropagateTRUSTAccountRequester" name="CCRMAM_PropagateTRUSTAccount" partnerRole="CCRMAM_PropagateTRUSTAccountProvider" partnerLinkType="ns5:CCRMAM_PropagateTRUSTAccount"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="TrustPropagateAccount_IV" messageType="client:TRUSTAM_AccountManagerRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="INSTANCE_ID" type="xsd:string"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvSequenceChecker_IV" messageType="ns3:SequenceCheckerRequestMessage"/>
+        <variable name="InvSequenceChecker_OV" messageType="ns3:SequenceCheckerResponseMessage"/>
+        <variable name="RcvReleaseStatus_IV" messageType="client:ReleaseSequenceMessage"/>
+        <variable name="InvPropagateTRUSTAccount_IV" messageType="ns5:CCRMAM_PropagateTRUSTAccountRequestMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="TrustCorrelationSet" properties="ns7:TrustCorrProp"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleRemoteFault" language="java" version="1.3">
+                <![CDATA[org.w3c.dom.Node sfdcIdNode = ((oracle.xml.parser.v2.XMLElement)                                       
+                        getVariableData("TrustPropagateAccount_IV","payload","/ns2:publishTrustAccounts/ns2:SFDCId"));   
+String sfdcId = sfdcIdNode == null ? "" : sfdcIdNode.getFirstChild().getNodeValue();              
+setCompositeInstanceTitle("ID : " + sfdcId+" ;Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="ns2:SequenceCheckerError" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCutomTitleSequenceError" language="java" version="1.3">
+                <![CDATA[org.w3c.dom.Node sfdcIdNode = ((oracle.xml.parser.v2.XMLElement)                                        
+                        getVariableData("TrustPropagateAccount_IV","payload","/ns2:publishTrustAccounts/ns2:SFDCId"));    
+String sfdcId = sfdcIdNode == null ? "" : sfdcIdNode.getFirstChild().getNodeValue();               
+setCompositeInstanceTitle("ID : " + sfdcId+" ;Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCutomTitleGenericError" language="java" version="1.3">
+                <![CDATA[org.w3c.dom.Node sfdcIdNode = ((oracle.xml.parser.v2.XMLElement)                                        
+                        getVariableData("TrustPropagateAccount_IV","payload","/ns2:publishTrustAccounts/ns2:SFDCId"));    
+String sfdcId = sfdcIdNode == null ? "" : sfdcIdNode.getFirstChild().getNodeValue();               
+setCompositeInstanceTitle("ID : " + sfdcId+" ;Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TRUSTAM_AccountManager.wsdl) -->
+        <receive name="receiveInput" partnerLink="TRUSTAM_AccountManager" portType="client:TRUSTAM_AccountManager" operation="initiate" variable="TrustPropagateAccount_IV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="INSTANCE_ID"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="TrustPropagateAccount_IV" part="payload" query="/ns2:publishTrustAccounts/ns2:eaiHeader/ns2:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="&quot;EAI&quot;"/>
+                <to variable="TrustPropagateAccount_IV" part="payload" query="/ns2:publishTrustAccounts/ns2:eaiHeader/ns2:applicationId"/>
+            </copy>
+            <copy>
+                <from variable="INSTANCE_ID"/>
+                <to variable="TrustPropagateAccount_IV" part="payload" query="/ns2:publishTrustAccounts/ns2:eaiHeader/ns2:transactionId"/>
+            </copy>
+            <copy>
+                <from variable="INSTANCE_ID"/>
+                <to variable="TrustPropagateAccount_IV" part="payload" query="/ns2:publishTrustAccounts/ns2:eaiHeader/ns2:messageId"/>
+            </copy>
+            <copy>
+                <from expression="&quot;EAI;&quot;"/>
+                <to variable="TrustPropagateAccount_IV" part="payload" query="/ns2:publishTrustAccounts/ns2:eaiHeader/ns2:messageHistory"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCurrentDateTime()"/>
+                <to variable="TrustPropagateAccount_IV" part="payload" query="/ns2:publishTrustAccounts/ns2:eaiHeader/ns2:timeStamp"/>
+            </copy>
+            <copy>
+                <from variable="INSTANCE_ID"/>
+                <to variable="TrustPropagateAccount_IV" part="payload" query="/ns2:publishTrustAccounts/ns2:eaiHeader/ns2:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="TrustPropagateAccount_IV" part="payload" query="/ns2:publishTrustAccounts/ns2:eaiHeader/ns2:timeToLive"/>
+            </copy>
+            <copy>
+                <from expression="&quot;A&quot;"/>
+                <to variable="TrustPropagateAccount_IV" part="payload" query="/ns2:publishTrustAccounts/ns2:eaiHeader/ns2:payloadVersion"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+            <![CDATA[org.w3c.dom.Node sfdcIdNode = ((oracle.xml.parser.v2.XMLElement)                                      
+                        getVariableData("TrustPropagateAccount_IV","payload","/ns2:publishTrustAccounts/ns2:SFDCId"));  
+String sfdcId = sfdcIdNode == null ? "" : sfdcIdNode.getFirstChild().getNodeValue();             
+setCompositeInstanceTitle("ID : " + sfdcId);]]>
+        </bpelx:exec>
+        <scope name="ScopeSequenceChecker">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrSequencerCheckerFault" faultName="ns2:SequenceCheckerError" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqSequencChecker">
+                <assign name="TransAccountManagerToSequenceCheckerIV">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransAccountManagerToSequenceCheckerIV.xsl',bpws:getVariableData('TrustPropagateAccount_IV','payload'))"/>
+                        <to variable="InvSequenceChecker_IV" part="payload"/>
+                    </copy>
+                </assign>
+                <invoke name="InvSequenceChecker" partnerLink="SequenceChecker" portType="ns3:SequenceChecker" operation="checkSequence" inputVariable="InvSequenceChecker_IV" outputVariable="InvSequenceChecker_OV">
+                    <correlations>
+                        <correlation initiate="yes" set="TrustCorrelationSet" pattern="out"/>
+                    </correlations>
+                </invoke>
+            </sequence>
+        </scope>
+        <switch name="SwitchReleaseSequence">
+            <case condition="bpws:getVariableData('InvSequenceChecker_OV','payload','/ns1:basicResponse/ns1:basicResponse/ns4:responseMessage')='CONTINUE'">
+                <bpelx:annotation>
+                    <bpelx:pattern>Continue</bpelx:pattern>
+                </bpelx:annotation>
+                <empty name="NothingToProceed"/>
+            </case>
+            <case condition="bpws:getVariableData('InvSequenceChecker_OV','payload','/ns1:basicResponse/ns1:basicResponse/ns4:responseMessage')='WAIT'">
+                <bpelx:annotation>
+                    <bpelx:pattern>Wait</bpelx:pattern>
+                </bpelx:annotation>
+                <scope name="ScopeReleaseSeq">
+                    <receive name="RcvReleaseSeq" createInstance="no" partnerLink="TRUSTAM_AccountManager" portType="client:TRUSTAM_AccountManager" operation="updateReleaseStatus" variable="RcvReleaseStatus_IV">
+                        <correlations>
+                            <correlation initiate="no" set="TrustCorrelationSet"/>
+                        </correlations>
+                    </receive>
+                </scope>
+            </case>
+            <otherwise>
+                <throw name="ThrSequenceChecker" faultName="ns2:SequenceCheckerError" faultVariable="runtimeFault"/>
+            </otherwise>
+        </switch>
+        <scope name="ScopeTRUSTPropagate">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrTRUSTPropagate" faultName="ns2:TRUSTPropagateError" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqTRUSTPropagate">
+                <assign name="TransAcountManagerToPropagateAccount">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransAcountManagerToPropagateAccount.xsl',bpws:getVariableData('TrustPropagateAccount_IV','payload'))"/>
+                        <to variable="InvPropagateTRUSTAccount_IV" part="accountStatus"/>
+                    </copy>
+                </assign>
+                <invoke name="InvCCRMAM_PropagateTRUSTAccount" partnerLink="CCRMAM_PropagateTRUSTAccount" portType="ns5:CCRMAM_PropagateTRUSTAccount" operation="sendAccount" inputVariable="InvPropagateTRUSTAccount_IV"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

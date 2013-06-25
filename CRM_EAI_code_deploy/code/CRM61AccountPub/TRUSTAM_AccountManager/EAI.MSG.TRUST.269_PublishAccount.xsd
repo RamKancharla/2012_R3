@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:	EAI.MSG.TRUST.269_PublishAccount.xsd
+*				
+* Type:		XML Schema Document
+* Description:	EAI Internal Schema for SFDC
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		22/10/2007	G PATCHIPULUSU			Initial Version
+*  0.02         13/08/2009      Sreeja Prasad			Added CustomerJourney,TCID & ISPrimaryAccount
+*  0.03         06/10/2009      Sreeja Prasad			AccountClass
+*  0.04         22/03/2010      Sreeja Prasad			Added NomCustomerGroup for PBI-0483
+*  0.05			10/04/2010		Kedar Shenoy			Added KNOwned for 9134
+*************************************************************************/-->
+<xsd:schema xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.04">
+<xsd:complexType name="publishTrustAccountEaiHeader">
+  <xsd:sequence>
+	<xsd:element name="applicationId" type="xsdLocal:string10"/>
+	<xsd:element name="transactionId" type="xsdLocal:string30"/>
+	<xsd:element name="messageId" type="xsdLocal:string30"/>
+	<xsd:element name="messageHistory" type="xsdLocal:string100"/>
+	<xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+	<xsd:element name="timeStamp" type="xsd:dateTime"/>
+	<xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+	<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+	<xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+  </xsd:sequence>
+</xsd:complexType>
+   <xsd:complexType name="AccountRequest">
+   <xsd:sequence>
+     <xsd:element name="eaiHeader" minOccurs="0" type="xsdLocal:publishTrustAccountEaiHeader" nillable="true"/>
+     <xsd:element name="AccountCAID" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountTeamData" minOccurs="0" maxOccurs="unbounded" type="xsdLocal:TrustAccountTeam" nillable="true"/>
+     <xsd:element name="AgreementNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AgreementStatus" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AgreementType" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="BusinessChannel" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="RelationshipModel" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="CreditCheckDate" minOccurs="0" type="xsd:date" nillable="true"/>
+     <xsd:element name="CreditCheckStatus" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="CurrencyCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="CustomerType" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Description" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Fax" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalAccountName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalCity" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalCountry" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalPostal" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalState" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalStreet" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="MCCCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Name" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="OwnerEmail" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Phone" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Region" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Segment" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SFDCId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingCity" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingCountry" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingPostal" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingState" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingStreet" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelAccountStatus" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="TDOCheckDate" minOccurs="0" type="xsd:date" nillable="true"/>
+     <xsd:element name="TDOStatus" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Website" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="CustomerJourney" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="TCID" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ISPrimaryAccount" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="KNOwned" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+     <xsd:element name="AccountClass" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="NomCustomerGroup" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:element name="publishTrustAccounts" type="xsdLocal:AccountRequest"/>
+
+   <xsd:complexType name="TrustAccountTeam">
+    <xsd:sequence>
+     <xsd:element name="AccountTeamFirstName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountTeamLastName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountTeamJobTitle" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountTeamEmail" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountTeamPhoneNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountTeamDivision" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccounTeamPositionName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ActionCode" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+ <xsd:simpleType name="string30">
+ <xsd:restriction base="xsd:string">
+  <xsd:maxLength value="30" /> 
+  </xsd:restriction>
+  </xsd:simpleType>
+ <xsd:simpleType name="string50">
+ <xsd:restriction base="xsd:string">
+  <xsd:maxLength value="50" /> 
+  </xsd:restriction>
+  </xsd:simpleType>
+ <xsd:simpleType name="string10">
+ <xsd:restriction base="xsd:string">
+  <xsd:maxLength value="10" /> 
+  </xsd:restriction>
+  </xsd:simpleType>
+ <xsd:simpleType name="string40">
+ <xsd:restriction base="xsd:string">
+  <xsd:maxLength value="40" /> 
+  </xsd:restriction>
+  </xsd:simpleType>
+ <xsd:simpleType name="string3">
+ <xsd:restriction base="xsd:string">
+  <xsd:maxLength value="3" /> 
+  </xsd:restriction>
+  </xsd:simpleType>
+
+ <xsd:simpleType name="string100">
+ <xsd:restriction base="xsd:string">
+  <xsd:maxLength value="100" /> 
+  </xsd:restriction>
+  </xsd:simpleType>
+
+
+</xsd:schema>

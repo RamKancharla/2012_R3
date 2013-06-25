@@ -1,0 +1,28 @@
+<wsdl:definitions
+     name="enqueueAccountStatus"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/CRM61AccountPub/SFDCAM_Invoker/enqueueAccountStatus"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/CRM61AccountPub/SFDCAM_Invoker/enqueueAccountStatus"
+     xmlns:imp1="http://www.siebel.com/xml/RCRM%20Account%20Publish"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+    >
+  <plt:partnerLinkType name="Enqueue_plt" >
+    <plt:role name="Enqueue_role" >
+      <plt:portType name="tns:Enqueue_ptt" />
+    </plt:role>
+  </plt:partnerLinkType>
+    <wsdl:types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.siebel.com/xml/RCRM%20Account%20Publish" schemaLocation="EAI.MSG.CCRM.172_PublishAccountRequestResponse.xsd" />
+      </schema>
+    </wsdl:types>
+    <wsdl:message name="Enqueue_msg">
+        <wsdl:part name="body" element="imp1:AccountContactPublish"/>
+    </wsdl:message>
+    <wsdl:portType name="Enqueue_ptt">
+        <wsdl:operation name="Enqueue">
+            <wsdl:input message="tns:Enqueue_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

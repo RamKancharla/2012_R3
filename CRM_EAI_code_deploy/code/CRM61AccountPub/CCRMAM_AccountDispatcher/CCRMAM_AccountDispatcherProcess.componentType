@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMAM_AccountDispatcher.wsdl" name="CCRMAM_AccountDispatcher">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher#wsdl.interface(CCRMAM_AccountDispatcher)"/>
+    </service>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CPFGAM_AccountManager/CPFGAM_AccountManager.wsdl" name="CPFGAM_AccountManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager#wsdl.interface(CPFGAM_AccountManager)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager#wsdl.interface(CPFGAM_AccountManagerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/SFDCAM_AccountEventManager/SFDCAM_AccountEventManager.wsdl" name="SFDCAM_AccountEventManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_AccountEventManager#wsdl.interface(SFDCAM_AccountEventManager)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_AccountEventManager#wsdl.interface(SFDCAM_AccountEventManagerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="CSACM_AccountContactManagerRef.wsdl" name="CSACM_AccountContactManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_AccountContactManager#wsdl.interface(CSACM_AccountContactManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/TOMAM_AccountManager/TOMAM_AccountManager.wsdl" name="TOMAM_AccountManager">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager#wsdl.interface(TOMAM_AccountManager)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager#wsdl.interface(TOMAM_AccountManagerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/SAPAM_EventManager/SAPAM_EventManager.wsdl" name="SAPAM_EventManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager#wsdl.interface(SAPAM_EventManager)"
+                        callbackInterface="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager#wsdl.interface(SAPAM_EventManagerCallback)"/>
+    </reference>
+    <reference name="CCRMACM_PropagateAccountContactPublishStatus"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMACM_PropagateAccountContactPublishStatus/CCRMACM_PropagateAccountContactPublishStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatus)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatusCallback)"/>
+    </reference>
+    <reference name="ELMAM_EventManager"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ELMAM_EventManager/ELMAM_EventManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/ELMAM_EventManager#wsdl.interface(ELMAM_EventManager)"
+                        callbackInterface="http://xmlns.oracle.com/ELMAM_EventManager#wsdl.interface(ELMAM_EventManagerCallback)"/>
+    </reference>
+</componentType>

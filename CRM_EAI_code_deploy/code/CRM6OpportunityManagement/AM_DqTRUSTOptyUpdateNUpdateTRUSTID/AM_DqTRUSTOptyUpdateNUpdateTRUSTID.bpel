@@ -1,0 +1,242 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Mar 19 15:35:47 GMT+05:30 2009
+  Author:  as37583
+  Purpose: Empty BPEL Process
+  
+  *********************Change History*********************************
+    Version    Date            Name     Comments
+  * 1.2        10/09/09      Surya      Filtered the Siebel Oppty Id updates to TRUST , filtering only in case of Success and mapping not exist in EAI
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="AM_DqTRUSTOptyUpdateNUpdateTRUSTID" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/AM_DqTRUSTOptyUpdateNUpdateTRUSTID" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="urn:enterprise.soap.sforce.com" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/AM_DqTRUSTOptyUpdateNUpdateTRUSTID" xmlns:ns6="http://soap.sforce.com/schemas/class/OpportunityManagement" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTOptyUpdate/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound" xmlns:ns2="http://www.siebel.com/xml/RCRM%20Account%20Publish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink myRole="Dequeue_role" name="DequeueTRUSTOptyUpdate" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink myRole="CCRMOP_SubmitOpportunityRequester" name="CCRMOP_SubmitOpportunity" partnerRole="CCRMOP_SubmitOpportunityProvider" partnerLinkType="ns4:CCRMOP_SubmitOpportunity"/>
+    <partnerLink name="SalesForce" partnerRole="Soap_Role" partnerLinkType="ns5:Soap_PL"/>
+    <partnerLink name="TRUSTOpptyUpdate" partnerRole="OpportunityManagementPortType_Role" partnerLinkType="ns6:OpportunityManagementPortType_PL"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <variable name="rcvDequeueTRUSTOptyUpdate_IV" messageType="ns1:RCRMOpportunityPublish_msg"/>
+    <variable name="SIEBELOptyID" type="xsd:string"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="SubmitOpportunity_IV" messageType="ns4:TRUSTOpportunityUpdatemsg"/>
+    <variable name="TRUSTOpptyUpdate_IV" messageType="ns6:updateSiebelIdRequest"/>
+    <variable name="TRUSTOpptyUpdate_OV" messageType="ns6:updateSiebelIdResponse"/>
+    <variable name="SFDCLogin_IV" messageType="ns5:loginRequest"/>
+    <variable name="SFDCLogin_OV" messageType="ns5:loginResponse"/>
+    <variable name="headerRequest" messageType="ns6:Header"/>
+    <variable name="SFDCOpptyId" type="xsd:string"/>
+  </variables>
+  <faultHandlers>
+    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+        <![CDATA[String SFDCOptyID = null;     
+org.w3c.dom.Node SFDCOptyIDNode = ((oracle.xml.parser.v2.XMLElement)     
+                        getVariableData("rcvDequeueTRUSTOptyUpdate_IV","RCRMOpportunityPublish","/ns3:RCRMOpportunityPublish/ns3:Opportunity/ns3:RCRMSFDCOpptyId"));     
+SFDCOptyID = SFDCOptyIDNode == null ? "" : SFDCOptyIDNode.getFirstChild().getNodeValue();     
+setCompositeInstanceTitle("SFDCOptyID : " + SFDCOptyID+";Fault");]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:PopulateXrefFault" faultVariable="runtimeFault">
+      <sequence name="SeqPopulateXrefFault">
+        <assign name="TransPopulateXrefFault">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransTRUSTOptyUpdToSubmitOpty.xsl',bpws:getVariableData('rcvDequeueTRUSTOptyUpdate_IV','RCRMOpportunityPublish'))"/>
+            <to variable="SubmitOpportunity_IV" part="TRUSTOpportunityUpdate"/>
+          </copy>
+        </assign>
+        <invoke name="InvSubmitOpportunity" partnerLink="CCRMOP_SubmitOpportunity" portType="ns4:CCRMOP_SubmitOpportunity" operation="updateOpportunity" inputVariable="SubmitOpportunity_IV"/>
+        <bpelx:exec name="PopulateXrefCustomFault" language="java" version="1.5">
+          <![CDATA[String SFDCOptyID = null;      
+org.w3c.dom.Node SFDCOptyIDNode = ((oracle.xml.parser.v2.XMLElement)      
+                        getVariableData("rcvDequeueTRUSTOptyUpdate_IV","RCRMOpportunityPublish","/ns3:RCRMOpportunityPublish/ns3:Opportunity/ns3:RCRMSFDCOpptyId"));      
+SFDCOptyID = SFDCOptyIDNode == null ? "" : SFDCOptyIDNode.getFirstChild().getNodeValue();      
+setCompositeInstanceTitle("SFDCOptyID : " + SFDCOptyID);]]>
+        </bpelx:exec>
+      </sequence>
+    </catch>
+    <catchAll>
+      <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+        <![CDATA[String SFDCOptyID = null;    
+org.w3c.dom.Node SFDCOptyIDNode = ((oracle.xml.parser.v2.XMLElement)    
+                        getVariableData("rcvDequeueTRUSTOptyUpdate_IV","RCRMOpportunityPublish","/ns3:RCRMOpportunityPublish/ns3:Opportunity/ns3:RCRMSFDCOpptyId"));    
+SFDCOptyID = SFDCOptyIDNode == null ? "" : SFDCOptyIDNode.getFirstChild().getNodeValue();    
+setCompositeInstanceTitle("SFDCOptyID : " + SFDCOptyID+";Fault");]]>
+      </bpelx:exec>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <receive name="rcvDequeueTRUSTOptyUpdate" partnerLink="DequeueTRUSTOptyUpdate" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="rcvDequeueTRUSTOptyUpdate_IV" createInstance="yes"/>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+      <![CDATA[String SFDCOptyID = null; 
+try{ 
+org.w3c.dom.Node SFDCOptyIDNode = ((oracle.xml.parser.v2.XMLElement)      
+                        getVariableData("rcvDequeueTRUSTOptyUpdate_IV","RCRMOpportunityPublish","/ns3:RCRMOpportunityPublish/ns3:Opportunity/ns3:RCRMSFDCOpptyId"));      
+SFDCOptyID = SFDCOptyIDNode == null ? "" : SFDCOptyIDNode.getFirstChild().getNodeValue();      
+setCompositeInstanceTitle("SFDCOptyID : " + SFDCOptyID); 
+} 
+ 
+catch(Exception e){ 
+setCompositeInstanceTitle("No Id Supplied"); 
+}]]>
+    </bpelx:exec>
+    <assign name="AsgInitVariables">
+      <copy>
+        <from variable="rcvDequeueTRUSTOptyUpdate_IV" part="RCRMOpportunityPublish" query="/ns3:RCRMOpportunityPublish/ns3:Opportunity/ns3:RCRMSFDCOpptyId"/>
+        <to variable="SFDCOpptyId"/>
+      </copy>
+      <copy>
+        <from expression="xref:lookupXRef(&quot;oramds:/apps/EAIMetaData/Xref/CRM_SFDC_OPPTYXREF.xref&quot;,&quot;SFDCOPPTYID&quot;,bpws:getVariableData('SFDCOpptyId'),&quot;SIEBELOPPTYID&quot;,false())"/>
+        <to variable="SIEBELOptyID"/>
+      </copy>
+    </assign>
+    <scope name="ScpPopulateintoXrefTable">
+      <faultHandlers>
+        <catchAll>
+          <throw name="ThrPopulateXrefFault" faultName="bpelx:PopulateXrefFault" faultVariable="runtimeFault"/>
+        </catchAll>
+      </faultHandlers>
+      <switch name="PopulateIntoXrefOnCreate">
+        <case condition="string-length(bpws:getVariableData('SIEBELOptyID')) >0 or bpws:getVariableData('rcvDequeueTRUSTOptyUpdate_IV','RCRMOpportunityPublish','/ns3:RCRMOpportunityPublish/ns3:ActionCode') = &quot;Error&quot;">
+          <bpelx:annotation>
+            <bpelx:pattern>Do not Populate for existing SIEBELOptyID</bpelx:pattern>
+          </bpelx:annotation>
+          <empty name="DoNothing"/>
+        </case>
+        <otherwise>
+          <assign name="TransPopulateSiebelOptyIDintoXref">
+            <bpelx:annotation>
+              <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+              <from expression="ora:processXSLT('TransPopulateSiebelOptyIDintoXref.xsl',bpws:getVariableData('rcvDequeueTRUSTOptyUpdate_IV','RCRMOpportunityPublish'))"/>
+              <to variable="rcvDequeueTRUSTOptyUpdate_IV" part="RCRMOpportunityPublish"/>
+            </copy>
+          </assign>
+        </otherwise>
+      </switch>
+    </scope>
+    <flow name="PropagateTRUSTOptyNTRUST">
+      <sequence name="SeqSubmitOpportunity">
+        <scope name="ScopeSubmitOpportunity">
+          <faultHandlers>
+            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+              <throw name="ThrRemoteFault" faultName="bpelx:remoteFault" faultVariable="runtimeFault"/>
+            </catch>
+          </faultHandlers>
+          <sequence name="SeqSubmitOpportunity">
+            <assign name="TransTRUSTOptyUpdToSubmitOpty">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransTRUSTOptyUpdToSubmitOpty.xsl',bpws:getVariableData('rcvDequeueTRUSTOptyUpdate_IV','RCRMOpportunityPublish'))"/>
+                <to variable="SubmitOpportunity_IV" part="TRUSTOpportunityUpdate"/>
+              </copy>
+            </assign>
+            <invoke name="InvCCRMOP_SubmitOpportunity" partnerLink="CCRMOP_SubmitOpportunity" portType="ns4:CCRMOP_SubmitOpportunity" operation="updateOpportunity" inputVariable="SubmitOpportunity_IV"/>
+          </sequence>
+        </scope>
+      </sequence>
+      <sequence name="SeqSFDCLogin">
+        <switch name="CheckforActionCodeFrmCRM">
+          <case condition="(bpws:getVariableData('rcvDequeueTRUSTOptyUpdate_IV','RCRMOpportunityPublish','/ns3:RCRMOpportunityPublish/ns3:ActionCode') = &quot;Error&quot;) or (string-length(bpws:getVariableData('SIEBELOptyID')) > 0)">
+            <empty name="DontSendTRUSTIOpptyId"/>
+          </case>
+          <otherwise>
+            <sequence name="SeqUpdateSiebelOpptyIdToTRUST">
+              <scope name="ScopeSFDCLogin">
+                <faultHandlers>
+                  <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrSFDCRemoteFault" faultName="bpelx:remoteFault" faultVariable="runtimeFault"/>
+                  </catch>
+                </faultHandlers>
+                <sequence name="SeqSFDCLogin">
+                  <assign name="AsgCredentials">
+                    <copy>
+                      <from expression="ora:getPreference(&quot;loginId&quot;)"/>
+                      <to variable="SFDCLogin_IV" part="parameters" query="/ns5:login/ns5:username"/>
+                    </copy>
+                    <copy>
+                      <from expression="ora:getPreference(&quot;password&quot;)"/>
+                      <to variable="SFDCLogin_IV" part="parameters" query="/ns5:login/ns5:password"/>
+                    </copy>
+                  </assign>
+                  <invoke name="InvSalesForce" partnerLink="SalesForce" portType="ns5:Soap" operation="login" inputVariable="SFDCLogin_IV" outputVariable="SFDCLogin_OV"/>
+                  <assign name="readSession">
+                    <copy>
+                      <from variable="SFDCLogin_OV" part="parameters" query="/ns5:loginResponse/ns5:result/ns5:sessionId"/>
+                      <to variable="headerRequest" part="SessionHeader" query="/ns6:SessionHeader/ns6:sessionId"/>
+                    </copy>
+                  </assign>
+                  <assign name="TransCreateOptyToSFDC">
+                    <bpelx:annotation>
+                      <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                      <from expression="ora:processXSLT('TransCreateOptyToSFDC.xsl',bpws:getVariableData('rcvDequeueTRUSTOptyUpdate_IV','RCRMOpportunityPublish'))"/>
+                      <to variable="TRUSTOpptyUpdate_IV" part="parameters"/>
+                    </copy>
+                  </assign>
+                  <invoke name="InvTRUSTOpptyUpdate" partnerLink="TRUSTOpptyUpdate" portType="ns6:OpportunityManagementPortType" operation="updateSiebelId" inputVariable="TRUSTOpptyUpdate_IV" outputVariable="TRUSTOpptyUpdate_OV" bpelx:inputHeaderVariable="headerRequest"/>
+                </sequence>
+              </scope>
+              <switch name="FilterOnStatusCode">
+                <case condition="bpws:getVariableData('TRUSTOpptyUpdate_OV','parameters','/ns6:updateSiebelIdResponse/ns6:result/ns6:StatusCode')='Error'">
+                  <bpelx:exec name="AsgCustomTitleOnErrorResponse" language="java" version="1.5">
+                    <![CDATA[String SFDCOptyID = null;      
+org.w3c.dom.Node SFDCOptyIDNode = ((oracle.xml.parser.v2.XMLElement)      
+                        getVariableData("rcvDequeueTRUSTOptyUpdate_IV","RCRMOpportunityPublish","/ns3:RCRMOpportunityPublish/ns3:Opportunity/ns3:RCRMSFDCOpptyId"));      
+SFDCOptyID = SFDCOptyIDNode == null ? "" : SFDCOptyIDNode.getFirstChild().getNodeValue();      
+setCompositeInstanceTitle("SFDCOptyID : " + SFDCOptyID+";SF-OP-Fault");]]>
+                  </bpelx:exec>
+                </case>
+                <otherwise>
+                  <bpelx:exec name="AddSiebelIdToTitle" language="java" version="1.5">
+                    <![CDATA[String SFDCOptyID = null;  
+String CRMOpptyId = null; 
+org.w3c.dom.Node SFDCOptyIDNode = ((oracle.xml.parser.v2.XMLElement)          
+                        getVariableData("rcvDequeueTRUSTOptyUpdate_IV","RCRMOpportunityPublish","/ns3:RCRMOpportunityPublish/ns3:Opportunity/ns3:RCRMSFDCOpptyId"));          
+SFDCOptyID = SFDCOptyIDNode == null ? "" : SFDCOptyIDNode.getFirstChild().getNodeValue();     
+    
+org.w3c.dom.Node CRMOpptyIdNode = ((oracle.xml.parser.v2.XMLElement)          
+                        getVariableData("rcvDequeueTRUSTOptyUpdate_IV","RCRMOpportunityPublish","/ns3:RCRMOpportunityPublish/ns3:Opportunity/ns3:Id"));    
+                        
+CRMOpptyId = CRMOpptyIdNode == null ? "" : CRMOpptyIdNode.getFirstChild().getNodeValue();    
+setCompositeInstanceTitle(SFDCOptyID+"; CRMId: "+CRMOpptyId);]]>
+                  </bpelx:exec>
+                </otherwise>
+              </switch>
+            </sequence>
+          </otherwise>
+        </switch>
+      </sequence>
+    </flow>
+  </sequence>
+</process>

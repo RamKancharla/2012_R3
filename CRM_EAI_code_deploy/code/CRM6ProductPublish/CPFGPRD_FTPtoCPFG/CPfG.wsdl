@@ -1,0 +1,21 @@
+<?binding.jca CPfG_ftp.jca?>
+<definitions name="CPfG" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/ftp/CPfG/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/ftp/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/ftp/CPfG/" xmlns:imp1="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ProductManagementServices" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="Put_plt">
+        <plt:role name="Put_role">
+            <plt:portType name="tns:Put_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ProductManagementServices" schemaLocation="EAI.MSG.EXT.130_ProductReferenceDataUpdate.xsd"/>
+        </schema>
+    </types>
+    <message name="productReferenceDataUpdate_msg">
+        <part name="productReferenceDataUpdate" element="imp1:productReferenceDataUpdate"/>
+    </message>
+    <portType name="Put_ptt">
+        <operation name="Put">
+            <input message="tns:productReferenceDataUpdate_msg"/>
+        </operation>
+    </portType>
+</definitions>

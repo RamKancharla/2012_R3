@@ -1,0 +1,51 @@
+<definitions
+     name="TF_ManageQuote"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TechFul"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote"
+                 schemaLocation="TF_ManageQuote.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/TechFul" schemaLocation="EAI.MSG.TF.152_VettingRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul" schemaLocation="EAI.MSG.TOM.TF.153_VettingRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TF_ManageQuoteRequestMessage">
+        <part name="manageQuoteRequest" element="ns1:vettingRequest"/>
+    </message>
+    <message name="TF_ManageQuoteResponseMessage">
+        <part name="payload" element="client:TF_ManageQuoteProcessResponse"/>
+    </message>
+    <message name="QuoteRequestMessageType">
+        <part name="QuoteRequestMessagePart" element="ns3:vettingRequest"/>
+    </message>
+    <portType name="TF_ManageQuote">
+        <operation name="manageQuote">
+            <input message="client:TF_ManageQuoteRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="TF_ManageQuoteCallback">
+        <operation name="onResult">
+            <input message="client:TF_ManageQuoteResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TF_ManageQuote">
+        <plnk:role name="TF_ManageQuoteProvider">
+            <plnk:portType name="client:TF_ManageQuote"/>
+        </plnk:role>
+        <plnk:role name="TF_ManageQuoteRequester">
+            <plnk:portType name="client:TF_ManageQuoteCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

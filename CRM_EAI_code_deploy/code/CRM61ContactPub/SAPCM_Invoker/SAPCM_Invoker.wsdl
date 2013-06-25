@@ -1,0 +1,44 @@
+<definitions
+     name="SAPCM_Invoker"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_Invoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_Invoker"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_Invoker">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_Invoker"
+                 schemaLocation="SAPCM_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_Invoker">
+             <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactRequest" schemaLocation="EAI.MSG.CM.287_CreateContactRequest.xsd"/>
+            </xsd:schema>
+    </types>
+    <message name="SAPCM_InvokerResponseMessage">
+        <part name="payload" element="client:SAPCM_InvokerProcessResponse"/>
+    </message>
+    <message name="SAPCM_InvokerRequestMessage">
+        <part name="payload" element="client:SAPCM_InvokerProcessRequest"/>
+    </message>
+    <portType name="SAPCM_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:SAPCM_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="SAPCM_Invoker">
+        <operation name="initiate">
+            <input message="client:SAPCM_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SAPCM_Invoker">
+        <plnk:role name="SAPCM_InvokerProvider">
+            <plnk:portType name="client:SAPCM_Invoker"/>
+        </plnk:role>
+        <plnk:role name="SAPCM_InvokerRequester">
+            <plnk:portType name="client:SAPCM_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,51 @@
+<definitions
+     name="ATHOMOrderManager"
+     targetNamespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <!--schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://schemas.oracle.com/bpel/extension">
+            <import namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager"
+                 schemaLocation="ATHOMOrderManager.xsd"/>
+        </schema-->
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager"
+             xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+                 schemaLocation="EAI.MSG.ATH.OM.301_OrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager"
+             xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+                 schemaLocation="EAI.MSG.ATH.OM.302_OrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHOMOrdReqMsg">
+        <part name="ATHOMOrdReqMsgPart" element="ns1:ATHOrder"/>
+    </message>
+    <message name="ATHOMOrdReqGroupMsg">
+        <part name="ATHOMOrdReqGroupMsgPart" element="ns1:ATHOrdRequest"/>
+    </message>
+    <portType name="ATHOMOrderManager">
+        <operation name="initiate">
+            <input message="client:ATHOMOrdReqMsg"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHOMOrderManager">
+        <plnk:role name="ATHOMOrderManagerProvider">
+            <plnk:portType name="client:ATHOMOrderManager"/>
+        </plnk:role>
+        <!--plnk:role name="ATHOMOrderManagerRequester">
+            <plnk:portType name="client:ATHOMOrderManagerCallback"/>
+        </plnk:role-->
+    </plnk:partnerLinkType>
+</definitions>

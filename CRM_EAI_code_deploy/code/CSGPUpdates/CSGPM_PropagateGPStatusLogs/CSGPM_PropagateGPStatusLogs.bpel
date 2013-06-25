@@ -1,0 +1,232 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Jul 04 10:44:26 BST 2008
+  Author:  subramanya.raju
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CSGPM_PropagateGPStatusLogs" targetNamespace="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog" xmlns:ns7="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/GPM/PriceManagement" xmlns:client="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs" xmlns:ns6="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:ns3="http://xmlns.oracle.com/ias/pcbpel/NotificationService" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/ftp/FTPAdpGetLogs/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/ftp/jhg/" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CSGPM_PropagateGPStatusLogs" myRole="CSGPM_PropagateGPStatusLogsProvider" partnerRole="CSGPM_PropagateGPStatusLogsRequester"/>
+        <partnerLink name="NotificationService" partnerRole="NotificationServiceProvider" partnerLinkType="ns3:NotificationServiceLink"/>
+        <partnerLink name="GlobalPriceUpdateLogFTP" partnerRole="FTPPLLogRequest_Role" partnerLinkType="ns4:FTPPLLogRequest_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="PropagateGPStatusIV" messageType="client:CSGPM_PropagateGPStatusLogsRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CSGPM_PropagateGPStatusLogsResponseMessage"/>
+        <variable name="E-Mail" type="xsd:string"/>
+        <variable name="GlobalPriceUpdateLogIV" messageType="ns4:PLLogFTPRequest"/>
+        <variable name="GlobalPriceUpdateLogOV" messageType="ns4:PLLogFTPStatus"/>
+        <variable name="FTPReqIV" messageType="client:FTPReqMsgType"/>
+        <variable name="fileLocation" type="xsd:string"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CSGPM_PropagateGPStatusLogs.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:CSGPM_PropagateGPStatusLogs" operation="MailGPUpdateLog" variable="PropagateGPStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AssignMaiId">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/GPUpdateReference.dvm','Reference','E-MailID','Value','')"/>
+                <to variable="E-Mail"/>
+            </copy>
+            <copy>
+                <from expression="'EAI'"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:eaiHeader/ns5:applicationId"/>
+            </copy>
+            <copy>
+                <from expression="'EAI'"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:eaiHeader/ns5:transactionId"/>
+            </copy>
+            <copy>
+                <from expression="'EAI'"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:eaiHeader/ns5:messageId"/>
+            </copy>
+            <copy>
+                <from expression="';EAI;'"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:eaiHeader/ns5:messageHistory"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:eaiHeader/ns5:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:eaiHeader/ns5:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCurrentDateTime()"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:eaiHeader/ns5:timeToLive"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:eaiHeader/ns5:timeToLive"/>
+            </copy>
+            <copy>
+                <from expression="'A'"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:eaiHeader/ns5:payloadVersion"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/GPUpdateReference.dvm','Reference','sourceIPAddress','Value','')"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:sourceIPAddress"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/GPUpdateReference.dvm','Reference','sourceUserName','Value','')"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:sourceUserName"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/GPUpdateReference.dvm','Reference','sourcePassword','Value','')"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:sourcePassword"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/GPUpdateReference.dvm','Reference','sourceLocalDirectory','Value','')"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:sourceLocalDirectory"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/GPUpdateReference.dvm','Reference','EAIlocalDirectory','Value','')"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:EAIlocalDirectory"/>
+            </copy>
+            <copy>
+                <from expression="concat(dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/GPUpdateReference.dvm','Reference','CSEnvironmentIndicator','Value',''),substring(bpws:getVariableData('PropagateGPStatusIV','payload','/ns1:EBCDICMessage/ns1:message'),7,2),dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/GPUpdateReference.dvm','Reference','logFileName','Value',''))"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:logFileName"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:CSInstance"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="FTPReqIV" part="FTPReq" query="/FTPReq/ns5:CSEnvironment"/>
+            </copy>
+            <copy>
+                <from expression="concat('file://',bpws:getVariableData('FTPReqIV','FTPReq','/FTPReq/ns5:EAIlocalDirectory'),'/',bpws:getVariableData('FTPReqIV','FTPReq','/FTPReq/ns5:logFileName'))"/>
+                <to variable="fileLocation"/>
+            </copy>
+        </assign>
+        <assign name="TransFTPReqToGPUpdateLogIV">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransFTPReqToGPUpdateLogIV.xsl',bpws:getVariableData('FTPReqIV','FTPReq'))"/>
+                <to variable="GlobalPriceUpdateLogIV" part="parameter"/>
+            </copy>
+        </assign>
+        <invoke name="InvGlobalPriceUpdateLogFTP" portType="ns4:FTPPLLogRequest" inputVariable="GlobalPriceUpdateLogIV" outputVariable="GlobalPriceUpdateLogOV" partnerLink="GlobalPriceUpdateLogFTP" operation="FTPLogRequest"/>
+        <scope name="NotifyGlobalPriceUpdateLog">
+            <bpelx:annotation>
+                <bpelx:pattern patternName="bpelx:email"/>
+            </bpelx:annotation>
+            <variables>
+                <variable name="varNotificationReq" messageType="ns3:EmailNotificationRequest"/>
+                <variable name="varNotificationResponse" messageType="ns3:ArrayOfResponse"/>
+                <variable name="NotificationServiceFaultVariable" messageType="ns3:NotificationServiceErrorMessage"/>
+            </variables>
+            <sequence name="Sequence_1">
+                <assign name="EmailParamsAssign">
+                    <copy>
+                        <from expression="string('Default')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:FromAccountName"/>
+                    </copy>
+                    <copy>
+                        <from expression="string('')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Bcc"/>
+                    </copy>
+                    <copy>
+                        <from expression="string('')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Cc"/>
+                    </copy>
+                    <copy>
+                        <from expression="string('')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:ReplyToAddress"/>
+                    </copy>
+                    <copy>
+                        <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/GPUpdateReference.dvm','Reference','subject','Value','')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Subject"/>
+                    </copy>
+                    <copy>
+                        <from expression="bpws:getVariableData('E-Mail')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:To"/>
+                    </copy>
+                    <copy>
+                        <from>
+                            <Content xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService">
+                                <MimeType xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService">multipart/mixed</MimeType>
+                                <ContentBody xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService">
+                                    <MultiPart xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService">
+                                        <BodyPart xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService">
+                                            <MimeType xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/>
+                                            <ContentBody xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/>
+                                            <BodyPartName xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/>
+                                        </BodyPart>
+                                        <BodyPart xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService">
+                                            <MimeType xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/>
+                                            <ContentBody xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/>
+                                            <BodyPartName xmlns="http://xmlns.oracle.com/ias/pcbpel/NotificationService"/>
+                                        </BodyPart>
+                                    </MultiPart>
+                                </ContentBody>
+                            </Content>
+                        </from>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Content"/>
+                    </copy>
+                    <copy>
+                        <from expression="string('text/html; charset=UTF-8')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[1]/ns3:MimeType"/>
+                    </copy>
+                    <copy>
+                        <from expression="string('NotificationAttachment1.html')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[1]/ns3:BodyPartName"/>
+                    </copy>
+                    <copy>
+                        <from expression="string('')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[1]/ns3:ContentBody"/>
+                    </copy>
+                    <copy>
+                        <from expression="string('multipart/mixed')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[2]/ns3:MimeType"/>
+                    </copy>
+                    <copy>
+                        <from expression="bpws:getVariableData('FTPReqIV','FTPReq','/FTPReq/ns5:logFileName')"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[2]/ns3:BodyPartName"/>
+                    </copy>
+                    <copy>
+                        <from expression="ora:readFile(bpws:getVariableData('fileLocation'))"/>
+                        <to variable="varNotificationReq" part="EmailPayload" query="/EmailPayload/ns3:Content/ns3:ContentBody/ns3:MultiPart/ns3:BodyPart[2]/ns3:ContentBody"/>
+                    </copy>
+                </assign>
+                <invoke name="InvokeNotificationService" partnerLink="NotificationService" portType="ns3:NotificationService" operation="sendEmailNotification" inputVariable="varNotificationReq" outputVariable="varNotificationResponse"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

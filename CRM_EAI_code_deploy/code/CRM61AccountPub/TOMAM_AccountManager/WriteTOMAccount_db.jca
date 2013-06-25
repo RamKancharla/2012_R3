@@ -1,0 +1,15 @@
+<adapter-config name="WriteTOMAccount" adapter="Database Adapter" wsdlLocation="WriteTOMAccount.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="inkaban01_DB" adapterRef=""/>
+  <endpoint-interaction portType="WriteTOMAccount_ptt" operation="insert">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="WriteTOMAccount.InterfaceBuffer"/>
+      <property name="DmlType" value="insert"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="WriteTOMAccount-or-mappings.xml"/>
+      <property name="GetActiveUnitOfWork" value="false"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

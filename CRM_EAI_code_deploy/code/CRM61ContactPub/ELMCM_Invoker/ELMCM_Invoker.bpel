@@ -1,0 +1,311 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Mar 01 15:18:53 IST 2012
+  Author:  Ramanjana.Reddy
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ELMCM_Invoker"
+         targetNamespace="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_Invoker/ELMCM_Invoker"
+         xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:client="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_Invoker/ELMCM_Invoker"
+         xmlns:ora="http://schemas.oracle.com/xpath/extension"
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/ELMCM_Invoker/PollOnELMCM_POLLING_VW"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/top/PollOnELMCM_POLLING_VW"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:mhdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.mediator.service.common.functions.MediatorExtnFunction"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:med="http://schemas.oracle.com/mediator/xpath"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:socket="http://www.oracle.com/XSL/Transform/java/oracle.tip.adapter.socket.ProtocolTranslator"
+         xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/ELM/ContactRequest"
+         xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+         xmlns:ns5="http://contact.service.eai.trls.thomsonreuters.com/"
+         xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/CRM61ContactPub/ELMCM_Invoker/UpdateBuffer"
+         xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateBuffer"
+         xmlns:ns8="http://xmlns.oracle.com/InterfaceManager"
+         xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig">
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    --> 
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink myRole="PollOnELMCM_POLLING_VW_role"
+                     name="PollOnELMCM_POLLING_VW"
+                     partnerLinkType="ns1:PollOnELMCM_POLLING_VW_plt"/>
+        <partnerLink name="ELMCM" partnerRole="ContactAccount"
+                     partnerLinkType="ns5:ELMCM"/>
+        <partnerLink name="UpdateBuffer" partnerRole="UpdateBuffer_role"
+                     partnerLinkType="ns6:UpdateBuffer_plt"/>
+        <partnerLink name="InterfaceManager"
+                     partnerRole="InterfaceManagerProvider"
+                     partnerLinkType="ns8:InterfaceManager"/>
+    </partnerLinks>
+
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable"
+                  messageType="ns1:ElmcmPollingVCollection_msg"/>
+
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable"
+                  messageType="ns1:ELMCM_EventManagerMessage"/>
+        <variable name="nProcessed" type="xsd:integer"/>
+        <variable name="nFailures" type="xsd:integer"/>
+        <variable name="errorMsg" type="xsd:string"/>
+        <variable name="nReceived" type="xsd:integer"/>
+        <variable name="State" type="xsd:string"/>
+        <variable name="nErrors" type="xsd:integer"/>
+        <variable name="varRawMessage" type="xsd:string"/>
+        <variable name="varInterfaceManager"
+                  messageType="ns8:InterfaceManagerRequestMessage"/>
+        <variable name="varInterfaceManagerOut"
+                  messageType="ns8:InterfaceManagerResponseMessage"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="SetFaultTtile" version="1.5" language="java">
+                <![CDATA[String ContactID = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","ElmcmPollingVCollection","/ns2:ElmcmPollingVCollection/ns2:ElmcmPollingV/ns2:referenceId")).getFirstChild().getNodeValue();            
+String Title=(ContactID!=null ? ("Contact ID: " +ContactID ) : ".;")+" Flt";                
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ELMCM_Invoker.wsdl) -->
+        <receive name="receiveInput" variable="inputVariable" createInstance="yes"
+                 partnerLink="PollOnELMCM_POLLING_VW"
+                 portType="ns1:PollOnELMCM_POLLING_VW_ptt" operation="receive"/>
+
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgVariables">
+            <copy>
+                <from expression="0"/>
+                <to variable="nProcessed"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nFailures"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="errorMsg"/>
+            </copy>
+            <copy>
+                <from expression="count(bpws:getVariableData('inputVariable','ElmcmPollingVCollection','/ns2:ElmcmPollingVCollection/ns2:ElmcmPollingV'))"/>
+                <to variable="nReceived"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="State"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="nErrors"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="SetTitle" version="1.5" language="java">
+            <![CDATA[setCompositeInstanceTitle("Processing " + getVariableData("nReceived") + " messages");]]>
+        </bpelx:exec>
+        <while name="While"
+               condition="bpws:getVariableData('nProcessed')&lt;bpws:getVariableData('nReceived')">
+            <sequence name="Seq_ELM">
+                <scope name="Scope_ELM">
+                    <bpelx:annotation>
+                        <bpelx:general>
+                            <bpelx:property name="userLabel">Scope_ELM</bpelx:property>
+                        </bpelx:general>
+                    </bpelx:annotation>
+                    <variables>
+                        <variable name="ELMCMVariable"
+                                  messageType="ns5:onData"/>
+                        <variable name="ELMCMVariableOut"
+                                  messageType="ns5:onDataResponse"/>
+                    </variables>
+                    <faultHandlers>
+                        <catchAll>
+                            <assign name="AsnFault">
+                                <copy>
+                                    <from expression="bpws:getVariableData('nFailures') +1"/>
+                                    <to variable="nFailures"/>
+                                </copy>
+                                <copy>
+                                    <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                    <to variable="errorMsg"/>
+                                </copy>
+                                <copy>
+                                    <from expression="'R'"/>
+                                    <to variable="State"/>
+                                </copy>
+                            </assign>
+                        </catchAll>
+                    </faultHandlers>
+                    <sequence name="Seq_TransToELM">
+                        <assign name="AsnRawPayload">
+                            <copy>
+                                <from variable="inputVariable"
+                                      part="ElmcmPollingVCollection"
+                                      query="/ns2:ElmcmPollingVCollection/ns2:ElmcmPollingV[bpws:getVariableData('nProcessed') +1]/ns2:payload"/>
+                                <to variable="varRawMessage"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:parseEscapedXML(bpws:getVariableData('varRawMessage'))"/>
+                                <to variable="outputVariable" part="payload"
+                                    query="/ns3:ContactRequest"/>
+                            </copy>
+                        </assign>
+                        <assign name="TransToELM">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('xsl/TransToELM.xsl',bpws:getVariableData('outputVariable','payload'))"/>
+                                <to variable="ELMCMVariable" part="parameters"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvELM" inputVariable="ELMCMVariable"
+                                outputVariable="ELMCMVariableOut"
+                                partnerLink="ELMCM"
+                                portType="ns5:ContactAccount"
+                                operation="onData"/>
+                        <assign name="AsnSetSuccVar">
+                            <copy>
+                                <from expression="'C'"/>
+                                <to variable="State"/>
+                            </copy>
+                            <copy>
+                                <from expression="'SUCCESS'"/>
+                                <to variable="errorMsg"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </scope>
+                <scope name="Scope_UpdateBuffer">
+                    <bpelx:annotation>
+                        <bpelx:general>
+                            <bpelx:property name="userLabel">Scope_UpdateBuffer</bpelx:property>
+                        </bpelx:general>
+                    </bpelx:annotation>
+                    <variables>
+                        <variable name="varUpdateBuffer"
+                                  messageType="ns6:InterfaceBufferCollection_msg"/>
+                    </variables>
+                    <sequence name="Seq_UpdateBuffer">
+                        <assign name="AsnUpdateBufferVariables">
+                            <copy>
+                                <from variable="inputVariable"
+                                      part="ElmcmPollingVCollection"
+                                      query="/ns2:ElmcmPollingVCollection/ns2:ElmcmPollingV[bpws:getVariableData('nProcessed') +1]/ns2:id"/>
+                                <to variable="varUpdateBuffer"
+                                    part="InterfaceBufferCollection"
+                                    query="/ns7:InterfaceBufferCollection/ns7:InterfaceBuffer/ns7:id"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCompositeInstanceId()"/>
+                                <to variable="varUpdateBuffer"
+                                    part="InterfaceBufferCollection"
+                                    query="/ns7:InterfaceBufferCollection/ns7:InterfaceBuffer/ns7:updatedBy"/>
+                            </copy>
+                            <copy>
+                                <from variable="State"/>
+                                <to variable="varUpdateBuffer"
+                                    part="InterfaceBufferCollection"
+                                    query="/ns7:InterfaceBufferCollection/ns7:InterfaceBuffer/ns7:state"/>
+                            </copy>
+                            <copy>
+                                <from variable="errorMsg"/>
+                                <to variable="varUpdateBuffer"
+                                    part="InterfaceBufferCollection"
+                                    query="/ns7:InterfaceBufferCollection/ns7:InterfaceBuffer/ns7:errorMessage"/>
+                            </copy>
+                        </assign>
+                        <invoke name="UpdateBuffer"
+                                inputVariable="varUpdateBuffer"
+                                partnerLink="UpdateBuffer"
+                                portType="ns6:UpdateBuffer_ptt"
+                                operation="update"/>
+                    </sequence>
+                </scope>
+                <assign name="IncrProcessedCount">
+                    <copy>
+                        <from expression="bpws:getVariableData('nProcessed')+1"/>
+                        <to variable="nProcessed"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <bpelx:exec name="SetTitle" version="1.5" language="java">
+            <![CDATA[setCompositeInstanceTitle("Completed R:P:E:F=" + getVariableData("nReceived") + ":" + getVariableData("nProcessed") + ":" + getVariableData("nErrors") + ":" + getVariableData("nFailures"));]]>
+        </bpelx:exec>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('nProcessed')=bpws:getVariableData('nFailures')">
+                <bpelx:annotation>
+                    <bpelx:general>
+                        <bpelx:property name="userLabel">HealthCheck</bpelx:property>
+                    </bpelx:general>
+                </bpelx:annotation>
+                <sequence name="SeqIM">
+                    <assign name="AsnHealthChkData">
+                        <copy>
+                            <from expression="'doHealthCheck'"/>
+                            <to variable="varInterfaceManager" part="payload"
+                                query="/ns8:InterfaceManagerProcessRequest/ns8:operation"/>
+                        </copy>
+                        <copy>
+                            <from expression="'ELMCM'"/>
+                            <to variable="varInterfaceManager" part="payload"
+                                query="/ns8:InterfaceManagerProcessRequest/ns8:interfaceConfig/ns9:id"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvInterfaceManager"
+                            inputVariable="varInterfaceManager"
+                            outputVariable="varInterfaceManagerOut"
+                            partnerLink="InterfaceManager"
+                            portType="ns8:InterfaceManager"
+                            operation="process"/>
+                    <terminate name="Terminate_1"/>
+                </sequence>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

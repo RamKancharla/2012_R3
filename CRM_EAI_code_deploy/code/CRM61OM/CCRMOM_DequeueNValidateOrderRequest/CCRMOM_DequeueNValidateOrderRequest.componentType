@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="DequeueOrderRequest.wsdl" name="DequeueOrderRequest">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOrderRequest/#wsdl.interface(Dequeue_ptt)"/>
+    </service>
+    <service name="AnchorToDeque"
+             ui:wsdlLocation="CCRMOM_DequeueNValidateOrderRequest.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMOM_DequeueNValidateOrderRequest#wsdl.interface(CCRMOM_DequeueNValidateOrderRequest)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_OrderRequestValidatorStub/CCRMOM_OrderRequestValidatorStub.wsdl" name="CCRMOM_OrderRequestValidatorStub">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_OrderRequestValidatorStub)"/>
+    </reference>
+    <reference ui:wsdlLocation="UpdateCSValidationMessage.wsdl" name="UpdateEAIValidationMessage">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerUpdateCSValidationMessage/#wsdl.interface(Enqueue_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_RouteToDispatcher/CCRMOM_RouteToDispatcher.wsdl" name="CCRMOM_RouteToDispatcher">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.interface(CCRMOM_RouteToDispatcher)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.interface(CCRMOM_RouteToDispatcherCallback)"/>
+    </reference>
+</componentType>

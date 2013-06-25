@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.EXT.CSZ.251_PopulateSolutionRequest
+* Type:       	XSD Schema
+* Description: The schema used for Common Message attributes
+*
+* Change History
+* Version     Date      Author             Description Of Change
+*
+*  0.1        21/07/08  Raju Vegesna	   Initial Version
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/PopulateSolutionRequest" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:csz="http://www.reuters.com/ns/2007/09/01/GCAP/CommonServiceRequestTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/PopulateSolutionRequest" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonServiceRequestTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.018_CommonServiceRequestTypes.xsd"/>
+<xsd:element name="CSZPopulateSolutionRequest" type="xsdLocal:CSZPopulateSolutionRequest"/>
+<xsd:complexType name="CSZPopulateSolutionRequest">
+	<xsd:sequence>
+		<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+		<xsd:element name="SRDetails" type="xsdLocal:SRDetails"/>
+	</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="SRDetails">
+	<xsd:sequence>
+		<xsd:element name="SRNumber" type="csz:SRNumber"/>
+                <xsd:element name="Abstract" type="csz:Abstract"/>
+		<xsd:element name="SRType" type="csz:SRType"/>
+		<xsd:element name="SRSubType" type="csz:SRSubType"/>
+		<xsd:element name="Description" type="csz:Description"/>
+		<xsd:element name="Status" type="csz:Status"/>
+		<xsd:element name="Resolution" type="csz:Resolution"/>
+		
+	</xsd:sequence>
+</xsd:complexType>
+</xsd:schema>

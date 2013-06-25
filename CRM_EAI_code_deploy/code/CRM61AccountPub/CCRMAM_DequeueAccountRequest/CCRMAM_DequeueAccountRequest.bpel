@@ -1,0 +1,111 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Oct 08 18:01:32 GMT+05:30 2008
+  Author:  cr33960
+  Purpose: Empty BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         16/02/10   Sandeep R          added mappings for CustomerReferenceNumber and LegalEntityFlag for Sprint 10; PBI 413,422 
+    * 0.2         23/03/10   Veni               added mapping for RCRMNOMCustGroup in TransAccountRequest.xsl as part of PBI 483.
+    * 0.3         25/03/10   Sreeja             Added the mapping for LegacyParentId for PBI-0493 & also mapped RCRMOAID.
+	* 0.4		  28/06/10	 Albin I			Defect 37842(Removal of JMS Topic Usage) 	
+       * 0.5           30/08/10    Lavanya       Removed Account Spitter ESB and replaced that with CCRMAM_Account_Dispatcher BPEL Component.
+-->
+<process name="CCRMAM_DequeueAccountRequest" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/CCRMAM_DequeueAccountRequest" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.siebel.com/xml/RCRM%20Account%20Publish" xmlns:ns7="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountSpliter" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/CCRMAM_DequeueAccountRequest" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueAccountRequest/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueueAccountResponse/" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/jms/EnqueueAccountRequest/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountDispatcher" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink name="DequeueAccountRequest" partnerLinkType="ns1:Dequeue_plt" myRole="Dequeue_role"/>
+    <partnerLink name="CCRMAM_AccountDispatcher" partnerRole="CCRMAM_AccountDispatcherProvider" partnerLinkType="ns8:CCRMAM_AccountDispatcher"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <variable name="RcvAcoountRequest_IV" messageType="ns1:AccountContactPublish_msg"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="InvAcountRequest_IV" messageType="ns8:CCRMAM_AccountDispatcherRequestMessage"/>
+  </variables>
+  <faultHandlers>
+    <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+        <![CDATA[String AccountID = ((oracle.xml.parser.v2.XMLElement)                             
+                        getVariableData("RcvAcoountRequest_IV", "AccountContactPublish", "/ns4:AccountContactPublish/ns4:RcrmAccount-Thin/ns4:Id")).getFirstChild().getNodeValue();    
+      
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID+ ";Fault") : ".;");                                        
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+        <![CDATA[String AccountID = ((oracle.xml.parser.v2.XMLElement)                             
+                        getVariableData("RcvAcoountRequest_IV", "AccountContactPublish", "/ns4:AccountContactPublish/ns4:RcrmAccount-Thin/ns4:Id")).getFirstChild().getNodeValue();    
+     
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID+ ";Fault") : ".;");                                       
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+        <![CDATA[String AccountID = ((oracle.xml.parser.v2.XMLElement)                             
+                        getVariableData("RcvAcoountRequest_IV", "AccountContactPublish", "/ns4:AccountContactPublish/ns4:RcrmAccount-Thin/ns4:Id")).getFirstChild().getNodeValue();    
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID+ ";Fault") : ".;");                                       
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catchAll>
+      <sequence name="SeqGenericError">
+        <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+          <![CDATA[String AccountID = ((oracle.xml.parser.v2.XMLElement)                             
+                        getVariableData("RcvAcoountRequest_IV", "AccountContactPublish", "/ns4:AccountContactPublish/ns4:RcrmAccount-Thin/ns4:Id")).getFirstChild().getNodeValue();    
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID+ ";Fault") : ".;");                                        
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+      </sequence>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <receive name="RcvAccountRequest" partnerLink="DequeueAccountRequest" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="RcvAcoountRequest_IV" createInstance="yes"/>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[String AccountID = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("RcvAcoountRequest_IV", "AccountContactPublish", "/ns4:AccountContactPublish/ns4:RcrmAccount-Thin/ns4:Id")).getFirstChild().getNodeValue();                                   
+String Title=(AccountID!=null ? ("AccountID: "+ AccountID) : ".;");                                          
+setCompositeInstanceTitle(Title);    
+  
+//catch(Exception e){    
+//setCompositeInstanceTitle("AccountID: ");    
+//}]]>
+    </bpelx:exec>
+    <sequence name="SeqSendReqToTarget">
+      <assign name="TransAccountRequestToAccountDispatcher">
+        <bpelx:annotation>
+          <bpelx:pattern>transformation</bpelx:pattern>
+        </bpelx:annotation>
+        <copy>
+          <from expression="ora:processXSLT('TransAccountRequest.xsl',bpws:getVariableData('RcvAcoountRequest_IV','AccountContactPublish'))"/>
+          <to variable="InvAcountRequest_IV" part="accountEvent"/>
+        </copy>
+      </assign>
+      <invoke name="InvAccountDispatcher" partnerLink="CCRMAM_AccountDispatcher" portType="ns8:CCRMAM_AccountDispatcher" operation="dispatchAccount" inputVariable="InvAcountRequest_IV"/>
+    </sequence>
+  </sequence>
+</process>

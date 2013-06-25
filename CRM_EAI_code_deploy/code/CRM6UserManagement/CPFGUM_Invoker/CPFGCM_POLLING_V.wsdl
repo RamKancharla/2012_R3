@@ -1,0 +1,24 @@
+<?binding.jca CPFGCM_POLLING_V_db.jca?>
+<definitions name="CPFGCM_POLLING_V" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/CPFGCM_POLLING_V/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/CPFGCM_POLLING_V/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/CPFGCMPOLLINGV">
+    <plt:partnerLinkType name="CPFGCM_POLLING_V_plt">
+        <plt:role name="CPFGCM_POLLING_V_role">
+            <plt:portType name="tns:CPFGCM_POLLING_V_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/CPFGCMPOLLINGV" schemaLocation="CPFGCMPOLLINGV_table.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/UserManagementServices" schemaLocation="EAI.MSG.EXT.226_StandalonePropagateUserRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CpfgcmPollingVCollection_msg">
+        <part name="CpfgcmPollingVCollection" element="top:CpfgcmPollingVCollection"/>
+    </message>
+    <portType name="CPFGCM_POLLING_V_ptt">
+        <operation name="receive">
+            <input message="tns:CpfgcmPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

@@ -1,0 +1,21 @@
+<?binding.jca QuoteStatusDeq_mq.jca?>
+<definitions name="QuoteStatusDeq" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerQuoteStatusDeq/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/mq/header" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/headerQuoteStatusDeq/" xmlns:imp1="http://www.siebel.com/xml/RCRMGenericQuoteInterface" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="Dequeue_plt">
+        <plt:role name="Dequeue_role">
+            <plt:portType name="tns:Dequeue_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.siebel.com/xml/RCRMGenericQuoteInterface" schemaLocation="ListOfGenQuoteInterface.xsd"/>
+        </schema>
+    </types>
+    <message name="ListOfGenQuoteInterface_msg">
+        <part name="ListOfGenQuoteInterface" element="imp1:ListOfGenQuoteInterface"/>
+    </message>
+    <portType name="Dequeue_ptt">
+        <operation name="Dequeue">
+            <input message="tns:ListOfGenQuoteInterface_msg"/>
+        </operation>
+    </portType>
+</definitions>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="OM_ManageOrderLineStatus.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8000/soa-infra/services/CRMASYNC/CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilment.wsdl" name="CSOM_COMPASSOrderFulfilment">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilment)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilmentCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8000/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus.wsdl" name="CCRMOM_ProxyPropagateOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatusCallback)"/>
+    </reference>
+    <reference name="OrderLineStatusDictionary141008_DecisionService_1"
+               ui:wsdlLocation="OrderLineStatusDictionary_DecisionServiceRef.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/OrderLineStatusDictionary141008/OrderLineStatusDictionary141008_DecisionService_1#wsdl.interface(IDecisionService)"/>
+    </reference>
+</componentType>

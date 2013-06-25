@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="InterfaceMessageManager" revision="1.0" mode="active" state="on" xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="InterfaceMessageManager.wsdl" namespace="http://xmlns.oracle.com/InterfaceMessageManager"/>
+    <import location="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID/"/>
+    <import location="INTERFACE_BUFFER.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/"/>
+    <service ui:wsdlLocation="InterfaceMessageManager.wsdl" name="InterfaceMessageManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceMessageManager#wsdl.interface(InterfaceMessageManager)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://xmlns.oracle.com/InterfaceMessageManager#wsdl.endpoint(InterfaceMessageManager/InterfaceMessageManager)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+    </service>
+    <component name="InterfaceMessageManagerProcess">
+        <implementation.bpel src="InterfaceMessageManagerProcess.bpel"/>
+    </component>
+    <reference ui:wsdlLocation="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID.wsdl" name="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID/#wsdl.interface(INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID_ptt)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID_db.jca">
+            <property name="jca.retry.interval" type="xs:string" many="false">60</property>
+        </binding.jca>
+        <property name="jca.retry.count" type="xs:int" many="false"
+                  override="may">4</property>
+        <property name="jca.retry.interval" type="xs:string" many="false">60</property>
+        <property name="jca.retry.backoff" type="xs:int" many="false"
+                  override="may">1</property>
+    </reference>
+    <reference ui:wsdlLocation="INTERFACE_BUFFER.wsdl" name="INTERFACE_BUFFER">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/#wsdl.interface(INTERFACE_BUFFER_ptt)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.jca config="INTERFACE_BUFFER_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>InterfaceMessageManager</source.uri>
+        <target.uri>InterfaceMessageManagerProcess/InterfaceMessageManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>InterfaceMessageManagerProcess/INTERFACE_BUFFER</source.uri>
+        <target.uri>INTERFACE_BUFFER</target.uri>
+    </wire>
+    <wire>
+        <source.uri>InterfaceMessageManagerProcess/INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID</source.uri>
+        <target.uri>INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID</target.uri>
+    </wire>
+</composite>

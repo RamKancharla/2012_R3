@@ -1,0 +1,56 @@
+<definitions
+     name="AsyncSequenceChecker"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker/correlationset"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker/correlationset"
+         location="AsyncSequenceChecker_Properties.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" schemaLocation="EAI.MSG.UTL.185_CheckSequenceRequest.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </schema>
+    </types>
+    <message name="AsyncSequenceCheckerResponseMessage">
+        <part name="payload" element="ns2:basicResponse"/>
+    </message>
+    <message name="AsyncSequenceCheckerRequestMessage">
+        <part name="payload" element="ns1:checkSequenceRequest"/>
+    </message>
+    <message name="ReleaseSequenceMessage">
+        <part name="releaseSequence" element="ns2:basicResponse"/>
+    </message>
+    <portType name="AsyncSequenceCheckerCallback">
+        <operation name="onResult">
+            <input message="client:AsyncSequenceCheckerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="AsyncSequenceChecker">
+        <operation name="initiate">
+            <input message="client:AsyncSequenceCheckerRequestMessage"/>
+        </operation>
+        <operation name="updateReleaseStatus">
+            <input message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="AsyncSequenceChecker">
+        <plnk:role name="AsyncSequenceCheckerProvider">
+            <plnk:portType name="client:AsyncSequenceChecker"/>
+        </plnk:role>
+        <plnk:role name="AsyncSequenceCheckerRequester">
+            <plnk:portType name="client:AsyncSequenceCheckerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:id" messageType="client:AsyncSequenceCheckerRequestMessage" part="payload"
+         query="/ns1:checkSequenceRequest/ns1:seqRequestDetails/ns1:correlationID" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+    <bpws:propertyAlias propertyName="pns1:id" messageType="client:ReleaseSequenceMessage" part="releaseSequence"
+         query="/ns2:basicResponse/ns2:eaiHeader/ns3:tracingId" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+</definitions>

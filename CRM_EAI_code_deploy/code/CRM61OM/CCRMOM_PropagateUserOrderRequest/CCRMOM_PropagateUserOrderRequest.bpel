@@ -1,0 +1,266 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Dec 01 12:14:57 GMT+05:30 2009
+  Author:  dk54958
+  Purpose: Asynchronous BPEL Process
+ Change History 
+ Version      Date         Author          Description Of Change 
+  1.0         20/09/07     Dasaradh        Initial Version 
+  1.1         25/11/09     Sreeja          Mapped generate-guid for the message id in the xsl TransAthenaOrderRequestToCRMOrderRequest.xsl 
+  1.2         16/12/09     Surya G         Removed the condition to stop the sequence in case of Error from CRM in the acknowledgment , however the title will be set to SiebelFault
+  1.3         16/12/09     Sreeja          Modified the custom title AsgCustomTitleOnSiebelError to transactionId instead of AthenaSubId.
+  1.4         21/12/09     Sreeja          Added the preferences to release the sequence.
+  1.4         22/02/10     Veni            Made tranformations for anonymous, anonymousFlagReason, phone for PBI-433 in TransAthenaOrderRequestToCRMOrderRequest.xsl file.
+  1.5         25/02/10     Mallesh         Modified tranformation TransAthenaOrderRequestToCRMOrderRequest.xsl for defect Defect No 34596 and 34718.
+  1.6         19/05/10     Swathi          Remove the if condition for the moveSubScriber in TransAthenaOrderRequestToCRMOrderRequest.xsl
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOM_PropagateUserOrderRequest" targetNamespace="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns7="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest/correlationset" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:client="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.siebel.com/xml/AthenaRequest" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/mq/headerAthenaOrderRequest/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/mq/header" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToPropagateUserOrderRequest" partnerLinkType="client:CCRMOM_PropagateUserOrderRequest" myRole="CCRMOM_PropagateUserOrderRequestProvider" partnerRole="CCRMOM_PropagateUserOrderRequestRequester"/>
+        <partnerLink name="AthenaOrderRequest" partnerRole="Enqueue_role" partnerLinkType="ns2:Enqueue_plt"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns3:SequenceReleaser"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvAthenaOrderRequestIV" messageType="ns2:AthenaRequest_msg"/>
+        <variable name="InvSequenceReleaserIV" messageType="ns3:SequenceReleaserRequestMessage"/>
+        <variable name="rcvOrderRequestIV" messageType="client:CCRMOM_PropagateUserOrderRequestRequestMessage"/>
+        <variable name="SequenceReleaserIV" messageType="ns3:SequenceReleaserRequestMessage"/>
+        <variable name="RcvAthenaOrderStatusIV" messageType="client:CRMUpdateStatusMsg"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet" properties="ns7:CorrProp"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String transId ="";              
+String title="";     
+try{   
+transId = ((oracle.xml.parser.v2.XMLElement)                           
+                        getVariableData("rcvOrderRequestIV","payload","/ns6:userOrderRequest/ns6:orderHeader/ns6:transactionId")).getFirstChild().getNodeValue();                           
+title=(transId!= null ? transId : ".; ");   
+setCompositeInstanceTitle(title);   
+    
+ }  
+ catch(Exception e)             
+{             
+setCompositeInstanceTitle("null");             
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFault" language="java" version="1.3">
+                <![CDATA[String transId ="";              
+String title="";     
+try{   
+transId = ((oracle.xml.parser.v2.XMLElement)                           
+                        getVariableData("rcvOrderRequestIV","payload","/ns6:userOrderRequest/ns6:orderHeader/ns6:transactionId")).getFirstChild().getNodeValue();                           
+title=(transId!= null ? transId : ".; ");   
+setCompositeInstanceTitle(title);   
+    
+ }  
+ catch(Exception e)             
+{             
+setCompositeInstanceTitle("null");             
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String transId ="";              
+String title="";     
+try{   
+transId = ((oracle.xml.parser.v2.XMLElement)                           
+                        getVariableData("rcvOrderRequestIV","payload","/ns6:userOrderRequest/ns6:orderHeader/ns6:transactionId")).getFirstChild().getNodeValue();                           
+title=(transId!= null ? transId : ".; ");   
+setCompositeInstanceTitle(title);   
+    
+ }  
+ catch(Exception e)             
+{             
+setCompositeInstanceTitle("null");             
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                <![CDATA[String transId ="";              
+String title="";     
+try{   
+transId = ((oracle.xml.parser.v2.XMLElement)                           
+                        getVariableData("rcvOrderRequestIV","payload","/ns6:userOrderRequest/ns6:orderHeader/ns6:transactionId")).getFirstChild().getNodeValue();                           
+title=(transId!= null ? transId : ".; ");   
+setCompositeInstanceTitle(title);   
+    
+ }  
+ catch(Exception e)             
+{             
+setCompositeInstanceTitle("null");             
+}]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMOM_PropagateUserOrderRequest.wsdl) -->
+        <receive name="rcvOrderRequest" partnerLink="anchorToPropagateUserOrderRequest" portType="client:CCRMOM_PropagateUserOrderRequest" operation="rcvOrderRequest" variable="rcvOrderRequestIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String transId ="";             
+String title="";    
+try{  
+transId = ((oracle.xml.parser.v2.XMLElement)                          
+                        getVariableData("rcvOrderRequestIV","payload","/ns6:userOrderRequest/ns6:orderHeader/ns6:transactionId")).getFirstChild().getNodeValue();                          
+title=(transId!= null ? transId : ".; ");  
+setCompositeInstanceTitle(title);  
+   
+ } 
+ catch(Exception e)            
+{            
+setCompositeInstanceTitle("null");            
+}]]>
+        </bpelx:exec>
+        <scope name="Scp_SubmitRequest">
+            <sequence name="SubmitRequest">
+                <switch name="Switch_1">
+                    <case condition="count(bpws:getVariableData('rcvOrderRequestIV','payload','/ns6:userOrderRequest/ns6:orderHeader/ns6:userOrderLineItem'))>0">
+                        <sequence name="SeqRequestToSeibel">
+                            <assign name="TransAthenaOrderRequestToCRMOrderRequest">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransAthenaOrderRequestToCRMOrderRequest.xsl',bpws:getVariableData('rcvOrderRequestIV','payload'))"/>
+                                    <to variable="InvAthenaOrderRequestIV" part="AthenaRequest"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvAthenaOrderRequest" partnerLink="AthenaOrderRequest" portType="ns2:Enqueue_ptt" operation="Enqueue" inputVariable="InvAthenaOrderRequestIV">
+                                <correlations>
+                                    <correlation initiate="yes" set="CorrelationSet" pattern="out"/>
+                                </correlations>
+                            </invoke>
+                            <receive name="RcvAthenaOrderStatus" partnerLink="anchorToPropagateUserOrderRequest" portType="client:CCRMOM_PropagateUserOrderRequest" operation="rcvOrderStatus" variable="RcvAthenaOrderStatusIV" createInstance="no">
+                                <correlations>
+                                    <correlation initiate="no" set="CorrelationSet"/>
+                                </correlations>
+                            </receive>
+                            <switch name="Switch2Success">
+                                <case condition="bpws:getVariableData('RcvAthenaOrderStatusIV','payload','/ns1:AthenaRequest/ns1:HeaderSubscriber/ns1:ActionCode')='Success'">
+                                    <empty name="DoNothing"/>
+                                </case>
+                                <otherwise>
+                                    <sequence name="SeqErrorFromCRM">
+                                        <bpelx:exec name="AsgCustomTitleOnSiebelError" language="java" version="1.5">
+                                            <![CDATA[String transId = ((oracle.xml.parser.v2.XMLElement)                          
+                        getVariableData("rcvOrderRequestIV","payload","/ns6:userOrderRequest/ns6:orderHeader/ns6:transactionId")).getFirstChild().getNodeValue();                             
+  setCompositeInstanceTitle(transId!= null ? transId+";SiebelFault"  : ";=");]]>
+                                        </bpelx:exec>
+                                        <empty name="SiebelErrorEmptyActivity"/>
+                                    </sequence>
+                                </otherwise>
+                            </switch>
+                            <sequence name="RelSequence">
+                                <switch name="Switch_2">
+                                    <case condition="ora:getPreference(&quot;releaseSequence&quot;)='Y'">
+                                        <scope name="ReleaseSequence">
+                                            <faultHandlers>
+                                                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                                    <empty name="SequenceReleaserRemoteFaultEmptyActivity"/>
+                                                </catch>
+                                            </faultHandlers>
+                                            <sequence name="SeqReleaseSequencer">
+                                                <assign name="AsgSequenceReleaserIV">
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:applicationId"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:applicationId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:transactionId"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:transactionId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:messageId"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:messageId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:messageHistory"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:messageHistory"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:tracingId"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:tracingId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:timeStamp"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:timeStamp"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:instanceId"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:instanceId"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:timeToLive"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:timeToLive"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:payloadVersion"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:payloadVersion"/>
+                                                    </copy>
+                                                    <copy>
+                                                        <from variable="rcvOrderRequestIV" part="payload" query="/ns6:userOrderRequest/ns6:eaiHeader/ns5:tracingId"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:correlationID"/>
+                                                    </copy>
+                                                </assign>
+                                                <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns3:SequenceReleaser" operation="releaseSequence" inputVariable="InvSequenceReleaserIV"/>
+                                            </sequence>
+                                        </scope>
+                                    </case>
+                                    <otherwise>
+                                        <empty name="DoNothing"/>
+                                    </otherwise>
+                                </switch>
+                            </sequence>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <sequence name="NoUserOrderLineItems">
+                            <empty name="NoUserOrderLineItems"/>
+                        </sequence>
+                    </otherwise>
+                </switch>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

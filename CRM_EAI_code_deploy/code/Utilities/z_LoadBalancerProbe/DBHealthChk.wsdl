@@ -1,0 +1,25 @@
+<?binding.jca DBHealthChk_db.jca?>
+<wsdl:definitions name="DBHealthChk" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/CRM63Stubs/Z_LoadBalancer_NodeHealthChk/DBHealthChk" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/CRM63Stubs/Z_LoadBalancer_NodeHealthChk/DBHealthChk" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/DBHealthChk">
+    <plt:partnerLinkType name="DBHealthChk_plt">
+        <plt:role name="DBHealthChk_role">
+            <plt:portType name="tns:DBHealthChk_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/DBHealthChk" schemaLocation="xsd/DBHealthChk_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="DBHealthChkSelect_inputParameters">
+        <wsdl:part name="DBHealthChkSelect_inputParameters" element="top:DBHealthChkSelectInputParameters"/>
+    </wsdl:message>
+    <wsdl:message name="DualCollection_msg">
+        <wsdl:part name="DualCollection" element="top:DualCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="DBHealthChk_ptt">
+        <wsdl:operation name="DBHealthChkSelect">
+            <wsdl:input message="tns:DBHealthChkSelect_inputParameters"/>
+            <wsdl:output message="tns:DualCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

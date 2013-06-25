@@ -1,0 +1,113 @@
+<definitions
+     name="CSOM_OrderSplitter"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter/correlationset"
+     xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OrderRequest"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter"
+     xmlns:ns6="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement/UserStausExtended"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter/correlationset"
+         location="CSOM_OrderSplitter_Properties.wsdl"/>
+ <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OrderRequest"
+             xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter/correlationset">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter"
+                 schemaLocation="CSOM_OrderSplitter.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OrderRequest"
+             xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.132_COMPASSOrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OrderRequest"
+             xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.CS.OM.222_ExtenedOrderRequestForSubscriberSplit.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OrderRequest"
+             xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter/correlationset"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.163_UserStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OrderRequest"
+             xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter/correlationset"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OrderRequest" schemaLocation="EAI.MSG.OM.259_OrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement/UserStausExtended"
+                 schemaLocation="EAI.MSG.CS.OM.163_UserStatusExtended.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CSOM_OrderSplitterRequestMessage">
+        <part name="orderRequest" element="ns5:CSOrderRequest"/>
+    </message>
+    <message name="CSUserStatusMessage">
+        <part name="userStatus" element="ns4:CSuserStatus"/>
+    </message>
+    <message name="CSOM_OrderSplitterResponseMessage">
+        <part name="payload" element="client:CSOM_OrderSplitterProcessResponse"/>
+    </message>
+    <message name="CSUserStatusExtended">
+        <part name="CSUserStatusExtended" element="ns6:CSuserStatus"/>
+    </message>
+    <message name="ExtSubscriberMessage">
+        <part name="extSubMsg" element="ns1:extSubcriberOrderRequest"/>
+    </message>
+    <portType name="CSOM_OrderSplitter">
+        <operation name="splitOrder">
+            <input message="client:CSOM_OrderSplitterRequestMessage"/>
+        </operation>
+        <operation name="updateUserStatus">
+            <input name="updateUserInput" message="client:CSUserStatusMessage"/>
+        </operation>
+    </portType>
+    <portType name="CSOM_OrderSplitterCallback">
+        <operation name="onResult">
+            <input message="client:CSOM_OrderSplitterResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CSOM_OrderSplitter">
+        <plnk:role name="CSOM_OrderSplitterProvider">
+            <plnk:portType name="client:CSOM_OrderSplitter"/>
+        </plnk:role>
+        <plnk:role name="CSOM_OrderSplitterRequester">
+            <plnk:portType name="client:CSOM_OrderSplitterCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:CorrProp" xmlns:ns9="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_UserFulfilment"
+         messageType="ns9:CSOM_UserFulfilmentRequestMessage" part="userRequest" query="/ns2:compassUser/ns2:eaiHeader/ns7:tracingId"
+         xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes"/>
+    <bpws:propertyAlias propertyName="pns1:CorrProp" messageType="client:CSUserStatusMessage" part="userStatus"
+         query="/ns4:CSuserStatus/ns4:eaiHeader/ns4:tracingId"/>
+</definitions>

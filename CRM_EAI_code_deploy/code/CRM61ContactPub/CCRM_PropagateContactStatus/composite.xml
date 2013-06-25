@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="CCRM_PropagateContactStatus" mode="active" revision="1.0" state="on" xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="EAI.SRV.EXT.CM.311_ContactPublishStatusGenericService.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/GenericContactStatus" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMCM_PropagateContactErrorStatus/CCRMCM_PropagateContactErrorStatus.wsdl"
+            importType="wsdl"/>
+    <service ui:wsdlLocation="EAI.SRV.EXT.CM.311_ContactPublishStatusGenericService.wsdl" name="CCRMCM.CCRMCM_ContactPublishStatusRS_ep">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/external/GenericContactStatus#wsdl.interface(propagateContactPublishStatusSoap)" xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/external/GenericContactStatus#wsdl.endpoint(propagateContactPublishStatus/propagateContactPublishStatusSoap)" location="EAI.SRV.EXT.CM.311_ContactPublishStatusGenericService.wsdl"/>
+    </service>
+    <component name="CCRMCM.CCRMCM_ContactPublishStatusRS">
+        <implementation.mediator src="CCRMCM.CCRMCM_ContactPublishStatusRS.mplan"/>
+    </component>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMCM_PropagateContactErrorStatus/CCRMCM_PropagateContactErrorStatus.wsdl" name="CCRMCM.PropagateContactErrorStatusService">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus#wsdl.interface(CCRMCM_PropagateContactErrorStatus)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus#wsdl.endpoint(CCRMCM_PropagateContactErrorStatus/CCRMCM_PropagateContactErrorStatus)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMCM_PropagateContactErrorStatus/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CCRMCM.CCRMCM_ContactPublishStatusRS_ep</source.uri>
+        <target.uri>CCRMCM.CCRMCM_ContactPublishStatusRS/CCRMCM.CCRMCM_ContactPublishStatusRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMCM.CCRMCM_ContactPublishStatusRS/CCRMCM.PropagateContactErrorStatusService</source.uri>
+        <target.uri>CCRMCM.PropagateContactErrorStatusService</target.uri>
+    </wire>
+</composite>

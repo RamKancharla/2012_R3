@@ -1,0 +1,58 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOM_ProxyPropagateOrderStatus" revision="1.0" state="on">
+    <import location="CCRMOM_ProxyPropagateOrderStatus.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_OrderDispatcher/TF_OrderDispatcher.wsdl" importType="wsdl"/>
+    <service name="anchorToProxyPropagateOrderStatus" ui:wsdlLocation="CCRMOM_ProxyPropagateOrderStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatusCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.endpoint(CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus)"/>
+    </service>
+    <component name="CCRMOM_ProxyPropagateOrderStatus">
+        <implementation.bpel src="CCRMOM_ProxyPropagateOrderStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMOM_PropagateOrderStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatus)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.endpoint(CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/anchorToPropagateOrderStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.endpoint(CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="SequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceChecker/SequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/anchorToSequencer?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="TF_OrderDispatcher" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_OrderDispatcher/TF_OrderDispatcher.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcher)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcherCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.endpoint(TF_OrderDispatcher/TF_OrderDispatcher)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_OrderDispatcher/anchorToTFDispatcher?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.endpoint(TF_OrderDispatcher/TF_OrderDispatcherCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToProxyPropagateOrderStatus</source.uri>
+        <target.uri>CCRMOM_ProxyPropagateOrderStatus/anchorToProxyPropagateOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_ProxyPropagateOrderStatus/TF_OrderDispatcher</source.uri>
+        <target.uri>TF_OrderDispatcher</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_ProxyPropagateOrderStatus/SequenceChecker</source.uri>
+        <target.uri>SequenceChecker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_ProxyPropagateOrderStatus/CCRMOM_PropagateOrderStatus</source.uri>
+        <target.uri>CCRMOM_PropagateOrderStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

@@ -1,0 +1,32 @@
+<definitions
+     name="TOM_ValidateQuoteStatusStub"
+     targetNamespace="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul" schemaLocation="EAI.MSG.TOM.TF.154_VettingStatus.xsd"/>
+        </schema>
+    </types>
+    <message name="TOM_ValidateQuoteStatusStubResponseMessage">
+        <part name="payload" element="ns1:vettingStatus"/>
+    </message>
+    <message name="TOM_ValidateQuoteStatusStubRequestMessage">
+        <part name="payload" element="ns1:vettingStatus"/>
+    </message>
+    <portType name="TOM_ValidateQuoteStatusStub">
+        <operation name="process">
+            <input message="client:TOM_ValidateQuoteStatusStubRequestMessage"/>
+            <output message="client:TOM_ValidateQuoteStatusStubResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TOM_ValidateQuoteStatusStub">
+        <plnk:role name="TOM_ValidateQuoteStatusStubProvider">
+            <plnk:portType name="client:TOM_ValidateQuoteStatusStub"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

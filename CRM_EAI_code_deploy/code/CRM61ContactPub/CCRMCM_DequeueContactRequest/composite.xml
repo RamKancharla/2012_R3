@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMCM_DequeueContactRequest" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="dequeContactReq.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerdequeContactReq/"/>
+    <import namespace="http://xmlns.oracle.com/CCRMCM_ContactDispatcher"
+            location="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher.wsdl"
+            importType="wsdl"/>
+    <service name="dequeContactReq" ui:wsdlLocation="dequeContactReq.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerdequeContactReq/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="dequeContactReq_mq.jca"/>
+    </service>
+    <component name="CCRMCM_DequeueContactRequest">
+        <implementation.bpel src="CCRMCM_DequeueContactRequest.bpel"/>
+    </component>
+    <reference name="CCRMCM_ContactDispatcher"
+               ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcher)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcherCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.endpoint(CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.endpoint(CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcherCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>dequeContactReq</source.uri>
+        <target.uri>CCRMCM_DequeueContactRequest/dequeContactReq</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMCM_DequeueContactRequest/CCRMCM_ContactDispatcher</source.uri>
+        <target.uri>CCRMCM_ContactDispatcher</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

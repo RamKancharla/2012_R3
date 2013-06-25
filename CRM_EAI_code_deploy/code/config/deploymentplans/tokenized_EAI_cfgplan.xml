@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAConfigPlan xmlns:jca="http://platform.integration.oracle/blocks/adapter/fw/metadata" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy" xmlns:edl="http://schemas.oracle.com/events/edl" xmlns="http://schemas.oracle.com/soa/configplan">
+
+  <composite name="TOMAM_Invoker">
+    <reference name="TOM">
+      <binding type="*">
+        <property name="oracle.webservices.auth.password">
+          <replace>@tom.Password@</replace>
+        </property>
+        <property name="oracle.webservices.auth.username">
+          <replace>@tom.iuseraccounts@</replace>
+        </property>
+      </binding>
+    </reference>
+  </composite>
+  <composite name="TOMCM_Invoker">
+    <reference name="TOM">
+      <binding type="*">
+        <property name="oracle.webservices.auth.password">
+          <replace>@tom.Password@</replace>
+        </property>
+        <property name="oracle.webservices.auth.username">
+          <replace>@tom.iusercontacts@</replace>
+        </property>
+      </binding>
+    </reference>
+  </composite>
+  <composite name="TOMOMInvoker">
+    <reference name="TOM">
+      <binding type="*">
+        <property name="oracle.webservices.auth.password">
+          <replace>@tom.Password@</replace>
+        </property>
+        <property name="oracle.webservices.auth.username">
+          <replace>@tom.iuserorders@</replace>
+        </property>
+      </binding>
+    </reference>
+  </composite>
+  <composite name="TOM_SubmitQuoteToTOM">
+    <reference name="SubmitQuoteToTOM_Ptl">
+      <binding type="*">
+        <property name="oracle.webservices.auth.password">
+          <replace>@tom.Password@</replace>
+        </property>
+        <property name="oracle.webservices.auth.username">
+          <replace>@tom.iuserquotes@</replace>
+        </property>
+      </binding>
+    </reference>
+  </composite>
+
+  <composite name="ELMAM_Invoker|ELMOM_Invoker|ELMCM_Invoker">
+      <reference name="AccountService|OrderService">
+        <binding type="*">
+          <property name="oracle.webservices.auth.password">
+            <replace>@elm.Password@</replace>
+          </property>
+          <property name="oracle.webservices.auth.username">
+            <replace>@elm.UserName@</replace>
+          </property>
+        </binding>
+      </reference>
+  </composite>
+  
+  <composite name="SAPAM_Invoker|SAPCM_Invoker|SAPCMExt_Invoker|SAPOM_Invoker|SAPOM_UserCreation">
+    <reference name="CustomerAccountPublish|UpdateSAPEmployee|SI_Contacts_OB_Async|SI_Create_ContractOrder_OB_Async|SI_CreateContacts_OB_Async">
+      <binding type="*">
+        <property name="oracle.webservices.auth.password">
+          <replace>@sap.Password@</replace>
+        </property>
+        <property name="oracle.webservices.auth.username">
+          <replace>@sap.UserName@</replace>
+        </property>
+      </binding>
+    </reference>
+  </composite>
+  <composite name="SFDCAM_Invoker|AM_DqTRUSTAcctUpdateNUpdateTRUSTID|SFDCOP_Invoker|AM_DqTRUSTOptyUpdateNUpdateTRUSTID|SFDCCM_ContactPublishUpdate|SFDCCM_Invoker">
+    <component name="SFDCAM_Invoker|AM_DqTRUSTAcctUpdateNUpdateTRUSTID|SFDCOP_Invoker|AM_DqTRUSTOptyUpdateNUpdateTRUSTID|SFDCCM_ContactPublishUpdate|SFDCCM_Invoker">
+        <property name="preference.password">
+          <replace>@trust.Password@</replace>
+        </property>
+        <property name="preference.loginId">
+          <replace>@trust.UserName@</replace>
+        </property>
+    </component>
+  </composite>
+
+  <composite name="ESOQM_PropagateQuoteSubmitStatus">
+    <component name="ESOQM_PropagateQuoteSubmitStatus">
+        <property name="preference.password">
+          <replace>@mtr.trust.Password@</replace>
+        </property>
+        <property name="preference.loginId">
+          <replace>@mtr.trust.UserName@</replace>
+        </property>
+    </component>
+  </composite>
+   <composite name="*">
+    <import>
+      <searchReplace>
+        <search>eaidev2</search>
+        <replace>${soa.host}</replace>
+      </searchReplace>
+    </import>
+
+    <reference name="*">
+      <binding type="ws">
+        <attribute name="location">
+      <searchReplace>
+        <search>eaidev2</search>
+        <replace>${soa.host}</replace>
+      </searchReplace>
+        </attribute>
+      </binding>
+    </reference>
+
+   </composite>
+
+   
+   <wsdlAndSchema name="Enqueue_GenQuoteServ_mq.jca|QuoteStatusDeq_mq.jca|DequeueDADService_mq.jca|CSOrderUpdate_mq.jca|UpdateCSValidationMessage_mq.jca|DequeueDADXMLMessageServ_mq.jca|DequeueDADServ_mq.jca|DequeueUploadStatusServ_mq.jca|Dequeue_mq.jca|DequeuePriceStatus_mq.jca|DequeuePriceRequest_mq.jca|DequeueOpportunity_mq.jca|DequeueOrderRequest_mq.jca|ENQ_GE_EI_EAI_TRIGGER_mq.jca|DequeueCSOrderUpdates_mq.jca|UpdateOrderForTOM_mq.jca|DequeueTOMUpdateOrderStatus_mq.jca|DequeueTRUSTOptyUpdate_mq.jca|DequeueTRUSTAccountUpdate_mq.jca|EnqueueDADUploadStatusServ_mq.jca|enqueueOpportunityStatus_mq.jca|EnqueuePriceUpdateStatus_mq.jca|EnqueueValidateStatus_mq.jca|Enqueue_DrafttQuoteService_mq.jca|PME_Enqueue_mq.jca|HQ_Enqueue_mq.jca|AccountUpdate_mq.jca|enqueueAccountStatus_mq.jca|DequeueAccountRequest_mq.jca|DequeueAccountContact_jms.jca|DequeueAccount_jms.jca|ContactStatusUpdate_mq.jca|dequeContactReq_mq.jca|DequeueATHOrderAck_mq.jca|AthenaOrderRequest_mq.jca|SiebelInboundQueueAdapter_mq.jca|SiebelInboundResponse_mq.jca|ContactErrorResponse_mq.jca">
+      	<jca:property name="QueueName">      	
+        <searchReplace>
+            <search>${mq.token.prefix}</search>
+            <replace>@mq.env.prefix@</replace>
+        </searchReplace>
+        </jca:property>
+   </wsdlAndSchema>
+   
+   
+   <wsdlAndSchema name="ENQ_GE_EI_EAI_TRIGGER_mq.jca|OrderStatusMonitorMQAdp_mq.jca">
+      	<jca:property name="QueueName">      	
+        <searchReplace>
+            <search>${mq.token.prefix.cs}</search>
+            <replace>@mq.prefix.cs@</replace>
+        </searchReplace>
+        </jca:property>
+   </wsdlAndSchema>
+
+    <wsdlAndSchema name="EAI.SRV.EXT.RCRM.330_QueryAssetRequest.wsdl|EAI.SRV.EXT.ESO.314_PropagateESOQuoteStatus.wsdl|SI_CreateContacts_OB_Async.wsdl|EAI.SRV.EXT.SFDC.049_SendAccountToSFDCService.wsdl|enterprise.wsdl|MM_GCAPInbound_Exp_AccountManagementInterface_PA.wsdl|EAI.SRV.AM.SAP.71_AccountPublish.wsdl|EAI.SRV.EXT.SFDC.049_SendAccountToSFDCService.wsdl|enterprise.wsdl|EAI.SRV.CM.SAP.72_UpdateUserContact.wsdl|EAI.SRV.CM.SAP.73_UpdateEmployeeContact.wsdl|SI_Contacts_OB_Async.wsdl|RCRMReceiveQuoteApproval.wsdl|SEASIBELUserManagementImp.wsdl|MM_GCAPInbound_Exp_ElectronicFulfilmentInterface_PA.wsdl|EAI.SRV.EXT.ATH.062_PropagateUserOrderStatusService.wsdl|SI_Create_ContractOrder_OB_Async.wsdl|RCRMContactInbound.wsdl|EAI.SRV.CM.SAP.72_UpdateUserContact.wsdl|EAI.SRV.EXT.SFDC.051_SendOpportunityToSFDCService.wsdl|EAI.SRV.EXT.SFDC.051_SendOpportunityToSFDCService.wsdl|MM_GCAPInbound_Exp_PropagateUserInterface_PA.wsdl|EAI.SRV.CCRM.058_PropagateMigrationStatusService.wsdl|EAI.SRV.EXT.MST.056_ManageMigrationRequestService.wsdl|EAI.SRV.CCRM.044_QuerySRDetailsService.wsdl|EAI.SRV.CCRM.045_PopulateSolutionService.wsdl|SiebelAccountAction.wsdl|SiebelQuoteLineItem.wsdl|SiebelSR.wsdl|OrderService.wsdl|AccountService.wsdl|ContactAccountService.wsdl|ContactManagement.wsdl|EAI.SRV.EXT.SFDC.071_SendContactToSFDCService.wsdl">
+        <searchReplace>
+            <search>${trust.eso.protocol}://${trust.eso.host}</search>
+            <replace>@trust.eso.protocol@://@trust.eso.host@</replace>
+        </searchReplace>
+        <searchReplace>
+            <search>${trust.protocol}://${trust.host}</search>
+            <replace>@trust.protocol@://@trust.host@</replace>
+        </searchReplace>
+
+        <searchReplace>
+            <search>${sap.protocol}://${sap.host}</search>
+            <replace>@sap.protocol@://@sap.host@</replace>
+        </searchReplace>
+        <searchReplace>
+            <search>${Sap.Accounts.suffixurl}</search>
+            <replace>@Sap.Accounts.suffixurl@</replace>
+        </searchReplace>
+        <searchReplace>
+            <search>${Sap.Contacts.Contacts.external.suffixurl}</search>
+            <replace>@Sap.Contacts.Contacts.external.suffixurl@</replace>
+        </searchReplace>
+        <searchReplace>
+            <search>${Sap.Contacts.User.Contacts.suffixurl}</search>
+            <replace>@Sap.Contacts.User.Contacts.suffixurl@</replace>
+        </searchReplace>
+         <searchReplace>
+            <search>${Sap.Contacts.Employee.Contacts.suffixurl}</search>
+            <replace>@Sap.Contacts.Employee.Contacts.suffixurl@</replace>
+        </searchReplace>
+         <searchReplace>
+            <search>${Sap.Orders.suffixurl}</search>
+            <replace>@Sap.Orders.suffixurl@</replace>
+        </searchReplace>
+
+        <searchReplace>
+            <search>${cpfg.protocol}://${cpfg.host}</search>
+            <replace>@cpfg.protocol@://@cpfg.host@</replace>
+        </searchReplace>
+
+		<searchReplace>
+            <search>${cpfg.domain}</search>
+            <replace>@cpfg.domain@</replace>
+        </searchReplace>
+
+        <searchReplace>
+            <search>${athena.protocol}://${athena.host}</search>
+            <replace>@athena.protocol@://@athena.host@</replace>
+        </searchReplace>
+
+        <searchReplace>
+            <search>${sea.protocol}://${sea.host}</search>
+            <replace>@sea.protocol@://@sea.host@</replace>
+        </searchReplace>
+
+        <searchReplace>
+            <search>${trust.protocol}://${trust.enterprise.host}</search>
+            <replace>@trust.protocol@://@trust.enterprise.host@</replace>
+        </searchReplace>
+        <searchReplace>
+            <search>${trust.protocol}://${trust.host}</search>
+            <replace>@trust.protocol@://@trust.host@</replace>
+        </searchReplace>
+
+        <searchReplace>
+            <search>${siebel.protocol}://${siebel.host}</search>
+            <replace>@siebel.protocol@://@siebel.host@</replace>
+        </searchReplace>
+        <searchReplace>
+            <search>UserName=${siebel.UserName}</search>
+            <replace>UserName=@siebel.UserName@</replace>
+        </searchReplace>
+        <searchReplace>
+            <search>Password=${siebel.Password}</search>
+            <replace>Password=@siebel.Password@</replace>
+        </searchReplace>
+
+        <searchReplace>
+            <search>${mst.protocol}://${mst.host}</search>
+            <replace>@mst.protocol@://@mst.host@</replace>
+        </searchReplace>
+	
+	<searchReplace>
+		<search>${elm.protocol}://${elm.host}</search>
+		<replace>@elm.protocol@://@elm.host@</replace>
+        </searchReplace>
+   </wsdlAndSchema>
+</SOAConfigPlan>

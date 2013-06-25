@@ -1,0 +1,16 @@
+<definitions
+    
+     targetNamespace="http://soap.sforce.com/schemas/class/AccountManagement"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://soap.sforce.com/schemas/class/AccountManagement"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <import namespace="http://soap.sforce.com/schemas/class/AccountManagement" location="EAI.SRV.EXT.SFDC.049_SendAccountToSFDCService.wsdl"/>
+    <plnk:partnerLinkType name="AccountManagementPortType_PL">
+        <plnk:role name="AccountManagementPortType_Role">
+            <plnk:portType name="tns:AccountManagementPortType"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

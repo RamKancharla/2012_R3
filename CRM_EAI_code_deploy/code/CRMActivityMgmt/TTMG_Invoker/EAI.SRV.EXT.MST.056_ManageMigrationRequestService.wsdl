@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="ttwebservices" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="ttwebservices" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="ttwebservices">
+      <s:element name="MST_Create">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="LegacyId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Product" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MigrationDate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SiebelID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_CreateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MST_CreateResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_Transition">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Product" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Transitions" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_TransitionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MST_TransitionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_Update">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Product" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="LegacyId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EndDate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MigrationDate" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_UpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MST_UpdateResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_Query">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="state" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Product" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EndDate" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_QueryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MST_QueryResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_GetState">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Product" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_GetStateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MST_GetStateResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_QueryUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Product" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_QueryUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MST_QueryUserResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_GetStatusByLegacyId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LegacyId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Product" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MST_GetStatusByLegacyIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MST_GetStatusByLegacyIdResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="MST_CreateSoapIn">
+    <wsdl:part name="parameters" element="tns:MST_Create" />
+  </wsdl:message>
+  <wsdl:message name="MST_CreateSoapOut">
+    <wsdl:part name="parameters" element="tns:MST_CreateResponse" />
+  </wsdl:message>
+  <wsdl:message name="MST_TransitionSoapIn">
+    <wsdl:part name="parameters" element="tns:MST_Transition" />
+  </wsdl:message>
+  <wsdl:message name="MST_TransitionSoapOut">
+    <wsdl:part name="parameters" element="tns:MST_TransitionResponse" />
+  </wsdl:message>
+  <wsdl:message name="MST_UpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:MST_Update" />
+  </wsdl:message>
+  <wsdl:message name="MST_UpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:MST_UpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="MST_QuerySoapIn">
+    <wsdl:part name="parameters" element="tns:MST_Query" />
+  </wsdl:message>
+  <wsdl:message name="MST_QuerySoapOut">
+    <wsdl:part name="parameters" element="tns:MST_QueryResponse" />
+  </wsdl:message>
+  <wsdl:message name="MST_GetStateSoapIn">
+    <wsdl:part name="parameters" element="tns:MST_GetState" />
+  </wsdl:message>
+  <wsdl:message name="MST_GetStateSoapOut">
+    <wsdl:part name="parameters" element="tns:MST_GetStateResponse" />
+  </wsdl:message>
+  <wsdl:message name="MST_QueryUserSoapIn">
+    <wsdl:part name="parameters" element="tns:MST_QueryUser" />
+  </wsdl:message>
+  <wsdl:message name="MST_QueryUserSoapOut">
+    <wsdl:part name="parameters" element="tns:MST_QueryUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="MST_GetStatusByLegacyIdSoapIn">
+    <wsdl:part name="parameters" element="tns:MST_GetStatusByLegacyId" />
+  </wsdl:message>
+  <wsdl:message name="MST_GetStatusByLegacyIdSoapOut">
+    <wsdl:part name="parameters" element="tns:MST_GetStatusByLegacyIdResponse" />
+  </wsdl:message>
+  <wsdl:portType name="MSTServiceSoap">
+    <wsdl:operation name="MST_Create">
+      <wsdl:input message="tns:MST_CreateSoapIn" />
+      <wsdl:output message="tns:MST_CreateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MST_Transition">
+      <wsdl:input message="tns:MST_TransitionSoapIn" />
+      <wsdl:output message="tns:MST_TransitionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MST_Update">
+      <wsdl:input message="tns:MST_UpdateSoapIn" />
+      <wsdl:output message="tns:MST_UpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MST_Query">
+      <wsdl:input message="tns:MST_QuerySoapIn" />
+      <wsdl:output message="tns:MST_QuerySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MST_GetState">
+      <wsdl:input message="tns:MST_GetStateSoapIn" />
+      <wsdl:output message="tns:MST_GetStateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MST_QueryUser">
+      <wsdl:input message="tns:MST_QueryUserSoapIn" />
+      <wsdl:output message="tns:MST_QueryUserSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MST_GetStatusByLegacyId">
+      <wsdl:input message="tns:MST_GetStatusByLegacyIdSoapIn" />
+      <wsdl:output message="tns:MST_GetStatusByLegacyIdSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MSTServiceSoap" type="tns:MSTServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="MST_Create">
+      <soap:operation soapAction="ttwebservices/MST_Create" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_Transition">
+      <soap:operation soapAction="ttwebservices/MST_Transition" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_Update">
+      <soap:operation soapAction="ttwebservices/MST_Update" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_Query">
+      <soap:operation soapAction="ttwebservices/MST_Query" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_GetState">
+      <soap:operation soapAction="ttwebservices/MST_GetState" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_QueryUser">
+      <soap:operation soapAction="ttwebservices/MST_QueryUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_GetStatusByLegacyId">
+      <soap:operation soapAction="ttwebservices/MST_GetStatusByLegacyId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MSTServiceSoap12" type="tns:MSTServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="MST_Create">
+      <soap12:operation soapAction="ttwebservices/MST_Create" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_Transition">
+      <soap12:operation soapAction="ttwebservices/MST_Transition" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_Update">
+      <soap12:operation soapAction="ttwebservices/MST_Update" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_Query">
+      <soap12:operation soapAction="ttwebservices/MST_Query" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_GetState">
+      <soap12:operation soapAction="ttwebservices/MST_GetState" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_QueryUser">
+      <soap12:operation soapAction="ttwebservices/MST_QueryUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MST_GetStatusByLegacyId">
+      <soap12:operation soapAction="ttwebservices/MST_GetStatusByLegacyId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MSTService">
+    <wsdl:port name="MSTServiceSoap" binding="tns:MSTServiceSoap">
+      <soap:address location="${mst.protocol}://${mst.host}/MST/Service.asmx" />
+    </wsdl:port>
+    <wsdl:port name="MSTServiceSoap12" binding="tns:MSTServiceSoap12">
+      <soap12:address location="${mst.protocol}://${mst.host}/MST/Service.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

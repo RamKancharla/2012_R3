@@ -1,0 +1,214 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified"
+     attributeFormDefault="unqualified" version="0.10">
+    <xsd:element name="orderLineRepository" type="xsdLocal:OrderLineRepositoryType"/>
+    <xsd:complexType name="OrderLineRepositoryType">
+        <xsd:sequence>
+            <xsd:element name="OrderLineRequestFacts" type="xsdLocal:OrderLineRequestFactsType" minOccurs="0"
+                 maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OrderLineRequestFactsType">
+        <xsd:sequence>
+            <xsd:element name="messageHeaderActionCode" type="xsd:string"/>
+            <xsd:element name="CRMOLIId" type="xsd:string"/>
+            <xsd:element name="parentOrderItemId" type="xsd:string"/>
+            <xsd:element name="rootItemId" type="xsd:string"/>
+            <xsd:element name="actionCode" type="xsd:string"/>
+            <xsd:element name="businessCase" type="xsd:string"/>
+            <xsd:element name="salesCode" type="xsd:string"/>
+            <xsd:element name="subscriber" type="xsd:string"/>
+            <xsd:element name="subAccount" type="xsd:string"/>
+            <xsd:element name="PLI" type="xsd:string"/>
+            <xsd:element name="permissioningSystem" type="xsd:string"/>
+            <xsd:element name="manualPermissioningRequired" type="xsd:string"/>
+            <xsd:element name="AKR" type="xsd:string"/>
+            <xsd:element name="userID" type="xsd:string"/>
+            <xsd:element name="userIDtype" type="xsd:string"/>
+            <xsd:element name="userNumber" type="xsd:string"/>
+            <xsd:element name="firstName" type="xsd:string"/>
+            <xsd:element name="lastname" type="xsd:string"/>
+            <xsd:element name="dob" type="xsd:string"/>
+            <xsd:element name="isNewUser" type="xsd:string"/>
+            <xsd:element name="installDate" type="xsd:string"/>
+            <xsd:element name="removalDate" type="xsd:string"/>
+            <xsd:element name="QUID" type="xsd:string"/>
+            <xsd:element name="discount" type="xsd:string"/>
+            <xsd:element name="specialPrice" type="xsd:string"/>
+            <xsd:element name="specialPriceCurr" type="xsd:string"/>
+            <xsd:element name="specialPriceRestrictionDate" type="xsd:string"/>
+            <xsd:element name="itemNumber" type="xsd:string"/>
+            <xsd:element name="startStopBillingDate" type="xsd:string"/>
+            <xsd:element name="billingType" type="xsd:string"/>
+            <xsd:element name="billingNote" type="xsd:string"/>
+            <xsd:element name="freeTrailFlag" type="xsd:string"/>
+            <xsd:element name="STB" type="xsd:string"/>
+            <xsd:element name="assetIntegrationId" type="xsd:string"/>
+            <xsd:element name="orderLineStatus" type="xsd:string"/>
+            <xsd:element name="permissioningStatus" type="xsd:string"/>
+            <xsd:element name="interfaceForBilling" type="xsd:string"/>
+            <xsd:element name="interfaceForFulfilment" type="xsd:string"/>
+            <xsd:element name="manualPermissioningComplete" type="xsd:string"/>
+            <xsd:element name="autoPermissioningComplete" type="xsd:string"/>
+            <xsd:element name="nextAction1" type="xsd:string"/>
+            <xsd:element name="nextAction2" type="xsd:string"/>
+            <xsd:element name="nextAction3" type="xsd:string"/>
+            <xsd:element name="nextAction4" type="xsd:string"/>
+            <xsd:element name="nextAction5" type="xsd:string"/>
+            <xsd:element name="billingStatusToBeSent" type="xsd:string"/>
+            <xsd:element name="permissioningStatusToBeSent" type="xsd:string"/>
+            <xsd:element name="productIntegrationId" type="xsd:string"/>
+            <xsd:element name="freeTrialEndDate" type="xsd:string"/>
+            <xsd:element name="configuredAttribute" type="xsdLocal:ConfiguredAttribute" maxOccurs="unbounded"
+                 minOccurs="0"/>
+            <xsd:element name="workPhone" type="xsd:string"/>
+            <xsd:element name="responseCode" type="xsd:string"/>
+            <xsd:element name="ePlatformId" type="xsd:string"/>
+            <xsd:element name="supportLanguage" type="xsd:string"/>
+            <xsd:element name="segGrpEndUserActivity" type="xsd:string"/>
+            <xsd:element name="regionalFocus" type="xsd:string"/>
+            <xsd:element name="marketingConsentSetDate" type="xsd:string"/>
+            <xsd:element name="localLastName" type="xsd:string"/>
+            <xsd:element name="localFirstName" type="xsd:string"/>
+            <xsd:element name="localDACSId" type="xsd:string"/>
+            <xsd:element name="legalConsentSetDate" type="xsd:string"/>
+            <xsd:element name="legalConsent" type="xsd:string"/>
+            <xsd:element name="lastUpdatedProfileDate" type="xsd:string"/>
+            <xsd:element name="fTLFlagSetDate" type="xsd:string"/>
+            <xsd:element name="fTLCompleteFlag" type="xsd:string"/>
+            <xsd:element name="errorContext" type="xsd:string"/>
+            <xsd:element name="errorCode" type="xsd:string"/>
+            <xsd:element name="directMarketing" type="xsd:string"/>
+            <xsd:element name="cPfGTempURL" type="xsd:string"/>
+            <xsd:element name="aaaUpdatedProfileDate" type="xsd:string"/>
+            <xsd:element name="primaryAccountId" type="xsd:string"/>
+            <xsd:element name="ModId" type="xsd:string"/>
+            <xsd:element name="MM" type="xsd:string"/>
+            <xsd:element name="EmailAddress" type="xsd:string"/>
+            <xsd:element name="extraInfo" type="xsd:anyType"/>
+            <xsd:element name="primaryUUID" type="xsd:string"/>
+            <xsd:element name="contactMarketFocus" type="xsd:string"/>
+            <xsd:element name="contactReutersMessagingId" type="xsd:string"/>
+            <xsd:element name="billingPlatform" type="xsd:string"/>
+            <xsd:element name="umbrellaProductIntegrationId" type="xsd:string"/>
+            <xsd:element name="field1" type="xsd:string"/>
+            <xsd:element name="field2" type="xsd:string"/>
+            <xsd:element name="field3" type="xsd:string"/>
+            <xsd:element name="oldContactUserId" type="xsd:string"/>
+            <xsd:element name="CpfgErrorMessage" type="xsd:string"/>
+            <xsd:element name="installSubscriberNumber" type="xsd:string"/>
+            <xsd:element name="installSubscriberAccountId" type="xsd:string"/>
+            <xsd:element name="installSubAccountNumber" type="xsd:string"/>
+            <xsd:element name="ruleName" type="xsd:string"/>
+            <xsd:element name="CSAction" type="xsd:string"/>
+            <xsd:element name="permBillFlag" type="xsd:string"/>
+            <xsd:element name="targetSystem" type="xsd:string"/>
+            <xsd:element name="installLoccationAccountCustomerReferenceNumber" type="xsd:string"/>
+            <xsd:element name="installBillingAccountCustomerReferenceNumber" type="xsd:string"/>
+            <xsd:element name="legalEntityCustomerReferenceNumber" type="xsd:string"/>
+            <xsd:element name="legalEntityLocationAccountId" type="xsd:string"/>
+            <xsd:element name="billingSubscriberAccountId" type="xsd:string"/>
+            <xsd:element name="productDescription" type="xsd:string"/>
+            <xsd:element name="editedListPrice" type="xsd:string"/>
+            <xsd:element name="creditDebitFlag" type="xsd:string"/>
+            <xsd:element name="productName" type="xsd:string"/>
+            <xsd:element name="recurringBillingNotesIndicator" type="xsd:string"/>
+            <xsd:element name="delayedBillingPeriod" type="xsd:string"/>
+            <xsd:element name="PDPCode" type="xsd:string"/>
+            <xsd:element name="DummyField1" type="xsd:string"/>
+            <xsd:element name="DummyField2" type="xsd:string"/>
+            <xsd:element name="DummyField3" type="xsd:string"/>
+            <xsd:element name="DummyField4" type="xsd:string"/>
+            <xsd:element name="DummyField5" type="xsd:string"/>
+            <xsd:element name="DummyField6" type="xsd:string"/>
+            <xsd:element name="DummyField7" type="xsd:string"/>
+            <xsd:element name="DummyField8" type="xsd:string"/>
+            <xsd:element name="DummyField9" type="xsd:string"/>
+            <xsd:element name="DummyField10" type="xsd:string"/>
+            <xsd:element name="DummyField11" type="xsd:string"/>
+            <xsd:element name="DummyField12" type="xsd:string"/>
+            <xsd:element name="DummyField13" type="xsd:string"/>
+            <xsd:element name="DummyField14" type="xsd:string"/>
+            <xsd:element name="DummyField15" type="xsd:string"/>
+            <xsd:element name="DummyField16" type="xsd:string"/>
+            <xsd:element name="DummyField17" type="xsd:string"/>
+            <xsd:element name="DummyField18" type="xsd:string"/>
+            <xsd:element name="DummyField19" type="xsd:string"/>
+            <xsd:element name="DummyField20" type="xsd:string"/>
+            <xsd:element name="SAPBillable" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="installLocationAccountId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="SAPItemNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="PONumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="InstallLocationAccountNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="BillToAccountNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="quantity" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="account" type="xsd:string"/>
+            <xsd:element name="RCRMBillingAccount" type="xsd:string"/>
+            <xsd:element name="accountLocId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMField1" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMField2" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="RCRMField3" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="orderHeaderSoldToAccountNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="orderHeaderRCRMField6" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="orderHeaderRCRMField7" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="orderHeaderquoteNumber" type="xsd:string"/>
+            <xsd:element name="SAPOrderNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="OLIRCRMField6" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="OLIRCRMField7" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="OLIRCRMField1" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="OLIRCRMField8" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="OLIRCRMField9" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="OLIRCRMField10" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="SAPActionCode" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="SAPBusinessCase" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="CalculatedListPrice" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="ListPrice" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="BillingPeriod" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="PublishContactToSAP" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="ContactStatus" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="product" type="xsd:string"/>
+            <xsd:element name="PPLId" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ConfiguredAttribute">
+        <xsd:sequence>
+            <xsd:element name="attributeIntegrationId" type="xsd:string"/>
+            <xsd:element name="attributeName" type="xsd:string"/>
+            <xsd:element name="valueIntegrationId" type="xsd:string"/>
+            <xsd:element name="value" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
+<!--********************************************************************************
+    * Module:      EAI.MSG.OM.201_OrderLineRequestFacts.xsd
+    * Type:        XSD Schema
+    * Description: Schema used to define the facts for rule engine on Order Request Side
+    *
+    * Change History
+    * Version           Date      Author                Description Of Change
+    *
+    * 0.1              26/01/08  Surya Gannavarapu     Initial Version
+    * 0.2              20/02/08  Geratayya P	       Renamed Schema name from  EAI.MSG.OM.194_OrderLineRequestFacts.xsd to EAI.MSG.OM.201_OrderLineRequestFacts.xsd
+    * 0.3              20/02/08	 Surya Gannavarapu     Added fields "manualPermissioningRequired","manualPermissioningComplete","autoPermissioningComplete","orderPermissioningStatus","orderLineStatus","nextAction1","nextAction2" and removed "nextAction"
+    * 0.4	       22/02/08	 Surya Gannavarapu	Added the field businessCase
+    * 0.5	       10/03/08  Surya Gannavarapu	Made an array of order line request facts	
+    
+    * 0.6	       01/04/08  Rob Billington  	Added ConfiguredAttribute complex type and configuredAttribute elements for PBI-334 and PBI-090
+    *                                                   Added productIntegrationId element for PBI-334 and PBI-090
+    *                                                   Added freeTrialEndDate element for PBI-334 and PBI-090
+    *                                                   Added parentOrderItemId and userIDType element for PBI-334 and PBI-090
+    * 0.7	       04/09/08	 Sreeja Prasad		Added  from WorkPhone to EmailAddress in OrderLineRequestFactsType.
+    * 0.8	       09/09/08	 Sreeja Prasad		Removed the duplicate field actionCode from OrderLineRequestFactsType.
+    * 0.9	       10/09/08	 anvv sharma		Added responseCode, errorContext, ModId for PBI-333.
+    * 0.10	       14/10/08	 Sreeja Prasad		Added from WorkPhone to field3 for defect 19646.
+    * 0.11	       31/03/10	 Mallesh		Added SAPBillable,SAPItemNumber,PONumber,InstallLocationAccountNumber,BillToAccountNumber in CCRMOM_OLI as part of SAP Integration
+    * 0.12	       07/04/10	 Mallesh		Added quantity in CCRMOM_OLI as part of SAP Integration
+    * 0.13	       20/04/10	 Mallesh		Added accountLocId in CCRMOM_OLI as part of SAP Integration
+    * 0.14	       30/04/10	 Mallesh		Added account,RCRMBillingAccount,installLocationAccountId as part of SAP Integration
+    * 0.15	       03/05/10	 Mallesh		Added RCRMField1 in orderHeader and RCRMField2,RCRMField3 in CCRMOM_OLI as part of SAP Integration
+    * 0.16	       18/05/10	 Mallesh		Added orderHeaderSoldToAccountNumber,orderHeaderRCRMField6,orderHeaderRCRMField7,orderHeaderquoteNumber in CCRMOMOrderHeader and SAPOrderNumber,OLIRCRMField6,OLIRCRMField7,OLIRCRMField1,
+							OLIRCRMField8,OLIRCRMField9,OLIRCRMField10,SAPActionCode,SAPBusinessCase,CalculatedListPrice,ListPrice,BillingPeriod,PublishContactToSAP,ContactStatus,product in CCRMOM_OLI as part of SAP Integration
+    * 0.17	       19/03/10  Surya Gannavarapu	Added the fields for PBI-421 and B2CC along with DummyFields1 to 20
+    * 0.18	       01/07/10  Mallesh        	Added the field PPLId for CR119
+    **********************************************************************************-->

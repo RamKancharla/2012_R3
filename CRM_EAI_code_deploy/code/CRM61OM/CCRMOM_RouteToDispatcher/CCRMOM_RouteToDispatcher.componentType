@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMOM_RouteToDispatcher.wsdl" name="RouteToDispatcher">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.interface(CCRMOM_RouteToDispatcher)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.interface(CCRMOM_RouteToDispatcherCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_OrderDispatcher/TF_OrderDispatcher.wsdl" name="TF_OrderDispatcher">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcher)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcherCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_OrderRuleManager/OM_OrderRuleManager.wsdl" name="OM_OrderRuleManager">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderRuleManager)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderRuleManagerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="AssetCacheDBAdapter.wsdl" name="AssetCacheDBAdapter">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/AssetCacheDBAdapter/#wsdl.interface(AssetCacheDBAdapter_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="OrderCacheDBAdapter.wsdl" name="OrderCacheDBAdapter">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/OrderCacheDBAdapter/#wsdl.interface(OrderCacheDBAdapter_ptt)"/>
+    </reference>
+    <reference name="ELMOM_EventManager"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ELMOM_EventManager/ELMOM_EventManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/ELMOM_EventManager#wsdl.interface(ELMOM_EventManager)"
+                        callbackInterface="http://xmlns.oracle.com/ELMOM_EventManager#wsdl.interface(ELMOM_EventManagerCallback)"/>
+    </reference>
+</componentType>

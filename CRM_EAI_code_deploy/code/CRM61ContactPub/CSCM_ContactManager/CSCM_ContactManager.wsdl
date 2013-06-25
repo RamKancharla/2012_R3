@@ -1,0 +1,52 @@
+<definitions
+     name="CSCM_ContactManager"
+     targetNamespace="http://xmlns.oracle.com/CSCM_ContactManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://xmlns.oracle.com/CSCM_ContactManager"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://xmlns.oracle.com/CSCM_ContactManager">
+            <import namespace="http://xmlns.oracle.com/CSCM_ContactManager" schemaLocation="CSCM_ContactManager.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+             xmlns:client="http://xmlns.oracle.com/CSCM_ContactManager">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+                 schemaLocation="EAI.MSG.CS.ACM.229_AccountContactPublishRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+                 schemaLocation="EAI.MSG.CS.ACM.235_PublishAccountContactEventRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CSCM_ContactManagerResponseMessage">
+        <part name="payload" element="client:CSCM_ContactManagerProcessResponse"/>
+    </message>
+    <message name="CSCM_ContactManagerRequestMessage">
+        <part name="payload" element="ns1:CSPublishAccountContactRequest"/>
+    </message>
+    <portType name="CSCM_ContactManagerCallback">
+        <operation name="onResult">
+            <input message="client:CSCM_ContactManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CSCM_ContactManager">
+        <operation name="manageContact">
+            <input message="client:CSCM_ContactManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CSCM_ContactManager">
+        <plnk:role name="CSCM_ContactManagerProvider">
+            <plnk:portType name="client:CSCM_ContactManager"/>
+        </plnk:role>
+        <plnk:role name="CSCM_ContactManagerRequester">
+            <plnk:portType name="client:CSCM_ContactManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

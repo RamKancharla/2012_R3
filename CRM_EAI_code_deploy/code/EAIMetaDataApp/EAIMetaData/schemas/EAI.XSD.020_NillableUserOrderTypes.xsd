@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.XSD.003_CommonAccountTypes.xsd
+	* Type:        XSD Schema
+	* Description: The schema used for Common Account Message attributes
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         12/06/09  Sreeja		   Initial version
+	* 0.2	      22/06/09  Sreeja		    Added Complex type AthActioncode & RequestSystem.
+ 	* 0.3	      30/11/09	Sreeja		    Added the QuoteId
+	* 0.4	      30/11/09	Sreeja		    Added the ExtraField1,ExtraField2,ExtraField3 & ErrorMessage
+	* 0.5	      12/02/10  Sreeja		    Added AnonymousFlag & Phone for PBI-433
+	* 0.6         18/02/10  Sreeja		    Added anonymousFlagReason for PBI-433
+	* 0.7         22/09/11  Ramanjana	    Added JobFunction
+	**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes"
+	xmlns:gcap-cuot="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.5">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes" schemaLocation="./EAI.XSD.019_CommonUserOrderTypes.xsd" />
+	<xsd:simpleType name="CountryCode">
+		<xsd:union
+			memberTypes="gcap-cuot:CountryCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TransactionId">
+		<xsd:union
+			memberTypes="gcap-cuot:TransactionId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SourceSystem">
+		<xsd:union
+		    memberTypes="gcap-cuot:SourceSystem local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Subscriber">
+		<xsd:union
+		    memberTypes="gcap-cuot:Subscriber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubAccount">
+		<xsd:union
+		    memberTypes="gcap-cuot:SubAccount local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>	
+	
+	<xsd:simpleType name="EffectiveDateTime">
+		<xsd:union
+		    memberTypes="gcap-cuot:EffectiveDateTime local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>	
+	
+	<xsd:simpleType name="EffectiveDate">
+		<xsd:union
+		    memberTypes="gcap-cuot:EffectiveDate local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SiebelOrderNumber">
+		<xsd:union
+		    memberTypes="gcap-cuot:SiebelOrderNumber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ActionCode">
+		<xsd:union
+		    memberTypes="gcap-cuot:ActionCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="NumOfLines">
+		<xsd:union
+		    memberTypes="gcap-cuot:NumOfLines local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="UOLIId">
+		<xsd:union
+		    memberTypes="gcap-cuot:UOLIId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AthenaSubId">
+		<xsd:union
+		    memberTypes="gcap-cuot:AthenaSubId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="FirstName">
+		<xsd:union
+		    memberTypes="gcap-cuot:FirstName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="LastName">
+		<xsd:union
+		    memberTypes="gcap-cuot:LastName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TSAID">
+		<xsd:union
+		    memberTypes="gcap-cuot:TSAID local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="EmailId">
+		<xsd:union
+		    memberTypes="gcap-cuot:EmailId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AKR">
+		<xsd:union
+		    memberTypes="gcap-cuot:AKR local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="PLI">
+		<xsd:union
+		    memberTypes="gcap-cuot:PLI local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="InstallRemoveInd">
+		<xsd:union
+		    memberTypes="gcap-cuot:InstallRemoveInd local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ItemNumber">
+		<xsd:union
+		    memberTypes="gcap-cuot:ItemNumber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="HardStopFlag">
+		<xsd:union
+		    memberTypes="gcap-cuot:HardStopFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SystemName">
+		<xsd:union
+		    memberTypes="gcap-cuot:SystemName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AdminName">
+		<xsd:union
+		    memberTypes="gcap-cuot:AdminName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AthActionCode">
+		<xsd:union
+		    memberTypes="gcap-cuot:AthActionCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="RequestSystem">
+		<xsd:union
+		    memberTypes="gcap-cuot:RequestSystem local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="QuoteId">
+		<xsd:union
+		    memberTypes="gcap-cuot:QuoteId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ErrorMessage">
+		<xsd:union
+		    memberTypes="gcap-cuot:ErrorMessage local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ExtraField1">
+		<xsd:union
+		    memberTypes="gcap-cuot:ExtraField1 local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AnonymousFlag">
+		<xsd:union
+		    memberTypes="gcap-cuot:AnonymousFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Phone">
+		<xsd:union
+		    memberTypes="gcap-cuot:Phone local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AnonymousFlagReason">
+		<xsd:union
+		    memberTypes="gcap-cuot:AnonymousFlagReason local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="JobFunction">
+		<xsd:union
+		    memberTypes="gcap-cuot:JobFunction local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="EmptyString">
+	  <xsd:restriction base="xsd:string">
+	   <xsd:maxLength value="0"/>
+	  </xsd:restriction>
+	 </xsd:simpleType>
+</xsd:schema>

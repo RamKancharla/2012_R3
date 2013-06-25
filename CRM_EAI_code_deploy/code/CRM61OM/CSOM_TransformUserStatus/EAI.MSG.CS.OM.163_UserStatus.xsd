@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*********************************************************************************************************
+* Module:			EAI.MSG.CS.OM.163_UserStatus.xsd
+*						Order Management (Core Suite)
+* Type:				XML Schema Document
+* Description:  	Core Suite User Status Schema document including message header
+*
+*
+* Change History
+* Version	Date		Author				    Description Of Change
+* =======	========	==================		   =============================
+*  0.01		23/10/07	Satish Patel		            Initial Version
+*
+***********************************************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:element name="CSuserStatus" type="xsdLocal:CSUserStatus"/>
+	<xsd:complexType name="CSUserStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="xsdLocal:USEaiHeader"/>
+			<xsd:element name="parsingStatus" type="xsdLocal:USBasicResponse"/>
+			<xsd:element name="logicalCountry" type="xsdLocal:USCountryCode"/>
+			<xsd:element name="messageHeader" type="xsdLocal:USMessageHeader"/>
+			<xsd:element name="userHeader" type="xsdLocal:USResponseUserHeader"/>
+			<xsd:element name="userLineItem" type="xsdLocal:USResponseULI" maxOccurs="300"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="USEaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="xsdLocal:string10"/>
+			<xsd:element name="transactionId" type="xsdLocal:string30"/>
+			<xsd:element name="messageId" type="xsdLocal:string30"/>
+			<xsd:element name="messageHistory" type="xsdLocal:string100"/>
+			<xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="USBasicResponse">	
+		<xsd:sequence>
+			<xsd:element name="response" type="xsdLocal:Response"/>
+			<xsd:element name="responseCode" type="xsdLocal:ResponseCode"/>
+			<xsd:element name="responseMessage" type="xsdLocal:Message"/>
+		</xsd:sequence>	          
+	</xsd:complexType>
+	<xsd:complexType name="USMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsdLocal:CSActionCode"/>
+			<xsd:element name="version" type="xsdLocal:MessageVersion"/>
+			<xsd:element name="userId" type="xsdLocal:ApplicationUserID"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="USResponseUserHeader">
+		<xsd:sequence>
+			<xsd:element name="response" type="xsdLocal:Response"/>
+			<xsd:element name="requestStatus" type="xsdLocal:RequestStatus"/>
+			<xsd:element name="CRMOrderNumber" type="xsdLocal:CRMOrderNumber"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="USResponseULI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:CRMOLIId"/>
+			<xsd:element name="requestStatus" type="xsdLocal:RequestStatus"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="ResponseCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>00203-EAI-INVALID ACTION CODE</content>
+					<comment>In valid action code</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>00202-EAI-INVALID MESSAGE CONTENT</content>
+					<comment>Invalid message content provided by service client</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>00401-EAI-TIMEOUT ERROR</content>
+					<comment>Timeout error returned if the service cannot respond within a specified time.</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="250"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Message">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="USCountryCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>FR</content>
+					<comment>Country code for France</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="2"/>
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CSActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>OM05</content>
+					<comment>Order Create</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="4"/>
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessageVersion">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A</content>
+					<comment>Message Version</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+		<xsd:simpleType name="ApplicationUserID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Brian.Knights@reuters.com</content>
+					<comment>User id, who initiated the change</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Response">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>0</content>
+					<comment>Success</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>1</content>
+					<comment>Failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="0"/>
+			<xsd:enumeration value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RequestStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A000</content>
+					<comment>Success</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Ennn</content>
+					<comment>Error or failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>UNKNOWN ERROR</content>
+					<comment>Error or failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CRMOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CRMOLIId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

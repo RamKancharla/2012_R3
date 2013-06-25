@@ -1,0 +1,159 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Mar 31 11:17:37 BST 2009
+  Author:  surya.gannavarapu
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TTMG_Invoker" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/MigrationTicketServices" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="ttwebservices" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TktRqst" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:TTMG_Invoker" myRole="TTMG_InvokerProvider" partnerRole="TTMG_InvokerRequester"/>
+        <partnerLink myRole="CCRMG_PropagateTicketStatusRequester" name="CCRMG_PropagateTicketStatus" partnerRole="CCRMG_PropagateTicketStatusProvider" partnerLinkType="ns5:CCRMG_PropagateTicketStatus"/>
+        <partnerLink name="MSTTeamTrack" partnerRole="MSTServiceSoap_Role" partnerLinkType="ns1:MSTServiceSoap_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="TeamTrackInvokerIV" messageType="client:TTMG_InvokerRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="MST_Create_IV" messageType="ns1:MST_CreateSoapIn"/>
+        <variable name="MST_Create_OV" messageType="ns1:MST_CreateSoapOut"/>
+        <variable name="MST_Update_IV" messageType="ns1:MST_UpdateSoapIn"/>
+        <variable name="MST_Update_OV" messageType="ns1:MST_UpdateSoapOut"/>
+        <variable name="CCRMCreateTicketActionCode" type="xsd:string"/>
+        <variable name="CCRMUpdateTicketActionCode" type="xsd:string"/>
+        <variable name="PropagateTTInvocationErrorIV" messageType="ns5:CCRMG_PropagateTicketStatusRequestMessage"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TTMG_Invoker.wsdl) -->
+        <receive name="RcvTktRequest" partnerLink="client" portType="client:TTMG_Invoker" operation="submitTicketToMST" variable="TeamTrackInvokerIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[try{ 
+ 
+String CRMActivityId = ((oracle.xml.parser.v2.XMLElement)         
+                    getVariableData("TeamTrackInvokerIV","ttTktRqst","/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:Action/ns2:SiebelId")).getFirstChild().getNodeValue();         
+ 
+String Action =  ((oracle.xml.parser.v2.XMLElement)         
+                    getVariableData("TeamTrackInvokerIV","ttTktRqst","/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:ActionCode")).getFirstChild().getNodeValue();  
+ 
+String Title = CRMActivityId+"; "+Action ; 
+ 
+ 
+setCompositeInstanceTitle(Title); 
+ 
+} 
+ 
+catch(Exception e) 
+{ 
+setCompositeInstanceTitle("No Activity Id Supplied") ; 
+}]]>
+        </bpelx:exec>
+        <assign name="AsnInitVariables">
+            <copy>
+                <from expression="&quot;Create&quot;"/>
+                <to variable="CCRMCreateTicketActionCode"/>
+            </copy>
+            <copy>
+                <from expression="&quot;Update&quot;"/>
+                <to variable="CCRMUpdateTicketActionCode"/>
+            </copy>
+        </assign>
+        <scope name="ScpMSTTeamTrack">
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="SeqPropagateTTInvocationErrorToCRM">
+                        <bpelx:exec name="AsgCustomTitleOnTTInvocationError" language="java" version="1.5">
+                            <![CDATA[String currentTitle = getTitle(); 
+ 
+String Title = currentTitle+"; TTFault" ; 
+ 
+setCompositeInstanceTitle(Title);]]>
+                        </bpelx:exec>
+                        <assign name="TransPropagateTTInvocationError">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransPropagateTTInvocationError.xsl',bpws:getVariableData('TeamTrackInvokerIV','ttTktRqst'))"/>
+                                <to variable="PropagateTTInvocationErrorIV" part="crmMigrationStatus"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvPropagateTicketStatusToPropagateTTInvocationError" partnerLink="CCRMG_PropagateTicketStatus" portType="ns5:CCRMG_PropagateTicketStatus" operation="propagateTicketStatus" inputVariable="PropagateTTInvocationErrorIV"/>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <switch name="CheckActionCode">
+                <case condition="bpws:getVariableData('TeamTrackInvokerIV','ttTktRqst','/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:ActionCode') = bpws:getVariableData('CCRMUpdateTicketActionCode')">
+                    <sequence name="SeqUpdateTicket">
+                        <assign name="TransTTRequestToTTUpdateRequestMessage">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransTTRequestToTTUpdateRequestMessage.xsl',bpws:getVariableData('TeamTrackInvokerIV','ttTktRqst'))"/>
+                                <to variable="MST_Update_IV" part="parameters"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvMSTTeamTrackToUpdateTicket" portType="ns1:MSTServiceSoap" inputVariable="MST_Update_IV" outputVariable="MST_Update_OV" partnerLink="MSTTeamTrack" operation="MST_Update"/>
+                    </sequence>
+                </case>
+                <case condition="bpws:getVariableData('TeamTrackInvokerIV','ttTktRqst','/ns2:MSTTeamTrackRequest/ns2:TeamTrackRequest/ns2:ActionCode') = bpws:getVariableData('CCRMCreateTicketActionCode')">
+                    <sequence name="SeqCreateTicket">
+                        <assign name="TransTTRequestToTTCreateRequestMessage">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransTTRequestToTTCreateRequestMessage.xsl',bpws:getVariableData('TeamTrackInvokerIV','ttTktRqst'))"/>
+                                <to variable="MST_Create_IV" part="parameters"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvMSTTeamTrackToCreateTicket" portType="ns1:MSTServiceSoap" inputVariable="MST_Create_IV" outputVariable="MST_Create_OV" partnerLink="MSTTeamTrack" operation="MST_Create"/>
+                    </sequence>
+                </case>
+                <otherwise>
+                    <empty name="DoNothing"/>
+                </otherwise>
+            </switch>
+        </scope>
+        <assign name="AsgOutput">
+            <copy>
+                <from variable="MST_Create_OV"/>
+                <to variable="MST_Create_OV"/>
+            </copy>
+            <copy>
+                <from variable="MST_Update_OV"/>
+                <to variable="MST_Update_OV"/>
+            </copy>
+        </assign>
+    </sequence>
+</process>

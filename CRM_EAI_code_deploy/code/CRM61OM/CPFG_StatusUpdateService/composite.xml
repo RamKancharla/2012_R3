@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFG_StatusUpdateService" revision="1.0" state="on">
+    <import importType="wsdl" location="EAI.SRV.EXT.012_PropagateStatusUpdateInterface.wsdl" namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidator.wsdl" importType="wsdl"/>
+    <service name="CPFG.StatusUpdateService_RS_ep" ui:wsdlLocation="EAI.SRV.EXT.012_PropagateStatusUpdateInterface.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices#wsdl.interface(PropagateStatusUpdateInterface)"/>
+        <binding.ws location="EAI.SRV.EXT.012_PropagateStatusUpdateInterface.wsdl" port="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices#wsdl.endpoint(PropagateStatusUpdateService/PropagateStatusUpdatePort)"/>
+    </service>
+    <component name="CPFG.StatusUpdateService_RS">
+        <implementation.mediator src="CPFG.StatusUpdateService_RS.mplan"/>
+    </component>
+    <reference name="CPFG.StatusUpdateValidatorSOAPAdp" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidator.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.interface(CPFG_StatusUpdateValidator)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.endpoint(CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidator)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidator/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CPFG.StatusUpdateService_RS_ep</source.uri>
+        <target.uri>CPFG.StatusUpdateService_RS/CPFG.StatusUpdateService_RS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFG.StatusUpdateService_RS/CPFG.StatusUpdateValidatorSOAPAdp</source.uri>
+        <target.uri>CPFG.StatusUpdateValidatorSOAPAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

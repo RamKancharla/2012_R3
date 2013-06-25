@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.XSD.001_SchemaAnnotations.xsd
+	* Type:        XSD Schema
+	* Description: Schema Annotations schema
+	*
+	* Change History
+	* Version     Date      Author              		Description Of Change
+	*
+	*  0.1        21/02/07  Siva (Detica)   			Initial Version
+	*  0.02       06/03/07  Rob Billignton   			Version scheme changed
+	*  1.0        16/05/08  Andrew Humphreys            Updated namespaces to be AAA owned
+	*
+	**********************************************************************************-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ns="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations"
+	targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.02">
+	<xs:simpleType name="EquivalentDataItem">
+		<xs:annotation>
+			<xs:documentation>
+				This annotation is used to document which data item in
+				the CRM6 Data Model an element is equivalent to.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string" />
+	</xs:simpleType>
+	<xs:element name="equivalentDataItem" type="ns:EquivalentDataItem" />
+	<xs:simpleType name="MessageRef">
+		<xs:annotation>
+			<xs:documentation>
+				This annotation is used to record which message in the
+				High-level design specifications, a given entity or type
+				is equivalent to. We could have used AIPI.MSG.001 etc.
+				as the type names in the schema but that's not very
+				user-friendly.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string" />
+	</xs:simpleType>
+	<xs:element name="MessageRef" type="ns:MessageRef" />
+	<xs:complexType name="Example">
+		<xs:all>
+			<xs:element name="content" />
+			<xs:element name="comment" />
+		</xs:all>
+	</xs:complexType>
+</xs:schema>

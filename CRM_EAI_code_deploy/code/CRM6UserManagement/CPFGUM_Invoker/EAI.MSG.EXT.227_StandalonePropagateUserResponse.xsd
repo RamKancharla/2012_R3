@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.EXT.227_PropagateUserResponse.xsd
+* Type:        XSD Schema
+* Description: Response from CEP to EAI
+*
+* Change History
+* Version     	Date      Author              			Description Of Change
+*
+*  0.1        	09/05/08  Rob Billington   			Initial Version
+**********************************************************************************-->
+<xsd:schema xmlns:bons0="http://www.reuters.com/ns/2007/11/20/GCAP/external/CEP/UserManagementResponse" xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/UserManagementServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/UserManagementServices" version="0.1">
+	<xsd:complexType name="StandalonePropagateUserResponse">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader">
+	<xsd:complexType>
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="xsd:string"/>
+			<xsd:element name="transactionId" type="xsd:string"/>
+			<xsd:element name="messageId" type="xsd:string"/>
+			<xsd:element name="messageHistory" type="xsd:string"/>
+			<xsd:element name="tracingId" type="xsd:string" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="xsd:string" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="response">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="response" type="xsd:string"/>
+						<xsd:element name="responseCode" type="xsd:string"/>
+						<xsd:element name="responseMessage" type="xsd:string"/>
+					</xsd:sequence>
+	</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="temporaryURL" nillable="true" type="xsd:string"/>
+			<xsd:element name="userDetails">
+	<xsd:complexType>
+		<xsd:sequence>
+			<xsd:element name="UUID" type="xsd:string"/>
+			<xsd:element name="domain" type="xsd:string"/>
+			<xsd:element name="userID" type="xsd:string"/>
+			<xsd:element name="title" type="xsd:string"/>
+			<xsd:element name="firstName" type="xsd:string"/>
+			<xsd:element name="lastName" type="xsd:string"/>
+			<xsd:element name="phoneNumber" type="xsd:string"/>
+			<xsd:element name="emailAddress" type="xsd:string"/>
+			<xsd:element name="legalConsentGiven" type="xsd:boolean"/>
+			<xsd:element name="legalConsentGivenOn" type="xsd:dateTime" nillable="true"/>
+			<xsd:element name="marketingConsentGiven" type="xsd:boolean"/>
+			<xsd:element name="marketingConsentGivenOn" type="xsd:dateTime" nillable="true"/>
+			<xsd:element name="jobRole" type="xsd:string"  nillable="true"/>
+			<xsd:element name="FTLCompleted" type="xsd:boolean"/>
+			<xsd:element name="FTLCompletedOn" type="xsd:dateTime" nillable="true"/>
+			<xsd:element name="localFirstName" type="xsd:string" nillable="true"/>
+			<xsd:element name="localLastName" type="xsd:string" nillable="true"/>
+			<xsd:element name="preferredServiceLanguage" type="xsd:string" nillable="true"/>
+			<xsd:element name="reutersMessagingId" type="xsd:string" nillable="true"/>
+			<xsd:element name="localDACSID" type="xsd:string" nillable="true"/>
+			<xsd:element name="geographicalFocus" type="xsd:string" nillable="true"/>
+			<xsd:element name="lastUpdatedByAAAOn" type="xsd:dateTime" nillable="true"/>
+			<xsd:element name="lastUpdatedSiebelOn" type="xsd:dateTime" nillable="true"/>
+			<xsd:element name="locationAccountID" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="standalonePropagateUserResponse" type="local:StandalonePropagateUserResponse"/>
+</xsd:schema>

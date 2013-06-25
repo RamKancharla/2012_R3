@@ -1,0 +1,21 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="TOMOMInvokerProcessRequest">
+		<complexType>
+			<sequence>
+				<element name="input" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="TOMOMInvokerProcessResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"/>
+				<element name="releaseSequence" type="boolean"/>
+				<element name="instanceID" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

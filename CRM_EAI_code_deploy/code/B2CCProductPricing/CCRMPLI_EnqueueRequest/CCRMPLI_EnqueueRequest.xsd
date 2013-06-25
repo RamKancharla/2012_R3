@@ -1,0 +1,19 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="CCRMPLI_EnqueueRequestProcessRequest">
+		<complexType>
+			<sequence>
+				<element name="input" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="CCRMPLI_EnqueueRequestProcessResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

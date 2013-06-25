@@ -1,0 +1,9 @@
+<adapter-config name="SiebelInboundResponse" adapter="MQ Series Adapter" wsdlLocation="SiebelInboundResponse.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemoteCRMtoEAI"/>
+  <endpoint-activation portType="Dequeue_ptt" operation="Dequeue" UITransmissionPrimitive="Dequeue">
+    <activation-spec className="oracle.tip.adapter.mq.inbound.ActivationSpecImpl">
+      <property name="QueueName" value="${mq.token.prefix}CRM_EAI_400_CON_QT_RPLY_Q"/>
+    </activation-spec>
+  </endpoint-activation>
+</adapter-config>

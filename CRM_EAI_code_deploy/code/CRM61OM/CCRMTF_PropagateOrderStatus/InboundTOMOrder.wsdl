@@ -1,0 +1,1044 @@
+<?xml version="1.0" encoding="UTF-8"?><?Siebel-Property-Set EscapeNames="false"?><definitions
+ xmlns="http://schemas.xmlsoap.org/wsdl/"
+ xmlns:xsdLocal0="http://www.siebel.com/xml/RCRM%20Order%20Entry"
+ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+ targetNamespace="http://www.reuters.com/ns/2008/06/24/GCAP/RCRM"
+ xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:tns="http://www.reuters.com/ns/2008/06/24/GCAP/RCRM"
+><types
+><xsd:schema
+ elementFormDefault="qualified"
+ xmlns:xsdLocal0="http://www.siebel.com/xml/RCRM%20Order%20Entry"
+ attributeFormDefault="unqualified"
+ targetNamespace="http://www.siebel.com/xml/RCRM%20Order%20Entry"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+><xsd:annotation
+><xsd:documentation
+>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights reserved. Siebel XSD Generation</xsd:documentation
+></xsd:annotation
+><xsd:element
+ name="OrderRequest"
+ type="xsdLocal0:OrderRequest"
+></xsd:element
+><xsd:complexType
+ name="OrderRequestTopElmt"
+><xsd:sequence
+><xsd:element
+ name="OrderRequest"
+ maxOccurs="1"
+ minOccurs="1"
+ type="xsdLocal0:OrderRequest"
+></xsd:element
+></xsd:sequence
+></xsd:complexType
+><xsd:complexType
+ name="OrderRequest"
+><xsd:sequence
+><xsd:element
+ name="MessageId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="OrderEntry-Orders"
+ maxOccurs="1"
+ minOccurs="1"
+ type="xsdLocal0:OrderEntry-Orders"
+></xsd:element
+><xsd:element
+ name="ActionCode"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string4"
+></xsd:element
+><xsd:element
+ name="MessageHistory"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string100"
+></xsd:element
+><xsd:element
+ name="Timestamp"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="UserId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="SourceSystem"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string60"
+></xsd:element
+><xsd:element
+ name="TargetSystem"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string70"
+></xsd:element
+></xsd:sequence
+></xsd:complexType
+><xsd:complexType
+ name="OrderEntry-Orders"
+><xsd:sequence
+><xsd:element
+ name="RCRMOMSPhone"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMOMSLastName"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMOMSFirstName"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMOMSEmail"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField5"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMField4"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMField3"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField2"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField1"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMBusinessCase"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMAccountLocId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string15"
+></xsd:element
+><xsd:element
+ name="RCRMTechnicalOrderNo"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMTechFulfillmentStatusReason"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string150"
+></xsd:element
+><xsd:element
+ name="RCRMTechFulfillmentStatus"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMPlannedInstallDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMPONumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMCustRequiredDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMTechOrderOwner"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string200"
+></xsd:element
+><xsd:element
+ name="RCRMActualInstallationDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="Id"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="OrderNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="PrimaryAccountCountry"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMInstallDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMLIInstallDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMLIRemovalDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMLegacyOrderNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string100"
+></xsd:element
+><xsd:element
+ name="Status"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="Account"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string100"
+></xsd:element
+><xsd:element
+ name="OrderEntry-LineItems"
+ maxOccurs="unbounded"
+ minOccurs="0"
+ type="xsdLocal0:OrderEntry-LineItems"
+></xsd:element
+><xsd:element
+ name="AccountLocation"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMNewOrderType"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="QuoteNote"
+ maxOccurs="unbounded"
+ minOccurs="0"
+ type="xsdLocal0:QuoteNote"
+></xsd:element
+><xsd:element
+ name="QuoteNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMQuoteRevisionNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string22"
+></xsd:element
+
+></xsd:sequence
+></xsd:complexType
+><xsd:complexType
+ name="OrderEntry-LineItems"
+><xsd:sequence
+><xsd:element
+ name="RCRMTechnicalFulfilmentReq"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string1"
+></xsd:element
+><xsd:element
+ name="RCRMTechnicalFulfillmentStatus"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMTechnicalApprovalReq"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string1"
+></xsd:element
+><xsd:element
+ name="RCRMPermissioningStatus"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMInstallDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMField5"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMField4"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMField3"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField2"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField1"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMBillingAccount"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string15"
+></xsd:element
+><xsd:element
+ name="RCRMTechnicalFulfilmentFlag"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMPlannedInstallationDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="Quantity"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="Product"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string100"
+></xsd:element
+><xsd:element
+ name="AltInstalBillingId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string15"
+></xsd:element
+><xsd:element
+ name="RCRMSTB"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string1"
+></xsd:element
+><xsd:element
+ name="RCRMProductLoginType"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMProdIntegrationId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMPermissioningSystem"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMManualPermissionedFlag"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string1"
+></xsd:element
+><xsd:element
+ name="RCRMLIRemovalDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMLIInstallDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMFulfilmentStatus"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMFulfilmentIntegrationFlag"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string1"
+></xsd:element
+><xsd:element
+ name="RCRMBusinessCase"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMBillingIntegrationFlag"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string1"
+></xsd:element
+><xsd:element
+ name="ParentOrderItemId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string15"
+></xsd:element
+><xsd:element
+ name="RCRMLastUpdateDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMMandatoryTechFulfilmentFlag"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string1"
+></xsd:element
+><xsd:element
+ name="RCRMTechnicalVettingFlag"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string1"
+></xsd:element
+><xsd:element
+ name="RCRMActualInstallationDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RootId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="OrderEntry-LineItemsAttribute"
+ maxOccurs="unbounded"
+ minOccurs="1"
+ type="xsdLocal0:OrderEntry-LineItemsAttribute"
+></xsd:element
+><xsd:element
+ name="RCRMContactUserNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMContactLastName"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMContactIsNewUser"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string1"
+></xsd:element
+><xsd:element
+ name="RCRMContactFirstName"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMContactBirthDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMILA"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMErrorMessage"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string100"
+></xsd:element
+><xsd:element
+ name="RCRMContactUserId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string320"
+></xsd:element
+><xsd:element
+ name="Status"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="Id"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="ActionCode"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="DiscountAmount"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="OrderNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="PartNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMAKR"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMBillingNote"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMBillingStartStopDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMCompassItemNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMDiscount"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMFreeTrialDuration"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMFreeTrialEndDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMFreeTrialFlag"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMFreeTrialStartDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMPriceListRevenueType"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMSpecialPrice"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMSpecialPriceCurrencyCode"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string20"
+></xsd:element
+><xsd:element
+ name="RCRMSpecialPriceRestrictionDate"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="RCRMSubAccountNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string3"
+></xsd:element
+><xsd:element
+ name="RCRMSubscriberNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="AssetIntegrationId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="RCRMSalesReasonCode"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string200"
+></xsd:element
+></xsd:sequence
+></xsd:complexType
+><xsd:complexType
+ name="QuoteNote"
+><xsd:sequence
+><xsd:element
+ name="RCRMField2"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField1"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMType"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="InstallationNotes"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string16383"
+></xsd:element
+><xsd:element
+ name="NoteId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string15"
+></xsd:element
+></xsd:sequence
+></xsd:complexType
+><xsd:complexType
+ name="OrderEntry-LineItemsAttribute"
+><xsd:sequence
+><xsd:element
+ name="XAId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="Value"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string100"
+></xsd:element
+><xsd:element
+ name="RCRMField5"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField4"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField3"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField2"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField1"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string50"
+></xsd:element
+><xsd:element
+ name="ParentId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="Name"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string75"
+></xsd:element
+><xsd:element
+ name="Id"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+><xsd:element
+ name="ActionCode"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal0:string30"
+></xsd:element
+></xsd:sequence
+></xsd:complexType
+><xsd:simpleType
+ name="string3"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="3"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string50"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="50"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string60"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="60"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string75"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="75"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string15"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="15"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string320"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="320"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string30"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="30"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string16383"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="16383"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string150"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="150"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string1"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="1"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string22"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="22"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string200"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="200"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string100"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="100"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string70"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="70"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string20"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="20"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string4"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="4"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+></xsd:schema
+></types
+><message
+ name="RCRM_spcTOM_spcOrder_spcInbound_spcOperation_Input"
+><part
+ name="Process_spcInstance_spcId"
+ type="xsd:string"
+></part
+><part
+ name="Object_spcId"
+ type="xsd:string"
+></part
+><part
+ name="Siebel_spcOperation_spcObject_spcId"
+ type="xsd:string"
+></part
+><part
+ name="SiebelMessage"
+ type="xsdLocal0:OrderRequestTopElmt"
+></part
+><part
+ name="Error_spcCode"
+ type="xsd:string"
+></part
+><part
+ name="Error_spcMessage"
+ type="xsd:string"
+></part
+></message
+><message
+ name="RCRM_spcTOM_spcOrder_spcInbound_spcOperation_Output"
+><part
+ name="Error_spcCode"
+ type="xsd:string"
+></part
+><part
+ name="Error_spcMessage"
+ type="xsd:string"
+></part
+><part
+ name="Object_spcId"
+ type="xsd:string"
+></part
+><part
+ name="Process_spcInstance_spcId"
+ type="xsd:string"
+></part
+><part
+ name="Siebel_spcOperation_spcObject_spcId"
+ type="xsd:string"
+></part
+></message
+><portType
+ name="RCRM_spcTOM_spcOrder_spcInbound_spcPort"
+><operation
+ name="RCRM_spcTOM_spcOrder_spcInbound_spcOperation"
+><input
+ message="tns:RCRM_spcTOM_spcOrder_spcInbound_spcOperation_Input"
+></input
+><output
+ message="tns:RCRM_spcTOM_spcOrder_spcInbound_spcOperation_Output"
+></output
+></operation
+></portType
+><binding
+ name="RCRM_spcTOM_spcOrder_spcInbound_spcPort"
+ type="tns:RCRM_spcTOM_spcOrder_spcInbound_spcPort"
+><soap:binding
+ transport="http://schemas.xmlsoap.org/soap/http"
+ style="rpc"
+></soap:binding
+><operation
+ name="RCRM_spcTOM_spcOrder_spcInbound_spcOperation"
+><soap:operation
+ soapAction="rpc/http://www.reuters.com/ns/2008/06/24/GCAP/RCRM:RCRM_spcTOM_spcOrder_spcInbound_spcOperation"
+></soap:operation
+><input
+><soap:body
+ namespace="http://www.reuters.com/ns/2008/06/24/GCAP/RCRM"
+ use="literal"
+></soap:body
+></input
+><output
+><soap:body
+ namespace="http://www.reuters.com/ns/2008/06/24/GCAP/RCRM"
+ use="literal"
+></soap:body
+></output
+></operation
+></binding
+><service
+ name="RCRM_spcTOM_spcOrder_spcInbound"
+><port
+ binding="tns:RCRM_spcTOM_spcOrder_spcInbound_spcPort"
+ name="RCRM_spcTOM_spcOrder_spcInbound_spcPort"
+><soap:address
+ location="http://10.15.35.26/eai_enu/start.swe?SWEExtSource=WebService&amp;SWEExtCmd=Execute&amp;UserName=sadmin&amp;Password=sadmin"
+></soap:address
+></port
+></service
+></definitions
+>

@@ -1,0 +1,213 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:     {Name of the file CSPM_TransformPriceUpdateStatus.bpel}   
+* Type:        {BPEL FILE} 
+* Description: {Asynchronous BPEL Process that gets User Status  from CS Adapter ESB service parses the User Status message and Submits the Canonical format to CCRMPM_PropagatePriceUpdateStatus BPEL Process} 
+  Created: Wed Apr 16 14:02:11 GMT+05:30 2008
+  * Change History 
+* Version      Date         Author                           Description Of Change 
+*  1.0         16/04/08     Chandrasekhar Reddy              Initial Version
+*  1.1         18/04/08     Chandrasekhar Reddy              Modified the code after code review
+*  1.2	       31/08/08	    Surya Gannavarapu		     Modified the custom title as part of PBI-718	
+*  1.3         02/07/10     Swathi Nadipelli                 Added new field "pliId" as part of CR 6474 and mapped in TransformParsePriceUpdateStatusToPropogatePriceUpdateStatus.xsl file
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CSPM_TransformPriceUpdateStatus" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser" xmlns:ns7="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns12="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/ns/2007/09/01/GCAP/CS/PM/Exception" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ns2="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" xmlns:ns8="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToCSPM_TransformPriceUpdateStatus" partnerLinkType="client:CSPM_TransformPriceUpdateStatus" myRole="CSPM_TransformPriceUpdateStatusProvider" partnerRole="CSPM_TransformPriceUpdateStatusRequester"/>
+        <partnerLink name="ParsePriceUpdateStatus" partnerRole="ParseCSPriceUpdateStatus_Role" partnerLinkType="ns4:ParseCSPriceUpdateStatus_PL"/>
+        <partnerLink myRole="CCRMPM_PropagatePriceUpdateStatusRequester" name="CCRMPM_PropagatePriceUpdateStatus" partnerRole="CCRMPM_PropagatePriceUpdateStatusProvider" partnerLinkType="ns12:CCRMPM_PropagatePriceUpdateStatus"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="TransformPriceUpdateStatusIV" messageType="client:CSPM_TransformPriceUpdateStatusRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CSPM_TransformPriceUpdateStatusResponseMessage"/>
+        <variable name="Success_Response" type="xsd:string"/>
+        <variable name="Sensor_Message" type="xsd:string"/>
+        <variable name="UnknownError" type="xsd:string"/>
+        <variable name="priceListNumber" type="xsd:string"/>
+        <variable name="FirstPriceUpdateLineStatus" type="xsd:string"/>
+        <variable name="ParsePriceUpdateStatusIV" messageType="ns4:FLPriceUpdatePropagationStatus"/>
+        <variable name="ParsePriceUpdateStatusOV" messageType="ns4:PriceUpdatePropagationStatus"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="PropagatePriceUpdateStatusIV" messageType="ns12:CCRMPM_PropagatePriceUpdateStatusRequestMessage"/>
+        <variable name="logicalCountry" type="xsd:string"/>
+        <variable name="CRMPLHId" type="xsd:string"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleForBindingFault" language="java" version="1.5">
+                <![CDATA[String CRMPLHId = (String)getVariableData("CRMPLHId"); 
+setTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleSelectionFailure" language="java" version="1.5">
+                <![CDATA[String CRMPLHId = (String)getVariableData("CRMPLHId"); 
+setTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleForRemoteFault" language="java" version="1.5">
+                <![CDATA[String CRMPLHId = (String)getVariableData("CRMPLHId"); 
+setTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqCustomTitleGenericFault">
+                <bpelx:exec name="AsgCustomTitleForGenericFault" language="java" version="1.5">
+                    <![CDATA[String CRMPLHId = (String)getVariableData("CRMPLHId"); 
+setTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+                </bpelx:exec>
+                <assign name="AsgUnknownError">
+                    <copy>
+                        <from expression="&quot;Unknown Error&quot;"/>
+                        <to variable="UnknownError"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CSPM_TransformPriceUpdateStatus.wsdl) -->
+        <receive name="RcvParseUpdateStatus" partnerLink="anchorToCSPM_TransformPriceUpdateStatus" portType="client:CSPM_TransformPriceUpdateStatus" operation="transformPriceUpdateStatus" variable="TransformPriceUpdateStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="Success_Response"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformPriceUpdateStatusIV','payload','/ns1:EBCDICMessage/ns1:message'),1,2000)"/>
+                <to variable="Sensor_Message"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformPriceUpdateStatusIV','payload','/ns1:EBCDICMessage/ns1:message'),384,1)"/>
+                <to variable="FirstPriceUpdateLineStatus"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformPriceUpdateStatusIV','payload','/ns1:EBCDICMessage/ns1:message'),356,2)"/>
+                <to variable="priceListNumber"/>
+            </copy>
+            <copy>
+                <from expression="substring(bpws:getVariableData('TransformPriceUpdateStatusIV','payload','/ns1:EBCDICMessage/ns1:message'),1,2)"/>
+                <to variable="logicalCountry"/>
+            </copy>
+            <copy>
+                <from expression="orcl:right-trim(substring(bpws:getVariableData('TransformPriceUpdateStatusIV','payload','/ns1:EBCDICMessage/ns1:message'),3,30))"/>
+                <to variable="CRMPLHId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[/*String priceNumber = (String)getVariableData("priceListNumber");                            
+priceNumber=(priceNumber!=null ? (priceNumber) : ".;");       
+     
+String logCountry = (String)getVariableData("logicalCountry");                            
+logCountry=(logCountry!=null ? (logCountry) : ".;");      
+                      
+String firstPriceUpdateLineStatus = (String)getVariableData("FirstPriceUpdateLineStatus");                      
+firstPriceUpdateLineStatus = (firstPriceUpdateLineStatus!=null ? ("ST: "+firstPriceUpdateLineStatus) : ".;");                      
+String Title = "PL: "+logCountry+"-"+priceNumber+" ;"+firstPriceUpdateLineStatus;            
+           
+setTitle(Title);*/  
+String CRMPLHId = (String)getVariableData("CRMPLHId"); 
+setTitle("CRMPLHId : " + CRMPLHId);]]>
+        </bpelx:exec>
+        <scope name="ParsePriceUpdateStatus">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrParsePriceUpdateStatusRemoteFault" faultName="ns11:ParsePriceUpdateStatusRemoteFault" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqParsePriceUpdateStatus">
+                <assign name="TransPriceUpdateStatusToParsePriceUpdateStatus">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransformPriceUpdateStatusIVToParsePriceUpdateStatusIV.xsl',bpws:getVariableData('TransformPriceUpdateStatusIV','payload'))"/>
+                        <to variable="ParsePriceUpdateStatusIV" part="parameter"/>
+                    </copy>
+                </assign>
+                <invoke name="InvParsePriceUpdateStatus" partnerLink="ParsePriceUpdateStatus" portType="ns4:ParseCSPriceUpdateStatus" operation="parsePriceUpdateStatus" inputVariable="ParsePriceUpdateStatusIV" outputVariable="ParsePriceUpdateStatusOV"/>
+            </sequence>
+        </scope>
+        <switch name="SwitchPropagatePriceUpdateStatus">
+            <bpelx:annotation>
+                <bpelx:documentation>SwitchPropagatePriceUpdateStatus validates
+                                     the response from ParsePriceUpdateStatus
+                                     with SuccessCode value from DVM
+                                     CRMAppReference</bpelx:documentation>
+            </bpelx:annotation>
+            <case condition="bpws:getVariableData('ParsePriceUpdateStatusOV','parameter','/ns6:CSPriceUpdateStatus/ns6:parsingPriceUpdateStatus/ns6:response')=bpws:getVariableData('Success_Response')">
+                <scope name="PropagatePriceUpdateStatus">
+                    <faultHandlers>
+                        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                            <throw name="ThrPropagatePriceUpdateStatusRemoteFault" faultName="ns11:PropagatePriceUpdateStatusRemoteFault" faultVariable="runtimeFault"/>
+                        </catch>
+                    </faultHandlers>
+                    <sequence name="SeqPropagatePriceUpdateStatus">
+                        <bpelx:annotation>
+                            <bpelx:documentation>SeqPropagatePriceUpdateStatus
+                                                 transfoms the
+                                                 ParsePriceUpdateStatus to
+                                                 PropagatePriceUpdateStatus, if
+                                                 Switch condition is true</bpelx:documentation>
+                        </bpelx:annotation>
+                        <assign name="TransParsePriceUpdateStatusToPropogatePriceUpdateStatus">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransformParsePriceUpdateStatusToPropogatePriceUpdateStatus.xsl',bpws:getVariableData('ParsePriceUpdateStatusOV','parameter'))"/>
+                                <to variable="PropagatePriceUpdateStatusIV" part="payload"/>
+                            </copy>
+                        </assign>
+                        <assign name="AsgInstanceIdToPropagatePricUpdateStatus">
+                            <copy>
+                                <from expression="ora:getCompositeInstanceId()"/>
+                                <to variable="PropagatePriceUpdateStatusIV" part="payload" query="/ns8:priceStatus/ns8:eaiHeader/ns9:instanceId"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCurrentDateTime()"/>
+                                <to variable="PropagatePriceUpdateStatusIV" part="payload" query="/ns8:priceStatus/ns8:eaiHeader/ns9:timeStamp"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvCCRMPM_PropagatePriceUpdateStatus" portType="ns12:CCRMPM_PropagatePriceUpdateStatus" inputVariable="PropagatePriceUpdateStatusIV" partnerLink="CCRMPM_PropagatePriceUpdateStatus" operation="sendPriceUpdateStatus"/>
+                    </sequence>
+                </scope>
+            </case>
+            <otherwise>
+                <empty name="ParsePriceUpateStatusFailureActivity"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

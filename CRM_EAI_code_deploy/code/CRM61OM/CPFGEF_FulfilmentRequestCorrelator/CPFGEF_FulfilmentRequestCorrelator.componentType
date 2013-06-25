@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGEF_FulfilmentRequestCorrelator.wsdl" name="rcvFulfilmentRequestCorrelator">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelator)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelatorCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="CrossRefService.wsdl" name="CrossRefService">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService#wsdl.interface(CrossRefServicePortType)"/>
+    </reference>
+    <reference ui:wsdlLocation="INTERFACE_BUFFER.wsdl" name="INTERFACE_BUFFER">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/#wsdl.interface(INTERFACE_BUFFER_ptt)"/>
+    </reference>
+    <reference name="CCRMOM_PropagateOrderStatus"
+               ui:wsdlLocation="http://10.136.164.216:8000/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatusCallback)"/>
+    </reference>
+    <property name="preference.maxWaitForElectronicFulfilmentStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

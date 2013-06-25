@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CPFG.StatusUpdateService_RS" wsdlTargetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="propagateStatusUpdate">
+      <switch>
+         <case name="Case_1_CPFG.StatusUpdateService_RS.propagateStatusUpdate" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/propagateStatusUpdateRequest_To_propagateStatusUpdateRequest.xsl,$in.parameter)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="CPFG.StatusUpdateValidatorSOAPAdp" operation="processOpportunityEvent">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/basicResponse_To_basicResponse.xsl,$in.payload)" name="$out.parameter"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

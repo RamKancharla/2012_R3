@@ -1,0 +1,13 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="TOMCM_InvokerActionCodeMap" xmlns="http://xmlns.oracle.com/dvm">
+<description>Used to translate action codes received by EAI from Siebel into CRMAction codes used when calling Peregrine.
+
+Used By:
+TOMCM_Invoker</description><columns><column name="InputActionCode"/><column name="TOMActionCode"/></columns>
+<rows><row><cell>EAI.SRV.CCRM.027.ACT.001</cell><cell>CREATE</cell></row>
+<row><cell>EAI.SRV.CCRM.027.ACT.002</cell><cell>CREATE</cell></row>
+<row><cell>EAI.SRV.CCRM.027.ACT.003</cell><cell>DELETE</cell></row>
+<row><cell>EAI.SRV.CCRM.027.ACT.004</cell><cell>CREATE</cell></row>
+<row><cell>DeAssociate</cell><cell>DEASSOCIATE</cell></row>
+<row><cell>Left Account</cell><cell>LEFTACCOUNT</cell></row>
+</rows></dvm>

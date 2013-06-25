@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="replacetokens" default="set.build.properties">
+  <property environment="env"/>  
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement location="../lib/ant-contrib/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
+ <target name="set.build.properties">
+
+	<loadproperties srcFile="build.properties"/>
+	
+	<replace dir="${basedir}/../../EAIMetaDataApp/EAIMetaData/WSDL_Cache" token="@tom.protocol@://@tom.host@:@tom.OM.port@" value="${tom.protocol}://${tom.host}:${tom.OM.port}">
+		<include name="TOM_OM.wsdl"/>
+	</replace>	  
+	<replace dir="${basedir}/../../EAIMetaDataApp/EAIMetaData/WSDL_Cache" token="@tom.protocol@://@tom.host@:@tom.AM.port@" value="${tom.protocol}://${tom.host}:${tom.AM.port}">
+		<include name="TOM_AM.wsdl"/>
+	</replace>	
+	<replace dir="${basedir}/../../EAIMetaDataApp/EAIMetaData/WSDL_Cache" token="@tom.protocol@://@tom.host@:@tom.CM.port@" value="${tom.protocol}://${tom.host}:${tom.CM.port}">
+		<include name="TOM_CM.wsdl"/>
+	</replace>		
+	<replace dir="${basedir}/../../EAIMetaDataApp/EAIMetaData/WSDL_Cache" token="@tom.protocol@://@tom.host@:@tom.QM.port@" value="${tom.protocol}://${tom.host}:${tom.QM.port}">
+		<include name="TOM_QM.wsdl"/>
+	</replace>	
+    <echo message="Replaced all TOM related tokens in EAIMetadata."/>
+	
+	<copy file="${basedir}/../../release.properties" tofile="${basedir}../../release.master.properties" overwrite="true"/>
+       <echo message="Made a copy of release.properties to release.master.properties"/>
+
+    <echo message="Replacing MDS connection with following database connection details :- ${basedir}/.adf/META-INF/adf-config.xml  User:${db.user}, password:${db.password}, ${db.url}"/>
+       <property file="build.properties"/>
+
+
+	<replace dir="${basedir}/.adf/META-INF" token="@db.user@" value="${db.user}">
+		<include name="adf-config.xml"/>
+	</replace>	
+	<replace dir="${basedir}/.adf/META-INF" token="@db.password@" value="${db.password}">
+		<include name="adf-config.xml"/>
+	</replace>	
+	<replace dir="${basedir}/.adf/META-INF" token="@db.url@" value="${db.url}">
+		<include name="adf-config.xml"/>
+	</replace>	
+	<replace dir="${basedir}/.adf/META-INF" token="@partition@" value="${soa.domain}">
+		<include name="adf-config.xml"/>
+	</replace>	
+
+
+	<replace dir="." token="@soa.host@" value="${soa.host}">
+		<include name="replaceWSEndpoints.xml"/>
+	</replace>	
+	<replace dir="." token="@soa.port@" value="${soa.port}">
+		<include name="replaceWSEndpoints.xml"/>
+	</replace>	
+	<replace dir="." token="@wls.host@" value="${wls.host}">
+		<include name="replaceWSEndpoints.xml"/>
+	</replace>	
+	<replace dir="." token="@wls.port@" value="${wls.port}">
+		<include name="replaceWSEndpoints.xml"/>
+	</replace>	
+
+
+	<!-- Get list of all the deployed composites -->
+
+  	<delete>
+      		<fileset dir="." includes="DeployedComposites.txt"/>
+  	</delete>
+  	<record name="DeployedComposites.txt" action="start"/>  
+  	<subant antfile="ant-sca-mgmt.xml" target="listDeployedComposites" buildpath="${env.ORACLE_HOME}/bin">
+          <property name="host" value="${soa.t3.host}"/>
+          <property name="port" value="${soa.t3.port}"/>
+          <property name="user" value="${soa.user}"/>
+          <property name="password" value="${soa.password}"/>
+ 	</subant>
+  	<record name="DeployedComposites.txt" action="stop"/> 
+
+   </target>
+</project>

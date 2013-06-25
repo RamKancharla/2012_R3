@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ReadSFDCAM_POLLING_V.wsdl" name="ReadSFDCAM_POLLING_V">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/ReadSFDCAM_POLLING_V/#wsdl.interface(ReadSFDCAM_POLLING_V_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="enterpriseRef.wsdl" name="SalesForce">
+        <interface.wsdl interface="urn:enterprise.soap.sforce.com#wsdl.interface(Soap)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="Update_Interfacebuffer.wsdl" name="Update_Interfacebuffer">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Interfacebuffer/#wsdl.interface(Update_Interfacebuffer_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="EAI.SRV.EXT.SFDC.049_SendAccountToSFDCServiceRef.wsdl" name="AccountManagement">
+        <interface.wsdl interface="http://soap.sforce.com/schemas/class/AccountManagement#wsdl.interface(AccountManagementPortType)"/>
+    </reference>
+    <reference name="enqueueAccountStatus"
+               ui:wsdlLocation="enqueueAccountStatus.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/CRM61AccountPub/SFDCAM_Invoker/enqueueAccountStatus#wsdl.interface(Enqueue_ptt)"/>
+    </reference>
+    <property name="preference.RemoteFaultStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.password" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.loginId" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.BusinessFaultStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

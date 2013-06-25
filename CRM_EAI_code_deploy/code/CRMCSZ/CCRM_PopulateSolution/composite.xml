@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRM_PopulateSolution" revision="1.0" state="on">
+    <import importType="wsdl" location="EAI.SRV.CCRM.045_PopulateSolutionService.wsdl" namespace="http://www.reuters.com/2008/07/14/GCAP/RCRM"/>
+    <import importType="wsdl" location="CSZ_PopulateSolutionRS.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ"/>
+    <service name="CSZ.PopulateSolutionRS_ep" ui:wsdlLocation="CSZ_PopulateSolutionRS.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.interface(assignSolutionToSR_ppt)"/>
+        <binding.ws location="CSZ_PopulateSolutionRS.wsdl" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.endpoint(assignSolutionToSR_ppt/assignSolutionToSR_ppt_pt)"/>
+    </service>
+    <component name="CSZ.PopulateSolutionRS">
+        <implementation.mediator src="CSZ.PopulateSolutionRS.mplan"/>
+    </component>
+    <reference name="CSZ.CCRM_KNOVAActivitySOAPAdp" ui:wsdlLocation="EAI.SRV.CCRM.045_PopulateSolutionService.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/2008/07/14/GCAP/RCRM#wsdl.interface(RCRM_spcKNOVA_spcActivity)"/>
+        <binding.ws location="EAI.SRV.CCRM.045_PopulateSolutionService.wsdl" port="http://www.reuters.com/2008/07/14/GCAP/RCRM#wsdl.endpoint(RCRM_spcKNOVA_spcService_spcRequest_spcActivity/RCRM_spcKNOVA_spcActivity)"/>
+    </reference>
+    <wire>
+        <source.uri>CSZ.PopulateSolutionRS_ep</source.uri>
+        <target.uri>CSZ.PopulateSolutionRS/CSZ.PopulateSolutionRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSZ.PopulateSolutionRS/CSZ.CCRM_KNOVAActivitySOAPAdp</source.uri>
+        <target.uri>CSZ.CCRM_KNOVAActivitySOAPAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

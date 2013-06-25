@@ -1,0 +1,44 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOM_PropagateOrderStatus" revision="1.0" state="on">
+    <import location="CSOrderUpdate.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerCSOrderUpdate/"/>
+    <import location="CCRMOM_PropagateOrderStatus.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" importType="wsdl"/>
+    <service name="anchorToPropagateOrderStatus" ui:wsdlLocation="CCRMOM_PropagateOrderStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatusCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.endpoint(CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus)"/>
+    </service>
+    <component name="CCRMOM_PropagateOrderStatus">
+        <implementation.bpel src="CCRMOM_PropagateOrderStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="CSOrderUpdate" ui:wsdlLocation="CSOrderUpdate.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerCSOrderUpdate/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="CSOrderUpdate_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="SequenceReleaser" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToPropagateOrderStatus</source.uri>
+        <target.uri>CCRMOM_PropagateOrderStatus/anchorToPropagateOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_PropagateOrderStatus/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_PropagateOrderStatus/CSOrderUpdate</source.uri>
+        <target.uri>CSOrderUpdate</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

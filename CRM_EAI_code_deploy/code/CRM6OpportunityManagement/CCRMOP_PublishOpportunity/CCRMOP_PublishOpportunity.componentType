@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMOP_PublishOpportunity.wsdl" name="anchorToCCRMOP_PublishOpportunity">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.interface(CCRMOP_PublishOpportunity)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.interface(CCRMOP_PublishOpportunityCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" name="AsyncSequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="WriteOpportunity.wsdl" name="WriteOpportunity">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteOpportunity/#wsdl.interface(WriteOpportunity_ptt)"/>
+    </reference>
+</componentType>

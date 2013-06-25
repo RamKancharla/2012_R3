@@ -1,0 +1,39 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPM_PriceRequestValidator" revision="1.0" state="on">
+    <import location="CCRMPM_PriceRequestValidator.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/PM_PropagatePriceUpdate/PM_PropagatePriceUpdate.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PriceRequestValidatorStub/CCRMPM_PriceRequestValidatorStub.wsdl" importType="wsdl"/>
+    <service name="anchorToPricerequestValidator" ui:wsdlLocation="CCRMPM_PriceRequestValidator.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator#wsdl.interface(CCRMPM_PriceRequestValidator)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator#wsdl.endpoint(CCRMPM_PriceRequestValidator/CCRMPM_PriceRequestValidator)"/>
+    </service>
+    <component name="CCRMPM_PriceRequestValidator">
+        <implementation.bpel src="CCRMPM_PriceRequestValidator.bpel"/>
+        
+        
+    </component>
+    <reference name="PM_PropagatePriceUpdate" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/PM_PropagatePriceUpdate/PM_PropagatePriceUpdate.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.interface(PM_PropagatePriceUpdate)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.endpoint(PM_PropagatePriceUpdate/PM_PropagatePriceUpdate)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/PM_PropagatePriceUpdate/anchorToPropagatePriceUpdate?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="CCRMPM_PriceRequestValidatorStub" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PriceRequestValidatorStub/CCRMPM_PriceRequestValidatorStub.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub#wsdl.interface(CCRMPM_PriceRequestValidatorStub)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub#wsdl.endpoint(CCRMPM_PriceRequestValidatorStub/CCRMPM_PriceRequestValidatorStub)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PriceRequestValidatorStub/client?WSDL" soapVersion="1.1"/>
+    </reference>
+    <wire>
+        <source.uri>anchorToPricerequestValidator</source.uri>
+        <target.uri>CCRMPM_PriceRequestValidator/anchorToPricerequestValidator</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_PriceRequestValidator/CCRMPM_PriceRequestValidatorStub</source.uri>
+        <target.uri>CCRMPM_PriceRequestValidatorStub</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM_PriceRequestValidator/PM_PropagatePriceUpdate</source.uri>
+        <target.uri>PM_PropagatePriceUpdate</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

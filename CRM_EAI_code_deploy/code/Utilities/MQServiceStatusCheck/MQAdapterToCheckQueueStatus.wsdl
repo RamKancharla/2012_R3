@@ -1,0 +1,21 @@
+<?binding.jca MQAdapterToCheckQueueStatus_mq.jca?>
+<definitions name="MQAdapterToCheckQueueStatus" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerMQAdapterToCheckQueueStatus/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/mq/header" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/headerMQAdapterToCheckQueueStatus/" xmlns:imp1="http://xmlns.oracle.com/MQServiceStatusCheck" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="Enqueue_plt">
+        <plt:role name="Enqueue_role">
+            <plt:portType name="tns:Enqueue_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/MQServiceStatusCheck" schemaLocation="MQServiceStatusCheck.xsd"/>
+        </schema>
+    </types>
+    <message name="MQServiceStatusCheckProcessRequest_msg">
+        <part name="MQServiceStatusCheckProcessRequest" element="imp1:MQServiceStatusCheckProcessRequest"/>
+    </message>
+    <portType name="Enqueue_ptt">
+        <operation name="Enqueue">
+            <input message="tns:MQServiceStatusCheckProcessRequest_msg"/>
+        </operation>
+    </portType>
+</definitions>

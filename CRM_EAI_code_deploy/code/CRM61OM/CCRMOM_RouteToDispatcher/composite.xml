@@ -1,0 +1,89 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOM_RouteToDispatcher" revision="1.0" state="on">
+    <import location="AssetCacheDBAdapter.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/AssetCacheDBAdapter/"/>
+    <import location="CCRMOM_RouteToDispatcher.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher"/>
+    <import location="OrderCacheDBAdapter.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/OrderCacheDBAdapter/"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_OrderRuleManager/OM_OrderRuleManager.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_OrderDispatcher/TF_OrderDispatcher.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/ELMOM_EventManager"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ELMOM_EventManager/ELMOM_EventManager.wsdl"
+            importType="wsdl"/>
+    <service name="RouteToDispatcher" ui:wsdlLocation="CCRMOM_RouteToDispatcher.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.interface(CCRMOM_RouteToDispatcherCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.interface(CCRMOM_RouteToDispatcher)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/RouteToDispatcher#wsdl.endpoint(CCRMOM_RouteToDispatcher/CCRMOM_RouteToDispatcher)"/>
+    </service>
+    <component name="CCRMOM_RouteToDispatcher">
+        <implementation.bpel src="CCRMOM_RouteToDispatcher.bpel"/>
+        <property name="preference.routeToELM">OFF</property>
+    </component>
+    <reference name="OM_OrderRuleManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_OrderRuleManager/OM_OrderRuleManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderRuleManager)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderRuleManagerCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.endpoint(OM_OrderRuleManager/OM_OrderRuleManager)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_OrderRuleManager/OM_OrderRuleManager?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.endpoint(OM_OrderRuleManager/OM_OrderRuleManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="TF_OrderDispatcher" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_OrderDispatcher/TF_OrderDispatcher.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcher)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.interface(TF_OrderDispatcherCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.endpoint(TF_OrderDispatcher/TF_OrderDispatcher)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_OrderDispatcher/anchorToTFDispatcher?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TF_OrderDispatcher#wsdl.endpoint(TF_OrderDispatcher/TF_OrderDispatcherCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="AssetCacheDBAdapter" ui:wsdlLocation="AssetCacheDBAdapter.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/AssetCacheDBAdapter/#wsdl.interface(AssetCacheDBAdapter_ptt)"/>
+        <binding.jca config="AssetCacheDBAdapter_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="OrderCacheDBAdapter" ui:wsdlLocation="OrderCacheDBAdapter.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/OrderCacheDBAdapter/#wsdl.interface(OrderCacheDBAdapter_ptt)"/>
+        <binding.jca config="OrderCacheDBAdapter_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="ELMOM_EventManager"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ELMOM_EventManager/ELMOM_EventManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/ELMOM_EventManager#wsdl.interface(ELMOM_EventManager)"
+                        callbackInterface="http://xmlns.oracle.com/ELMOM_EventManager#wsdl.interface(ELMOM_EventManagerCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/ELMOM_EventManager#wsdl.endpoint(ELMOM_EventManager/ELMOM_EventManager)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ELMOM_EventManager/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/ELMOM_EventManager#wsdl.endpoint(ELMOM_EventManager/ELMOM_EventManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>RouteToDispatcher</source.uri>
+        <target.uri>CCRMOM_RouteToDispatcher/RouteToDispatcher</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_RouteToDispatcher/OrderCacheDBAdapter</source.uri>
+        <target.uri>OrderCacheDBAdapter</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_RouteToDispatcher/TF_OrderDispatcher</source.uri>
+        <target.uri>TF_OrderDispatcher</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_RouteToDispatcher/AssetCacheDBAdapter</source.uri>
+        <target.uri>AssetCacheDBAdapter</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOM_RouteToDispatcher/OM_OrderRuleManager</source.uri>
+        <target.uri>OM_OrderRuleManager</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>CCRMOM_RouteToDispatcher/ELMOM_EventManager</source.uri>
+        <target.uri>ELMOM_EventManager</target.uri>
+    </wire>
+</composite>

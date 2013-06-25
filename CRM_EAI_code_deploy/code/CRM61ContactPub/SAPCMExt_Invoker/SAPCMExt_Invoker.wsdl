@@ -1,0 +1,44 @@
+<definitions
+     name="SAPCMExt_Invoker"
+     targetNamespace="http://xmlns.oracle.com/SAPCMExt_Invoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://xmlns.oracle.com/SAPCMExt_Invoker"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:client="http://xmlns.oracle.com/SAPCMExt_Invoker" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest">
+            <import namespace="http://xmlns.oracle.com/SAPCMExt_Invoker" schemaLocation="SAPCMExt_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://xmlns.oracle.com/SAPCMExt_Invoker">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest"
+                 schemaLocation="EAI.MSG.CM.288_CreateContactRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SAPCMExt_InvokerResponseMessage">
+        <part name="payload" element="client:SAPCMExt_InvokerProcessResponse"/>
+    </message>
+    <message name="SAPCMExt_InvokerRequestMessage">
+        <part name="payload" element="client:SAPCMExt_InvokerProcessRequest"/>
+    </message>
+    <portType name="SAPCMExt_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:SAPCMExt_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="SAPCMExt_Invoker">
+        <operation name="initiate">
+            <input message="client:SAPCMExt_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SAPCMExt_Invoker">
+        <plnk:role name="SAPCMExt_InvokerProvider">
+            <plnk:portType name="client:SAPCMExt_Invoker"/>
+        </plnk:role>
+        <plnk:role name="SAPCMExt_InvokerRequester">
+            <plnk:portType name="client:SAPCMExt_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

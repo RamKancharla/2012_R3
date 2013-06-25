@@ -1,0 +1,39 @@
+<definitions
+     name="CCRMPLI_EnqueueRequest"
+     targetNamespace="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/ProductPricing"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest"
+                 schemaLocation="CCRMPLI_EnqueueRequest.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/ProductPricing" schemaLocation="EAI.MSG.SAP.PPL.290_ProductPricingRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMPLI_EnqueueRequestResponseMessage">
+        <part name="payload" element="client:CCRMPLI_EnqueueRequestProcessResponse"/>
+    </message>
+    <message name="CCRMPLI_EnqueueRequestMessage">
+        <part name="payload" element="ns1:ProductPricing_Request"/>
+    </message>
+    <portType name="CCRMPLI_EnqueueRequest">
+        <operation name="initiate">
+            <input message="client:CCRMPLI_EnqueueRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMPLI_EnqueueRequest">
+        <plnk:role name="CCRMPLI_EnqueueRequestProvider">
+            <plnk:portType name="client:CCRMPLI_EnqueueRequest"/>
+        </plnk:role>
+        <plnk:role name="CCRMPLI_EnqueueRequestRequester">
+            <plnk:portType name="client:CCRMPLI_EnqueueRequestCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--********************************************************************************
+    * Module:      EAI.MSG.CCRM.194_PublishContactRequestresponse.xsd
+    * Type:        XSD Schema
+    * Description: Schema used to publish notifications of events on CRM contacts to EAI.
+    *
+    * Change History
+    * Version           Date      Author             Description Of Change
+    *
+   * 0.1                05/01/11   Albin I        Added ContactRowId, RCRMAccountNumber and  RCRMSAPPublishedFlag as part of Contact Sync.
+    **********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.siebel.com/xml/RCRMContactPublish"
+            xmlns:xsdLocal="http://www.siebel.com/xml/RCRMContactPublish"
+            attributeFormDefault="unqualified" elementFormDefault="qualified">
+ <xsd:annotation>
+  <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights
+                     reserved. Siebel XSD Generation</xsd:documentation>
+ </xsd:annotation>
+ <xsd:element name="PublishContactRequestReponse"
+              type="xsdLocal:PublishContactRequestReponse"/>
+ <xsd:complexType name="PublishContactRequestReponseTopElmt">
+  <xsd:sequence>
+   <xsd:element name="PublishContactRequestReponse"
+                type="xsdLocal:PublishContactRequestReponse" minOccurs="1"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PublishContactRequestReponse">
+  <xsd:sequence>
+   <xsd:element name="Header" type="xsdLocal:Header" minOccurs="1"
+                maxOccurs="1"/>
+   <xsd:element name="PublishContactRequest"
+                type="xsdLocal:PublishContactRequest" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PublishContactResponse"
+                type="xsdLocal:PublishContactResponse" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Header">
+  <xsd:sequence>
+   <xsd:element name="msgId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="applicationId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="instanceId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="messageHistory" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="timeStamp" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="timeToLive" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="tracingId" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="transactionId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PublishContactRequest">
+  <xsd:sequence>
+   <xsd:element name="ActionCode" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Contact" type="xsdLocal:Contact" minOccurs="1"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PublishContactResponse">
+  <xsd:sequence>
+   <xsd:element name="Response" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ResponseMessage" type="xsdLocal:string1000" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Contact">
+  <xsd:sequence>
+   <xsd:element name="RelationshipType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMePlatformId" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMTimeStamp" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>             
+   <xsd:element name="RCRMSupportLanguage" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMStatus" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSourceSystem" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>             
+   <xsd:element name="RCRMSegGrpEndUserActivity" type="xsdLocal:string255"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMRegionalFocus" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPublishContactToSAP" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMMessagingId" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMMarketingConsentSetDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMMarketFocus" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLocalLastName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLocalFirstName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLocalDACSId" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLegalConsentSetDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLegalConsent" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLastUpdatedProfileDate" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMLastUpdatedBy" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>               
+   <xsd:element name="RCRMField5" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField4" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField3" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField2" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField1" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMFTLFlagSetDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMFTLCompleteFlag" type="xsdLocal:string15"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMErrorMessage" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDirectMarketing" type="xsdLocal:string15"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMCoreSuiteStatus" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMContactStatus" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCPfGUserId" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMAAAUpdatedProfileDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PrimaryPositionId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PersonUId" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PartyUID3" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PartyTypeCD" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ModId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MM" type="xsdLocal:string15" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="JobTitle" type="xsdLocal:string75" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="EmployeeFlag" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ContactRowId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CellularPhone" type="xsdLocal:string40" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMDepartment" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="FaxPhone" type="xsdLocal:string40" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMContactFloor" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMVIP" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMSegGrpSecondaryAssetClass" type="xsdLocal:string255"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMAssetFocus3" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLastTrainedDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMPreferredLanguage" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMSegGrpPrimaryAssetClass" type="xsdLocal:string255"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMSegGrpBSCSide" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMLocalSalutation" type="xsdLocal:string50"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="ContactNumber" type="xsdLocal:string10" minOccurs="0"
+                maxOccurs="1"/>              
+   <xsd:element name="TelephoneNumber" type="xsdLocal:string40" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ParentAccountId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MasterAccountId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LastName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="FirstName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="EmailAddress" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ContactUUID" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ContactSubType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Position" type="xsdLocal:Position" minOccurs="0"
+                maxOccurs="unbounded"/>
+   <xsd:element name="ComplianceJobRole" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>              
+   <xsd:element name="ContactUserId" type="xsdLocal:ContactUserId" minOccurs="0"
+                maxOccurs="unbounded"/>
+   <xsd:element name="PrimaryAccountNumber" type="xsdLocal:string20"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="PrimaryAccountClass" type="xsdLocal:string20"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="PrimaryAccountId" type="xsdLocal:string15" minOccurs="0"
+                maxOccurs="1"/>             
+   <xsd:element name="Function" type="xsdLocal:Function" minOccurs="0"
+                maxOccurs="unbounded"/>
+   <xsd:element name="ContactAccount" type="xsdLocal:ContactAccount"
+                minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Position">
+  <xsd:sequence>
+   <xsd:element name="Name" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="IsPrimaryPosition" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PositionAccount" type="xsdLocal:PositionAccount"
+                minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="ContactUserId">
+  <xsd:sequence>
+   <xsd:element name="RCRMCPfGStatusReason" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCPfGStatus" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCPfGTempURL" type="xsdLocal:string2000" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMCPfGUserId" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField1" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField2" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField3" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField4" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField5" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string15" minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="ContactUUID" type="xsdLocal:string15" minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="RCRMFTLCompleteFlag" type="xsdLocal:string15" minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="RCRMFTLFlagSetDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="RCRMLocalDACSId" type="xsdLocal:string100" minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="PrimaryContactUUID" type="xsdLocal:string20" minOccurs="0" maxOccurs="1"/>
+ </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Function">
+  <xsd:sequence>
+   <xsd:element name="RCRMAccountNumber" type="xsdLocal:string20" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AccountId" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="FunctionPrimaryFlag" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMAccountClass" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField1" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RCRMField2" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>             
+   <xsd:element name="Name" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="ContactAccount">
+  <xsd:sequence>
+   <xsd:element name="RCRMSAPPublishedFlag" type="xsdLocal:string1"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="RCRMAccountNumber" type="xsdLocal:string20" minOccurs="0"
+                maxOccurs="1"/>
+    <xsd:element name="RCRMAccountClass" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AccountPrimaryFlag" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>             
+   <xsd:element name="Id" type="xsdLocal:string15" minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PositionAccount">
+  <xsd:sequence>
+   <xsd:element name="Id" type="xsdLocal:string15" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="IsPrimaryPosition" type="xsdLocal:string1" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:simpleType name="string2000">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="2000"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string50">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="50"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+  <xsd:simpleType name="string10">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="10"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string255">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="255"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string1000">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="1000"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string75">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="75"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string15">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="15"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string40">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="40"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string30">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="30"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string100">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="100"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string1">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="1"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string20">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="20"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+</xsd:schema>

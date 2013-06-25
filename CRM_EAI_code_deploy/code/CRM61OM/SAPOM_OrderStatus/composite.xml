@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SAPOM_OrderStatus" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import importType="wsdl" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_TransformOrderStatus/SAPOM_TransformOrderStatus.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus"/>
+    <import importType="wsdl" location="EAI.SRV.OM.SAP.68_OrderStatusResponse.wsdl" namespace="http://trm.com:I027:OrderProcessing:ContractOrderStatusReceive"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_TransformOrderStatus/SAPOM_TransformOrderStatus.wsdl"
+            importType="wsdl"/>
+    <service name="SAPOM.SAPOM_OrderStatus_RS_ep" ui:wsdlLocation="EAI.SRV.OM.SAP.68_OrderStatusResponse.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://trm.com:I027:OrderProcessing:ContractOrderStatusReceive#wsdl.interface(SI_ContractOrderStatusSend_IB_Async)"/>
+        <binding.ws location="EAI.SRV.OM.SAP.68_OrderStatusResponse.wsdl" port="http://trm.com:I027:OrderProcessing:ContractOrderStatusReceive#wsdl.endpoint(SI_ContractOrderStatusSend_IB_AsyncService/SI_ContractOrderStatusSend_IB_AsyncPort)"/>
+    </service>
+    <component name="SAPOM.SAPOM_OrderStatus_RS">
+        <implementation.mediator src="SAPOM.SAPOM_OrderStatus_RS.mplan"/>
+    </component>
+    <reference name="SAPOM.SAPOM_TransformOrderStatusSOAPAdp"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_TransformOrderStatus/SAPOM_TransformOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus#wsdl.interface(SAPOM_TransformOrderStatus)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus#wsdl.endpoint(SAPOM_TransformOrderStatus/SAPOM_TransformOrderStatus)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_TransformOrderStatus/SAPOM_TransformOrderStatus?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>SAPOM.SAPOM_OrderStatus_RS_ep</source.uri>
+        <target.uri>SAPOM.SAPOM_OrderStatus_RS/SAPOM.SAPOM_OrderStatus_RS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM.SAPOM_OrderStatus_RS/SAPOM.SAPOM_TransformOrderStatusSOAPAdp</source.uri>
+        <target.uri>SAPOM.SAPOM_TransformOrderStatusSOAPAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

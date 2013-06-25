@@ -1,0 +1,53 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="AM_DqTRUSTOptyUpdateNUpdateTRUSTID" revision="1.0" state="on">
+    <import location="enterpriseRef.wsdl" namespace="urn:enterprise.soap.sforce.com"/>
+    <import location="DequeueTRUSTOptyUpdate.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTOptyUpdate/"/>
+    <import location="EAI.SRV.EXT.SFDC.051_SendOpportunityToSFDCServiceRef.wsdl" namespace="http://soap.sforce.com/schemas/class/OpportunityManagement"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_SubmitOpportunity/CCRMOP_SubmitOpportunity.wsdl" importType="wsdl"/>
+    <service name="DequeueTRUSTOptyUpdate" ui:wsdlLocation="DequeueTRUSTOptyUpdate.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueTRUSTOptyUpdate/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeueTRUSTOptyUpdate_mq.jca"/>
+    </service>
+    <component name="AM_DqTRUSTOptyUpdateNUpdateTRUSTID">
+        <implementation.bpel src="AM_DqTRUSTOptyUpdateNUpdateTRUSTID.bpel"/>
+        <property name="preference.password">${trust.Password}</property>
+        <property name="preference.loginId">${trust.UserName}</property>
+        
+        
+    </component>
+    <reference name="CCRMOP_SubmitOpportunity" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_SubmitOpportunity/CCRMOP_SubmitOpportunity.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.interface(CCRMOP_SubmitOpportunity)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.interface(CCRMOP_SubmitOpportunityCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.endpoint(CCRMOP_SubmitOpportunity/CCRMOP_SubmitOpportunity)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_SubmitOpportunity/anchorToCCRMOPSubmitOpportunity?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.endpoint(CCRMOP_SubmitOpportunity/CCRMOP_SubmitOpportunityCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="SalesForce" ui:wsdlLocation="enterpriseRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="urn:enterprise.soap.sforce.com#wsdl.interface(Soap)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="enterpriseRef.wsdl" port="urn:enterprise.soap.sforce.com#wsdl.endpoint(SforceService/Soap)"/>
+    </reference>
+    <reference name="TRUSTOpptyUpdate" ui:wsdlLocation="EAI.SRV.EXT.SFDC.051_SendOpportunityToSFDCServiceRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://soap.sforce.com/schemas/class/OpportunityManagement#wsdl.interface(OpportunityManagementPortType)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="EAI.SRV.EXT.SFDC.051_SendOpportunityToSFDCServiceRef.wsdl" port="http://soap.sforce.com/schemas/class/OpportunityManagement#wsdl.endpoint(OpportunityManagementService/OpportunityManagement)"/>
+    </reference>
+    <wire>
+        <source.uri>DequeueTRUSTOptyUpdate</source.uri>
+        <target.uri>AM_DqTRUSTOptyUpdateNUpdateTRUSTID/DequeueTRUSTOptyUpdate</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AM_DqTRUSTOptyUpdateNUpdateTRUSTID/TRUSTOpptyUpdate</source.uri>
+        <target.uri>TRUSTOpptyUpdate</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AM_DqTRUSTOptyUpdateNUpdateTRUSTID/SalesForce</source.uri>
+        <target.uri>SalesForce</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AM_DqTRUSTOptyUpdateNUpdateTRUSTID/CCRMOP_SubmitOpportunity</source.uri>
+        <target.uri>CCRMOP_SubmitOpportunity</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

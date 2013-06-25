@@ -1,0 +1,47 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="PM_PropagatePriceUpdate" revision="1.0" state="on">
+    <import location="PM_PropagatePriceUpdate.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdatesToCRM/CCRMPM_PropagatePriceUpdatesToCRM.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSPM_PropagatePriceUpdatesToCS/CSPM_PropagatePriceUpdatesToCS.wsdl" importType="wsdl"/>
+    <service name="anchorToPropagatePriceUpdate" ui:wsdlLocation="PM_PropagatePriceUpdate.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.interface(PM_PropagatePriceUpdateCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.interface(PM_PropagatePriceUpdate)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.endpoint(PM_PropagatePriceUpdate/PM_PropagatePriceUpdate)"/>
+    </service>
+    <component name="PM_PropagatePriceUpdate">
+        <implementation.bpel src="PM_PropagatePriceUpdate.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMPM_PropagatePriceUpdatesToCRM" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdatesToCRM/CCRMPM_PropagatePriceUpdatesToCRM.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM#wsdl.interface(CCRMPM_PropagatePriceUpdatesToCRM)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM#wsdl.interface(CCRMPM_PropagatePriceUpdatesToCRMCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM#wsdl.endpoint(CCRMPM_PropagatePriceUpdatesToCRM/CCRMPM_PropagatePriceUpdatesToCRM)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PropagatePriceUpdatesToCRM/anchorToCCRMPM_PropagatePriceUpdatesToCRM?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM#wsdl.endpoint(CCRMPM_PropagatePriceUpdatesToCRM/CCRMPM_PropagatePriceUpdatesToCRMCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CSPM_PropagatePriceUpdatesToCS" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSPM_PropagatePriceUpdatesToCS/CSPM_PropagatePriceUpdatesToCS.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.interface(CSPM_PropagatePriceUpdatesToCS)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.interface(CSPM_PropagatePriceUpdatesToCSCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.endpoint(CSPM_PropagatePriceUpdatesToCS/CSPM_PropagatePriceUpdatesToCS)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSPM_PropagatePriceUpdatesToCS/anchorToCSPM_PropagatePriceUpdatesToCS?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS#wsdl.endpoint(CSPM_PropagatePriceUpdatesToCS/CSPM_PropagatePriceUpdatesToCSCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToPropagatePriceUpdate</source.uri>
+        <target.uri>PM_PropagatePriceUpdate/anchorToPropagatePriceUpdate</target.uri>
+    </wire>
+    <wire>
+        <source.uri>PM_PropagatePriceUpdate/CCRMPM_PropagatePriceUpdatesToCRM</source.uri>
+        <target.uri>CCRMPM_PropagatePriceUpdatesToCRM</target.uri>
+    </wire>
+    <wire>
+        <source.uri>PM_PropagatePriceUpdate/CSPM_PropagatePriceUpdatesToCS</source.uri>
+        <target.uri>CSPM_PropagatePriceUpdatesToCS</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

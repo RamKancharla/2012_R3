@@ -1,0 +1,21 @@
+<?binding.jca DequeueDADService_mq.jca?>
+<definitions name="DequeueDADService" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueDADService/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/mq/header" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueDADService/" xmlns:imp1="http://www.reuters.com/ns/2011/03/03/GCAP/EAI/eDTK/QM/DraftQuote" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="Dequeue_plt">
+        <plt:role name="Dequeue_role">
+            <plt:portType name="tns:Dequeue_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2011/03/03/GCAP/EAI/eDTK/QM/DraftQuote" schemaLocation="EAI.MSG.eDTK.QM.307_DraftQuoteMessage.xsd"/>
+        </schema>
+    </types>
+    <message name="DAD_msg">
+        <part name="DAD" element="imp1:DAD"/>
+    </message>
+    <portType name="Dequeue_ptt">
+        <operation name="Dequeue">
+            <input message="tns:DAD_msg"/>
+        </operation>
+    </portType>
+</definitions>

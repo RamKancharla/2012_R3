@@ -1,0 +1,51 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:csns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:csfns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    >
+    <types>
+       <xsd:schema targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement">
+           <xsd:include schemaLocation="EAI.MSG.CS.UOM.273_FixedLengthUserOrderRequest.xsd"/>
+        </xsd:schema>
+         <xsd:schema targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement">
+           <xsd:include schemaLocation="EAI.MSG.CS.UOM.272_UserOrderRequest.xsd"/>
+        </xsd:schema>
+     </types>
+
+    <message name="UserRequest">
+        <part name="parameter" element="tns:CSUserOrder"/>
+    </message>
+    <message name="FLUserRequest">
+        <part name="parameter" element="tns:fixedLengthUserOrderRequest"/>
+    </message>
+    <portType name="TransformToCSUserRequest">
+        <operation name="transform">
+            <input message="tns:UserRequest"/>
+            <output message="tns:FLUserRequest"/>
+        </operation>
+    </portType>
+    <binding name="TransformToCSUserRequestSOAP" type="tns:TransformToCSUserRequest">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="transform">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="TransformToCSUserRequestService">
+        <port name="TransformToCSUserRequest" binding="tns:TransformToCSUserRequestSOAP">
+            <soap:address location="http://10.2.136.134:8888/CRM60UOM-TransformToCSUserRequest-context-root/TransformToCSUserRequest"/>
+        </port>
+    </service>
+</definitions>

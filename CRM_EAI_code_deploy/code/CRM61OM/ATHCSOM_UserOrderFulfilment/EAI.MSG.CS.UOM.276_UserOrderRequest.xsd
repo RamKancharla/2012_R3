@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.CS.UOM.276_UserOrderRequest.xsd
+	* Type:        XSD Schema
+	* Description: The schema used in EAI components to publish the account data to subscribers
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         12/06/09  Sreeja			Initial version
+
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+	xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+	xmlns:gcap-cuot="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes"
+	xmlns:gcap-nuot="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.00">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.019_CommonUserOrderTypes.xsd" />
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.020_NillableUserOrderTypes.xsd" />
+	<xsd:element name="CSUserOrderRequest" type="local:UserOrderRequest" />
+	<xsd:complexType name="UserOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader" />
+			<xsd:element name="country" type="gcap-cuot:CountryCode" />
+			<xsd:element name="messageHeader" type="gcap-cmt:CSCompassMessageHeader"/>
+			<xsd:element name="sourceSystem" type="gcap-cuot:SourceSystem" />
+			<xsd:element name="userOrderHeader" type="local:UserOrderHeader" />
+			<xsd:element name="userOrderLineItem" type="local:UserOrderLineItem" maxOccurs="100"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="UserOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="transactionId" type="gcap-cuot:TransactionId" />
+			<xsd:element name="sourceSystem" type="gcap-nuot:SourceSystem" />
+			<xsd:element name="subscriber" type="gcap-cuot:Subscriber"/>
+			<xsd:element name="subAccount" type="gcap-nuot:SubAccount"/>
+			<xsd:element name="effectiveDate" type="gcap-nuot:EffectiveDate"/>
+			<xsd:element name="siebelOrderNumber" type="gcap-nuot:SiebelOrderNumber"/>
+			<xsd:element name="actionCode" type="gcap-nuot:ActionCode"/>
+	        </xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="UserOrderLineItem">
+		<xsd:sequence>		
+			<xsd:element name="UOLIId" type="gcap-nuot:UOLIId"/>
+			<xsd:element name="athenaSubId" type="gcap-nuot:AthenaSubId"/>
+			<xsd:element name="firstName" type="gcap-nuot:FirstName"/>
+                        <xsd:element name="lastName" type="gcap-nuot:LastName"/>
+                        <xsd:element name="TSAID" type="gcap-nuot:TSAID"/>
+			<xsd:element name="emailId" type="gcap-nuot:EmailId"/>
+			<xsd:element name="AKR" type="gcap-nuot:AKR"/>
+			<xsd:element name="PLI" type="gcap-nuot:PLI"/>
+			<xsd:element name="installRemoveInd" type="gcap-nuot:InstallRemoveInd"/>
+			<xsd:element name="itemNumber" type="gcap-nuot:ItemNumber"/>
+			<xsd:element name="hardStopFlag" type="gcap-nuot:HardStopFlag"/>
+                 </xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

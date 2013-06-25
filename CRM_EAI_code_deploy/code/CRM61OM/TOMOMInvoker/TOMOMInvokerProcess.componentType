@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TOMOMInvoker.wsdl" name="TOMOMInvoker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvoker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker#wsdl.interface(TOMOMInvokerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="partnerWsdls/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"/>
+    </reference>
+    <reference ui:wsdlLocation="partnerWsdls/InterfaceManager.wsdl" name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="TOMRef.wsdl" name="TOM">
+        <interface.wsdl interface="http://schemas.hp.com/SM/7#wsdl.interface(TOM)"/>
+    </reference>
+    <reference ui:wsdlLocation="INTERFACE_BUFFER.wsdl" name="INTERFACE_BUFFER">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/#wsdl.interface(INTERFACE_BUFFER_ptt)"/>
+    </reference>
+    <property name="preference.maxTimeoutOnCreateQuoteProductsAsyncResponse" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    <property name="preference.maxTimeoutOnCreateQuoteAsyncResponse" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

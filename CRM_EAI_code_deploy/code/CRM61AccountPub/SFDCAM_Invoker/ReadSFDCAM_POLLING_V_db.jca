@@ -1,0 +1,31 @@
+<adapter-config name="ReadSFDCAM_POLLING_V" adapter="Database Adapter" wsdlLocation="ReadSFDCAM_POLLING_V.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="DBEAIDev2" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//eaidev2:1521/EAIDEV2"/>
+      <property name="UserName" value="EAIOWNER"/>
+      <property name="Password" value="E8D26CEB17C942CF78415AE2B31C2AA9"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-activation portType="ReadSFDCAM_POLLING_V_ptt" operation="receive">
+    <activation-spec className="oracle.tip.adapter.db.DBActivationSpec">
+      <property name="DescriptorName" value="ReadSFDCAMPOLLINGV.SfdcamPollingV"/>
+      <property name="QueryName" value="ReadSFDCAM_POLLING_V"/>
+      <property name="PollingStrategy" value="LogicalDeletePollingStrategy"/>
+      <property name="MarkReadColumn" value="STATE"/>
+      <property name="MarkReadValue" value="P"/>
+      <property name="MaxRaiseSize" value="8"/>
+      <property name="MaxTransactionSize" value="8"/>
+      <property name="PollingInterval" value="11"/>
+      <property name="NumberOfThreads" value="1"/>
+      <property name="UseBatchDestroy" value="false"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+      <property name="MappingsMetaDataURL" value="ReadSFDCAM_POLLING_V-or-mappings.xml"/>
+    </activation-spec>
+    <input/>
+  </endpoint-activation>
+
+</adapter-config>

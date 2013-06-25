@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CCRMQM_QuoteStatusDispatcher"
+             targetNamespace="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher"
+             xmlns:ns1="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessageStatus"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/QM/QuoteRequestResponseMessageStatus" schemaLocation="EAI.MSQ.QM.314_QuoteRequestResponseMessageStatus.xsd" />
+		</schema>
+	</types>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<message name="CCRMQM_QuoteStatusDispatcherRequestMessage">
+		<part name="payload" element="ns1:UpdateQuoteStatusRequest" />
+	</message>
+
+	<message name="CCRMQM_QuoteStatusDispatcherResponseMessage">
+		<part name="payload" element="ns1:UpdateQuoteStatusRequest" />
+	</message>
+
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- portType implemented by the CCRMQM_QuoteStatusDispatcher BPEL process -->
+	<portType name="CCRMQM_QuoteStatusDispatcher">
+		<operation name="initiate">
+			<input message="client:CCRMQM_QuoteStatusDispatcherRequestMessage"/>
+		</operation>
+	</portType>
+
+	<!-- portType implemented by the requester of CCRMQM_QuoteStatusDispatcher BPEL process
+	for asynchronous callback purposes
+	-->
+	<portType name="CCRMQM_QuoteStatusDispatcherCallback">
+		<operation name="onResult">
+			<input message="client:CCRMQM_QuoteStatusDispatcherResponseMessage"/>
+		</operation>
+	</portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	the CCRMQM_QuoteStatusDispatcher partnerLinkType binds the provider and
+	requester portType into an asynchronous conversation.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<plnk:partnerLinkType name="CCRMQM_QuoteStatusDispatcher">
+		<plnk:role name="CCRMQM_QuoteStatusDispatcherProvider">
+			<plnk:portType name="client:CCRMQM_QuoteStatusDispatcher"/>
+		</plnk:role>
+		<plnk:role name="CCRMQM_QuoteStatusDispatcherRequester">
+			<plnk:portType name="client:CCRMQM_QuoteStatusDispatcherCallback"/>
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

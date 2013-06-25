@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGEF_FulfilmentRequestManager.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.interface(CPFGEF_FulfilmentRequestManager)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.interface(CPFGEF_FulfilmentRequestManagerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="CrossRefService.wsdl" name="CrossRefService">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService#wsdl.interface(CrossRefServicePortType)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelator.wsdl" name="CPFGEF_FulfilmentRequestCorrelator">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelator)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelatorCallback)"/>
+    </reference>
+    <property name="preference.maxWaitForElectronicFulfilmentStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

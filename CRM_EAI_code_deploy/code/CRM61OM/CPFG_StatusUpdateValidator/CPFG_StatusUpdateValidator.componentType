@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFG_StatusUpdateValidator.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.interface(CPFG_StatusUpdateValidator)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidatorStub/CPFG_StatusUpdateValidatorStub.wsdl" name="CPFG_StatusUpdateValidatorStub">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.interface(CPFG_StatusUpdateValidatorStub)"/>
+    </reference>
+    <reference ui:wsdlLocation="DBService.wsdl" name="DBService">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/DBService/#wsdl.interface(DBService_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_PropagateFulfillmentStatus/CPFGEF_PropagateFulfillmentStatus.wsdl" name="CPFGEF_PropagateFulfillmentStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.interface(CPFGEF_PropagateFulfillmentStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.interface(CPFGEF_PropagateFulfillmentStatusCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelator.wsdl" name="CPFGEF_FulfilmentRequestCorrelator">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelator)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelatorCallback)"/>
+    </reference>
+    <reference name="CPF_UpdateProfile"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UpdateProfile.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.interface(CPF_UpdateProfile)"/>
+    </reference>
+</componentType>

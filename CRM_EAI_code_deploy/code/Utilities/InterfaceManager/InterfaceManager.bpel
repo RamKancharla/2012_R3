@@ -1,0 +1,142 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Sun Aug 23 22:38:01 BST 2009
+  Author:  rob.billington
+  Purpose: Synchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="InterfaceManager" targetNamespace="http://xmlns.oracle.com/InterfaceManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectCountInThresholdPeriod" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectStatesOfRecentMessages/" xmlns:client="http://xmlns.oracle.com/InterfaceManager" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectStatesOfRecentMessages" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfig/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectCountInThresholdPeriod/" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="client" partnerLinkType="client:InterfaceManager" myRole="InterfaceManagerProvider"/>
+    <partnerLink name="InterfaceConfig" partnerRole="InterfaceConfig_role" partnerLinkType="ns1:InterfaceConfig_plt"/>
+    <partnerLink name="InterfaceConfigSelectStatesOfRecentMessages" partnerRole="InterfaceConfigSelectStatesOfRecentMessages_role" partnerLinkType="ns5:InterfaceConfigSelectStatesOfRecentMessages_plt"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="client:InterfaceManagerRequestMessage"/>
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="outputVariable" messageType="client:InterfaceManagerResponseMessage"/>
+    <variable name="InvInterfaceConfigSelectOV" messageType="ns1:InterfaceConfigCollection_msg"/>
+    <variable name="InvUpdateIV" messageType="ns1:InterfaceConfigCollection_msg"/>
+    <variable name="dbInterfaceConfig" messageType="ns1:InterfaceConfigCollection_msg"/>
+    <variable name="InvThresholdCheck_InterfaceConfigSelectStatesOfRecentMessagesUV" messageType="ns5:InterfaceConfigSelectStatesOfRecentMessagesInput_msg"/>
+    <variable name="InvThresholdCheck_InterfaceConfigSelectStatesOfRecentMessagesOV" messageType="ns5:InterfaceConfigSelectStatesOfRecentMessagesOutputCollection_msg"/>
+    <variable name="InvInterfaceConfigSelectIV" messageType="ns1:InterfaceConfigSelect_InterfaceID_inparameters"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in InterfaceManager.wsdl) -->
+    <receive name="receiveInput" partnerLink="client" portType="client:InterfaceManager" operation="process" variable="inputVariable" createInstance="yes"/>
+    <!-- Generate reply to synchronous request -->
+    <assign name="AsgInterfaceID">
+      <copy>
+        <from variable="inputVariable" part="payload" query="/client:InterfaceManagerProcessRequest/client:interfaceConfig/ns2:id"/>
+        <to variable="InvInterfaceConfigSelectIV" part="InterfaceConfigSelect_InterfaceID_inparameters" query="/ns2:InterfaceConfigSelect_InterfaceIDInputParameters/ns2:InterfaceID"/>
+      </copy>
+    </assign>
+    <invoke name="InvInterfaceConfigSelect" partnerLink="InterfaceConfig" portType="ns1:InterfaceConfig_ptt" operation="InterfaceConfigSelect_InterfaceID" inputVariable="InvInterfaceConfigSelectIV" outputVariable="InvInterfaceConfigSelectOV"/>
+    <switch name="SwitchOperation">
+      <case condition="bpws:getVariableData('inputVariable','payload','/client:InterfaceManagerProcessRequest/client:operation') = 'getConfig'">
+        <bpelx:annotation>
+          <bpelx:pattern>getConfig</bpelx:pattern>
+        </bpelx:annotation>
+        <assign name="TransSelectResponseToOutput">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransSelectResponseToOutput.xsl',bpws:getVariableData('InvInterfaceConfigSelectOV','InterfaceConfigCollection'))"/>
+            <to variable="outputVariable" part="payload"/>
+          </copy>
+        </assign>
+      </case>
+      <case condition="bpws:getVariableData('inputVariable','payload','/client:InterfaceManagerProcessRequest/client:operation') = 'doHealthCheck' and ( ora:countNodes('InvInterfaceConfigSelectOV','InterfaceConfigCollection','/ns2:InterfaceConfigCollection/ns2:InterfaceConfig') = 1)">
+        <bpelx:annotation>
+          <bpelx:pattern>doHealthCheck</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_3">
+          <assign name="AsgInterfaceId">
+            <copy>
+              <from variable="inputVariable" part="payload" query="/client:InterfaceManagerProcessRequest/client:interfaceConfig/ns2:id"/>
+              <to variable="InvThresholdCheck_InterfaceConfigSelectStatesOfRecentMessagesUV" part="InterfaceConfigSelectStatesOfRecentMessagesInput_msg" query="/ns6:InterfaceConfigSelectStatesOfRecentMessagesInput/ns6:interface1"/>
+            </copy>
+            <copy>
+              <from variable="inputVariable" part="payload" query="/client:InterfaceManagerProcessRequest/client:interfaceConfig/ns2:id"/>
+              <to variable="InvThresholdCheck_InterfaceConfigSelectStatesOfRecentMessagesUV" part="InterfaceConfigSelectStatesOfRecentMessagesInput_msg" query="/ns6:InterfaceConfigSelectStatesOfRecentMessagesInput/ns6:interface2"/>
+            </copy>
+          </assign>
+          <invoke name="InvThresholdCheck" partnerLink="InterfaceConfigSelectStatesOfRecentMessages" portType="ns5:InterfaceConfigSelectStatesOfRecentMessages_ptt" operation="InterfaceConfigSelectStatesOfRecentMessages" inputVariable="InvThresholdCheck_InterfaceConfigSelectStatesOfRecentMessagesUV" outputVariable="InvThresholdCheck_InterfaceConfigSelectStatesOfRecentMessagesOV"/>
+          <switch name="SwitchHealthCheck">
+            <case condition="bpws:getVariableData('InvInterfaceConfigSelectOV','InterfaceConfigCollection','/ns2:InterfaceConfigCollection/ns2:InterfaceConfig/ns2:shutoffThresholdMessages') = bpws:getVariableData('InvThresholdCheck_InterfaceConfigSelectStatesOfRecentMessagesOV','InterfaceConfigSelectStatesOfRecentMessagesOutputCollection','/ns6:InterfaceConfigSelectStatesOfRecentMessagesOutputCollection/ns6:InterfaceConfigSelectStatesOfRecentMessagesOutput[ns6:state=&quot;R&quot;]/ns6:COUNT___')">
+              <bpelx:annotation>
+                <bpelx:pattern>Count of 'R' messages in recent set equals the threshold for shutoff</bpelx:pattern>
+              </bpelx:annotation>
+              <sequence name="Sequence_4">
+                <assign name="AsgUpdateVarsForShutoff">
+                  <copy>
+                    <from variable="inputVariable" part="payload" query="/client:InterfaceManagerProcessRequest/client:interfaceConfig/ns2:id"/>
+                    <to variable="InvUpdateIV" part="InterfaceConfigCollection" query="/ns2:InterfaceConfigCollection/ns2:InterfaceConfig/ns2:id"/>
+                  </copy>
+                  <copy>
+                    <from expression="'N'"/>
+                    <to variable="InvUpdateIV" part="InterfaceConfigCollection" query="/ns2:InterfaceConfigCollection/ns2:InterfaceConfig/ns2:isAvailable"/>
+                  </copy>
+                </assign>
+                <invoke name="InvUpdateShutoff" partnerLink="InterfaceConfig" portType="ns1:InterfaceConfig_ptt" operation="update" inputVariable="InvUpdateIV"/>
+              </sequence>
+            </case>
+            <otherwise>
+              <empty name="DoNothing"/>
+            </otherwise>
+          </switch>
+        </sequence>
+      </case>
+      <case condition="bpws:getVariableData('inputVariable','payload','/client:InterfaceManagerProcessRequest/client:operation') = 'updateConfig'">
+        <bpelx:annotation>
+          <bpelx:pattern>updateConfig</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_2">
+          <assign name="AsgNewConfig">
+            <copy>
+              <from variable="inputVariable" part="payload" query="/client:InterfaceManagerProcessRequest/client:interfaceConfig"/>
+              <to variable="InvUpdateIV" part="InterfaceConfigCollection" query="/ns2:InterfaceConfigCollection/ns2:InterfaceConfig"/>
+            </copy>
+          </assign>
+          <invoke name="InvUpdate" partnerLink="InterfaceConfig" portType="ns1:InterfaceConfig_ptt" operation="update" inputVariable="InvUpdateIV"/>
+        </sequence>
+      </case>
+      <otherwise>
+        <sequence name="Sequence_1">
+          <terminate name="TerminateOnUnknownAction"/>
+        </sequence>
+      </otherwise>
+    </switch>
+    <reply name="replyOutput" partnerLink="client" portType="client:InterfaceManager" operation="process" variable="outputVariable"/>
+  </sequence>
+</process>

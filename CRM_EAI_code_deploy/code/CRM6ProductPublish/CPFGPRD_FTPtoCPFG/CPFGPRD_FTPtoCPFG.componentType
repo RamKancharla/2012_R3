@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGPRD_FTPtoCPFG.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_FTPtoCPFG#wsdl.interface(CPFGPRD_FTPtoCPFG)"/>
+    </service>
+    <reference ui:wsdlLocation="CPfG.wsdl" name="CPfG">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/ftp/CPfG/#wsdl.interface(Put_ptt)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TTMG_Invoker.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker#wsdl.interface(TTMG_Invoker)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker#wsdl.interface(TTMG_InvokerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="EAI.SRV.EXT.MST.056_ManageMigrationRequestServiceRef.wsdl" name="MSTTeamTrack">
+        <interface.wsdl interface="ttwebservices#wsdl.interface(MSTServiceSoap)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatus.wsdl" name="CCRMG_PropagateTicketStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatusCallback)"/>
+    </reference>
+</componentType>

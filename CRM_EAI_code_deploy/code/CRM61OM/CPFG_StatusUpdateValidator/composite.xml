@@ -1,0 +1,81 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFG_StatusUpdateValidator" revision="1.0" state="on">
+    <import location="CPFG_StatusUpdateValidator.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"/>
+    <import location="DBService.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/DBService/"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelator.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UpdateProfile.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidatorStub/CPFG_StatusUpdateValidatorStub.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_PropagateFulfillmentStatus/CPFGEF_PropagateFulfillmentStatus.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="CPFG_StatusUpdateValidator.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.interface(CPFG_StatusUpdateValidator)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.endpoint(CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidator)"/>
+    </service>
+    <component name="CPFG_StatusUpdateValidator">
+        <implementation.bpel src="CPFG_StatusUpdateValidator.bpel"/>
+        
+        
+        <property name="partnerLink.CPFG_StatusUpdateValidatorStub.validateXML" type="xs:string" many="false">true</property>
+    </component>
+    <reference name="CPFG_StatusUpdateValidatorStub" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidatorStub/CPFG_StatusUpdateValidatorStub.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.interface(CPFG_StatusUpdateValidatorStub)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.endpoint(CPFG_StatusUpdateValidatorStub/CPFG_StatusUpdateValidatorStub)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidatorStub/anchorToValidationStub?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="CPFGEF_FulfilmentRequestCorrelator" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelator.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelator)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelatorCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.endpoint(CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelator)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestCorrelator/rcvFulfilmentRequestCorrelator?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.endpoint(CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelatorCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CPF_UpdateProfile" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UpdateProfile.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.interface(CPF_UpdateProfile)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile#wsdl.endpoint(CPF_UpdateProfile/CPF_UpdateProfile)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPF_UpdateProfile/CPF_UserManagementService?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="CPFGEF_PropagateFulfillmentStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_PropagateFulfillmentStatus/CPFGEF_PropagateFulfillmentStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.interface(CPFGEF_PropagateFulfillmentStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.interface(CPFGEF_PropagateFulfillmentStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.endpoint(CPFGEF_PropagateFulfillmentStatus/CPFGEF_PropagateFulfillmentStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_PropagateFulfillmentStatus/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.endpoint(CPFGEF_PropagateFulfillmentStatus/CPFGEF_PropagateFulfillmentStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="DBService" ui:wsdlLocation="DBService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/DBService/#wsdl.interface(DBService_ptt)"/>
+        <binding.jca config="DBService_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CPFG_StatusUpdateValidator/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidatorStub</source.uri>
+        <target.uri>CPFG_StatusUpdateValidatorStub</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFG_StatusUpdateValidator/CPFGEF_PropagateFulfillmentStatus</source.uri>
+        <target.uri>CPFGEF_PropagateFulfillmentStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFG_StatusUpdateValidator/CPFGEF_FulfilmentRequestCorrelator</source.uri>
+        <target.uri>CPFGEF_FulfilmentRequestCorrelator</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFG_StatusUpdateValidator/DBService</source.uri>
+        <target.uri>DBService</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>CPFG_StatusUpdateValidator/CPF_UpdateProfile</source.uri>
+        <target.uri>CPF_UpdateProfile</target.uri>
+    </wire>
+</composite>

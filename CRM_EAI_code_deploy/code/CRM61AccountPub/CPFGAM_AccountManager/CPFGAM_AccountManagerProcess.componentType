@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGAM_AccountManager.wsdl" name="CPFGAM_AccountManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager#wsdl.interface(CPFGAM_AccountManager)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_AccountManager#wsdl.interface(CPFGAM_AccountManagerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" name="AsyncSequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="WriteAccount.wsdl" name="WriteAccount">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteAccount/#wsdl.interface(WriteAccount_ptt)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TrustServiceRequest.wsdl" name="AGATEWAY.SRRS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/SR/TRUSTServiceRequest#wsdl.interface(getSRService)"/>
+    </service>
+    <reference ui:wsdlLocation="SiebelSR.wsdl" name="AGATEWAY.SRSOAP">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM#wsdl.interface(RCRMServiceRequestOutput)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,73 @@
+<definitions
+     name="CSOM_COMPASSOrderFulfilment"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment"
+                 schemaLocation="CSOM_COMPASSOrderFulfilment.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.132_COMPASSOrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.133_FixedLengthOrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.157_OrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.158_FixedLengthOrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.001_SchemaAnnotations.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CSOM_COMPASSOrderFulfilmentResponseMessage">
+        <part name="payload" element="client:CSOM_COMPASSOrderFulfilmentProcessResponse"/>
+    </message>
+    <message name="CSOM_COMPASSOrderFulfilmentRequestMessage">
+        <part name="orderRequest" element="ns1:compassOrder"/>
+    </message>
+    <portType name="CSOM_COMPASSOrderFulfilmentCallback">
+        <operation name="onResult">
+            <input message="client:CSOM_COMPASSOrderFulfilmentResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CSOM_COMPASSOrderFulfilment">
+        <operation name="transformOrder">
+            <input message="client:CSOM_COMPASSOrderFulfilmentRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CSOM_COMPASSOrderFulfilment">
+        <plnk:role name="CSOM_COMPASSOrderFulfilmentProvider">
+            <plnk:portType name="client:CSOM_COMPASSOrderFulfilment"/>
+        </plnk:role>
+        <plnk:role name="CSOM_COMPASSOrderFulfilmentRequester">
+            <plnk:portType name="client:CSOM_COMPASSOrderFulfilmentCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

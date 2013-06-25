@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://impl.services.ail.athena.thomsonreuters.com/"
+             xmlns:tns1="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+             targetNamespace="http://impl.services.ail.athena.thomsonreuters.com/"
+             name="SEASiebelIntegrationWS">
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+                  schemaLocation="UserProvisionRequest.xsd"></xsd:import>
+    </xsd:schema>
+    <xsd:schema>
+      <xsd:import namespace="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+                  schemaLocation="UserProvisionResponse.xsd"></xsd:import>
+    </xsd:schema>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+                xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager"
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                xmlns:ns2="http://schemas.oracle.com/bpel/extension">
+      <xsd:import namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement"
+                  schemaLocation="EAI.MSG.ATH.OM.302_OrderRequest.xsd"/>
+    </xsd:schema>
+  </types>
+  <message name="UserProvisionRequest">
+    <part name="parameters" element="tns1:UserProvisionRequest"></part>
+  </message>
+  <message name="UserProvisionResponse">
+    <part name="parameters" element="tns1:UserProvisionResponse"></part>
+  </message>
+  <message name="ATHOMOrdReqGroupMsg">
+    <part name="ATHOMOrdReqGroupMsgPart" element="ns1:ATHOrdRequest"/>
+  </message>
+  <portType name="SEASiebelIntegrationWS">
+    <operation name="UserProvisionRequest">
+      <input message="tns:UserProvisionRequest"></input>
+      <output message="tns:UserProvisionResponse"></output>
+    </operation>
+  </portType>
+  <binding xmlns:ns3="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+           name="SEASiebelIntegrationWSPortBinding"
+           type="tns:SEASiebelIntegrationWS">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+                  style="document"></soap:binding>
+    <operation name="UserProvisionRequest">
+      <soap:operation soapAction=""></soap:operation>
+      <input>
+        <soap:body use="literal"></soap:body>
+      </input>
+      <output>
+        <soap:body use="literal"></soap:body>
+      </output>
+    </operation>
+  </binding>
+  <service name="SEASiebelIntegrationWS">
+    <port name="SEASiebelIntegrationWSPort"
+          binding="tns:SEASiebelIntegrationWSPortBinding">
+      <soap:address location="${sea.protocol}://${sea.host}/SEASiebelIntegrationWSService/SEASiebelIntegrationWS"></soap:address>
+    </port>
+  </service>
+</definitions>

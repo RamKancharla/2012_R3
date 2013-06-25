@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!--
+/*********************************************************************************
+* Module        EAI.MSG.CS.OM.158_FixedLengthOrderRequest
+* Type          XML Schema Document
+*
+*Description    Fixed length order request
+*
+*
+*Change History
+* Version	Date		Author			Description Of Change
+* =======	======		=================	================================
+*  0.01		15/10/07	G Suryanarayana		Initial Version
+*  0.02		16/10/07	G Patchipulusu 		Amended types 
+*  0.03         17/10/07        G Suryanarayana         Changed the element name fixedLengthOrderRequest to CSfixedLengthOrderRequest 
+*  0.04         09/01/08        G Patchipulusu          Cahnged the file name 
+*************************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.04">
+	<xsd:include schemaLocation="EAI.MSG.CS.OM_CommonTypes.xsd"/>
+  <xsd:element name="CSfixedLengthOrderRequest" type="xsdLocal:_CSFixedLengthOrderRequest"/>
+	<xsd:complexType name="_CSFixedLengthOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="xsdLocal:_CSEaiHeader"/>
+			<xsd:element name="basicResponse" type="xsdLocal:_CSBasicResponse"/>
+			<xsd:element name="logicalCountry" type="xsdLocal:_CSCountryCode"/>
+			<xsd:element name="message" type="xsd:string"/>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSBasicResponse">
+		<xsd:sequence>
+			<xsd:element name="response" type="xsdLocal:_CSResponse"/>
+			<xsd:element name="responseCode" type="xsdLocal:_CSResponseCode"/>
+			<xsd:element name="responseMessage" type="xsdLocal:_CSMessage"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="_CSResponseCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>00203-EAI-INVALID ACTION CODE</content>
+					<comment>In valid action code</comment>
+				</gcap-sa:Example>
+				
+				<gcap-sa:Example>
+					<content>00202-EAI-INVALID MESSAGE CONTENT</content>
+					<comment>Invalid message content provided by service client</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>00401-EAI-TIMEOUT ERROR</content>
+					<comment>Timeout error returned if the service
+                        cannot respond within a               specified time.</comment>
+
+                </gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="250"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSResponse">
+		<xsd:annotation>
+		
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>non-zero</content>
+					<comment>Failure</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>0</content>
+					
+					<comment>Success</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="0"/>
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value=""/>
+			
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSMessage">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+					
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

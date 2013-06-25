@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/PLI/ProductPricing"
+            xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/PLI/ProductPricing"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="SAPProductPricing" type="xsdLocal:DT_ProductPricing_Send"/>
+  <xsd:complexType name="DT_ProductPricing_Send">
+    <xsd:sequence>
+      <xsd:element name="Header_Details">
+        <xsd:complexType> 
+          <xsd:sequence>
+            <xsd:element name="PPLID" type="xsd:string"></xsd:element>
+            <xsd:element name="ZGPLI" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_MATNR" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRDNM" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRLVL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRDSTS" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_QTTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_RVTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRDTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRDESC" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_SC3" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_GADIS" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_TRGA" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRDLN" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_FRTRL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_MNPRMSN" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_WLCL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_CLTRNG" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_SRVPRD" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_COMMAPP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_CONSPN" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_SLACAT" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRDLTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRDUTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_SPRCALL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_DVCE" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_AUTOPRMSN" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_ASSCAT" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_WLEML" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_GUAHRS" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_STB" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRKEY" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRMPRMSN" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_BLPLT" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_CNVASS" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_TCHAPP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_TCHFLFL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_MRGCAT" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_PRDAPPRQ" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_GLBPRCPRD" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_ELPRIC" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_AGRTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_ORDBL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_VSBL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_SRVTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_LCPLI" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_RIN" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_DISCGRP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_SNVLDISC" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_MNVLDISC" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_CONTRCAT" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_LICTYP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_3RYGRP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_EMBSWPRD" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_MNFPTNUM" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_MNFCTNAME" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_SOLAPP" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_EMRGPRT" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_MAINTPRD" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_OPRSYS" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_SOLMAINTPRD" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_INVBANK" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_BUSCLS" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_BILL" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_TPRS" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_BQTY" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_OPPRD" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_SLATM" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_MAPER" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_ADPER" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_GUPER" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="MAKTX" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="Item_Details" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="PRICID" type="xsd:string"></xsd:element>
+                  <xsd:element name="ZPLNM" type="xsd:string" minOccurs="0"></xsd:element>
+                  <xsd:element name="DATBI" type="xsd:string" minOccurs="0"></xsd:element>
+                  <xsd:element name="DATAB" type="xsd:string" minOccurs="0"></xsd:element>
+                  <xsd:element name="ZLPRIC" type="xsd:string" minOccurs="0"></xsd:element>
+                  <xsd:element name="ZCURR_CODE" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="ZSB_INACT" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ZSB_PLIPER" type="xsd:string" minOccurs="0"></xsd:element>
+                  <xsd:element name="ZSB_LCLSTS" type="xsd:string" minOccurs="0"></xsd:element>
+                  <xsd:element name="ZSB_LCLPLI" type="xsd:string" minOccurs="0"></xsd:element>
+                  <xsd:element name="ZSB_IGNOR" type="xsd:string" minOccurs="0"></xsd:element>
+                  <xsd:element name="ZSB_LCLPLILNG" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence> 
+  </xsd:complexType>
+</xsd:schema>

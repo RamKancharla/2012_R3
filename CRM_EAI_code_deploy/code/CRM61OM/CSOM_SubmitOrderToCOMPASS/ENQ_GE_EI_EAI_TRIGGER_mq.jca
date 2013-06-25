@@ -1,0 +1,17 @@
+<adapter-config name="ENQ_GE_EI_EAI_TRIGGER" adapter="MQSeriesAdapter" wsdlLocation="ENQ_GE_EI_EAI_TRIGGER.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemote" adapterRef=""/>
+  <endpoint-interaction portType="submitOrder_ptt" operation="submitOrder" UITransmissionPrimitive="Enqueue">
+    <interaction-spec className="oracle.tip.adapter.mq.outbound.InteractionSpecImpl">
+      <property name="QueueName" value="${mq.token.prefix.cs}GE_EI_EAI_TRIGGER"/>
+      <property name="UseMessageEncodingForTranslation" value="true"/>
+      <property name="MessageType" value="NORMAL"/>
+      <property name="MessageFormat" value="STRING"/>
+      <property name="Priority" value="AS_Q_DEF"/>
+      <property name="Persistence" value="true"/>
+      <property name="Expiry" value="NEVER"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

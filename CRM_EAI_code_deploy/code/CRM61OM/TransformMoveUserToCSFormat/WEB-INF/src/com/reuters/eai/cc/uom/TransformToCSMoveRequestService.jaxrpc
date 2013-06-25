@@ -1,0 +1,109 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<jdevws:WebService xmlns:jdevws="http://xmlns.oracle.com/jdeveloper/10130/webservice">
+   <list n="CHILD_NODES">
+      <url path="../../../../../../../public_html/WEB-INF/wsdl/TransformToCSMoveRequestService.wsdl"/>
+      <url path="TransformMoveUserToCSFormatRequest.java"/>
+      <url path="CSSourceSystem.java"/>
+      <url path="_CSResponse.java"/>
+      <url path="CSMoveUserRequest.java"/>
+      <url path="CSMessageHeader.java"/>
+      <url path="CSUserOrderHeader.java"/>
+      <url path="CSUOLI.java"/>
+      <url path="CSFixedLengthUserOrderRequest.java"/>
+      <url path="_CSEaiHeader.java"/>
+      <url path="_CSBasicResponse.java"/>
+      <url path="../../../../../../../public_html/WEB-INF/TransformToCSMoveRequestService-java-wsdl-mapping.xml"/>
+      <url path="TransformMoveUserToCSFormatRequestImpl.java"/>
+   </list>
+   <hash n="DATA_MODEL">
+      <value n="ATTACHMENT_ENCODING" v="ATTACHMENT_MIME"/>
+      <list n="BD_">
+         <hash>
+            <value n="BD_DEFAULT_DOCUMENT_WRAPPED" v="false"/>
+            <value n="BOUND_PORT_TYPE" v="{http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement}TransformMoveUserToCSFormatRequest"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPBinding"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement}TransformMoveUserToCSFormatSOAP"/>
+            <list n="OP_BINDINGS">
+               <hash>
+                  <value n="BD_SOAP_ACTION" v="urn:#NewOperation"/>
+                  <value n="BD_SOAP_INPUT_USE" v="1"/>
+                  <value n="BD_SOAP_OUTPUT_USE" v="1"/>
+                  <value n="BD_SOAP_STYLE" v="1"/>
+                  <value n="BOUND_OPERATION" v="com.reuters.eai.cc.uom.CSFixedLengthUserOrderRequest.transform.com.reuters.eai.cc.uom.CSMoveUserRequest"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPOperationBinding"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+         </hash>
+      </list>
+      <list n="custom_schema_urls">
+         <url path="../../../../../../../EAI.MSG.CS.UOM.273_FixedLengthUserOrderRequest.xsd"/>
+         <url path="../../../../../../../EAI.MSG.CS.UOM.279_MoveUserRequest.xsd"/>
+      </list>
+      <value n="GUID" v="e5091868-0122-1000-8005-0a0288530ebd"/>
+      <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaWebService"/>
+      <list n="PO_">
+         <hash>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPPort"/>
+            <value n="NAME" v="TransformMoveUserToCSFormatRequest"/>
+            <value n="PORT_BINDING_NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement}TransformMoveUserToCSFormatSOAP"/>
+            <list n="PORT_OPS">
+               <hash>
+                  <value n="EXPOSED_BD_OPERATION" v="com.reuters.eai.cc.uom.CSFixedLengthUserOrderRequest.transform.com.reuters.eai.cc.uom.CSMoveUserRequest"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.PortOperation"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+         </hash>
+      </list>
+      <hash n="PROPERTY_GROUPS">
+         <hash n="WSDL_TO_JAVA_PROPERTIES">
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.WSDLToJavaProperties"/>
+            <value n="WSDL2JAVA_ROOT_VALUE_PACKAGE" v="com.reuters.eai.cc.uom"/>
+            <value n="WSDL2JAVA_UNWRAP_PARAMETERS" v="false"/>
+         </hash>
+      </hash>
+      <list n="PT_">
+         <hash>
+            <value n="AUTO_SERVICE_INTERFACE"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaPortType"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement}TransformMoveUserToCSFormatRequest"/>
+            <list n="OP_">
+               <hash>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaOperation"/>
+                  <list n="OP_JAVA_EXCEPTIONS">
+                     <string v="java.rmi.RemoteException"/>
+                  </list>
+                  <value n="OP_JAVA_NAME" v="transform"/>
+                  <list n="OP_JAVA_PARAMETERS">
+                     <hash>
+                        <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaParameter"/>
+                        <value n="NAME" v="parameter"/>
+                        <value n="TYPE" v="com.reuters.eai.cc.uom.CSMoveUserRequest"/>
+                     </hash>
+                  </list>
+                  <value n="OP_JAVA_RETURN_TYPE" v="com.reuters.eai.cc.uom.CSFixedLengthUserOrderRequest"/>
+                  <value n="OP_NAME" v="transform"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+            <value n="PT_CLASS" v="com.reuters.eai.cc.uom.TransformMoveUserToCSFormatRequestImpl"/>
+            <value n="PT_SERVICE_INTERFACE" v="com.reuters.eai.cc.uom.TransformMoveUserToCSFormatRequest"/>
+         </hash>
+      </list>
+      <url n="TARGET_PROJECT" path="../../../../../../../TransformMoveUserToCSFormat.jpr"/>
+      <url n="WS_MAPPING_FILE" path="../../../../../../../public_html/WEB-INF/TransformToCSMoveRequestService-java-wsdl-mapping.xml"/>
+      <value n="WS_TARGET_NAMESPACE" v="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"/>
+      <value n="WS_URI" v="TransformToCSMoveRequestService"/>
+      <list n="WSDL_DEPENDENT_FILES">
+         <url path="../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CS.UOM.279_MoveUserRequest.xsd"/>
+         <url path="../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CS.UOM.273_FixedLengthUserOrderRequest.xsd"/>
+      </list>
+   </hash>
+</jdevws:WebService>

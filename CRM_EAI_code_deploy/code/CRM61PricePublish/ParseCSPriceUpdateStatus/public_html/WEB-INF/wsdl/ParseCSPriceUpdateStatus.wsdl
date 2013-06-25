@@ -1,0 +1,46 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser"
+     xmlns:osns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:fixns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse" location="EAI.MSG.CS.209_FixedLengthEBCDICMessage.xsd"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate" location="EAI.MSG.CS.PM.210_PriceUpdateStatus.xsd"/>
+    <message name="FLPriceUpdatePropagationStatus">
+        <part name="parameter" element="fixns:fixedLengthMessage"/>
+    </message>
+    <message name="PriceUpdatePropagationStatus">
+        <part name="parameter" element="osns:CSPriceUpdateStatus"/>
+    </message>
+    <portType name="ParseCSPriceUpdateStatus">
+        <operation name="parsePriceUpdateStatus">
+            <input message="tns:FLPriceUpdatePropagationStatus"/>
+            <output message="tns:PriceUpdatePropagationStatus"/>
+        </operation>
+    </portType>
+    <binding name="ParseCSPriceUpdateStatusSOAP" type="tns:ParseCSPriceUpdateStatus">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="parsePriceUpdateStatus">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ParseCSPriceUpdateStatus">
+        <port name="parsePriceUpdateStatus" binding="tns:ParseCSPriceUpdateStatusSOAP">
+            <soap:address location="http://10.2.136.245:8888/SPRINT8-ParseCSPriceUpdateStatus-context-root/parsePriceUpdateStatus"/>
+        </port>
+    </service>
+</definitions>

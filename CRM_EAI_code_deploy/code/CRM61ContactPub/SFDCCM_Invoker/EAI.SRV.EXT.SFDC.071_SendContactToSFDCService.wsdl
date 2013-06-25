@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Web Services API : ContactManagement
+-->
+<definitions targetNamespace="http://soap.sforce.com/schemas/class/ContactManagement" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://soap.sforce.com/schemas/class/ContactManagement">
+ <types>
+  <xsd:schema elementFormDefault="qualified" targetNamespace="http://soap.sforce.com/schemas/class/ContactManagement">
+   <xsd:element name="DebuggingInfo">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="debugLog" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:simpleType name="ID">
+    <xsd:restriction base="xsd:string">
+     <xsd:length value="18"/>
+     <xsd:pattern value="[a-zA-Z0-9]{18}"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LogCategory">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="Db"/>
+     <xsd:enumeration value="Workflow"/>
+     <xsd:enumeration value="Validation"/>
+     <xsd:enumeration value="Callout"/>
+     <xsd:enumeration value="Apex_code"/>
+     <xsd:enumeration value="Apex_profiling"/>
+     <xsd:enumeration value="Visualforce"/>
+     <xsd:enumeration value="System"/>
+     <xsd:enumeration value="All"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LogCategoryLevel">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="Internal"/>
+     <xsd:enumeration value="Finest"/>
+     <xsd:enumeration value="Finer"/>
+     <xsd:enumeration value="Fine"/>
+     <xsd:enumeration value="Debug"/>
+     <xsd:enumeration value="Info"/>
+     <xsd:enumeration value="Warn"/>
+     <xsd:enumeration value="Error"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:complexType name="LogInfo">
+    <xsd:sequence>
+     <xsd:element name="category" type="tns:LogCategory"/>
+     <xsd:element name="level" type="tns:LogCategoryLevel"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:simpleType name="LogType">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="None"/>
+     <xsd:enumeration value="Debugonly"/>
+     <xsd:enumeration value="Db"/>
+     <xsd:enumeration value="Profiling"/>
+     <xsd:enumeration value="Callout"/>
+     <xsd:enumeration value="Detail"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:element name="DebuggingHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="categories" minOccurs="0" maxOccurs="unbounded" type="tns:LogInfo"/>
+      <xsd:element name="debugLevel" type="tns:LogType"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="CallOptions">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="client" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="SessionHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="sessionId" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="AllowFieldTruncationHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="allowFieldTruncation" type="xsd:boolean"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:complexType name="ContactAccount">
+    <xsd:sequence>
+     <xsd:element name="AccountANumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ActionCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="PrimaryFlag" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ContactFunction">
+    <xsd:sequence>
+     <xsd:element name="AccountANumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ActionCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="FunctionValue" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="PrimaryFlag" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ContactIdUpdateandResponse">
+    <xsd:sequence>
+     <xsd:element name="ContactUniqueNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SFDCId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SourceSystem" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="StatusCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="StatusDescription" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="TransactionId" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ContactRequest">
+    <xsd:sequence>
+     <xsd:element name="ActionCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AssetFocus1" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AssetFocus2" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AssetFocus3" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="BuySellCorpSide" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ComplianceJobRole" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ContactAccountData" minOccurs="0" maxOccurs="unbounded" type="tns:ContactAccount" nillable="true"/>
+     <xsd:element name="ContactFunctionData" minOccurs="0" maxOccurs="unbounded" type="tns:ContactFunction" nillable="true"/>
+     <xsd:element name="ContactUniqueNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Department" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="DirectMarketing" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="EmailAddress" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="EndUserActivity" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="FaxNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="FirstName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Floor" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="FTLDate" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="FTLFlag" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="JobTitle" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="KNLastTrained" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Language" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LastName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LastUpdatedBy" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LastUpdatedDate" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LegalConsent" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalFirstName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalLastName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalSalutation" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="MobileNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="PrimaryAccountANumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Salutation" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SFDCId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SourceSystem" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Status" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="VIPFlag" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="WorkPhoneNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="CNumberUpdate">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="ConRequest" type="tns:ContactIdUpdateandResponse" nillable="true"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="CNumberUpdateResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" type="tns:ContactIdUpdateandResponse" nillable="true"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="TRUSTInboundContact">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="ConRequest" type="tns:ContactRequest" nillable="true"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="TRUSTInboundContactResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" type="tns:ContactIdUpdateandResponse" nillable="true"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+  </xsd:schema>
+ </types>
+ <!-- Message for the header parts -->
+ <message name="Header">
+  <part name="AllowFieldTruncationHeader" element="tns:AllowFieldTruncationHeader"/>
+  <part name="CallOptions" element="tns:CallOptions"/>
+  <part name="DebuggingHeader" element="tns:DebuggingHeader"/>
+  <part name="DebuggingInfo" element="tns:DebuggingInfo"/>
+  <part name="SessionHeader" element="tns:SessionHeader"/>
+ </message>
+ <!-- Operation Messages -->
+ <message name="CNumberUpdateRequest">
+  <part element="tns:CNumberUpdate" name="parameters"/>
+ </message>
+ <message name="CNumberUpdateResponse">
+  <part element="tns:CNumberUpdateResponse" name="parameters"/>
+ </message>
+ <message name="TRUSTInboundContactRequest">
+  <part element="tns:TRUSTInboundContact" name="parameters"/>
+ </message>
+ <message name="TRUSTInboundContactResponse">
+  <part element="tns:TRUSTInboundContactResponse" name="parameters"/>
+ </message>
+ <portType name="ContactManagementPortType">
+  <operation name="CNumberUpdate">
+   <input message="tns:CNumberUpdateRequest"/>
+   <output message="tns:CNumberUpdateResponse"/>
+  </operation>
+  <operation name="TRUSTInboundContact">
+   <input message="tns:TRUSTInboundContactRequest"/>
+   <output message="tns:TRUSTInboundContactResponse"/>
+  </operation>
+ </portType>
+ <binding name="ContactManagementBinding" type="tns:ContactManagementPortType">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="CNumberUpdate">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
+    <soap:header use="literal" part="AllowFieldTruncationHeader" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:header use="literal" part="DebuggingInfo" message="tns:Header"/>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+  <operation name="TRUSTInboundContact">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
+    <soap:header use="literal" part="AllowFieldTruncationHeader" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:header use="literal" part="DebuggingInfo" message="tns:Header"/>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+ </binding>
+ <service name="ContactManagementService">
+  <documentation></documentation>
+  <port binding="tns:ContactManagementBinding" name="ContactManagement">
+   <soap:address location="${trust.protocol}://${trust.host}/services/Soap/class/ContactManagement"/>
+  </port>
+ </service>
+</definitions>

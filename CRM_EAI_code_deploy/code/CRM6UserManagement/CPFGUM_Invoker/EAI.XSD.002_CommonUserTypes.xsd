@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by robin goode (Reuters Software (Thailand) Limited) -->
+<!--********************************************************************************
+	* Module:      EAI.XSD.002_CommonUserTypes.xsd
+	* Type:       	XSD Schema
+	* Description: The schema used for Common User Message attributes
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	*  0.1        21/02/07  Siva (Detica)	   Initial Version
+	*  0.02       06/03/07  Rob Billington	   Version scheme changed
+	*  0.03       23/03/07  Geratayya P		   Changed the elements in the camel case
+	*  0.04       23/03/07  Rob Billington	   Removed common message types and renamed surName to surname
+	*  0.05       27/03/07  Rob Billington	   Changed surname to LastName to comply with CDM.  Added local first and last names as apparently we'll need them.  Changed length of title to 15 characters to comply with CDM.
+	*  0.06	      27/03/07  Kevin Wood	       Some constraints updated to reflect CDMv2.0
+	*  0.07	      03/04/07  Geratayya P	       Updated as based on Contact EAI IO Object Def 20070328 v07.xls
+	*  0.08	      10/04/07  Kevin Wood	       Added Login type and updated FTLUserDetails and syncCPfGUserDetails to include
+	*  0.09	      16/04/07  Kevin Wood         Removed login element from UpdateUserDetails type
+	*  0.10       24/07/07  Mark Flynn         Updated to reflect new processes
+	*  0.11       13/08/07  Rob Billington     Added restriction to allowable characters for UUID and domain
+	*  0.12       13/08/07  Rob Billington     Renamed DACSServerID to LocalDACSID. Increased max length of LastName to 50 to match CDM v2
+	*                                          Corrected example value in comment for _FTLCompleted 
+	*                                          Increased length of userID and emailAddress to 320 characters to match Siebel implementation and user ID policy. 
+	*                                          Changed CDM mapping for JobRole. 
+	*  0.13       14/08/07  Rob Billington     Renamed accountID to locationAccountID
+	*  1.0        16/05/08  Andrew Humphreys   Changed namespaces to  be AAA owned
+	*  1.1        14/08/08	Carlo Marcoli	   Validation constraints have been reviewed  		
+	*  1.2        19/12/08  Vlad/Ravi          Removed nillable
+	**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes" xmlns:gcap-sa="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations" xmlns:gcap-cat="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonAccountTypes" targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.13">
+	<xsd:import namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations" schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonAccountTypes" schemaLocation="EAI.XSD.003_CommonAccountTypes.xsd"/>
+	<xsd:complexType name="UserDetails">
+		<xsd:sequence>
+			<xsd:element name="UUID" type="gcap:UUID" />
+      		<xsd:element name="primaryUUID" type="gcap:UUID" minOccurs="0" maxOccurs="1"/>
+      		<xsd:element name="userType" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+      		<xsd:element name="extraInfo" minOccurs="0" maxOccurs="1">
+		  		<xsd:complexType>
+			  		<xsd:sequence>
+				  		<xsd:any minOccurs="0" maxOccurs="1" processContents="lax"/>
+			  		</xsd:sequence>
+		  		</xsd:complexType>
+      		</xsd:element>
+			<xsd:element name="domain" type="gcap:Domain"  minOccurs="0"/>
+			<xsd:element name="userID" type="gcap:UserID"  minOccurs="0"/>
+			<xsd:element name="title" type="gcap:Title"  minOccurs="0"/>
+			<xsd:element name="firstName" type="gcap:FirstName"  minOccurs="0"/>
+			<xsd:element name="lastName" type="gcap:LastName"  minOccurs="0"/>
+			<xsd:element name="phoneNumber" type="gcap:PhoneNumber"  minOccurs="0"/>
+			<xsd:element name="emailAddress" type="gcap:EmailAddress"  minOccurs="0"/>
+			<xsd:element name="legalConsentGiven" type="gcap:LegalConsentGiven"  minOccurs="0"/>
+			<xsd:element name="legalConsentGivenOn" type="gcap:LegalConsentGivenOn"  minOccurs="0"/>
+			<xsd:element name="marketingConsentGiven" type="gcap:MarketingConsentGiven"  minOccurs="0"/>
+			<xsd:element name="marketingConsentGivenOn" type="gcap:MarketingConsentGivenOn"  minOccurs="0"/>
+			<xsd:element name="jobRole" type="gcap:JobRole"  minOccurs="0"/>
+			<xsd:element name="FTLCompleted" type="gcap:_FTLCompleted"  minOccurs="0"/>
+			<xsd:element name="FTLCompletedOn" type="gcap:_FTLCompletedOn"  minOccurs="0"/>
+			<xsd:element name="localFirstName" type="gcap:LocalFirstName"  minOccurs="0"/>
+			<xsd:element name="localLastName" type="gcap:LocalLastName"  minOccurs="0"/>
+			<xsd:element name="preferredServiceLanguage" type="gcap:PreferredServiceLanguage"  minOccurs="0"/>
+			<xsd:element name="reutersMessagingId" type="gcap:ReutersMessagingId"  minOccurs="0"/>
+			<xsd:element name="localDACSID" type="gcap:LocalDACSID"  minOccurs="0"/>
+			<xsd:element name="geographicalFocus" type="gcap:GeographicalFocus"  minOccurs="0"/>
+			<xsd:element name="lastUpdatedByAAAOn" type="gcap:LastUpdatedByAAAOn"  minOccurs="0"/>
+			<xsd:element name="lastUpdatedSiebelOn" type="gcap:LastUpdatedSiebelOn"  minOccurs="0"/>
+			<xsd:element name="locationAccountID" type="gcap-cat:AccountID"  minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="UUID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.UUID
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>1-6AORV1</content>
+					<comment>Siebel Rowid</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+			<xsd:pattern value="[A-Z,0-9,\-,\+]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Domain">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.DOMAIN
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>SL</content>
+					<comment>
+						Domain from which a user was created
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2"/>
+			<xsd:enumeration value="SL"/>
+			<xsd:enumeration value="PA"/>
+			<xsd:enumeration value="X1"/>
+			<xsd:enumeration value="X2"/>
+			<xsd:enumeration value="X3"/>
+			<xsd:enumeration value="X4"/>
+			<xsd:enumeration value="X5"/>
+			<xsd:enumeration value="T1"/>
+			<xsd:enumeration value="T2"/>
+			<xsd:enumeration value="T3"/>
+			<xsd:enumeration value="R1"/>
+			<xsd:enumeration value="R2"/>
+			<xsd:enumeration value="R3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="UserID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.LOGON.USER_ID
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>JSmith</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="320"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FirstName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.FIRST NAME
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>John</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LastName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.LAST_NAME
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Smith</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LocalFirstName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.LOCAL FIRST NAME
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment>
+						May contain characters from the local character
+						set
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LocalLastName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.LOCAL LAST NAME
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment>
+						May contain characters from the local character
+						set
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Title">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.TITLE
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Mr</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PhoneNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.WORK PHONE NUMBER
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>+44 20 7542 8567 x5432</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="EmailAddress">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.EMAIL_ADDR
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>John.Smith@email.com</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="320"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="JobRole">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.LOGON.JOB FUNCTION
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Equity Sales Person</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="75"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LegalConsentGiven">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.LEGAL_CONSENT_GIVEN_FLAG
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>true</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:boolean"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="LegalConsentGivenOn">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.LEGAL_CONSENT_GIVEN_TIMESTAMP
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>2007/04/25 01:01:01</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:dateTime"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="MarketingConsentGiven">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.MARKETING_CONSENT_GIVEN_FLAG
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>true</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:boolean"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="MarketingConsentGivenOn">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.MARKETING_CONSENT_GIVEN_TIMESTAMP
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>2007/04/25 01:01:01</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:dateTime"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="LastUpdatedByAAAOn">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.LAST_UPDATED_BY_AAA_TIMESTAMP
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>2007/04/25 01:01:01</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:dateTime"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="LastUpdatedSiebelOn">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.LAST_UPDATED_BY_SIEBEL_TIMESTAMP
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>2007/04/25 01:01:01</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:dateTime"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_FTLCompleted">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.FIRST_TIME_LOGIN_COMPLETED_FLAG
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>true</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:boolean"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_FTLCompletedOn">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.FIRST_TIME_LOGIN_COMPLETED_TIMESTAMP
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>2007/04/25 01:01:01</content>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:dateTime"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="TemporaryURL">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.FIRST_TIME_URL
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PreferredServiceLanguage">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.PREFERRED SERVICE LANGUAGE
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ReutersMessagingId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.REUTERS MESSAGING ID
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="250"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LocalDACSID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.LocalDACSID
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="32"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="GeographicalFocus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM.v2.CONTACT.GEOGRAPHICAL FOCUS
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

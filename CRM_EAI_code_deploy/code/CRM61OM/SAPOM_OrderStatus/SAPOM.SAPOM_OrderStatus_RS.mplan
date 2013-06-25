@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="SAPOM.SAPOM_OrderStatus_RS" wsdlTargetNamespace="http://trm.com:I027:OrderProcessing:ContractOrderStatusReceive" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="SI_ContractOrderStatusSend_IB_Async">
+      <switch>
+         <case name="Case_1_SAPOM.SAPOM_OrderStatus_RS.SI_ContractOrderStatusSend_IB_Async" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/MT_ContractOrderStatusReceive_To_orderStatus.xsl,$in.MT_ContractOrderStatusReceive)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="SAPOM.SAPOM_TransformOrderStatusSOAPAdp" operation="processStatus"/>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

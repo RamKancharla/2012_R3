@@ -1,0 +1,46 @@
+<definitions
+     name="ATHOM_OrderFulfillmentStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus"
+     >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus"
+                 schemaLocation="ATHOM_OrderFulfillmentStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.ATH.UOM.304_UserOrderResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.ATH.UOM.305_UserOrderResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHOM_OrderFulfillmentStatusRequestMessage">
+        <part name="payload" element="ns1:userProvisionResponse"/>
+    </message>
+    <message name="ATHOM_OrderFulfillmentStatusResponseMessage">
+        <part name="payload" element="ns1:userInfoMessage"/>
+    </message>
+    <portType name="ATHOM_OrderFulfillmentStatus">
+        <operation name="validateFulfillment">
+            <input message="client:ATHOM_OrderFulfillmentStatusRequestMessage"/>
+            <output message="client:ATHOM_OrderFulfillmentStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHOM_OrderFulfillmentStatus">
+        <plnk:role name="ATHOM_OrderFulfillmentStatusProvider">
+            <plnk:portType name="client:ATHOM_OrderFulfillmentStatus"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

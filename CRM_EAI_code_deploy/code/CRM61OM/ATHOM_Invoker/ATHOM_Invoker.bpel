@@ -1,0 +1,535 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Aug 24 09:40:34 GMT+05:30 2010
+  Author:  Ramanjana.Reddy
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHOM_Invoker" targetNamespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_Invoker" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateInterfaceBuffer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns16="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheServ/" xmlns:ns5="http://xmlns.oracle.com/ATHOM_Invoker" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://impl.services.ail.athena.thomsonreuters.com/" xmlns:ns17="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/ATHOM_POLLING_VW/" xmlns:ns2="http://sea.thomsonone.com/SEA/Service/2010-07-19" xmlns:ns15="http://impl.service.sea.athena.thomsonreuters.com/" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/top/ATHOMPOLLINGVW" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/db/top/InterfaceConfig" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://xmlns.oracle.com/InterfaceManager" xmlns:ns18="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_Invoker" xmlns:ns6="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateInterfaceBuffer/" xmlns:ns14="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink myRole="OM_ManageOrderLineStatusRequester" name="OM_ManageOrderLineStatus" partnerRole="OM_ManageOrderLineStatusProvider" partnerLinkType="ns11:OM_ManageOrderLineStatus"/>
+    <partnerLink name="InterfaceManager" partnerRole="InterfaceManagerProvider" partnerLinkType="ns12:InterfaceManager"/>
+    <partnerLink myRole="ATHOM_POLLING_VW_role" name="ATHOM_POLLING_VW" partnerLinkType="ns1:ATHOM_POLLING_VW_plt"/>
+    <partnerLink name="UpdateInterfaceBuffer" partnerRole="UpdateInterfaceBuffer_role" partnerLinkType="ns3:UpdateInterfaceBuffer_plt"/>
+    <partnerLink name="SEASiebelIntegrationWSService" partnerRole="SEASiebelIntegrationWS_Role" partnerLinkType="ns9:SEASiebelIntegrationWS_PL"/>
+    <partnerLink name="AdpOrderCacheServ" partnerRole="AdpOrderCacheServ_role" partnerLinkType="ns16:AdpOrderCacheServ_plt"/>
+    <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns17:SequenceReleaser"/>
+  </partnerLinks>
+  <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <!-- Reference to the message that will be sent back to the requester during callback -->
+    <variable name="inputVariable" messageType="ns1:AthomPollingVCollection_msg"/>
+    <variable name="iReceived" type="xsd:int"/>
+    <variable name="varSuccResp" type="xsd:string"/>
+    <variable name="iProcessed" type="xsd:int"/>
+    <variable name="iErroredOut" type="xsd:int"/>
+    <variable name="iFailured" type="xsd:int"/>
+    <variable name="iIndex" type="xsd:int"/>
+    <variable name="iSent" type="xsd:int"/>
+    <variable name="varErrorMsg" type="xsd:string"/>
+    <variable name="varRawMessage" type="xsd:string"/>
+    <variable name="varId" type="xsd:string"/>
+    <variable name="varCreated" type="xsd:string"/>
+    <variable name="varRefId" type="xsd:string"/>
+    <variable name="varInterfaceId" type="xsd:string"/>
+    <variable name="varJavaException" type="xsd:string"/>
+    <variable name="varParsedMessage" type="xsd:string"/>
+    <variable name="varState" type="xsd:string"/>
+    <variable name="varUpdateIntBufferInput" messageType="ns3:InterfaceBufferCollection_msg"/>
+    <variable name="varAthenaInput" element="ns6:ATHOrdRequest"/>
+    <variable name="varAthenaFormat" messageType="ns9:UserProvisionRequest"/>
+    <variable name="varAthenaOutput" messageType="ns9:UserProvisionResponse"/>
+    <variable name="varOMManageOrderLineStatusInput" messageType="ns11:OM_ManageOrderLineStatusRequestMessage"/>
+    <variable name="varReceiveHealthCheckIn" messageType="ns12:InterfaceManagerRequestMessage"/>
+    <variable name="varReceiveHealthCheckOp" messageType="ns12:InterfaceManagerResponseMessage"/>
+    <variable name="varRuntimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="varSeqReleaserIn" messageType="ns17:SequenceReleaserRequestMessage"/>
+  </variables>
+  <faultHandlers>
+    <catchAll>
+      <bpelx:exec name="AsgCustomFaultTitle" language="java" version="1.3">
+        <![CDATA[setCompositeInstanceTitle( getTitle() + ";Fault");]]>
+      </bpelx:exec>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in ATHOM_Invoker.wsdl) -->
+    <receive name="receiveInput" partnerLink="ATHOM_POLLING_VW" portType="ns1:ATHOM_POLLING_VW_ptt" operation="receive" variable="inputVariable" createInstance="yes"/>
+    <assign name="AsgInitVariables">
+      <copy>
+        <from expression="count(bpws:getVariableData('inputVariable','AthomPollingVCollection','/ns10:AthomPollingVCollection/ns10:AthomPollingV'))"/>
+        <to variable="iReceived"/>
+      </copy>
+      <copy>
+        <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+        <to variable="varSuccResp"/>
+      </copy>
+      <copy>
+        <from expression="0"/>
+        <to variable="iProcessed"/>
+      </copy>
+      <copy>
+        <from expression="0"/>
+        <to variable="iErroredOut"/>
+      </copy>
+      <copy>
+        <from expression="0"/>
+        <to variable="iFailured"/>
+      </copy>
+      <copy>
+        <from expression="1"/>
+        <to variable="iIndex"/>
+      </copy>
+      <copy>
+        <from expression="0"/>
+        <to variable="iSent"/>
+      </copy>
+      <copy>
+        <from expression="''"/>
+        <to variable="varErrorMsg"/>
+      </copy>
+    </assign>
+    <bpelx:exec name="SetInitialTitle" language="java" version="1.3">
+      <![CDATA[setCompositeInstanceTitle("Processing " + getVariableData("iReceived") + " messages");     
+checkpoint();]]>
+    </bpelx:exec>
+    <while name="While_NoOfRecords" condition="number(bpws:getVariableData('iProcessed'))&lt;number(bpws:getVariableData('iReceived'))">
+      <sequence name="SeqATHENAFLow">
+        <assign name="AsgPayload">
+          <copy>
+            <from variable="inputVariable" part="AthomPollingVCollection" query="/ns10:AthomPollingVCollection/ns10:AthomPollingV[bpws:getVariableData('iProcessed')+1]/ns10:payload"/>
+            <to variable="varRawMessage"/>
+          </copy>
+          <copy>
+            <from variable="inputVariable" part="AthomPollingVCollection" query="/ns10:AthomPollingVCollection/ns10:AthomPollingV[bpws:getVariableData('iProcessed')+1]/ns10:id"/>
+            <to variable="varId"/>
+          </copy>
+          <copy>
+            <from variable="inputVariable" part="AthomPollingVCollection" query="/ns10:AthomPollingVCollection/ns10:AthomPollingV[bpws:getVariableData('iProcessed')+1]/ns10:created"/>
+            <to variable="varCreated"/>
+          </copy>
+          <copy>
+            <from variable="inputVariable" part="AthomPollingVCollection" query="/ns10:AthomPollingVCollection/ns10:AthomPollingV[bpws:getVariableData('iProcessed')+1]/ns10:referenceId"/>
+            <to variable="varRefId"/>
+          </copy>
+          <copy>
+            <from variable="inputVariable" part="AthomPollingVCollection" query="/ns10:AthomPollingVCollection/ns10:AthomPollingV[bpws:getVariableData('iProcessed')+1]/ns10:interfaceId"/>
+            <to variable="varInterfaceId"/>
+          </copy>
+          <copy>
+            <from expression="bpws:getVariableData('iProcessed')+ 1"/>
+            <to variable="iProcessed"/>
+          </copy>
+        </assign>
+        <bpelx:exec name="ReplaceUnsafeCharsInRawMessage" language="java" version="1.5">
+          <![CDATA[try {                                    
+    setVariableData("varParsedMessage", ((String)getVariableData("varRawMessage")).replaceAll("&", "&amp;") );              
+    } catch (Exception e) {                                 
+        setVariableData("varJavaException", e.getMessage() );                
+    }]]>
+        </bpelx:exec>
+        <switch name="SwitchJavaException">
+          <case condition="bpws:getVariableData('varJavaException')!=''">
+            <sequence name="SeqUpdateError">
+              <assign name="AsgErrorAndIncrementCount">
+                <copy>
+                  <from expression="bpws:getVariableData('iFailured')+1"/>
+                  <to variable="iFailured"/>
+                </copy>
+                <copy>
+                  <from expression="'E'"/>
+                  <to variable="varState"/>
+                </copy>
+              </assign>
+              <assign name="AsgInputForDatabaseUpdate">
+                <copy>
+                  <from variable="varId"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:id"/>
+                </copy>
+                <copy>
+                  <from variable="varCreated"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:created"/>
+                </copy>
+                <copy>
+                  <from variable="varRawMessage"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:payload"/>
+                </copy>
+                <copy>
+                  <from variable="varInterfaceId"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:interfaceId"/>
+                </copy>
+                <copy>
+                  <from variable="varRefId"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:referenceId"/>
+                </copy>
+                <copy>
+                  <from variable="varState"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:state"/>
+                </copy>
+                <copy>
+                  <from expression="ora:getCompositeInstanceId()"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:updatedBy"/>
+                </copy>
+                <bpelx:remove>
+                  <bpelx:target variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:lastUpdated"/>
+                </bpelx:remove>
+              </assign>
+            </sequence>
+          </case>
+          <otherwise>
+            <sequence name="SeqAthenaFlow">
+              <assign name="AssignAthenaRequestToSend">
+                <copy>
+                  <from expression="ora:parseEscapedXML(bpws:getVariableData('varParsedMessage'))"/>
+                  <to variable="varAthenaInput"/>
+                </copy>
+              </assign>
+              <scope name="ScopeTransToAthena">
+                <variables>
+                  <variable name="varTemp1" type="xsd:string"/>
+                  <variable name="varTemp2" type="xsd:string"/>
+                  <variable name="varTemp3" type="xsd:string"/>
+                </variables>
+                <faultHandlers>
+                  <catchAll>
+                    <sequence name="SeqTerminate">
+                      <assign name="AgnErrorMessage">
+                        <copy>
+                          <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                          <to variable="varErrorMsg"/>
+                        </copy>
+                      </assign>
+                      <terminate name="Terminate"/>
+                    </sequence>
+                  </catchAll>
+                </faultHandlers>
+                <sequence name="SeqTransToAthenaFormat">
+                  <assign name="TransInputReqToAthenaFromat">
+                    <bpelx:annotation>
+                      <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                      <from expression="ora:processXSLT('TransInputReqToAthenaFormat.xsl',bpws:getVariableData('varAthenaInput'))"/>
+                      <to variable="varAthenaFormat" part="parameters"/>
+                    </copy>
+                  </assign>
+                  <scope name="ScopeInvokeAthena">
+                    <faultHandlers>
+                      <catch faultName="bpelx:remoteFault" faultVariable="varRuntimeFault">
+                        <switch name="SwitchChkRemoteFaultCode">
+                          <case condition="bpws:getVariableData('varRuntimeFault','code')!=''">
+                            <sequence name="SeqErrorState">
+                              <assign name="IncrementFailed">
+                                <copy>
+                                  <from expression="bpws:getVariableData('iFailured')+1"/>
+                                  <to variable="iFailured"/>
+                                </copy>
+                              </assign>
+                              <assign name="AgnErrorState">
+                                <copy>
+                                  <from expression="'E'"/>
+                                  <to variable="varState"/>
+                                </copy>
+                                <copy>
+                                  <from expression="string(bpws:getVariableData('varRuntimeFault','summary'))"/>
+                                  <to variable="varErrorMsg"/>
+                                </copy>
+                              </assign>
+                            </sequence>
+                          </case>
+                          <otherwise>
+                            <sequence name="SeqRetryState">
+                              <assign name="IncrementFailed">
+                                <copy>
+                                  <from expression="bpws:getVariableData('iFailured')+1"/>
+                                  <to variable="iFailured"/>
+                                </copy>
+                              </assign>
+                              <assign name="AgnRetryableState">
+                                <copy>
+                                  <from expression="'R'"/>
+                                  <to variable="varState"/>
+                                </copy>
+                                <copy>
+                                  <from expression="string(bpws:getVariableData('varRuntimeFault','summary'))"/>
+                                  <to variable="varErrorMsg"/>
+                                </copy>
+                              </assign>
+                            </sequence>
+                          </otherwise>
+                        </switch>
+                      </catch>
+                      <catchAll>
+                        <sequence name="SeqCatchAll">
+                          <assign name="IncrementFailed">
+                            <copy>
+                              <from expression="bpws:getVariableData('iFailured')+1"/>
+                              <to variable="iFailured"/>
+                            </copy>
+                          </assign>
+                          <assign name="AgnErrorState">
+                            <copy>
+                              <from expression="'E'"/>
+                              <to variable="varState"/>
+                            </copy>
+                            <copy>
+                              <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                              <to variable="varErrorMsg"/>
+                            </copy>
+                          </assign>
+                        </sequence>
+                      </catchAll>
+                    </faultHandlers>
+                    <sequence name="SeqCallAthenaEndPoint">
+                      <invoke name="InvAthenaEndPoint" inputVariable="varAthenaFormat" outputVariable="varAthenaOutput" partnerLink="SEASiebelIntegrationWSService" portType="ns9:SEASiebelIntegrationWS" operation="UserProvisionRequest"/>
+                      <!--bpelx:exec name="Java_Embedding_1" language="java"
+                                  version="1.5">
+                        <![CDATA[try    
+{    
+org.w3c.dom.Document doc = (org.w3c.dom.Document)(getVariableData("varAthenaOutput","parameters","/ns2:UserProvisionResponse"));    
+org.w3c.dom.Element element = (org.w3c.dom.Element)doc.getElementsByTagName("return").item(1);    
+element.getParentNode().removeChild(element);    
+doc.normalize(); 
+setVariableData("varAthenaOutput","parameters","/ns2:UserProvisionResponse",doc); 
+}    
+catch(Exception e)    
+{   
+}]]>
+                      </bpelx:exec-->
+                      <assign name="RmvRetrunElementFromAthOP">
+                        <copy>
+                          <from expression="substring-before(ora:getContentAsString(bpws:getVariableData('varAthenaOutput','parameters','/ns2:UserProvisionResponse')),'&lt;return>')"/>
+                          <to variable="varTemp1"/>
+                        </copy>
+                        <copy>
+                          <from expression="substring-after(substring-before(ora:getContentAsString(bpws:getVariableData('varAthenaOutput','parameters','/ns2:UserProvisionResponse')),'&lt;/return>'),'&lt;return>')"/>
+                          <to variable="varTemp2"/>
+                        </copy>
+                        <copy>
+                          <from expression="substring-after(ora:getContentAsString(bpws:getVariableData('varAthenaOutput','parameters','/ns2:UserProvisionResponse')),'&lt;/return>')"/>
+                          <to variable="varTemp3"/>
+                        </copy>
+                        <copy>
+                          <from expression="ora:parseEscapedXML(concat(bpws:getVariableData('varTemp1'),bpws:getVariableData('varTemp2'),bpws:getVariableData('varTemp3')))"/>
+                          <to variable="varAthenaOutput" part="parameters" query="/ns2:UserProvisionResponse"/>
+                        </copy>
+                      </assign>
+                      <switch name="SwitchResponse">
+                        <case condition="bpws:getVariableData('varAthenaOutput','parameters','/ns2:UserProvisionResponse/ns2:MessageHeader/ns2:Status')= 'FAILURE'">
+                          <scope name="ScpToOMManageOrderLineStatus">
+                            <variables>
+                              <variable name="varOrderCache" messageType="ns16:OrderCacheCollection_msg"/>
+                            </variables>
+                            <faultHandlers>
+                              <catch faultName="bpelx:remoteFault" faultVariable="varRuntimeFault">
+                                <assign name="AssignErrorState">
+                                  <copy>
+                                    <from expression="'E'"/>
+                                    <to variable="varState"/>
+                                  </copy>
+                                  <copy>
+                                    <from expression="substring(substring-after(substring-before(ora:getFaultAsString(),'&lt;/summary>'),'&lt;summary>'),0,1999)"/>
+                                    <to variable="varErrorMsg"/>
+                                  </copy>
+                                </assign>
+                              </catch>
+                            </faultHandlers>
+                            <sequence name="SeqToOMManageOrderLineStatus">
+                              <assign name="IncrementError">
+                                <copy>
+                                  <from expression="bpws:getVariableData('iErroredOut')+1"/>
+                                  <to variable="iErroredOut"/>
+                                </copy>
+                                <copy>
+                                  <from expression="'W'"/>
+                                  <to variable="varState"/>
+                                </copy>
+                              </assign>
+                              <assign name="TransAthenaRespToOMManageOrderLineStatus">
+                                <bpelx:annotation>
+                                  <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                  <from expression="ora:processXSLT('TransToOMManageOrderLineStatus.xsl',bpws:getVariableData('varAthenaOutput','parameters'))"/>
+                                  <to variable="varOMManageOrderLineStatusInput" part="payload"/>
+                                </copy>
+                              </assign>
+                              <assign name="TransErrorToOrderCache">
+                                <bpelx:annotation>
+                                  <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                  <from expression="ora:processXSLT('TransAthenaErrorToOrderCache.xsl',bpws:getVariableData('varAthenaOutput','parameters'))"/>
+                                  <to variable="varOrderCache" part="OrderCacheCollection"/>
+                                </copy>
+                              </assign>
+                              <invoke name="InvOrderCache" partnerLink="AdpOrderCacheServ" portType="ns16:AdpOrderCacheServ_ptt" operation="update" inputVariable="varOrderCache"/>
+                              <invoke name="Inv_OMManageOrderLineStatus" partnerLink="OM_ManageOrderLineStatus" portType="ns11:OM_ManageOrderLineStatus" operation="manageOrderLineStatus" inputVariable="varOMManageOrderLineStatusInput"/>
+                            </sequence>
+                          </scope>
+                        </case>
+                        <otherwise>
+                          <assign name="IncrementSent">
+                            <copy>
+                              <from expression="bpws:getVariableData('iSent')+1"/>
+                              <to variable="iSent"/>
+                            </copy>
+                            <copy>
+                              <from expression="'C'"/>
+                              <to variable="varState"/>
+                            </copy>
+                          </assign>
+                        </otherwise>
+                      </switch>
+                    </sequence>
+                  </scope>
+                </sequence>
+              </scope>
+              <assign name="AsgUpdateValues">
+                <copy>
+                  <from variable="varId"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:id"/>
+                </copy>
+                <copy>
+                  <from variable="varCreated"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:created"/>
+                </copy>
+                <copy>
+                  <from variable="varRawMessage"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:payload"/>
+                </copy>
+                <copy>
+                  <from variable="varInterfaceId"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:interfaceId"/>
+                </copy>
+                <copy>
+                  <from variable="varRefId"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:referenceId"/>
+                </copy>
+                <copy>
+                  <from variable="varState"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:state"/>
+                </copy>
+                <copy>
+                  <from expression="ora:getCompositeInstanceId()"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:updatedBy"/>
+                </copy>
+                <copy>
+                  <from variable="varErrorMsg"/>
+                  <to variable="varUpdateIntBufferInput" part="InterfaceBufferCollection" query="/ns4:InterfaceBufferCollection/ns4:InterfaceBuffer/ns4:errorMessage"/>
+                </copy>
+              </assign>
+              <assign name="IncrementIndex">
+                <copy>
+                  <from expression="bpws:getVariableData('iIndex')+1"/>
+                  <to variable="iIndex"/>
+                </copy>
+              </assign>
+            </sequence>
+          </otherwise>
+        </switch>
+        <assign name="AsgSeqRelRequest">
+          <copy>
+            <from expression="&quot;EAI&quot;"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:eaiHeader/ns7:applicationId"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:eaiHeader/ns7:transactionId"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:eaiHeader/ns7:messageId"/>
+          </copy>
+          <copy>
+            <from expression="&quot;EAI;&quot;"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:eaiHeader/ns7:messageHistory"/>
+          </copy>
+          <copy>
+            <from variable="varAthenaInput" query="/ns6:ATHOrdRequest/ns6:eaiHeader/ns7:tracingId"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:eaiHeader/ns7:tracingId"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCurrentDateTime()"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:eaiHeader/ns7:timeStamp"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:eaiHeader/ns7:instanceId"/>
+          </copy>
+          <copy>
+            <from expression="&quot;1&quot;"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:eaiHeader/ns7:timeToLive"/>
+          </copy>
+          <copy>
+            <from expression="&quot;V&quot;"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:eaiHeader/ns7:payloadVersion"/>
+          </copy>
+          <copy>
+            <from variable="varAthenaInput" query="/ns6:ATHOrdRequest/ns6:eaiHeader/ns7:tracingId"/>
+            <to variable="varSeqReleaserIn" part="payload" query="/ns18:releaseSequenceRequest/ns18:correlationID"/>
+          </copy>
+        </assign>
+        <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns17:SequenceReleaser" operation="releaseSequence" inputVariable="varSeqReleaserIn"/>
+        <invoke name="Inv_UpdateInterfaceBuffer" partnerLink="UpdateInterfaceBuffer" portType="ns3:UpdateInterfaceBuffer_ptt" operation="update" inputVariable="varUpdateIntBufferInput"/>
+        <assign name="AgnResetErrorMsg">
+          <copy>
+            <from expression="''"/>
+            <to variable="varErrorMsg"/>
+          </copy>
+        </assign>
+      </sequence>
+    </while>
+    <bpelx:exec name="SetCompletedTitle" language="java" version="1.3">
+      <![CDATA[setCompositeInstanceTitle("Completed R:P:E:F=" + getVariableData("iReceived") + ":" + getVariableData("iProcessed") + ":" + getVariableData("iErroredOut") + ":" + getVariableData("iFailured"));]]>
+    </bpelx:exec>
+    <switch name="SwitchIfAllFailed">
+      <case condition="bpws:getVariableData('iProcessed')>0 and bpws:getVariableData('iProcessed')=bpws:getVariableData('iFailured')">
+        <sequence name="SeqHealthCheck">
+          <assign name="AsgHealthCheckData">
+            <copy>
+              <from expression="'doHealthCheck'"/>
+              <to variable="varReceiveHealthCheckIn" part="payload" query="/ns12:InterfaceManagerProcessRequest/ns12:operation"/>
+            </copy>
+            <copy>
+              <from expression="'ATHOM'"/>
+              <to variable="varReceiveHealthCheckIn" part="payload" query="/ns12:InterfaceManagerProcessRequest/ns12:interfaceConfig/ns13:id"/>
+            </copy>
+          </assign>
+          <invoke name="InvInterfaceManager" partnerLink="InterfaceManager" portType="ns12:InterfaceManager" operation="process" inputVariable="varReceiveHealthCheckIn" outputVariable="varReceiveHealthCheckOp"/>
+          <terminate name="Terminate"/>
+        </sequence>
+      </case>
+      <otherwise>
+        <empty name="DoNothing"/>
+      </otherwise>
+    </switch>
+  </sequence>
+</process>

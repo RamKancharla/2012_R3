@@ -1,0 +1,60 @@
+<definitions
+     name="CPFGOM_OrderSplitter"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter"
+                 schemaLocation="CPFGOM_OrderSplitter.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.OM.125_OrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.OM.306_DistinctUserIdRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.OM.305_ExtendedOrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFGOM_OrderSplitterResponseMessage">
+        <part name="payload" element="client:CPFGOM_OrderSplitterProcessResponse"/>
+    </message>
+    <message name="CPFGOM_OrderSplitterRequestMessage">
+        <part name="orderRequest" element="ns1:orderRequest"/>
+    </message>
+    <message name="CPfGDistinctUserMessage">
+        <part name="UserRequest" element="ns1:UserIdRequest"/>
+    </message>
+    <message name="CPFGExtendedOrderRequest">
+        <part name="extendedOrderRequest" element="ns1:extendedorderReq"/>
+    </message>
+    <portType name="CPFGOM_OrderSplitterCallback">
+        <operation name="onResult">
+            <input message="client:CPFGOM_OrderSplitterResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CPFGOM_OrderSplitter">
+        <operation name="initiate">
+            <input message="client:CPFGOM_OrderSplitterRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFGOM_OrderSplitter">
+        <plnk:role name="CPFGOM_OrderSplitterProvider">
+            <plnk:portType name="client:CPFGOM_OrderSplitter"/>
+        </plnk:role>
+        <plnk:role name="CPFGOM_OrderSplitterRequester">
+            <plnk:portType name="client:CPFGOM_OrderSplitterCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

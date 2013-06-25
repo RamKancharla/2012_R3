@@ -1,0 +1,269 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CSPM_PropagatePriceUpdatesToCS.bpel 
+* Type:        BPEL FILE 
+* Description: Asynchronous BPEL Process that splits into 400 priceline items, transforms the XML into String format and 
+*              invokes CSOM_SubmitOrderToCompass service. 
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         14/04/08     Sreeja                  Initial
+*  1.0         29/10/10     Sreeja                  Modified the xsl file for the mapping of PLID.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CSPM_PropagatePriceUpdatesToCS" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/db/DBAdpStorePriceListCountry/" xmlns:ns4="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns12="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthRequest" xmlns:ns5="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/CSPM_PropagatePriceUpdatesToCS" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns11="http://www.reuters.com/ns/2007/09/01/GCAP/CS/PM/PriceUpdateRequestFormatter" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/CS/PM/Exception" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate" xmlns:ns14="http://xmlns.oracle.com/pcbpel/adapter/db/top/DBAdpStorePriceListCountry" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/ExtendedPriceUpdateRequest" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToCSPM_PropagatePriceUpdatesToCS" partnerLinkType="client:CSPM_PropagatePriceUpdatesToCS" myRole="CSPM_PropagatePriceUpdatesToCSProvider" partnerRole="CSPM_PropagatePriceUpdatesToCSRequester"/>
+        <partnerLink name="TransformPriceUpdateToCSFormat" partnerRole="TransformPriceUpdateRequest_Role" partnerLinkType="ns11:TransformPriceUpdateRequest_PL"/>
+        <partnerLink name="CSOM_SubmitOrderToCompass" partnerRole="submitOrder_pptProvider" partnerLinkType="ns10:submitOrder_pptLT"/>
+        <partnerLink name="DBAdpStorePriceListCountry" partnerRole="DBAdpStorePriceListCountry_role" partnerLinkType="ns13:DBAdpStorePriceListCountry_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="csPriceUpdateIV" messageType="client:CSPM_PropagatePriceUpdatesToCSRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="csPriceUpdateOV" messageType="client:CSPM_PropagatePriceUpdatesToCSResponseMessage"/>
+        <variable name="extendedPriceUpdate" messageType="client:ExtendedPriceUpdateRequestMessage"/>
+        <variable name="successResponse" type="xsd:string"/>
+        <variable name="numOfPriceLineItems" type="xsd:nonNegativeInteger"/>
+        <variable name="index" type="xsd:nonNegativeInteger"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="noOfPriceLineItemReq" type="xsd:int"/>
+        <variable name="InvTransformPriceUpdateCSFormatIV" messageType="ns11:PriceUpdateRequest"/>
+        <variable name="InvTransformPriceUpdateCSFormatOV" messageType="ns11:PriceUpdateResponse"/>
+        <variable name="InvCSOM_SubmitOrderToCompassIV" messageType="ns10:fixedLengthOrderRequest_request"/>
+        <variable name="errorMessage" type="xsd:string"/>
+        <variable name="DBAdpStorePriceListCountryIV" messageType="ns13:PricelistCountryTracingCollection_msg"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("csPriceUpdateIV", "priceUpdateRequest", "/ns1:priceUpdateRequest/ns1:messageHeader/ns2:messageId"));                          
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();       
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("csPriceUpdateIV", "priceUpdateRequest", "/ns1:priceUpdateRequest/ns1:messageHeader/ns2:messageId"));                          
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();       
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("csPriceUpdateIV", "priceUpdateRequest", "/ns1:priceUpdateRequest/ns1:messageHeader/ns2:messageId"));                          
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();       
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqGenericFault">
+                <bpelx:exec name="AsgCustomTitleonGenericFault" language="java" version="1.5">
+                    <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("csPriceUpdateIV", "priceUpdateRequest", "/ns1:priceUpdateRequest/ns1:messageHeader/ns2:messageId"));                          
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();       
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+                </bpelx:exec>
+                <assign name="AsgGenericFault">
+                    <copy>
+                        <from expression="'Unable To Process the Request'"/>
+                        <to variable="errorMessage"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CSPM_PropagatePriceUpdatesToCS.wsdl) -->
+        <receive name="rcvPriceUpdateRequest" partnerLink="anchorToCSPM_PropagatePriceUpdatesToCS" portType="client:CSPM_PropagatePriceUpdatesToCS" operation="updatePrice" variable="csPriceUpdateIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="successResponse"/>
+            </copy>
+            <copy>
+                <from expression="count(bpws:getVariableData('csPriceUpdateIV','priceUpdateRequest','/ns1:priceUpdateRequest/ns1:priceUpdateReqLineItem'))"/>
+                <to variable="numOfPriceLineItems"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="index"/>
+            </copy>
+            <copy>
+                <from expression="ceiling(count(bpws:getVariableData('csPriceUpdateIV','priceUpdateRequest','/ns1:priceUpdateRequest/ns1:priceUpdateReqLineItem')) div 400)"/>
+                <to variable="noOfPriceLineItemReq"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="csPriceUpdateIV" part="priceUpdateRequest" query="/ns1:priceUpdateRequest/ns1:eaiHeader/ns2:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="csPriceUpdateIV" part="priceUpdateRequest" query="/ns1:priceUpdateRequest/ns1:eaiHeader/ns2:tracingId"/>
+            </copy>
+        </assign>
+        <!--<assign name="AsgInitVariables">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="successResponse"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="csPriceUpdateIV" part="priceUpdateRequest"
+                    query="/ns1:priceUpdateRequest/ns1:eaiHeader/ns2:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="index"/>
+            </copy>
+            <copy>
+                <from expression="count(bpws:getVariableData('csPriceUpdateIV','priceUpdateRequest','/ns1:priceUpdateRequest/ns1:priceUpdateReqLineItem'))"/>
+                <to variable="numOfPriceLineItems"/>
+            </copy>
+            <copy>
+                <from expression="ceiling(count(bpws:getVariableData('csPriceUpdateIV', 'priceUpdateRequest','/ns1:priceUpdateRequest/ns1:priceUpdateReqLineItem')) div 2)"/>
+                <to variable="noOfPriceLineItemReq"/>
+            </copy>
+        </assign>-->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("csPriceUpdateIV", "priceUpdateRequest", "/ns1:priceUpdateRequest/ns1:messageHeader/ns2:messageId"));                          
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();       
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId);]]>
+        </bpelx:exec>
+        <scope name="ScpStorePriceListCountry">
+            <sequence name="SeqDBAdpStorePriceListCountry">
+                <assign name="AsgInputVariables">
+                    <copy>
+                        <from variable="csPriceUpdateIV" part="priceUpdateRequest" query="/ns1:priceUpdateRequest/ns1:eaiHeader/ns2:tracingId"/>
+                        <to variable="DBAdpStorePriceListCountryIV" part="PricelistCountryTracingCollection" query="/ns14:PricelistCountryTracingCollection/ns14:PricelistCountryTracing/ns14:tracingId"/>
+                    </copy>
+                    <copy>
+                        <from variable="csPriceUpdateIV" part="priceUpdateRequest" query="/ns1:priceUpdateRequest/ns1:logicalCountry"/>
+                        <to variable="DBAdpStorePriceListCountryIV" part="PricelistCountryTracingCollection" query="/ns14:PricelistCountryTracingCollection/ns14:PricelistCountryTracing/ns14:country"/>
+                    </copy>
+                </assign>
+                <invoke name="InvDBAdpToStorePriceListCountry" partnerLink="DBAdpStorePriceListCountry" portType="ns13:DBAdpStorePriceListCountry_ptt" operation="insert" inputVariable="DBAdpStorePriceListCountryIV"/>
+            </sequence>
+        </scope>
+        <assign name="TransCompassPriceReqToTransExtendedPriceListReq">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransCSPriceReqToExtendedPriceUpdReq.xsl',bpws:getVariableData('csPriceUpdateIV','priceUpdateRequest'))"/>
+                <to variable="extendedPriceUpdate" part="extendedPriceUpdate"/>
+            </copy>
+        </assign>
+        <while name="While_1" condition="bpws:getVariableData('noOfPriceLineItemReq') > 0                                                   ">
+            <bpelx:annotation>
+                <bpelx:documentation>Sends 400 price line item as 1 request</bpelx:documentation>
+            </bpelx:annotation>
+            <sequence name="SeqTransPriceReqToCompassPriceFulfilment">
+                <scope name="CSPriceUpdatetRequestToCSFormat">
+                    <faultHandlers>
+                        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                            <throw name="ThrTransformCSFormatRemoteFault" faultName="ns9:TransformToCSFormatRemoteFault" faultVariable="runtimeFault"/>
+                        </catch>
+                    </faultHandlers>
+                    <sequence name="SeqCompassPriceUpdateReqToCSFormat">
+                        <assign name="AsgIndexValue">
+                            <copy>
+                                <from variable="index"/>
+                                <to variable="extendedPriceUpdate" part="extendedPriceUpdate" query="/ns8:priceUpdateRequest/ns8:index"/>
+                            </copy>
+                        </assign>
+                        <assign name="TransPriceUpdateReqToTransCSFormat">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransPriceUpdateReqToCSFormat.xsl',bpws:getVariableData('extendedPriceUpdate','extendedPriceUpdate'))"/>
+                                <to variable="InvTransformPriceUpdateCSFormatIV" part="parameter"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvTransformPriceUpdateToCSFormat" partnerLink="TransformPriceUpdateToCSFormat" portType="ns11:TransformPriceUpdateRequest" operation="transform" inputVariable="InvTransformPriceUpdateCSFormatIV" outputVariable="InvTransformPriceUpdateCSFormatOV">
+                            <bpelx:annotation>
+                                <bpelx:documentation>Invokes the webservice
+                                                     which converts xml to string</bpelx:documentation>
+                            </bpelx:annotation>
+                        </invoke>
+                    </sequence>
+                </scope>
+                <switch name="CheckTransformPriceUpdateCSResponse">
+                    <case condition="bpws:getVariableData('InvTransformPriceUpdateCSFormatOV','parameter','/ns12:fixedLengthRequest/ns12:basicResponse/ns12:response')=bpws:getVariableData('successResponse')">
+                        <bpelx:annotation>
+                            <bpelx:pattern>Success Response from TransformPriceListCSFormat</bpelx:pattern>
+                        </bpelx:annotation>
+                        <sequence name="SeqCompassPriceFulfilment">
+                            <scope name="SubmitPriceUpdateToCompass">
+                                <faultHandlers>
+                                    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                        <throw name="ThrSubmitPriceUpdateToCompass" faultName="ns9:SubmitPriceListToCompass" faultVariable="runtimeFault"/>
+                                    </catch>
+                                </faultHandlers>
+                                <sequence name="SeqSubmitPriceUpdateToCompass">
+                                    <assign name="TransPriceUpdateCSFormatToSubmitPriceToCompass">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransPriceUpdateCSFormatToCompass.xsl',bpws:getVariableData('InvTransformPriceUpdateCSFormatOV','parameter'))"/>
+                                            <to variable="InvCSOM_SubmitOrderToCompassIV" part="fixedLengthOrderRequest"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvCSOM_SubmitOrderToCompass" partnerLink="CSOM_SubmitOrderToCompass" portType="ns10:submitOrder_ppt" operation="submitOrder" inputVariable="InvCSOM_SubmitOrderToCompassIV"/>
+                                </sequence>
+                            </scope>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <bpelx:exec name="AsgCustomTitleWhenFault" language="java" version="1.5">
+                            <![CDATA[String priceListNum = ((oracle.xml.parser.v2.XMLElement)                            
+                        getVariableData("csPriceUpdateIV", "priceUpdateRequest", "/ns1:priceUpdateRequest/ns1:priceUpdateReqHeader/ns3:priceListNumber")).getFirstChild().getNodeValue();                               
+                   
+String Title=(priceListNum!=null ? ("PriceListNumber: "+priceListNum+ " ;Fault") : ".;");            
+setCompositeInstanceTitle(Title);]]>
+                        </bpelx:exec>
+                    </otherwise>
+                </switch>
+                <assign name="AsgIncrementIndexValue">
+                    <copy>
+                        <from expression="bpws:getVariableData('noOfPriceLineItemReq')-1"/>
+                        <to variable="noOfPriceLineItemReq"/>
+                    </copy>
+                    <copy>
+                        <from expression="bpws:getVariableData('index') +1"/>
+                        <to variable="index"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+    </sequence>
+</process>

@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:p1="http://trm.com:I004:OrderProcessing:CreateContractOrder_Send" xmlns="" xmlns:idoc="urn:sap-com:document:sap:idoc:messages" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://schemas.xmlsoap.org/wsdl/soap/" name="SI_Create_ContractOrder_OB_Async" targetNamespace="http://trm.com:I004:OrderProcessing:CreateContractOrder_Send">
+	<wsdl:documentation/>
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:element name="ZSDCONTRACT">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="IDOC" type="ZSDCONTRACT.ZSDCONTRACT"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:complexType name="ZSDCONTRACT.Z1SDITEM">
+				<xsd:annotation>
+					<xsd:documentation>Item Segment for I004 - Siebel SAP Interface</xsd:documentation>
+				</xsd:annotation>
+				<xsd:sequence>
+					<xsd:element name="CUST_BILLTO" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Character Field Length = 10</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="CUST_SHIPTO" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Character Field Length = 10</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="ACTION" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Comment</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="50"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="AKR" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>3-Byte field</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="3"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="ASSET_INT_ID" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>30 Characters</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="30"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="BILL_TYPE" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Not More Closely Defined Area, Possibly Used for Patchlevels</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="4"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="BILLING_NOTE" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Billing Notes</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="108"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="START_DATE" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Field of type DATS</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="8"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="STOP_DATE" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Field of type DATS</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="8"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="OPERATION" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>30 Characters</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="30"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="CR_DR" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Single-Character Indicator</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="1"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="PO_NO" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Comment</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="50"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="QTY" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Target quantity in sales units</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="17"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="QUOTE_NO" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Char 15</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="15"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SPEC_PRICE" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Amount in Document Currency</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="15"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="EDL_PRICE" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Amount in Document Currency</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="15"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SIEB_ORLIN_ID" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Siebel CRM Order Line ID</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="15"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="REC_BIL_FLG" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Single-Character Indicator</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="1"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SPEC_PRICE_CURR" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Currency Key</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="5"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SPEC_PRICE_EDATE" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Field of type DATS</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="8"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="EDL_PRICE_CURR" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Currency Key</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="5"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="DLYD_BIL_PERIOD" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Version Number Component</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="2"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SIEB_USER" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Char 15</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="15"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="PRODUCT" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Comment</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="50"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="PROD_DESC" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Char255</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="255"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="PPLID" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>PPL ID</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="LOGINID" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Siebel Login ID</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="100"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+				</xsd:sequence>
+				<xsd:attribute name="SEGMENT" type="xsd:string" fixed="1" use="required"/>
+			</xsd:complexType>
+			<xsd:complexType name="EDI_DC40.ZSDCONTRACT.ZSDCONTRACT">
+				<xsd:sequence>
+					<xsd:element name="TABNAM" type="xsd:string" fixed="EDI_DC40">
+						<xsd:annotation>
+							<xsd:documentation>TABNAM</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="MANDT" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>MANDT</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="3"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="DOCNUM" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>DOCNUM</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="16"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="DOCREL" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>DOCREL</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="4"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="STATUS" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>STATUS</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="2"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="DIRECT">
+						<xsd:annotation>
+							<xsd:documentation>DIRECT</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="1">
+									<xsd:annotation>
+										<xsd:documentation>Outbound</xsd:documentation>
+									</xsd:annotation>
+								</xsd:enumeration>
+								<xsd:enumeration value="2">
+									<xsd:annotation>
+										<xsd:documentation>Inbound</xsd:documentation>
+									</xsd:annotation>
+								</xsd:enumeration>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="OUTMOD" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>OUTMOD</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="1"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="EXPRSS" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>EXPRSS</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="1"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="TEST" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>TEST</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="1"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="IDOCTYP" type="xsd:string" fixed="ZSDCONTRACT">
+						<xsd:annotation>
+							<xsd:documentation>IDOCTYP</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="CIMTYP" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>CIMTYP</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="30"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="MESTYP" type="xsd:string" fixed="ZSDCONTRACT">
+						<xsd:annotation>
+							<xsd:documentation>MESTYP</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="MESCOD" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>MESCOD</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="3"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="MESFCT" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>MESFCT</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="3"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="STD" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>STD</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="1"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="STDVRS" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>STDVRS</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="6"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="STDMES" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>STDMES</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="6"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SNDPOR">
+						<xsd:annotation>
+							<xsd:documentation>SNDPOR</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SNDPRT">
+						<xsd:annotation>
+							<xsd:documentation>SNDPRT</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="2"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SNDPFC" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>SNDPFC</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="2"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SNDPRN">
+						<xsd:annotation>
+							<xsd:documentation>SNDPRN</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SNDSAD" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>SNDSAD</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="21"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SNDLAD" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>SNDLAD</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="70"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="RCVPOR">
+						<xsd:annotation>
+							<xsd:documentation>RCVPOR</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="RCVPRT" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>RCVPRT</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="2"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="RCVPFC" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>RCVPFC</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="2"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="RCVPRN">
+						<xsd:annotation>
+							<xsd:documentation>RCVPRN</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="RCVSAD" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>RCVSAD</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="21"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="RCVLAD" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>RCVLAD</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="70"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="CREDAT" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>CREDAT</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="8"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="CRETIM" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>CRETIM</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="6"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="REFINT" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>REFINT</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="14"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="REFGRP" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>REFGRP</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="14"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="REFMES" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>REFMES</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="14"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="ARCKEY" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>ARCKEY</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="70"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SERIAL" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>SERIAL</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="20"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+				</xsd:sequence>
+				<xsd:attribute name="SEGMENT" type="xsd:string" fixed="1" use="required"/>
+			</xsd:complexType>
+			<xsd:complexType name="ZSDCONTRACT.ZSDCONTRACT">
+				<xsd:annotation>
+					<xsd:documentation>IDOC type for I004- Siebel SAP inbound interface</xsd:documentation>
+				</xsd:annotation>
+				<xsd:sequence>
+					<xsd:element name="EDI_DC40" type="EDI_DC40.ZSDCONTRACT.ZSDCONTRACT"/>
+					<xsd:element name="Z1SDCUST" type="ZSDCONTRACT.Z1SDCUST"/>
+				</xsd:sequence>
+				<xsd:attribute name="BEGIN" type="xsd:string" fixed="1" use="required"/>
+			</xsd:complexType>
+			<xsd:complexType name="ZSDCONTRACT.Z1SDCUST">
+				<xsd:annotation>
+					<xsd:documentation>Parent Segment for I004 - Siebel SAP inbound Interface</xsd:documentation>
+				</xsd:annotation>
+				<xsd:sequence>
+					<xsd:element name="CUST_SOLDTO" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Character Field Length = 10</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="10"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="CONTRACTING_COUNTRY" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Version Number Component</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="2"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="SIEB_ORD_ID" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Siebel Order ID/No</xsd:documentation>
+						</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:maxLength value="15"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="Z1SDITEM" type="ZSDCONTRACT.Z1SDITEM" minOccurs="0" maxOccurs="99999"/>
+				</xsd:sequence>
+				<xsd:attribute name="SEGMENT" type="xsd:string" fixed="1" use="required"/>
+			</xsd:complexType>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="idoc.ZSDCONTRACT.ZSDCONTRACT">
+		<wsdl:documentation/>
+		<wsdl:part name="idoc" element="ZSDCONTRACT"/>
+	</wsdl:message>
+	<wsdl:portType name="SI_Create_ContractOrder_OB_Async">
+		<wsdl:documentation/>
+		<wsdl:operation name="OP_Create_ContractOrder_Send_Async">
+			<wsdl:documentation/>
+			<wsp:Policy>
+				<wsp:PolicyReference URI="#OP_OP_Create_ContractOrder_Send_Async"/>
+			</wsp:Policy>
+			<wsdl:input message="p1:idoc.ZSDCONTRACT.ZSDCONTRACT"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="SI_Create_ContractOrder_OB_AsyncBinding" type="p1:SI_Create_ContractOrder_OB_Async">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+		<wsdl:operation name="OP_Create_ContractOrder_Send_Async">
+			<soap:operation soapAction="http://sap.com/xi/WebService/soap1.1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+			<wsdl:input>
+				<soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="SI_Create_ContractOrder_OB_Async">
+		<wsdl:port name="OP_Create_ContractOrder_Send_Async" binding="p1:SI_Create_ContractOrder_OB_AsyncBinding">
+			<ns:address location="${sap.protocol}://${sap.host}${Sap.Orders.suffixurl}"/>
+		</wsdl:port>
+	</wsdl:service>
+	<wsp:UsingPolicy wsdl:required="true"/>
+	<wsp:Policy wsu:Id="OP_OP_Create_ContractOrder_Send_Async"/>
+</wsdl:definitions>

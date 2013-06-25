@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSZ_PopulateActivityRS.wsdl" name="CSZ.PopulateActivityRS">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CSZ/PopulateActivity#wsdl.interface(assignSolutionToSR_ppt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/MEDIATOR/CCRM_PopulateSolution/CSZ_PopulateSolutionRS.wsdl" name="CSZ.PopulateSoultionSOAPAdp">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.interface(assignSolutionToSR_ppt)"/>
+    </reference>
+</componentType>

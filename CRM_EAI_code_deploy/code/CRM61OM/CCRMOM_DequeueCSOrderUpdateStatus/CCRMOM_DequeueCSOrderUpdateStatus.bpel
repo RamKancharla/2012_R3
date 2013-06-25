@@ -1,0 +1,73 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Oct 22 16:34:55 GMT+05:30 2008
+  Author:  as37583
+  Purpose: Empty BPEL Process
+  Modified: Added CRMOrderNumber as the Title instead of MSGId on 01/12/2008.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOM_DequeueCSOrderUpdateStatus" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_DequeueCSOrderUpdateStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_DequeueCSOrderUpdateStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueCSOrderUpdates/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.siebel.com/xml/RCRM%20Order%20Entry" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink myRole="Dequeue_role" name="DequeueCSOrderUpdates" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink myRole="CCRMOM_PropagateOrderStatusRequester" name="CCRMOM_PropagateOrderStatus" partnerRole="CCRMOM_PropagateOrderStatusProvider" partnerLinkType="ns2:CCRMOM_PropagateOrderStatus"/>
+  </partnerLinks>
+  <variables>
+    <variable name="RcvDequeueCSOrderUpdatesIV" messageType="ns1:OrderRequest_msg"/>
+    <variable name="InvCCRMOM_PropagateOrderStatusIV" messageType="ns2:CSUpdateStatusMsg"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <receive name="RcvDequeueCSOrderUpdates" partnerLink="DequeueCSOrderUpdates" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="RcvDequeueCSOrderUpdatesIV" createInstance="yes"/>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[String orderNumber ="";       
+String title="";     
+try       
+{       
+orderNumber = ((oracle.xml.parser.v2.XMLElement)                          
+                        getVariableData("RcvDequeueCSOrderUpdatesIV", "OrderRequest", "/ns3:OrderRequest/ns3:OrderEntry-Orders/ns3:OrderNumber")).getFirstChild().getNodeValue();                             
+title=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");       
+setCompositeInstanceTitle(title);       
+     
+}       
+catch(Exception e)       
+{       
+String msgID = ((oracle.xml.parser.v2.XMLElement)                          
+                        getVariableData("RcvDequeueCSOrderUpdatesIV","OrderRequest","/ns3:OrderRequest/ns3:MessageId")).getFirstChild().getNodeValue();  
+                          
+setCompositeInstanceTitle(msgID);                          
+                    
+}]]>
+    </bpelx:exec>
+    <assign name="TransDequeueCSUpdateStatusToPropagateOrderStatus">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:processXSLT('TransDequeueCSUpdateStatusToPropagateOrderStatus.xsl',bpws:getVariableData('RcvDequeueCSOrderUpdatesIV','OrderRequest'))"/>
+        <to variable="InvCCRMOM_PropagateOrderStatusIV" part="CSUpdateStatus"/>
+      </copy>
+    </assign>
+    <invoke name="InvCCRMOM_PropagateOrderStatus" partnerLink="CCRMOM_PropagateOrderStatus" portType="ns2:CCRMOM_PropagateOrderStatus" operation="updateOrderStatus" inputVariable="InvCCRMOM_PropagateOrderStatusIV"/>
+  </sequence>
+</process>

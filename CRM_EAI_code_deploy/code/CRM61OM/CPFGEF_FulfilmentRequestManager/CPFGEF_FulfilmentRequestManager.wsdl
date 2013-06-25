@@ -1,0 +1,86 @@
+<definitions
+     name="CPFGEF_FulfilmentRequestManager"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://schemas.oracle.com/bpel/extension"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices"
+     xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager/correlationset"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager/correlationset"
+         location="CPFGEF_FulfilmentRequestManager_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+             xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager"
+                 schemaLocation="EAI.MSG.CPFG.EF.285_OrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+             xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager/correlationset">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+                 schemaLocation="EAI.MSG.CPFG.EF.216_SplitOrderResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://schemas.oracle.com/bpel/extension" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices"
+             xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager/correlationset"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" schemaLocation="EAI.MSG.CPFG.EF.208_FulfilmentStatusUpdate.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFGEF_OrderStatusUpdateMessage">
+        <part name="statusUpdate" element="ns1:orderStatusUpdate"/>
+    </message>
+    <message name="CPFGEF_FulfilmentRequestManagerRequestMessage">
+        <part name="orderRequest" element="ns1:orderRequest"/>
+    </message>
+    <message name="CPFGEF_FulfilmentStatusUpdate">
+        <part name="statusUpdate" element="ns5:PropagateCPFGStatusUpdateRequest"/>
+    </message>
+    <message name="CPFGEF_ElectronicFulfilmentRequestExtendedMessage">
+        <part name="extElectronicFulfilmentRequest" element="ns3:splitOrderResponse"/>
+    </message>
+    <portType name="CPFGEF_FulfilmentRequestManagerCallback">
+        <operation name="onResult">
+            <input message="client:CPFGEF_OrderStatusUpdateMessage"/>
+        </operation>
+    </portType>
+    <portType name="CPFGEF_FulfilmentRequestManager">
+        <operation name="fulfilOrder">
+            <input message="client:CPFGEF_FulfilmentRequestManagerRequestMessage"/>
+        </operation>
+        <operation name="receiveFulfilmentStatusUpdate">
+            <input message="client:CPFGEF_FulfilmentStatusUpdate"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFGEF_FulfilmentRequestManager">
+        <plnk:role name="CPFGEF_FulfilmentRequestManagerProvider">
+            <plnk:portType name="client:CPFGEF_FulfilmentRequestManager"/>
+        </plnk:role>
+        <plnk:role name="CPFGEF_FulfilmentRequestManagerRequester">
+            <plnk:portType name="client:CPFGEF_FulfilmentRequestManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:fulfilmentRequestId" messageType="client:CPFGEF_FulfilmentStatusUpdate"
+         part="statusUpdate" query="/ns8:PropagateCPFGStatusUpdateRequest/ns8:electronicFulfilmentRequestId"
+         xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"/>
+    <bpws:propertyAlias propertyName="pns1:fulfilmentRequestId" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/"
+         messageType="ns7:InterfaceBufferCollection_msg" part="InterfaceBufferCollection"
+         query="/ns6:InterfaceBufferCollection/ns6:InterfaceBuffer/ns6:referenceId" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/top/INTERFACEBUFFER"/>
+</definitions>

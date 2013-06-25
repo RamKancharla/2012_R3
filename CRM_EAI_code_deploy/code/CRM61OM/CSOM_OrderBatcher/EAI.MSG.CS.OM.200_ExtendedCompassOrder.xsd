@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.CS.OM.200_ExtendedCompassOrder.xsd
+* Type:				XML Schema Document
+* Description:			Canonical Order Schema document which includes CoreSuite order number
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		15/02/08	S VUPPALA			Initial Version
+*  0.02         18/02/10	Sreeja Prasad			Added PermBillFlag in ExtendedCompassOLI for PBI -421.
+*  0.03         22/04/10        Satish Patel                    Added installToSubscriber and installToItemNumber in ExtendedCompassOLI for PBI-537
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:comt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:element name="ExtendedCompassOrder" type="xsdLocal:ExtendedCompassOrder"/>
+	<xsd:complexType name="ExtendedCompassOrder">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="logicalCountry" type="xsd:string"/>
+			<xsd:element name="messageHeader" type="comt:CompassMessageHeader"/>
+			<xsd:element name="orderHeader" type="comt:CompassOrderHeader"/>
+                        <xsd:element name="index" type="xsd:string"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:ExtendedCompassOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExtendedCompassOLI">
+		<xsd:sequence>
+			<xsd:element name="CSOrderNumber" type="xsd:string"/>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="salesCode" type="xsd:string"/>
+			<xsd:element name="subAccount" type="xsd:string"/>
+			<xsd:element name="PLI" type="xsd:string"/>
+			<xsd:element name="AKR" type="xsd:string"/>
+			<xsd:element name="userID" type="xsd:string"/>
+			<xsd:element name="QUID" type="xsd:string"/>
+			<xsd:element name="permissionDate" type="xsd:string"/>
+			<xsd:element name="specialPrice" type="xsd:string"/>
+			<xsd:element name="specialPriceCurr" type="xsd:string"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsd:string"/>
+			<xsd:element name="itemNumber" type="xsd:string"/>
+			<xsd:element name="startStopBillingDate" type="xsd:string"/>
+			<xsd:element name="billingType" type="xsd:string"/>
+			<xsd:element name="billingNote" type="xsd:string"/>
+			<xsd:element name="STB" type="xsd:string"/>
+			<xsd:element name="PermBillFlag" type="xsd:string"/>
+                        <xsd:element name="installToSubscriber" type="xsd:string"/>
+                        <xsd:element name="installToItemNumber" type="xsd:string"/>                        
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>
+	
+	

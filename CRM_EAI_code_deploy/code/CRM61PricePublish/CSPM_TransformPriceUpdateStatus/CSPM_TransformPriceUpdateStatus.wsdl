@@ -1,0 +1,68 @@
+<definitions
+     name="CSPM_TransformPriceUpdateStatus"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus"
+                 schemaLocation="CSPM_TransformPriceUpdateStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+                 schemaLocation="EAI.MSG.CS.PM.210_PriceUpdateStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/PM/PriceUpdate"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+                 schemaLocation="EAI.MSG.CS.209_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CSPM_TransformPriceUpdateStatusResponseMessage">
+        <part name="payload" element="ns2:CSPriceUpdateStatus"/>
+    </message>
+    <message name="CSPM_TransformPriceUpdateStatusRequestMessage">
+        <part name="payload" element="ns1:EBCDICMessage"/>
+    </message>
+    <portType name="CSPM_TransformPriceUpdateStatusCallback">
+        <operation name="onResult">
+            <input message="client:CSPM_TransformPriceUpdateStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CSPM_TransformPriceUpdateStatus">
+        <operation name="transformPriceUpdateStatus">
+            <input message="client:CSPM_TransformPriceUpdateStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CSPM_TransformPriceUpdateStatus">
+        <plnk:role name="CSPM_TransformPriceUpdateStatusProvider">
+            <plnk:portType name="client:CSPM_TransformPriceUpdateStatus"/>
+        </plnk:role>
+        <plnk:role name="CSPM_TransformPriceUpdateStatusRequester">
+            <plnk:portType name="client:CSPM_TransformPriceUpdateStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

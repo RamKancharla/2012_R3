@@ -1,0 +1,39 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHCSOM_UserOrderFulfilment" revision="1.0" state="on">
+    <import location="TransformToCSFormat.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"/>
+    <import location="ATHCSOM_UserOrderFulfilment.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" location="CSOM_SubmitOrderToCOMPASSRSRef.wsdl" importType="wsdl"/>
+    <service name="anchorToATHCSOMUserOrderFulfilment" ui:wsdlLocation="ATHCSOM_UserOrderFulfilment.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment#wsdl.interface(ATHCSOM_UserOrderFulfilmentCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment#wsdl.interface(ATHCSOM_UserOrderFulfilment)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment#wsdl.endpoint(ATHCSOM_UserOrderFulfilment/ATHCSOM_UserOrderFulfilment)"/>
+    </service>
+    <component name="ATHCSOM_UserOrderFulfilment">
+        <implementation.bpel src="ATHCSOM_UserOrderFulfilment.bpel"/>
+        
+        
+    </component>
+    <reference name="SubmitOrderToCompass" ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSRef.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.endpoint(submitOrder_ppt/submitOrder_ppt_pt)" location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CSOM_SubmitOrderToCOMPASS/CSOM.SubmitOrderToCOMPASSRS_ep?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="TransformToCSUserRequest" ui:wsdlLocation="TransformToCSFormat.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement#wsdl.interface(TransformToCSUserRequest)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="TransformToCSFormat.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement#wsdl.endpoint(TransformToCSUserRequestService/TransformToCSUserRequest)"/>
+    </reference>
+    <wire>
+        <source.uri>anchorToATHCSOMUserOrderFulfilment</source.uri>
+        <target.uri>ATHCSOM_UserOrderFulfilment/anchorToATHCSOMUserOrderFulfilment</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHCSOM_UserOrderFulfilment/TransformToCSUserRequest</source.uri>
+        <target.uri>TransformToCSUserRequest</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHCSOM_UserOrderFulfilment/SubmitOrderToCompass</source.uri>
+        <target.uri>SubmitOrderToCompass</target.uri>
+    </wire>
+<!-- <property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property> -->
+</composite>

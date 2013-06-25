@@ -1,0 +1,26 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TRUSTOP_PublishOpportunity" revision="1.0" state="on">
+    <import importType="wsdl" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TRUSTOP_PropagateOpportunity/TRUSTOP_PropagateOpportunity.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity"/>
+    <import importType="wsdl" location="EAI.SRV.EXT.SFDC.051_ReceiveOpportunityFromTRUST.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"/>
+    <service name="SFDCOP.PublishOpportunity_RS_ep" ui:wsdlLocation="EAI.SRV.EXT.SFDC.051_ReceiveOpportunityFromTRUST.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish#wsdl.interface(publishOpportunityService)"/>
+        <binding.ws location="EAI.SRV.EXT.SFDC.051_ReceiveOpportunityFromTRUST.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish#wsdl.endpoint(publishOpportunityService/publishOpportunity)"/>
+    </service>
+    <component name="SFDCOP.PublishOpportunity_RS">
+        <implementation.mediator src="SFDCOP.PublishOpportunity_RS.mplan"/>
+    </component>
+    <reference name="SFDCOP.PropagateOpportunityAdp" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TRUSTOP_PropagateOpportunity/TRUSTOP_PropagateOpportunity.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity#wsdl.interface(TRUSTOP_PropagateOpportunity)"/>
+        <binding.ws location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TRUSTOP_PropagateOpportunity/TRUSTOP_PropagateOpportunity?WSDL" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity#wsdl.endpoint(TRUSTOP_PropagateOpportunity/TRUSTOP_PropagateOpportunity)"/>
+    </reference>
+    <wire>
+        <source.uri>SFDCOP.PublishOpportunity_RS_ep</source.uri>
+        <target.uri>SFDCOP.PublishOpportunity_RS/SFDCOP.PublishOpportunity_RS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SFDCOP.PublishOpportunity_RS/SFDCOP.PropagateOpportunityAdp</source.uri>
+        <target.uri>SFDCOP.PropagateOpportunityAdp</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service name="client1" ui:wsdlLocation="CCRMPLI_EnqueueRequest.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest#wsdl.interface(CCRMPLI_EnqueueRequest)"/>
+    </service>
+    <reference ui:wsdlLocation="HQ_Enqueue.wsdl" name="HQ_Enqueue">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerHQ_Enqueue/#wsdl.interface(Enqueue_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="PME_Enqueue.wsdl" name="PME_Enqueue">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerPME_Enqueue/#wsdl.interface(Enqueue_ptt)"/>
+    </reference>
+</componentType>

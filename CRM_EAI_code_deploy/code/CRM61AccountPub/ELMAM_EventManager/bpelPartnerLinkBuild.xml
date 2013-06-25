@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="bpel.deploy" default="compile" basedir=".">
+    <import file="${bpel.home}/utilities/replace_hosts.xml"/>
+    <target name="compile">
+        <echo> -------------------------------------------------------------- | Compiling bpel process ${process.name}, revision ${rev} --------------------------------------------------------------         </echo>
+        <replace dir="${basedir}" token="inkaban3ua-eai01:7777"
+                 value="${hostname}:${http.port}">
+            <include name="**/*.xsd"/>
+        </replace>
+        <bpelc input="${process.dir}/bpel/bpel.xml" out="${process.dir}/output"
+               rev="${rev}" home="${bpel.home}">
+            <customize></customize>
+        </bpelc>
+    </target>
+</project>

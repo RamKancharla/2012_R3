@@ -1,0 +1,323 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Nov 30 13:02:20 GMT 2009
+  Author:  surya.gannavarapu
+  Purpose: Asynchronous BPEL Process
+  
+  *********CHANGE HISTORY*********************888888888888
+  
+  Date          Author          Comments
+  
+  16/12/2009    Surya G         Completed the basic requirement of this component
+  03/05/2010    Jyothirmayi     Modified the condition in TransPropagateUserOrderRequest.xsl as part of the Defect # 36604(Athena Split)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOM_SubmitUserOrderRequest" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest/correlationset" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToCCRMOM_SubmitUserOrderRequest" partnerLinkType="client:CCRMOM_SubmitUserOrderRequest" myRole="CCRMOM_SubmitUserOrderRequestProvider" partnerRole="CCRMOM_SubmitUserOrderRequestRequester"/>
+        <partnerLink myRole="CCRMOM_PropagateUserOrderRequestRequester" name="CCRMOM_PropagateUserOrderRequest" partnerRole="CCRMOM_PropagateUserOrderRequestProvider" partnerLinkType="ns3:CCRMOM_PropagateUserOrderRequest"/>
+        <partnerLink name="SequenceChecker" partnerRole="SequenceCheckerProvider" partnerLinkType="ns5:SequenceChecker"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="SubmitUserOrderRequestIV" messageType="client:CCRMOM_SubmitUserOrderRequestRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="PropagateUserOrderRequestIV" messageType="ns3:CCRMOM_PropagateUserOrderRequestRequestMessage"/>
+        <variable name="NoOfOrderLines" type="xsd:nonNegativeInteger"/>
+        <variable name="NoOf500OrderLineSets" type="xsd:nonNegativeInteger"/>
+        <variable name="orderLineRestrictionIndex" type="xsd:nonNegativeInteger"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="InvSequenceCheckerIV" messageType="ns5:SequenceCheckerRequestMessage"/>
+        <variable name="InvSequenceCheckerOV" messageType="ns5:SequenceCheckerResponseMessage"/>
+        <variable name="uniqueID" type="xsd:string"/>
+        <variable name="RcvReleaseOrderBatcherIV" messageType="client:ReleaseSequenceMessage"/>
+        <variable name="VaTest" type="xsd:nonNegativeInteger"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.     
+	System.out.println("Hello, World");    
+*/    
+   
+   
+String transId ="";              
+String title="";            
+try              
+{              
+transId = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("SubmitUserOrderRequestIV", "SEARequest", "/ns1:userOrderRequest/ns1:orderHeader/ns1:transactionId")).getFirstChild().getNodeValue();                                    
+title=(transId!=null ? transId+"; Fault" : "null");                     
+setCompositeInstanceTitle(title);              
+            
+}              
+catch(Exception e)              
+{              
+setCompositeInstanceTitle("null");              
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.      
+	System.out.println("Hello, World");     
+*/     
+    
+    
+String transId ="";               
+String title="";             
+try               
+{               
+transId = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("SubmitUserOrderRequestIV", "SEARequest", "/ns1:userOrderRequest/ns1:orderHeader/ns1:transactionId")).getFirstChild().getNodeValue();                                     
+title=(transId!=null ? transId+"; Fault" : "null");                      
+setCompositeInstanceTitle(title);               
+             
+}               
+catch(Exception e)               
+{               
+setCompositeInstanceTitle("null");               
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailureFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.      
+	System.out.println("Hello, World");     
+*/     
+    
+    
+String transId ="";               
+String title="";             
+try               
+{               
+transId = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("SubmitUserOrderRequestIV", "SEARequest", "/ns1:userOrderRequest/ns1:orderHeader/ns1:transactionId")).getFirstChild().getNodeValue();                                     
+title=(transId!=null ? transId+"; Fault" : "null");                      
+setCompositeInstanceTitle(title);               
+             
+}               
+catch(Exception e)               
+{               
+setCompositeInstanceTitle("null");               
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnCatchAll" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.      
+	System.out.println("Hello, World");     
+*/     
+    
+    
+String transId ="";               
+String title="";             
+try               
+{               
+transId = ((oracle.xml.parser.v2.XMLElement)                                  
+                        getVariableData("SubmitUserOrderRequestIV", "SEARequest", "/ns1:userOrderRequest/ns1:orderHeader/ns1:transactionId")).getFirstChild().getNodeValue();                                     
+title=(transId!=null ? transId+"; Fault" : "null");                      
+setCompositeInstanceTitle(title);               
+             
+}               
+catch(Exception e)               
+{               
+setCompositeInstanceTitle("null");               
+}]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMOM_SubmitUserOrderRequest.wsdl) -->
+        <receive name="RcvAthenaOrderRequest" partnerLink="anchorToCCRMOM_SubmitUserOrderRequest" portType="client:CCRMOM_SubmitUserOrderRequest" operation="splitSEAOrder" variable="SubmitUserOrderRequestIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+ 
+ 
+String transId ="";            
+String title="";          
+try            
+{            
+transId = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("SubmitUserOrderRequestIV", "SEARequest", "/ns1:userOrderRequest/ns1:orderHeader/ns1:transactionId")).getFirstChild().getNodeValue();                                  
+title=(transId!=null ? transId : "null");                   
+setCompositeInstanceTitle(title);            
+          
+}            
+catch(Exception e)            
+{            
+setCompositeInstanceTitle("null");            
+}]]>
+        </bpelx:exec>
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="count(bpws:getVariableData('SubmitUserOrderRequestIV','SEARequest','/ns1:userOrderRequest/ns1:orderHeader/ns1:userOrderLineItem'))"/>
+                <to variable="NoOfOrderLines"/>
+            </copy>
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','NoOfLinestoSplitforAthenaToSiebel','Value', '500')"/>
+                <to variable="VaTest"/>
+            </copy>
+            <copy>
+                <from expression="ceiling((bpws:getVariableData('NoOfOrderLines')) div (bpws:getVariableData('VaTest')))"/>
+                <to variable="NoOf500OrderLineSets"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="orderLineRestrictionIndex"/>
+            </copy>
+        </assign>
+        <while name="While_1" condition="bpws:getVariableData('NoOf500OrderLineSets')>0">
+            <sequence name="SeqPropagateUserOrderRequest">
+                <scope name="SequenceAndInvokeParseOrder">
+                    <correlationSets>
+                        <correlationSet name="CorrelationSetSequenceChecker" properties="ns7:InvSequenceCheckerIV_prop"/>
+                    </correlationSets>
+                    <sequence name="SequenceAndInvokeParseOrder">
+                        <assign name="AsgSequenceCheckerIV">
+                            <copy>
+                                <from expression="ora:generateGUID()"/>
+                                <to variable="uniqueID"/>
+                            </copy>
+                            <copy>
+                                <from expression="'EAI'"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns4:applicationId"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCompositeInstanceId()"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns4:transactionId"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCompositeInstanceId()"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns4:messageId"/>
+                            </copy>
+                            <copy>
+                                <from expression="'EAI;'"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns4:messageHistory"/>
+                            </copy>
+                            <copy>
+                                <from variable="uniqueID"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns4:tracingId"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCurrentDateTime()"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns4:timeStamp"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCompositeInstanceId()"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns4:instanceId"/>
+                            </copy>
+                            <copy>
+                                <from expression="1"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns4:timeToLive"/>
+                            </copy>
+                            <copy>
+                                <from expression="'V'"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:eaiHeader/ns4:payloadVersion"/>
+                            </copy>
+                            <copy>
+                                <from expression="'UserOrderManagement.OrderCreation'"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:seqRequestDetails/ns6:context"/>
+                            </copy>
+                            <copy>
+                                <from expression="'UserOrder.TransactionId'"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:seqRequestDetails/ns6:messageType"/>
+                            </copy>
+                            <copy>
+                                <from variable="SubmitUserOrderRequestIV" part="SEARequest" query="/ns1:userOrderRequest/ns1:orderHeader/ns1:transactionId"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:seqRequestDetails/ns6:contextId"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getProcessId()"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:seqRequestDetails/ns6:process"/>
+                            </copy>
+                            <copy>
+                                <from variable="uniqueID"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns6:checkSequenceRequest/ns6:seqRequestDetails/ns6:correlationID"/>
+                            </copy>
+                        </assign>
+                        <assign name="AsgUniqueID">
+                            <copy>
+                                <from variable="uniqueID"/>
+                                <to variable="SubmitUserOrderRequestIV" part="SEARequest" query="/ns1:userOrderRequest/ns1:eaiHeader/ns4:tracingId"/>
+                            </copy>
+                            <copy>
+                                <from variable="orderLineRestrictionIndex"/>
+                                <to variable="SubmitUserOrderRequestIV" part="SEARequest" query="/ns1:userOrderRequest/ns1:eaiHeader/ns4:messageId"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvSequenceChecker" partnerLink="SequenceChecker" portType="ns5:SequenceChecker" operation="checkSequence" inputVariable="InvSequenceCheckerIV" outputVariable="InvSequenceCheckerOV">
+                            <correlations>
+                                <correlation initiate="yes" set="CorrelationSetSequenceChecker" pattern="out"/>
+                            </correlations>
+                        </invoke>
+                        <switch name="Switch_1">
+                            <case condition="bpws:getVariableData('InvSequenceCheckerOV','payload','/ns2:basicResponse/ns2:basicResponse/ns4:responseMessage')='WAIT'">
+                                <receive name="RcvReleaseOrderBatcher" partnerLink="anchorToCCRMOM_SubmitUserOrderRequest" portType="client:CCRMOM_SubmitUserOrderRequest" operation="updateReleaseStatus" variable="RcvReleaseOrderBatcherIV" createInstance="no">
+                                    <correlations>
+                                        <correlation initiate="no" set="CorrelationSetSequenceChecker"/>
+                                    </correlations>
+                                </receive>
+                            </case>
+                            <otherwise>
+                                <empty name="DoNothing"/>
+                            </otherwise>
+                        </switch>
+                        <assign name="TransPropagateUserOrderRequest">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransPropagateUserOrderRequest.xsl',bpws:getVariableData('SubmitUserOrderRequestIV','SEARequest'))"/>
+                                <to variable="PropagateUserOrderRequestIV" part="payload"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvPropagateUserOrderRequest" partnerLink="CCRMOM_PropagateUserOrderRequest" portType="ns3:CCRMOM_PropagateUserOrderRequest" operation="rcvOrderRequest" inputVariable="PropagateUserOrderRequestIV"/>
+                        <assign name="RedefineIndexes">
+                            <copy>
+                                <from expression="bpws:getVariableData('NoOf500OrderLineSets') - 1"/>
+                                <to variable="NoOf500OrderLineSets"/>
+                            </copy>
+                            <copy>
+                                <from expression="bpws:getVariableData('orderLineRestrictionIndex')+1"/>
+                                <to variable="orderLineRestrictionIndex"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </scope>
+            </sequence>
+        </while>
+    </sequence>
+</process>

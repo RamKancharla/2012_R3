@@ -1,0 +1,40 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SAPAM_EventManager" revision="1.0" state="on">
+    <import location="WriteBuffer.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteBuffer/"/>
+    <import location="SAPAM_EventManager.wsdl" namespace="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" importType="wsdl"/>
+    <service name="SAPAM_EventManager" ui:wsdlLocation="SAPAM_EventManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager#wsdl.interface(SAPAM_EventManagerCallback)" interface="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager#wsdl.interface(SAPAM_EventManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager#wsdl.endpoint(SAPAM_EventManager/SAPAM_EventManager)"/>
+    </service>
+    <component name="SAPAM_EventManagerProcess">
+        <implementation.bpel src="SAPAM_EventManagerProcess.bpel"/>
+        
+        
+    </component>
+    <reference name="WriteBuffer" ui:wsdlLocation="WriteBuffer.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteBuffer/#wsdl.interface(WriteBuffer_ptt)"/>
+        <binding.jca config="WriteBuffer_db.jca"/>
+    </reference>
+    <reference name="AsyncSequenceChecker" ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)" location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL" soapVersion="1.1"/>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>SAPAM_EventManager</source.uri>
+        <target.uri>SAPAM_EventManagerProcess/SAPAM_EventManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPAM_EventManagerProcess/WriteBuffer</source.uri>
+        <target.uri>WriteBuffer</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPAM_EventManagerProcess/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

@@ -1,0 +1,75 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Sep 30 11:40:11 GMT+05:30 2011
+  Author:  harshitha.megha
+  Purpose: Empty BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMQM_DequeueQuoteStatus" targetNamespace="http://xmlns.oracle.com/CCRMQM_DequeueQuoteStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.siebel.com/xml/RCRMGenericQuoteInterface" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher" xmlns:client="http://xmlns.oracle.com/CCRMQM_DequeueQuoteStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerQuoteStatusDeq/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/PropagateGenericQuoteStatus" xmlns:ns2="http://xmlns.oracle.com/ESOQM_PropagateQuoteSubmitStatus" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink myRole="Dequeue_role" name="QuoteStatusDeq" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink myRole="CCRMQM_QuoteStatusDispatcherRequester" name="CCRMQM_QuoteStatusDispatcher" partnerRole="CCRMQM_QuoteStatusDispatcherProvider" partnerLinkType="ns5:CCRMQM_QuoteStatusDispatcher"/>
+  </partnerLinks>
+  <variables>
+    <variable name="ReceiveDeqQuoteStatus_Dequeue_InputVariable" messageType="ns1:ListOfGenQuoteInterface_msg"/>
+    <variable name="InvokeGenericQuoteStatus_initiate_InputVariable_1" messageType="ns5:CCRMQM_QuoteStatusDispatcherRequestMessage"/>
+  </variables>
+  <faultHandlers>
+    <catchAll>
+      <sequence name="Sequence_1">
+        <bpelx:exec name="SetTitleFault" language="java" version="1.5">
+          <![CDATA[String transactionID ="";                        
+transactionID = ((oracle.xml.parser.v2.XMLElement)getVariableData("receiveQuoteStatus_initiateIVar","payload","/ns2:UpdateQuoteStatusRequest/ns2:updateQuoteStatusRequest/ns2:TransactionId")).getFirstChild().getNodeValue();          
+String Title=(transactionID != null ? (transactionID) : ("Fault - "+transactionID) );     
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+      </sequence>
+    </catchAll>
+  </faultHandlers>
+  <sequence name="main">
+    <receive name="ReceiveDeqQuoteStatus" createInstance="yes" partnerLink="QuoteStatusDeq" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="ReceiveDeqQuoteStatus_Dequeue_InputVariable"/>
+    <bpelx:exec name="SetTitle" language="java" version="1.5">
+      <![CDATA[String TransactionId = "";        
+String QuoteNum="";     
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("ReceiveDeqQuoteStatus_Dequeue_InputVariable","ListOfGenQuoteInterface","/ns4:ListOfGenQuoteInterface/ns4:Quote/ns4:TransactionId")).getFirstChild()){              
+    TransactionId = ((oracle.xml.parser.v2.XMLElement) getVariableData("ReceiveDeqQuoteStatus_Dequeue_InputVariable","ListOfGenQuoteInterface","/ns4:ListOfGenQuoteInterface/ns4:Quote/ns4:TransactionId")).getFirstChild().getNodeValue();                        
+ }     
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("ReceiveDeqQuoteStatus_Dequeue_InputVariable","ListOfGenQuoteInterface","/ns4:ListOfGenQuoteInterface/ns4:Quote/ns4:QuoteNumber")).getFirstChild()){              
+    QuoteNum = ((oracle.xml.parser.v2.XMLElement) getVariableData("ReceiveDeqQuoteStatus_Dequeue_InputVariable","ListOfGenQuoteInterface","/ns4:ListOfGenQuoteInterface/ns4:Quote/ns4:QuoteNumber")).getFirstChild().getNodeValue();                        
+ }     
+setCompositeInstanceTitle(TransactionId+" : "+QuoteNum );]]>
+    </bpelx:exec>
+    <assign name="TransDeqStatusToQuoteStatusDispatcher">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:processXSLT('TransDequeueStatusToGenericQuoteStatus.xsl',bpws:getVariableData('ReceiveDeqQuoteStatus_Dequeue_InputVariable','ListOfGenQuoteInterface'))"/>
+        <to variable="InvokeGenericQuoteStatus_initiate_InputVariable_1" part="payload"/>
+      </copy>
+    </assign>
+    <invoke name="InvokeQuoteStatusDispatcher" partnerLink="CCRMQM_QuoteStatusDispatcher" portType="ns5:CCRMQM_QuoteStatusDispatcher" operation="initiate" inputVariable="InvokeGenericQuoteStatus_initiate_InputVariable_1"/>
+  </sequence>
+</process>

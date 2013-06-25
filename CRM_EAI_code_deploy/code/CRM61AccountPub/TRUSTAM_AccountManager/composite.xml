@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TRUSTAM_AccountManager" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="TRUSTAM_AccountManager.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccount.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl"
+            importType="wsdl"/>
+    <service name="TRUSTAM_AccountManager" ui:wsdlLocation="TRUSTAM_AccountManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.interface(TRUSTAM_AccountManagerCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.interface(TRUSTAM_AccountManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.endpoint(TRUSTAM_AccountManager/TRUSTAM_AccountManager)"/>
+    </service>
+    <component name="TRUSTAM_AccountManagerProcess">
+        <implementation.bpel src="TRUSTAM_AccountManagerProcess.bpel"/>
+    </component>
+    <reference name="SequenceChecker"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceChecker/SequenceChecker)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/anchorToSequencer?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="CCRMAM_PropagateTRUSTAccount"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccount.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccount)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.interface(CCRMAM_PropagateTRUSTAccountCallback)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.endpoint(CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccount)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMAM_PropagateTRUSTAccount/anchorToCCRMAM_PropagateTRUSTAccount?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMAM_PropagateTRUSTAccount#wsdl.endpoint(CCRMAM_PropagateTRUSTAccount/CCRMAM_PropagateTRUSTAccountCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>TRUSTAM_AccountManager</source.uri>
+        <target.uri>TRUSTAM_AccountManagerProcess/TRUSTAM_AccountManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TRUSTAM_AccountManagerProcess/SequenceChecker</source.uri>
+        <target.uri>SequenceChecker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TRUSTAM_AccountManagerProcess/CCRMAM_PropagateTRUSTAccount</source.uri>
+        <target.uri>CCRMAM_PropagateTRUSTAccount</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGPRD_FTPtoCPFG" revision="1.0" state="on">
+    <import location="CPFGPRD_FTPtoCPFG.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_FTPtoCPFG"/>
+    <import location="CPfG.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/ftp/CPfG/"/>
+    <service name="client" ui:wsdlLocation="CPFGPRD_FTPtoCPFG.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_FTPtoCPFG#wsdl.interface(CPFGPRD_FTPtoCPFG)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/PRD/CPFGPRD_FTPtoCPFG#wsdl.endpoint(CPFGPRD_FTPtoCPFG/CPFGPRD_FTPtoCPFG)"/>
+    </service>
+    <component name="CPFGPRD_FTPtoCPFG">
+        <implementation.bpel src="CPFGPRD_FTPtoCPFG.bpel"/>
+    </component>
+    <reference name="CPfG" ui:wsdlLocation="CPfG.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/ftp/CPfG/#wsdl.interface(Put_ptt)"/>
+        <binding.jca config="CPfG_ftp.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CPFGPRD_FTPtoCPFG/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGPRD_FTPtoCPFG/CPfG</source.uri>
+        <target.uri>CPfG</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

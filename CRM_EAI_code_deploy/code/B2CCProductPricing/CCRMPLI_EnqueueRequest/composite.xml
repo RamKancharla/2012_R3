@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPLI_EnqueueRequest" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="HQ_Enqueue.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerHQ_Enqueue/"/>
+    <import location="CCRMPLI_EnqueueRequest.wsdl" namespace="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest"/>
+    <import location="PME_Enqueue.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerPME_Enqueue/"/>
+    <service name="client" ui:wsdlLocation="CCRMPLI_EnqueueRequest.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest#wsdl.interface(CCRMPLI_EnqueueRequest)"/>
+        <binding.ws port="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest#wsdl.endpoint(client/CCRMPLI_EnqueueRequest_pt)">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">NEVER</property>
+        </binding.ws>
+    </service>
+    <component name="CCRMPLI_EnqueueRequest">
+        <implementation.bpel src="CCRMPLI_EnqueueRequest.bpel"/>
+        <property name="bpel.partnerLink.PME_Enqueue.nonBlockingInvoke">true</property>
+    </component>
+    <reference name="PME_Enqueue" ui:wsdlLocation="PME_Enqueue.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerPME_Enqueue/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="PME_Enqueue_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="HQ_Enqueue" ui:wsdlLocation="HQ_Enqueue.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerHQ_Enqueue/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="HQ_Enqueue_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>CCRMPLI_EnqueueRequest/PME_Enqueue</source.uri>
+        <target.uri>PME_Enqueue</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPLI_EnqueueRequest/HQ_Enqueue</source.uri>
+        <target.uri>HQ_Enqueue</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMPLI_EnqueueRequest/client1</target.uri>
+    </wire>
+</composite>

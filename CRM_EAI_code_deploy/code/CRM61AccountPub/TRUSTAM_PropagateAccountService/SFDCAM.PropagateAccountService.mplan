@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="SFDCAM.PropagateAccountService" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="publishAccounts">
+      <switch>
+         <case name="Case_1_SFDCAM.PropagateAccountService.publishAccounts" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/publishTrustAccounts_To_publishTrustAccounts.xsl,$in.parameter)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="SFDCAM.TRUSTSoapAdp" operation="publishTRUST">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/basicResponse_To_basicResponseElement.xsl,$in.payload)" name="$out.parameter"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

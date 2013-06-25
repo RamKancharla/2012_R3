@@ -1,0 +1,73 @@
+<definitions
+     name="SAPAM_EventManager"
+     targetNamespace="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+     xmlns:client="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+             xmlns:client="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager"
+                 schemaLocation="SAPAM_EventManager.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+             xmlns:client="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+                 schemaLocation="EAI.MSG.SAP.AM.292_PublishAccount.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+             xmlns:client="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.AM.176_AccountEvent.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+             xmlns:client="http://www.reuters.com/ns/2010/08/10/SAMI/EAI/AM/AccountPublish/SAPAM_EventManager">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+                 schemaLocation="EAI.MSG.AM.293_AccountEvent.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SAPAM_EventManagerResponseMessage">
+        <part name="payload" element="client:SAPAM_EventManagerProcessResponse"/>
+    </message>
+    <message name="SAPAM_EventManagerRequestMessage">
+        <part name="payload" element="ns2:accountEvent"/>
+    </message>
+    <message name="publish">
+        <part name="accPub" element="ns1:AccountPublish"/>
+    </message>
+    <message name="AccEvent">
+        <part name="event" element="ns2:extendedaccountEvent"/>
+    </message>
+    <portType name="SAPAM_EventManagerCallback">
+        <operation name="onResult">
+            <input message="client:SAPAM_EventManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="SAPAM_EventManager">
+        <operation name="initiate">
+            <input message="client:SAPAM_EventManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SAPAM_EventManager">
+        <plnk:role name="SAPAM_EventManagerProvider">
+            <plnk:portType name="client:SAPAM_EventManager"/>
+        </plnk:role>
+        <plnk:role name="SAPAM_EventManagerRequester">
+            <plnk:portType name="client:SAPAM_EventManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

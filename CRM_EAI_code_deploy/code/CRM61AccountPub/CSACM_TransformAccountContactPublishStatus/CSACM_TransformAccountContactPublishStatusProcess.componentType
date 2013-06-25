@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSACM_TransformAccountContactPublishStatus.wsdl" name="CSACM_TransformAccountContactPublishStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus#wsdl.interface(CSACM_TransformAccountContactPublishStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus#wsdl.interface(CSACM_TransformAccountContactPublishStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="ParseCSAccountContactPublishStatus.wsdl" name="ParseCSAccountContactPublishStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish#wsdl.interface(ParseCSAccountContactPublishStatus)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMACM_PropagateAccountContactPublishStatus/CCRMACM_PropagateAccountContactPublishStatus.wsdl" name="CCRMACM_PropagateAccountContactPublishStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatus)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatusCallback)"/>
+    </reference>
+</componentType>

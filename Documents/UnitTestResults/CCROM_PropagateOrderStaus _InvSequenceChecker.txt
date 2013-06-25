@@ -1,0 +1,39 @@
+<messages><SequenceCheckerIV><part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="payload"><checkSequenceRequest xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer">
+   <eaiHeader>
+      <cmt:applicationId xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">Siebel</cmt:applicationId>
+      <cmt:transactionId xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">1-5JPDZG</cmt:transactionId>
+      <cmt:messageId xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">1-5JPDZG</cmt:messageId>
+      <cmt:messageHistory xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">CRM;EAI;</cmt:messageHistory>
+      <cmt:tracingId xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">bbd0ce8cd5c68767:7b123c26:12848013046:-5f34</cmt:tracingId>
+      <cmt:timeStamp xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">2010-04-29T13:37:45</cmt:timeStamp>
+      <cmt:instanceId xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">200072</cmt:instanceId>
+      <cmt:timeToLive xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">0</cmt:timeToLive>
+      <cmt:payloadVersion xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">A</cmt:payloadVersion>
+   </eaiHeader>
+   <seqRequestDetails>
+      <context>OrderManagement.OrderStatus</context>
+      <messageType>Order.CRMOrderNumber</messageType>
+      <contextId>1-335428108</contextId>
+      <process>CCRMOM_ProxyPropagateOrderStatus</process>
+      <correlationID>bbd0ce8cd5c68767:7b123c26:12848013046:-5f34</correlationID>
+   </seqRequestDetails>
+</checkSequenceRequest>
+</part></SequenceCheckerIV><SequenceCheckerOV><part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="payload"><basicResponse xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common">
+   <eaiHeader>
+      <applicationId xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">Siebel</applicationId>
+      <transactionId xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">CRM;EAI;SEQ;</transactionId>
+      <messageId xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">1-5JPDZG</messageId>
+      <messageHistory xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">CRM;EAI;</messageHistory>
+      <tracingId xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">bbd0ce8cd5c68767:7b123c26:12848013046:-5f34</tracingId>
+      <timeStamp xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">2010-04-29T13:37:45+00:00</timeStamp>
+      <instanceId xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">220007</instanceId>
+      <timeToLive xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">0</timeToLive>
+      <payloadVersion xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">A</payloadVersion>
+   </eaiHeader>
+   <basicResponse>
+      <response xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">0</response>
+      <responseCode xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">00100-EAI-SUCCESS</responseCode>
+      <responseMessage xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">CONTINUE</responseMessage>
+   </basicResponse>
+</basicResponse>
+</part></SequenceCheckerOV></messages>

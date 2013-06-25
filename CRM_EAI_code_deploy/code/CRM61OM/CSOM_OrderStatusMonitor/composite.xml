@@ -1,0 +1,79 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" name="CSOM_OrderStatusMonitor" applicationName="CRM61OM" mode="active" revision="1.0" state="on">
+    <import location="OrderStatusMonitorMQAdp.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerOrderStatusMonitorMQAdp/" importType="wsdl"/>
+    <import location="OrderStatusMonitorMQAdp.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerOrderStatusMonitorMQAdp/" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformUserStatus/CSOM_TransformUserStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformOrderStatus/CSOM_TransformOrderStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSPM_TransformPriceUpdateStatus/CSPM_TransformPriceUpdateStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSGPM_PropagateGPStatusLogs/CSGPM_PropagateGPStatusLogs.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus" location="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CSACM_TransformAccountContactPublishStatus/CSACM_TransformAccountContactPublishStatus.wsdl" importType="wsdl"/>
+    <service ui:wsdlLocation="OrderStatusMonitorMQAdp.wsdl" name="CSOM.OrderStatusMonitorMQAdp">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerOrderStatusMonitorMQAdp/#wsdl.interface(monitorOrderStatus_ptt)"/>
+        <binding.jca config="OrderStatusMonitorMQAdp_mq.jca"/>
+    </service>
+    <service ui:wsdlLocation="OrderStatusMonitorMQAdp.wsdl" name="CSOM.OrderStatusMonitorMQAdp_RS_ep">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerOrderStatusMonitorMQAdp/#wsdl.interface(monitorOrderStatus_ptt)"/>
+        <binding.ws port="http://xmlns.oracle.com/pcbpel/adapter/mq/headerOrderStatusMonitorMQAdp/#wsdl.endpoint(OrderStatusMonitorMQAdp/monitorOrderStatus_pt)" location="OrderStatusMonitorMQAdp.wsdl"/>
+    </service>
+    <component name="CSOM.OrderStatusMonitorMQAdp_RS">
+        <implementation.mediator src="CSOM.OrderStatusMonitorMQAdp_RS.mplan"/>
+    </component>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformUserStatus/CSOM_TransformUserStatus.wsdl" name="CSOM.TransformUserStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus#wsdl.interface(CSOM_TransformUserStatus)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus#wsdl.endpoint(CSOM_TransformUserStatus/CSOM_TransformUserStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformUserStatus/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSGPM_PropagateGPStatusLogs/CSGPM_PropagateGPStatusLogs.wsdl" name="CSPM.PropagateGPStatusLogsSOAPAdp">
+        <interface.wsdl interface="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs#wsdl.interface(CSGPM_PropagateGPStatusLogs)"/>
+        <binding.ws port="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs#wsdl.endpoint(CSGPM_PropagateGPStatusLogs/CSGPM_PropagateGPStatusLogs)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSGPM_PropagateGPStatusLogs/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformOrderStatus/CSOM_TransformOrderStatus.wsdl" name="CSOM.TransformOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus#wsdl.interface(CSOM_TransformOrderStatus)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus#wsdl.endpoint(CSOM_TransformOrderStatus/CSOM_TransformOrderStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformOrderStatus/CSOM_TransformOrderStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSPM_TransformPriceUpdateStatus/CSPM_TransformPriceUpdateStatus.wsdl" name="CSPM.TransformPriceUpdateStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus#wsdl.interface(CSPM_TransformPriceUpdateStatus)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus#wsdl.endpoint(CSPM_TransformPriceUpdateStatus/CSPM_TransformPriceUpdateStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSPM_TransformPriceUpdateStatus/anchorToCSPM_TransformPriceUpdateStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CSACM_TransformAccountContactPublishStatus/CSACM_TransformAccountContactPublishStatus.wsdl" name="CSACM.TransformAccountContactPublishStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus#wsdl.interface(CSACM_TransformAccountContactPublishStatus)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus#wsdl.endpoint(CSACM_TransformAccountContactPublishStatus/CSACM_TransformAccountContactPublishStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSACM_TransformAccountContactPublishStatus/CSACM_TransformAccountContactPublishStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CSOM.OrderStatusMonitorMQAdp</source.uri>
+        <target.uri>CSOM.OrderStatusMonitorMQAdp_RS/CSOM.OrderStatusMonitorMQAdp_RS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM.OrderStatusMonitorMQAdp_RS_ep</source.uri>
+        <target.uri>CSOM.OrderStatusMonitorMQAdp_RS/CSOM.OrderStatusMonitorMQAdp_RS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM.OrderStatusMonitorMQAdp_RS/CSOM.TransformUserStatus</source.uri>
+        <target.uri>CSOM.TransformUserStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM.OrderStatusMonitorMQAdp_RS/CSOM.TransformOrderStatus</source.uri>
+        <target.uri>CSOM.TransformOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM.OrderStatusMonitorMQAdp_RS/CSACM.TransformAccountContactPublishStatus</source.uri>
+        <target.uri>CSACM.TransformAccountContactPublishStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM.OrderStatusMonitorMQAdp_RS/CSPM.TransformPriceUpdateStatus</source.uri>
+        <target.uri>CSPM.TransformPriceUpdateStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM.OrderStatusMonitorMQAdp_RS/CSPM.PropagateGPStatusLogsSOAPAdp</source.uri>
+        <target.uri>CSPM.PropagateGPStatusLogsSOAPAdp</target.uri>
+    </wire>
+</composite>

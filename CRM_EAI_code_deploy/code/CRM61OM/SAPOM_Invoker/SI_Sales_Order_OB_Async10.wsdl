@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="SI_Sales_Order_OB_Async"
+                  targetNamespace="http://trm.com:o2b:SalesOrderCreate"
+                  xmlns:p1="http://trm.com:o2b:SalesOrderCreate"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation/>
+  <wsp:UsingPolicy wsdl:required="true"/>
+  <wsp:Policy wsu:Id="OP_SI_Sales_Order_OB_Async"/>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://trm.com:o2b:SalesOrderCreate"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns="http://trm.com:o2b:SalesOrderCreate">
+      <xsd:element name="MT_SalesOrderData" type="DT_SalesOrderData"/>
+      <xsd:complexType name="DT_SalesOrderData">
+        <xsd:annotation>
+          <xsd:documentation xml:lang="EN">SalesOrderdata</xsd:documentation>
+          <xsd:appinfo source="http://sap.com/xi/VersionID">0b072c91adbc11dea93486eb1b9a9604</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element name="Header">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="doctype">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:length value="4"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="salesorg">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:length value="4"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="dischan">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:length value="2"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="division">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:length value="2"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="purchno">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="1"/>
+                      <xsd:maxLength value="35"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="Item" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="itemno">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="1"/>
+                      <xsd:maxLength value="6"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="material">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="10"/>
+                      <xsd:maxLength value="18"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="plant">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:length value="4"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="storloc">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:length value="4"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="qty">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:integer">
+                      <xsd:totalDigits value="15"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="uom">
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:length value="3"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="MT_SalesOrderData">
+    <wsdl:documentation/>
+    <wsdl:part name="MT_SalesOrderData" element="p1:MT_SalesOrderData"/>
+  </wsdl:message>
+  <wsdl:portType name="SI_Sales_Order_OB_Async">
+    <wsdl:documentation/>
+    <wsdl:operation name="SI_Sales_Order_OB_Async">
+      <wsdl:documentation/>
+      <wsp:Policy>
+        <wsp:PolicyReference URI="#OP_SI_Sales_Order_OB_Async"/>
+      </wsp:Policy>
+      <wsdl:input message="p1:MT_SalesOrderData"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SI_Sales_Order_OB_AsyncBinding"
+                type="p1:SI_Sales_Order_OB_Async">
+    <soap:binding style="document"
+                  transport="http://schemas.xmlsoap.org/soap/http"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+    <wsdl:operation name="SI_Sales_Order_OB_Async">
+      <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      <wsdl:input>
+        <soap:body use="literal"
+                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SI_Sales_Order_OB_AsyncService">
+    <wsdl:port name="SI_Sales_Order_OB_AsyncPort"
+               binding="p1:SI_Sales_Order_OB_AsyncBinding">
+      <soap:address location="http://sapmid.int.thomsonreuters.com:50000/XISOAPAdapter/MessageServlet?channel=*:BusComp_Siebel1:CC_Out_Soap_SalesOrdernew&amp;version=3.0&amp;Sender.Service=BusComp_Siebel1&amp;Interface=http%3A%2F%2Ftrm.com%3Ao2b%3ASalesOrderCreate%5ESI_Sales_Order_OB_Async"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

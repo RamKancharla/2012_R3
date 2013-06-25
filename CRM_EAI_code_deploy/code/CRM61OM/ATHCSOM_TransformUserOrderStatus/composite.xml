@@ -1,0 +1,42 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHCSOM_TransformUserOrderStatus" revision="1.0" state="on">
+    <import location="ParseUserOrderStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"/>
+    <import location="ATHCSOM_TransformUserOrderStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHUOM_PropagateUserOrderStatus/ATHUOM_PropagateUserOrderStatus.wsdl" importType="wsdl"/>
+    <service name="anchorToATHCSOM_TransformUserOrderStatus" ui:wsdlLocation="ATHCSOM_TransformUserOrderStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus#wsdl.interface(ATHCSOM_TransformUserOrderStatusCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus#wsdl.interface(ATHCSOM_TransformUserOrderStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_TransformUserOrderStatus#wsdl.endpoint(ATHCSOM_TransformUserOrderStatus/ATHCSOM_TransformUserOrderStatus)"/>
+    </service>
+    <component name="ATHCSOM_TransformUserOrderStatus">
+        <implementation.bpel src="ATHCSOM_TransformUserOrderStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="ATHUOM_PropagateUserOrderStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHUOM_PropagateUserOrderStatus/ATHUOM_PropagateUserOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.interface(ATHUOM_PropagateUserOrderStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.interface(ATHUOM_PropagateUserOrderStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.endpoint(ATHUOM_PropagateUserOrderStatus/ATHUOM_PropagateUserOrderStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHUOM_PropagateUserOrderStatus/anchorToATHUOM_PropagateUserOrderStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.endpoint(ATHUOM_PropagateUserOrderStatus/ATHUOM_PropagateUserOrderStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="ParseUserOrderStatus" ui:wsdlLocation="ParseUserOrderStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement#wsdl.interface(ParseCSUserOrderResponse)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="ParseUserOrderStatus.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement#wsdl.endpoint(ParseCSUserOrderResponse/ParseUserOrderResponse)"/>
+    </reference>
+    <wire>
+        <source.uri>anchorToATHCSOM_TransformUserOrderStatus</source.uri>
+        <target.uri>ATHCSOM_TransformUserOrderStatus/anchorToATHCSOM_TransformUserOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHCSOM_TransformUserOrderStatus/ATHUOM_PropagateUserOrderStatus</source.uri>
+        <target.uri>ATHUOM_PropagateUserOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHCSOM_TransformUserOrderStatus/ParseUserOrderStatus</source.uri>
+        <target.uri>ParseUserOrderStatus</target.uri>
+    </wire>
+<!-- <property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property> -->
+</composite>

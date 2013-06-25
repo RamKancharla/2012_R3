@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.SRV.EXT.019_CPfGAccountManagement.wsdl
+	* Type:        WSDL
+	*
+	* Change History
+	* Version		Date		    Author				Description Of Change
+	*
+	*  0.1          17/09/07    	R. Sivarajan        Initial Version
+	*  0.2          02/05/08        Andrew Humphreys    Change XSD Imports to import from same directory as WSDL 
+	*  0.3          02/05/08        Andrew Humphreys    Remove Account Merge Operation
+	*  1.0          16/05/08        Andrew Humphreys    Changed namespaces to be AAA owned
+	*
+	**********************************************************************************-->
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+	xmlns:ns1="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/Common"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:tns="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices">
+	<wsdl:import
+		location="EAI.MSG.EXT.137_PropagateAccountHierarchyRequest.xsd"
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices" />
+	<wsdl:import location="EAI.MSG.EXT.111_BasicResponse.xsd"
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/Common" />
+	<wsdl:types>
+		<xs:schema elementFormDefault="qualified"
+			targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices">
+			<xs:include
+				schemaLocation="EAI.MSG.EXT.137_PropagateAccountHierarchyRequest.xsd" />
+			<xs:element
+				name="PropagateAccountHierarchy_parameterElement" nillable="true"
+				type="tns:PropagateAccountHierarchyRequest" />
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="PropagateAccountHierarchyRequestMessage">
+		<wsdl:part
+			element="tns:PropagateAccountHierarchy_parameterElement"
+			name="parameter" />
+	</wsdl:message>
+	<wsdl:message name="BasicResponseMessage">
+		<wsdl:part element="ns1:basicResponse" name="parameter" />
+	</wsdl:message>
+	<wsdl:portType name="AccountManagementInterface">
+		<wsdl:operation name="propagateAccountHierarchy">
+			<wsdl:input
+				message="tns:PropagateAccountHierarchyRequestMessage" />
+			<wsdl:output message="tns:BasicResponseMessage" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="AccountManagementInterfaceSOAP"
+		type="tns:AccountManagementInterface">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="propagateAccountHierarchy">
+			<soap:operation
+				soapAction="http://services.reuters.com/soapaction?type=PropagateAccountHierarchyRequest&amp;ns=http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/AccountManagementServices" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="AccountManagementService">
+		<wsdl:port binding="tns:AccountManagementInterfaceSOAP"
+			name="AccountManagementPort">
+			<soap:address location="http://localhost:9080" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

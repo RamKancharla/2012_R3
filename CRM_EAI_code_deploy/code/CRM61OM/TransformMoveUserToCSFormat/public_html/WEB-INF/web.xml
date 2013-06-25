@@ -1,0 +1,15 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+     version="2.5">
+    <servlet>
+        <description>Web Service TransformMoveUserToCSFormatRequest</description>
+        <display-name>Web Service TransformMoveUserToCSFormatRequest</display-name>
+        <servlet-name>TransformMoveUserToCSFormatRequest</servlet-name>
+        <servlet-class>com.reuters.eai.cc.uom.TransformMoveUserToCSFormatRequestImpl</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TransformMoveUserToCSFormatRequest</servlet-name>
+        <url-pattern>TransformMoveUserToCSFormatRequest</url-pattern>
+    </servlet-mapping>
+</web-app>

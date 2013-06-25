@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CCRMQM.SubmitQuoteInRs" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/QuoteManagementServices" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="execute">
+      <switch>
+         <case name="Case_1_CCRMQM.SubmitQuoteInRs.execute" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/quoteDetailsMessage_To_vettingRequest.xsl,$in.quoteDetailsMessage)" name="$out.validateQuoteRequest"/>
+               </transform>
+               <assign/>
+               <invoke reference="CCRMQM.CCRMTF_QuoteRequestValidatorService" operation="validateQuote">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/quoteSubmissionStatus_To_quoteDetailsMessage.xsl,$in.validateQuoteResponse)" name="$out.quoteDetailsMessage"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>       
+      </switch>
+   </operation>
+</Mediator>

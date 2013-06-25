@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ATHCSOM_UserOrderSplitterNBatcher.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher#wsdl.interface(ATHCSOM_UserOrderSplitterNBatcher)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher#wsdl.interface(ATHCSOM_UserOrderSplitterNBatcherCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHCSOM_UserOrderFulfilment/ATHCSOM_UserOrderFulfilment.wsdl" name="ATHCSOM_UserOrderFulfilment">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment#wsdl.interface(ATHCSOM_UserOrderFulfilment)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment#wsdl.interface(ATHCSOM_UserOrderFulfilmentCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHCSOM_MoveUser/ATHCSOM_MoveUser.wsdl" name="ATHCSOM_MoveUser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.interface(ATHCSOM_MoveUser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.interface(ATHCSOM_MoveUserCallback)"/>
+    </reference>
+</componentType>

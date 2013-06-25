@@ -1,0 +1,59 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSOM_COMPASSOrderFulfilment" revision="1.0" state="on">
+    <import location="CSOM_COMPASSOrderFulfilment.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment"/>
+    <import location="TransformToCSFormat.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM"
+            location="CSOM_SubmitOrderToCOMPASSRSWrapper.wsdl"
+            importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="CSOM_COMPASSOrderFulfilment.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilmentCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilment)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.endpoint(CSOM_COMPASSOrderFulfilment/CSOM_COMPASSOrderFulfilment)"/>
+    </service>
+    <component name="CSOM_COMPASSOrderFulfilment">
+        <implementation.bpel src="CSOM_COMPASSOrderFulfilment.bpel"/>
+        
+        
+    </component>
+    <reference name="SequenceReleaser" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="TransformToCSFormat" ui:wsdlLocation="TransformToCSFormat.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter#wsdl.interface(TransformOrderRequest)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="TransformToCSFormat.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter#wsdl.endpoint(TransformOrderRequest/OrderRequest)"/>
+    </reference>
+    <reference name="CSOM_SubmitOrderToCOMPASS"
+               ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSWrapper.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.endpoint(submitOrder_ppt/submitOrder_ppt_pt)"
+                    location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CSOM_SubmitOrderToCOMPASS/CSOM.SubmitOrderToCOMPASSRS_ep?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CSOM_COMPASSOrderFulfilment/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_COMPASSOrderFulfilment/TransformToCSFormat</source.uri>
+        <target.uri>TransformToCSFormat</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_COMPASSOrderFulfilment/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_COMPASSOrderFulfilment/CSOM_SubmitOrderToCOMPASS</source.uri>
+        <target.uri>CSOM_SubmitOrderToCOMPASS</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite name="CCRMQM_PropagateQuoteRequestMsg" revision="1.0" mode="active"
+           state="on" xmlns="http://xmlns.oracle.com/sca/1.0"
+           xmlns:ui="http://xmlns.oracle.com/soa/designer/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="CCRMQM_PropagateQuoteRequestMsg.wsdl"
+            namespace="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg"/>
+    <import namespace="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcher.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage"
+            location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_EnqueueGenericQuoteMessage/CCRMQM_EnqueueGenericQuoteMessage.wsdl"
+            importType="wsdl"/>
+            
+            
+    <service ui:wsdlLocation="CCRMQM_PropagateQuoteRequestMsg.wsdl"
+             name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg#wsdl.interface(CCRMQM_PropagateQuoteRequestMsg)"
+                        xmlns:ns="http://xmlns.oracle.com/sca/1.0"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMQM_PropagateQuoteRequestMsg#wsdl.endpoint(CCRMQM_PropagateQuoteRequestMsg/CCRMQM_PropagateQuoteRequestMsg)"
+                    xmlns:ns="http://xmlns.oracle.com/sca/1.0">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">NEVER</property>
+        </binding.ws>
+    </service>
+    <component name="CCRMQM_PropagateQuoteRequestMsg">
+        <implementation.bpel src="CCRMQM_PropagateQuoteRequestMsg.bpel"/>
+    </component>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_EnqueueGenericQuoteMessage/CCRMQM_EnqueueGenericQuoteMessage.wsdl"
+               name="CCRMQM_EnqueueGenericQuoteMessage">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage#wsdl.interface(CCRMQM_EnqueueGenericQuoteMessage)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage#wsdl.interface(CCRMQM_EnqueueGenericQuoteMessageCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage#wsdl.endpoint(CCRMQM_EnqueueGenericQuoteMessage/CCRMQM_EnqueueGenericQuoteMessage)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_EnqueueGenericQuoteMessage/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CCRMQM_EnqueueGenericQuoteMessage#wsdl.endpoint(CCRMQM_EnqueueGenericQuoteMessage/CCRMQM_EnqueueGenericQuoteMessageCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcher.wsdl"
+               name="CCRMQM_QuoteStatusDispatcher">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.interface(CCRMQM_QuoteStatusDispatcher)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.interface(CCRMQM_QuoteStatusDispatcherCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.endpoint(CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcher)"
+                    location="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcher?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CCRMQM_QuoteStatusDispatcher#wsdl.endpoint(CCRMQM_QuoteStatusDispatcher/CCRMQM_QuoteStatusDispatcherCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMQM_PropagateQuoteRequestMsg/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMQM_PropagateQuoteRequestMsg/CCRMQM_EnqueueGenericQuoteMessage</source.uri>
+        <target.uri>CCRMQM_EnqueueGenericQuoteMessage</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMQM_PropagateQuoteRequestMsg/CCRMQM_QuoteStatusDispatcher</source.uri>
+        <target.uri>CCRMQM_QuoteStatusDispatcher</target.uri>
+    </wire>
+</composite>

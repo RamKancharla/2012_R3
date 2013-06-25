@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.CPFG.EF.208_FulfilmentStatusUpdate.xsd
+* Type:        XSD Schema
+*
+* Change History
+*Version	Date		Author			Description Of Change
+*
+*  0.01	       25/04/07	       Kevin Wood		Initial version
+*  0.02        26/04/07        Mark Flynn               Removed reference to orderId as
+*                                                       no longer needed
+*  0.03        15/08/07        Rob Billington           Minor formatting fix.
+*  0.04	       16/08/07        Mark Flynn               Changed description of interface
+*  0.05		08/04/08	anvv sharma		Changed EAIHeader to _CPFGEAIHeader Complex Type (to refer Local)
+							Changed entityID to electronicFulfilmentRequestId
+							Changed entityStatus to status
+*  0.06		14/10/08	Rob Billington		Added statusReasonCode
+**********************************************************************************-->
+<xsd:schema xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+
+	<xsd:complexType name="PropagateCPFGStatusUpdateRequest">
+			<xsd:sequence>
+				<xsd:element name="eaiHeader" type="xsdLocal:_CPFGEaiHeader"/>
+				<xsd:element name="electronicFulfilmentRequestId" type="xsd:string"/>
+				<xsd:element name="status" type="xsd:string"/>
+				<xsd:element name="statusReasonCode" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	<xsd:element name="PropagateCPFGStatusUpdateRequest" type="xsdLocal:PropagateCPFGStatusUpdateRequest"/>
+
+	<xsd:complexType name="_CPFGEaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="xsdLocal:string10"/>
+			<xsd:element name="transactionId" type="xsdLocal:string30"/>
+			<xsd:element name="messageId" type="xsdLocal:string30"/>
+			<xsd:element name="messageHistory" type="xsdLocal:string100"/>
+			<xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

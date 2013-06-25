@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.MSG.EXT.097_PropagateUserResponse.xsd
+	* Type:        XSD Schema
+	* Description: Response from CEP to EAI
+	*
+	* Change History
+	* Version     	Date      Author              			Description Of Change
+	*
+	*  0.1        	21/02/07  Siva (Detica)   			Initial Version
+	*  0.02       	06/03/07  Rob Billington		   	Version scheme changed
+	*  0.03       	09/03/07  Rob Billington		   	Temporary Password and User Details made nillable to cater for error conditions
+	*  0.04		    22/03/07  Kevin Wood				Included EAI Header
+	*  0.05		    26/03/07  Rob Billington			Replace some elements with BasicResponse
+	*  0.06		    27/03/07  Kevin Wood				Namespaces corrected
+	*  1.0          16/05/08  Andrew Humphreys          Changed namespaces to be AAA owned
+	**********************************************************************************-->
+<xsd:schema
+	xmlns:bons0="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementResponse"
+	xmlns:gcap-mt="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+	xmlns:local="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementServices"
+	xmlns:ns1="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	attributeFormDefault="unqualified" elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/UserManagementServices"
+	version="1.0">
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonUserTypes"
+		schemaLocation="EAI.XSD.002_CommonUserTypes.xsd" />
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonMessageTypes"
+		schemaLocation="EAI.XSD.005_CommonMessageTypes.xsd" />
+	<xsd:complexType name="PropagateUserResponse">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-mt:EaiHeader" />
+			<xsd:element name="response" type="gcap-mt:BasicResponse" />
+			<xsd:element name="temporaryURL" nillable="true"
+				type="ns1:TemporaryURL" />
+			<xsd:element name="userDetails" nillable="true"
+				type="ns1:UserDetails" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="propagateUserResponse"
+		type="local:PropagateUserResponse" />
+</xsd:schema>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:	EAI.MSG.TT.MG.271_TeamTrackTicketRequest.xsd
+*				
+* Type:		XML Schema Document
+* Description:	Ticket Request Schema Specific to MST Team Track
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		31/03/2009	S GANNAVARAPU			Initial Version
+*
+*
+*************************************************************************/-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+            xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TktRqst"
+            xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TktRqst"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            version="0.01">
+  <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+              schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+  <xsd:element name="MSTTeamTrackRequest" type="xsdLocal:MSTTeamTrackRequest"/>
+  <xsd:complexType name="MSTTeamTrackRequest">
+    <xsd:sequence>
+      <xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+      <xsd:element name="TeamTrackRequest" type="xsdLocal:_TTTeamTrack"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="_TTTeamTrack">
+    <xsd:sequence>
+      <xsd:element name="Timestamp" type="xsd:date"/>
+      <xsd:element name="TargetSystem" type="xsd:string"/>
+      <xsd:element name="SourceSystem" type="xsd:string"/>
+      <xsd:element name="MessageType" type="xsd:string"/>
+      <xsd:element name="MessageId" type="xsd:string"/>
+      <xsd:element name="IntObjectName" type="xsd:string"/>
+      <xsd:element name="IntObjectFormat" type="xsd:string"/>
+      <xsd:element name="ActionCode" type="xsd:string"/>
+      <xsd:element name="Action" type="xsdLocal:_TTAction" minOccurs="1"
+                   maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="_TTAction">
+    <xsd:sequence>
+      <xsd:element name="UUID" type="xsd:string"/>
+      <xsd:element name="Status" type="xsd:string"/>
+      <xsd:element name="ProductName" type="xsd:string"/>
+      <xsd:element name="MigrationDate" type="xsd:string"/>
+      <xsd:element name="EndDate" type="xsd:string"/>
+      <xsd:element name="LegacyID" type="xsd:string"/>
+      <xsd:element name="SiebelId" type="xsd:string"/>
+        <xsd:element name="Transitions" type="xsd:string"/>
+      <xsd:element name="CID" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

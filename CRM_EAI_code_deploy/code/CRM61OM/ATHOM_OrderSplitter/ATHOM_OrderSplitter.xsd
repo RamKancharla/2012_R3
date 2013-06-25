@@ -1,0 +1,19 @@
+<schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="ATHOM_OrderSplitterProcessRequest">
+		<complexType>
+			<sequence>
+				<element name="input" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="ATHOM_OrderSplitterProcessResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="string"/>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

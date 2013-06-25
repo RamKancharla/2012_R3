@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGEF_PropagateFulfillmentStatus.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.interface(CPFGEF_PropagateFulfillmentStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus#wsdl.interface(CPFGEF_PropagateFulfillmentStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl" name="OM_ManageOrderLineStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatusCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="CrossRefService.wsdl" name="CrossRefService">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService#wsdl.interface(CrossRefServicePortType)"/>
+    </reference>
+    <reference ui:wsdlLocation="AdpOrderCacheServ.wsdl" name="AdpOrderCacheServ">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheServ/#wsdl.interface(AdpOrderCacheServ_ptt)"/>
+    </reference>
+</componentType>

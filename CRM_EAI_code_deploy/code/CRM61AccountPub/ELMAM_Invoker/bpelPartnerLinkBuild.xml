@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="bpel.deploy" default="compile" basedir=".">
+ <import file="${bpel.home}/utilities/replace_hosts.xml"/>
+    
+
+    <target name="compile">
+
+        <echo>
+--------------------------------------------------------------
+| Compiling bpel process ${process.name}, revision ${rev}
+--------------------------------------------------------------
+        </echo>
+		<replace dir="${basedir}" token="eaidev2:7777" value="${hostname}:${http.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+	</replace>	               
+	<replace dir="${basedir}" token="ukcq-eai04:7777" value="${hostname}:${http.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+	</replace>	               
+	<replace dir="${basedir}" token="ukcq-crm07:7777" value="${hostname}:${http.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+	</replace>	               
+	<replace dir="${basedir}" token="eaidev1:7777" value="${hostname}:${http.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+
+	</replace>	 
+	<replace dir="${basedir}" token="ukcq-eai03:7777" value="${hostname}:${http.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+	</replace>	
+	<replace dir="${basedir}" token="eaidev2:7777" value="${hostname}:${http.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+
+	</replace>
+	<replace dir="${basedir}" token="ukcq-crm20:7778" value="${hostname}:${http.port}">
+		<include name="**/*.xsd"/>
+		<include name="**/*.wsdl"/>
+	</replace>	
+		
+	
+
+        <bpelc input="${process.dir}/bpel/bpel.xml" out="${process.dir}/output"
+               rev="${rev}"                     home="${bpel.home}">
+		
+        
+    	</bpelc>
+    </target>
+
+
+    
+</project>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SAPCM_ContactStatus" revision="1.0" state="on">
+    <import importType="wsdl" location="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CCRMCM_PropagateContactErrorStatus/CCRMCM_PropagateContactErrorStatus.wsdl" namespace="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus"/>
+    <import importType="wsdl" location="SI_ContactErrorResponse_IB_Async.wsdl" namespace="http://trm.com:I065:ARCash:ContactManagement_Send"/>
+    <service name="SAPCM.ContactStatus_ep" ui:wsdlLocation="SI_ContactErrorResponse_IB_Async.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://trm.com:I065:ARCash:ContactManagement_Send#wsdl.interface(SI_ContactErrorResponse_IB_Async)"/>
+        <binding.ws location="SI_ContactErrorResponse_IB_Async.wsdl" port="http://trm.com:I065:ARCash:ContactManagement_Send#wsdl.endpoint(SI_ContactErrorResponse_IB_Async/SI_ContactErrorResponse_IB_Async_pt)"/>
+    </service>
+    <component name="SAPCM.ContactStatus">
+        <implementation.mediator src="SAPCM.ContactStatus.mplan"/>
+    </component>
+    <reference name="SAPCM.PublishContactStatus" ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CCRMCM_PropagateContactErrorStatus/CCRMCM_PropagateContactErrorStatus.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus#wsdl.interface(CCRMCM_PropagateContactErrorStatus)"/>
+        <binding.ws location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMCM_PropagateContactErrorStatus/client?WSDL" port="http://xmlns.oracle.com/CCRMCM_PropagateContactErrorStatus#wsdl.endpoint(CCRMCM_PropagateContactErrorStatus/CCRMCM_PropagateContactErrorStatus)"/>
+    </reference>
+    <wire>
+        <source.uri>SAPCM.ContactStatus_ep</source.uri>
+        <target.uri>SAPCM.ContactStatus/SAPCM.ContactStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPCM.ContactStatus/SAPCM.PublishContactStatus</source.uri>
+        <target.uri>SAPCM.PublishContactStatus</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

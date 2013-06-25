@@ -1,0 +1,33 @@
+<adapter-config name="AssetCacheDBAdapter" adapter="Database Adapter" wsdlLocation="AssetCacheDBAdapter.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/OM" UIConnectionName="eaidev2" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//10.15.35.23:1521/EAIDEV2"/>
+      <property name="UserName" value="eaiowner"/>
+      <property name="Password" value="E8D26CEB17C942CF78415AE2B31C2AA9"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="AssetCacheDBAdapter_ptt" operation="merge">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="AssetCacheDBAdapter.AssetCache"/>
+      <property name="DmlType" value="merge"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="AssetCacheDBAdapter-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+  <endpoint-interaction portType="AssetCacheDBAdapter_ptt" operation="write">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="AssetCacheDBAdapter.AssetCache"/>
+      <property name="DmlType" value="write"/>
+      <property name="MappingsMetaDataURL" value="AssetCacheDBAdapter-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

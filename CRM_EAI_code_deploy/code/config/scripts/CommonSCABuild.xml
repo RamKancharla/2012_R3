@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="soaDeployAll" default="deployAll">
+    <echo>basedir ${basedir}</echo>
+    <property environment="env"/>
+    <property name="wn.bea.home" value="${env.MWHOME}"/>
+    <property name="oracle.home" value="${env.ORACLE_HOME}"/>
+    <property name="java.passed.home" value="${env.JAVA_HOME}"/>
+    <property name="wl_home" value="${env.WLSHOME}"/>
+    <property file="build.properties"/>
+    <!-- Tasks classpath.  -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${basedir}/lib/ant-contrib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+    <target name="deployMDSApplication">
+        <echo>Remove and create temporory MDS build at tmp/${mds.application}</echo>
+        <property name="mds.deploy.dir" value="tmp/${mds.application}"/>
+        <delete dir="${mds.deploy.dir}"/>
+        <mkdir dir="${mds.deploy.dir}"/>
+        <echo>Creating jar from file MDS store
+              ${mds.deploy.dir}/${mds.application}_mds.jar</echo>
+        <zip destfile="${mds.deploy.dir}/${mds.application}_mds.jar"
+             compress="false">
+            <fileset dir="${mds.reposistory}">
+                <include name="${mds.application}/dvm/**"/>
+                <include name="${mds.application}/schemas/**"/>
+                <include name="${mds.application}/WSDL_Cache/**"/>
+                <include name="${mds.application}/Xref/**"/>
+				<include name="${mds.application}/Abstract/**"/>
+            </fileset>
+        </zip>
+        <echo>Creating zip from file MDS jar
+              ${mds.deploy.dir}/${mds.application}_mds.zip</echo>
+        <zip destfile="${mds.deploy.dir}/${mds.application}_mds.zip"
+             compress="false">
+            <fileset dir="${mds.deploy.dir}" includes="*.jar"/>
+        </zip>
+        <echo>Deploying MDS application ${mds.application} as
+              ${mds.deploy.dir}/${mds.application}_mds.zip on
+              ${deploy.serverURL} with user ${deploy.user}</echo>
+        <ant antfile="${oracle.home}/bin/ant-sca-deploy.xml" inheritAll="false"
+             target="deploy">
+            <property name="wl_home" value="${wl_home}"/>
+            <property name="oracle.home" value="${oracle.home}"/>
+            <property name="serverURL" value="${soa.cluster.serverURL}"/>
+            <property name="user" value="${soa.user}"/>
+            <property name="password" value="${soa.password}"/>
+            <property name="overwrite" value="${soa.mds.overwrite}"/>
+            <property name="forceDefault" value="${soa.mds.forceDefault}"/>
+            <property name="sarLocation" value="${mds.deploy.dir}/${mds.application}_mds.zip"/>
+        </ant>
+    </target>
+    <target name="undeployMDSApplication">
+        <echo>Undeploying MDS application ${mds.application} from ${deploy.serverURL}</echo>
+        <ant antfile="${oracle.home}/bin/ant-sca-deploy.xml" inheritAll="false"
+             target="removeSharedData">
+            <property name="wl_home" value="${wl_home}"/>
+            <property name="oracle.home" value="${oracle.home}"/>
+            <property name="serverURL" value="${soa.cluster.serverURL}"/>
+            <property name="user" value="${soa.user}"/>
+            <property name="password" value="${soa.password}"/>
+            <property name="folderName" value="${mds.application}"/>
+        </ant>
+    </target>
+    <target name="undeploySCAProject">
+        <echo>Undeploy SOA composite project ${Project} from ${deploy.serverURL}</echo>
+        <ant antfile="${oracle.home}/bin/ant-sca-deploy.xml" inheritAll="true"
+             target="undeploy">
+            <property name="compositeName" value="${compositeName}"/>
+            <property name="revision" value="${revision}"/>
+            <property name="wl_home" value="${wl_home}"/>
+            <property name="oracle.home" value="${oracle.home}"/>
+            <property name="serverURL" value="${soa.cluster.serverURL}"/>
+            <property name="user" value="${soa.user}"/>
+            <property name="password" value="${soa.password}"/>
+        </ant>
+    </target>
+    <target name="deploySCAProject">
+        <echo>Start Deployment of SOA composite ${Project} with
+              revision:${revision} and partition:${partition} on
+              ${deploy.serverURL} with user ${deploy.user}</echo>
+        <property name="compositeName" value="${compositeName}"/>
+        <property name="compositeDir" value="${compositeDir}"/>
+        <property name="revision" value="${revision}"/>
+        <property name="enabled" value="${enabled}"/>
+        <property name="tmp.output.dir" value="${tmp.output.dir}"/>
+        <echo>Temp output directory is ${tmp.output.dir}</echo>
+        <echo>Packaging SCA application using
+              ${tmp.output.dir}/${compositeName}.xml</echo>
+        <ant antfile="${oracle.home}/bin/ant-sca-package.xml" inheritAll="false"
+             target="package">
+	     <property name="compositeDir" value="${compositeDir}"/>
+	     <property name="src.dir" value="${compositeDir}/src"/>
+            <property name="compositeName" value="${compositeName}"/>
+            <property name="revision" value="${revision}"/>
+            <property name="oracle.home" value="${oracle.home}"/>
+            <property name="java.passed.home" value="${java.passed.home}"/>
+            <property name="wl_home" value="${wl_home}"/>
+            <property name="sca.application.home" value="${compositeDir}"/>
+            <property name="scac.application.home" value="${scac.home}"/>
+            <property name="scac.input" value="${compositeDir}/composite.xml"/>
+            <property name="scac.output"
+                      value="${tmp.output.dir}/${compositeName}.xml"/>
+            <property name="scac.error"
+                      value="${tmp.output.dir}/${compositeName}.err"/>
+            <property name="scac.displayLevel" value="3"/>
+        </ant>
+        <property name="deploy.sarLocation"
+                  value="${compositeDir}/deploy/sca_${compositeName}_rev${revision}.jar"/>
+        <property name="deploy.configplan" value="${config.plan.file}"/>
+        <echo>Deploying composite:${deploy.sarLocation} on ${deploy.serverURL}
+              with user ${deploy.user}</echo>
+        <ant antfile="${oracle.home}/bin/ant-sca-deploy.xml" inheritAll="false"
+             target="deploy">
+            <property name="wl_home" value="${wl_home}"/>
+            <property name="oracle.home" value="${oracle.home}"/>
+            <property name="serverURL" value="${soa.cluster.serverURL}"/>
+            <property name="user" value="${soa.user}"/>
+            <property name="password" value="${soa.password}"/>
+            <property name="overwrite" value="${soa.composite.overwrite}"/>
+            <property name="forceDefault" value="${soa.composite.forceDefault}"/>
+            <property name="sarLocation" value="${deploy.sarLocation}"/>
+            <property name="configplan" value="${deploy.configplan}"/>
+        </ant>
+        <if>
+            <equals arg1="${enabled}" arg2="false"/>
+            <then>
+                <echo>Disabing composite</echo>
+                <ant antfile="${oracle.home}/bin/ant-sca-mgmt.xml"
+                     inheritAll="false" target="stopComposite">
+                    <property name="host" value="${soa.host}"/>
+                    <property name="port" value="${soa.port}"/>
+                    <property name="user" value="${soa.user}"/>
+                    <property name="password" value="${soa.password}"/>
+                    <property name="compositeName" value="${compositeName}"/>
+                    <property name="revision" value="${revision}"/>
+                </ant>
+            </then>
+        </if>
+        <if>
+            <equals arg1="${enabled}" arg2="true"/>
+            <then>
+                <echo>Enabling composite</echo>
+                <ant antfile="${oracle.home}/bin/ant-sca-mgmt.xml"
+                     inheritAll="false" target="activateComposite">
+                    <property name="host" value="${soa.t3.host}"/>
+                    <property name="port" value="${soa.t3.port}"/>
+                    <property name="user" value="${soa.user}"/>
+                    <property name="password" value="${soa.password}"/>
+                    <property name="compositeName" value="${compositeName}"/>
+                    <property name="revision" value="${revision}"/>
+                </ant>
+                <!--echo>unit test sarFile ${compositeName}</echo>
+                <ant antfile="${oracle.home}/bin/ant-sca-test.xml" inheritAll="true" target="test">
+                 <property name="scatest.input" value="${compositeDir}/test"/>
+                 <property name="scatest.format" value="junit"/>
+                 <property name="scatest.result" value="./${junit.output.dir}"/>
+                 <property name="jndi.properties.input" value="${basedir}/jndi.properties"/>
+            </ant-->
+            </then>
+        </if>
+    </target>
+</project>

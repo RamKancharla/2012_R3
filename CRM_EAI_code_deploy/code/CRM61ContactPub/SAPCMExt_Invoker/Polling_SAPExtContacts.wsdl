@@ -1,0 +1,24 @@
+<?binding.jca Polling_SAPExtContacts_db.jca?>
+<definitions name="Polling_SAPExtContacts" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Polling_SAPExtContacts/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Polling_SAPExtContacts/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/PollingSAPExtContacts">
+    <plt:partnerLinkType name="Polling_SAPExtContacts_plt">
+        <plt:role name="Polling_SAPExtContacts_role">
+            <plt:portType name="tns:Polling_SAPExtContacts_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/PollingSAPExtContacts" schemaLocation="PollingSAPExtContacts_table.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/ContactSyncRequest" schemaLocation="EAI.MSG.CM.288_CreateContactRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SapcmextPollingVCollection_msg">
+        <part name="SapcmextPollingVCollection" element="top:SapcmextPollingVCollection"/>
+    </message>
+    <portType name="Polling_SAPExtContacts_ptt">
+        <operation name="receive">
+            <input message="tns:SapcmextPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

@@ -1,0 +1,47 @@
+<definitions
+     name="TOM_ValidateQuoteStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus"
+                 schemaLocation="TOM_ValidateQuoteStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul" schemaLocation="EAI.MSG.TOM.TF.154_VettingStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/TechFul"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/TF/TOM_ValidateQuoteStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TOM_ValidateQuoteStatusResponseMessage">
+        <part name="validateQuoteStatusResponse" element="ns2:basicResponse"/>
+    </message>
+    <message name="TOM_ValidateQuoteStatusRequestMessage">
+        <part name="validateQuoteStatusRequest" element="ns1:vettingStatus"/>
+    </message>
+    <portType name="TOM_ValidateQuoteStatus">
+        <operation name="validateVettingStatus">
+            <input message="client:TOM_ValidateQuoteStatusRequestMessage"/>
+            <output message="client:TOM_ValidateQuoteStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TOM_ValidateQuoteStatus">
+        <plnk:role name="TOM_ValidateQuoteStatusProvider">
+            <plnk:portType name="client:TOM_ValidateQuoteStatus"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

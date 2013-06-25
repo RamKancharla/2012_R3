@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="EDTKDAD_DequeuedraftQuote" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="DequeueDADService.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueDADService/"/>
+    <import namespace="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMDAD_SubmitDraftQuoteMessage/CCRMDAD_SubmitDraftQuoteMessage.wsdl"
+            importType="wsdl"/>
+    <service name="DequeueDADService" ui:wsdlLocation="DequeueDADService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueDADService/#wsdl.interface(Dequeue_ptt)"/>
+        <binding.jca config="DequeueDADService_mq.jca"/>
+    </service>
+    <component name="EDTKDAD_DequeuedraftQuote">
+        <implementation.bpel src="EDTKDAD_DequeuedraftQuote.bpel"/>
+    </component>
+    <reference name="CCRMDAD_SubmitDraftQuoteMessage"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMDAD_SubmitDraftQuoteMessage/CCRMDAD_SubmitDraftQuoteMessage.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage#wsdl.interface(CCRMDAD_SubmitDraftQuoteMessage)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage#wsdl.interface(CCRMDAD_SubmitDraftQuoteMessageCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage#wsdl.endpoint(CCRMDAD_SubmitDraftQuoteMessage/CCRMDAD_SubmitDraftQuoteMessage)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMDAD_SubmitDraftQuoteMessage/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage#wsdl.endpoint(CCRMDAD_SubmitDraftQuoteMessage/CCRMDAD_SubmitDraftQuoteMessageCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>DequeueDADService</source.uri>
+        <target.uri>EDTKDAD_DequeuedraftQuote/DequeueDADService</target.uri>
+    </wire>
+    <wire>
+        <source.uri>EDTKDAD_DequeuedraftQuote/CCRMDAD_SubmitDraftQuoteMessage</source.uri>
+        <target.uri>CCRMDAD_SubmitDraftQuoteMessage</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

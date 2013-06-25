@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?Siebel-Property-Set EscapeNames="false"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsdLocal1="http://www.siebel.com/xml/RCRM%20Quote%20External"
+             targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM">
+  <types>
+    <xsd:schema elementFormDefault="qualified"
+                attributeFormDefault="unqualified"
+                targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/RCRM"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="http://www.siebel.com/xml/RCRM%20Quote%20External"></xsd:import>
+      <xsd:element name="RCRMReceiveQuoteApproval_Input">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="RCRM_spcLog_spcId" type="xsd:string"></xsd:element>
+            <xsd:element ref="xsdLocal1:VettingRequest"></xsd:element>
+            <xsd:element name="Error_spcCode" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcMessage" type="xsd:string"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="RCRMReceiveQuoteApproval_Output">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Error_spcCode" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcMessage" type="xsd:string"></xsd:element>
+            <xsd:element name="RCRM_spcLog_spcId" type="xsd:string"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+    <xsd:schema elementFormDefault="qualified"
+                attributeFormDefault="unqualified"
+                xmlns:xsdLocal1="http://www.siebel.com/xml/RCRM%20Quote%20External"
+                targetNamespace="http://www.siebel.com/xml/RCRM%20Quote%20External"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:annotation>
+        <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All
+                           rights reserved. Siebel XSD Generation</xsd:documentation>
+      </xsd:annotation>
+      <xsd:element name="VettingRequest" type="xsdLocal1:VettingRequest"></xsd:element>
+      <xsd:complexType name="VettingRequestTopElmt">
+        <xsd:sequence>
+          <xsd:element name="VettingRequest" maxOccurs="1" minOccurs="1"
+                       type="xsdLocal1:VettingRequest"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="VettingRequest">
+        <xsd:sequence>
+          <xsd:element name="UserId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="Timestamp" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="TargetSystem" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string70"></xsd:element>
+          <xsd:element name="SourceSystem" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string60"></xsd:element>
+          <xsd:element name="MessageHistory" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string100"></xsd:element>
+          <xsd:element name="MessageId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="ActionCode" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string4"></xsd:element>
+          <xsd:element name="Quote" maxOccurs="unbounded" minOccurs="0"
+                       type="xsdLocal1:Quote"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="Quote">
+        <xsd:sequence>
+          <xsd:element name="QuoteNumber" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="Revision" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string22"></xsd:element>
+          <xsd:element name="Name" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string75"></xsd:element>
+          <xsd:element name="RCRMOrderType" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="RCRMCreatedBy" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="EndDate" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string7"></xsd:element>
+          <xsd:element name="RCRMPONumber" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="ClientRequestedDate" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string7"></xsd:element>
+          <xsd:element name="AccountId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="Status" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="LineItems" maxOccurs="unbounded" minOccurs="0"
+                       type="xsdLocal1:LineItems"></xsd:element>
+          <xsd:element name="Approvals" maxOccurs="unbounded" minOccurs="0"
+                       type="xsdLocal1:Approvals"></xsd:element>
+          <xsd:element name="QuoteNote" maxOccurs="unbounded" minOccurs="0"
+                       type="xsdLocal1:QuoteNote"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="LineItems">
+        <xsd:sequence>
+          <xsd:element name="PartNumber" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="QuantityRequested" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string22"></xsd:element>
+          <xsd:element name="BillingAccountSubscriber" maxOccurs="1"
+                       minOccurs="0" type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="Id" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="LineNumber" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string22"></xsd:element>
+          <xsd:element name="RootQuoteItemId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="Approvals">
+        <xsd:sequence>
+          <xsd:element name="ParentRowId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="Id" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="RCRMApprovalDate" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string7"></xsd:element>
+          <xsd:element name="RCRMApprovalRequestedDate" maxOccurs="1"
+                       minOccurs="0" type="xsdLocal1:string7"></xsd:element>
+          <xsd:element name="RCRMApprovalComments" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string255"></xsd:element>
+          <xsd:element name="RCRMFailureReasonCode" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string50"></xsd:element>
+          <xsd:element name="RCRMFailureReasonComments" maxOccurs="1"
+                       minOccurs="0" type="xsdLocal1:string2000"></xsd:element>
+          <xsd:element name="RCRMVettingResult" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+          <xsd:element name="RCRMAllocatedTo" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string300"></xsd:element>
+          <!-- Added for PBI-872 -->             
+          <xsd:element name="RCRMContactId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <!-- -->             
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="QuoteNote">
+        <xsd:sequence>
+          <xsd:element name="Note" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string16383"></xsd:element>
+          <xsd:element name="QuoteId" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string15"></xsd:element>
+          <xsd:element name="RCRMType" maxOccurs="1" minOccurs="0"
+                       type="xsdLocal1:string30"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:simpleType name="string300">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="300"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string2000">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="2000"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string7">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="7"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string50">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="50"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string60">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="60"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string255">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="255"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string15">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="15"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string75">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="75"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string30">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="30"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string16383">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="16383"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string22">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="22"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string100">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="100"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string70">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="70"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="string4">
+        <xsd:restriction base="xsd:string">
+          <xsd:maxLength value="4"></xsd:maxLength>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:schema>
+  </types>
+  <message name="RCRMReceiveQuoteApproval_Input">
+    <part name="RCRMReceiveQuoteApproval_Input"
+          element="tns:RCRMReceiveQuoteApproval_Input"></part>
+  </message>
+  <message name="RCRMReceiveQuoteApproval_Output">
+    <part name="RCRMReceiveQuoteApproval_Output"
+          element="tns:RCRMReceiveQuoteApproval_Output"></part>
+  </message>
+  <portType name="RCRMReceiveQuoteApproval">
+    <operation name="RCRMReceiveQuoteApproval">
+      <input message="tns:RCRMReceiveQuoteApproval_Input"></input>
+      <output message="tns:RCRMReceiveQuoteApproval_Output"></output>
+    </operation>
+  </portType>
+  <binding name="RCRMReceiveQuoteApproval" type="tns:RCRMReceiveQuoteApproval">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+                  style="document"></soap:binding>
+    <operation name="RCRMReceiveQuoteApproval">
+      <soap:operation soapAction="document/http://www.reuters.com/ns/2007/09/01/GCAP/RCRM:RCRMReceiveQuoteApproval"></soap:operation>
+      <input>
+        <soap:body use="literal"></soap:body>
+      </input>
+      <output>
+        <soap:body use="literal"></soap:body>
+      </output>
+    </operation>
+  </binding>
+  <service name="RCRM_spcVetting_spcRequest">
+    <port binding="tns:RCRMReceiveQuoteApproval"
+          name="RCRMReceiveQuoteApproval">
+      <soap:address location="${siebel.protocol}://${siebel.host}/eai_enu/start.swe?SWEExtSource=WebService&amp;SWEExtCmd=Execute&amp;UserName=${siebel.UserName}&amp;Password=${siebel.Password}"></soap:address>
+    </port>
+  </service>
+</definitions>

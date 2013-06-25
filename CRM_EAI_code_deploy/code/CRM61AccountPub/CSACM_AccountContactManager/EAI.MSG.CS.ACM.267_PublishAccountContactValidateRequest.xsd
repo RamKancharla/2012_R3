@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************************************
+* Module:	EAI.MSG.CS.ACM.267_PublishAccountContactValidateRequest.xsd
+*				
+* Type:		XML Schema Document
+* Description:	Publish Account Contact request in CS Domain
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		09/02/09	Sreeja Prasad			Initial Version
+*  0.02		12/03/09        Sreeja Prasad			Added _CSCountryAttributes like DirectDebit,Ex-Postel,TaxOffice,RIOIndicator,RIPurchaseOrder and ERPurchaseOrder
+*  0.11         26/11/09	Hema				Added the element ContractType
+*  0.09         11/02/10	Sreeja				Added the element globalSubNum as a child element for CSAccount element as part of Release 2
+*************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" 
+xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" 
+xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" 
+xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"  
+xmlns:gcap-NAT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes"  
+xmlns:gcap-NUT="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes" 
+xmlns:gcap-cut="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" 
+targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.07">
+        <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.003_CommonAccountTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.009_NillableAccountTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.002_CommonUserTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableUserTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.016_NillableUserTypes.xsd"/>
+	<xsd:element name="CSPublishAccountValidateRequest" type="xsdLocal:_COMPASSAccountValidateRequest"/>
+	<xsd:complexType name="_COMPASSAccountValidateRequest">
+		<xsd:sequence>
+                        <xsd:element name="eaiHeader" type="xsdLocal:CSEaiHeader"/>
+                     	<xsd:element name="messageHeader" type="gcap-cmt:CSCompassMessageHeader"/>
+			<xsd:element name="country" type="gcap-NAT:Country"/>
+			<xsd:element name="actionCode" type="gcap-cmt:ActionCode"/>
+			<xsd:element name="AccountId" type="gcap-NAT:AccountID"/>
+			<xsd:element name="account" type="xsdLocal:_CompassAccount"/>
+			<xsd:element name="address" type="xsdLocal:_CompassAddress" minOccurs="0" maxOccurs="unbounded"/>
+                       <xsd:element name="employee" type="xsdLocal:_CompassEmployee" minOccurs="0" maxOccurs="20"/>
+                       <xsd:element name="contact" type="xsdLocal:_CompassContact" minOccurs="0" maxOccurs="20"/>
+		       <xsd:element name="countryAttributes" type="xsdLocal:_CSCountryAttributes"/> 
+		</xsd:sequence>
+	</xsd:complexType>
+         <xsd:complexType name="CSEaiHeader">
+		<xsd:sequence>
+			<xsd:element name="applicationId" type="xsdLocal:string10" nillable="true"/>
+			<xsd:element name="transactionId" type="xsdLocal:string30" nillable="true"/>
+			<xsd:element name="messageId" type="xsdLocal:string30" nillable="true"/>
+			<xsd:element name="messageHistory" type="xsdLocal:string100" nillable="true"/>
+			<xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime" nillable="true"/>
+			<xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+			<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+			<xsd:element name="payloadVersion" type="xsdLocal:string3" nillable="true"/>
+		</xsd:sequence>
+	</xsd:complexType>
+       	<xsd:complexType name="_CompassAccount">
+		<xsd:sequence>
+			<xsd:element name="subscriberNumber" type="gcap-NAT:SubscriberNumber"/>
+			<xsd:element name="subscriberName" type="gcap-NAT:SubscriberName"/>
+			<xsd:element name="irasRef" type="gcap-NAT:IRASReference"/>
+			<xsd:element name="subscriberType" type="gcap-NAT:OrganisationType"/>
+			<xsd:element name="subscriberRelation" type="xsd:string"/>
+			<xsd:element name="ifaceInd" type="xsd:string"/>
+			<xsd:element name="billingFrequency" type="gcap-NAT:BillingFrequency"/>
+			<xsd:element name="businessCategory" type="gcap-NAT:OrganisationType"/>
+			<xsd:element name="businessArea" type="gcap-NAT:BusinessChannel"/>
+			<xsd:element name="subFG1" type="xsd:string"/>
+			<xsd:element name="subFG2" type="xsd:string"/>
+			<xsd:element name="TaxCode" type="gcap-NAT:TaxCode"/>
+			<xsd:element name="subscriberPayTerms" type="gcap-NAT:PayTerms"/>
+			<xsd:element name="accountFamily" type="gcap-NAT:AccountFamily"/>
+			<xsd:element name="subMulticSubno" type="xsd:string"/>
+			<xsd:element name="shortName" type="gcap-NAT:SubscriberShortName"/>
+			<xsd:element name="cityCode" type="gcap-NAT:City"/>
+			<xsd:element name="dirName" type="xsd:string"/>
+			<xsd:element name="enterpriseCode" type="gcap-NAT:QuotronClient"/>
+			<xsd:element name="VATNumber" type="gcap-NAT:VATCode"/>
+			<xsd:element name="billingSubscriberNumber" type="xsd:string"/>
+			<xsd:element name="status" type="gcap-NAT:SubscriberStatus"/>
+			<xsd:element name="perClient" type="gcap-NAT:PerClient"/>
+			<xsd:element name="billingSuspensionRequired" type="gcap-NAT:Suspend"/>
+			<xsd:element name="invoicingSummary" type="gcap-NAT:InvoiceDescription"/>
+			<xsd:element name="CRHoldRequired" type="gcap-NAT:CRHold"/>
+			<xsd:element name="accountDescription" type="gcap-NAT:AccountDescription"/>
+			<xsd:element name="accountNotes" type="gcap-NAT:AccountNotes"/>
+			<xsd:element name="customerReference" type="gcap-NAT:CustomerReference"/>
+			<xsd:element name="contractType" type="gcap-NAT:ContractType"/>
+			<xsd:element name="globalSubNum" type="xsdLocal:UniqueCutomerReference"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CompassAddress">
+		<xsd:sequence>
+			<xsd:element name="subAccount" type="gcap-NAT:SubAccountNumber"/>
+			<xsd:element name="name1" type="gcap-NAT:AddressName"/>
+			<xsd:element name="name2" type="gcap-NAT:AddressName"/>
+			<xsd:element name="addressType" type="gcap-NAT:AddressType"/>
+			<xsd:element name="building" type="gcap-NAT:PrimaryAccountStreetAddress"/>
+			<xsd:element name="street" type="gcap-NAT:StreetAddress"/>
+			<xsd:element name="city" type="gcap-NAT:City"/>
+			<xsd:element name="state" type="gcap-NAT:PrimaryAccountState"/>
+			<xsd:element name="country" type="gcap-NAT:Country"/>
+			<xsd:element name="zipCode" type="gcap-NAT:PostalCode"/>
+			<xsd:element name="GeoCode" type="xsd:string"/>
+			<xsd:element name="status" type="gcap-NAT:SubscriberStatus"/>
+			<xsd:element name="perClient" type="gcap-NAT:PerClient"/>
+			<xsd:element name="billingSuspensionRequired" type="gcap-NAT:Suspend"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CompassEmployee">
+		<xsd:sequence>
+			<xsd:element name="contactId" type="gcap-NUT:Id"/>
+			<xsd:element name="personId" type="xsd:string"/>
+			<xsd:element name="contactType" type="xsd:string"/>
+			<xsd:element name="responsibilityCode" type="gcap-NUT:RelationshipType"/>
+			<xsd:element name="firstName" type="gcap-NUT:FirstName"/>
+			<xsd:element name="lastName" type="gcap-NUT:LastName"/>
+			<xsd:element name="title" type="gcap-NUT:MM"/>
+			<xsd:element name="jobTitle" type="gcap-NUT:JobTitle"/>
+			<xsd:element name="businessTelephoneNumber" type="gcap-NUT:WorkPhone"/>
+			<xsd:element name="homeTelephoneNumber" type="gcap-NUT:CellularPhone"/>
+		</xsd:sequence>
+	</xsd:complexType>
+        <xsd:complexType name="_CompassContact">
+		<xsd:sequence>
+			<xsd:element name="contactId" type="gcap-NUT:Id"/>
+			<xsd:element name="personId" type="xsd:string"/>
+			<xsd:element name="contactType" type="xsd:string"/>
+			<xsd:element name="responsibilityCode" type="gcap-NUT:RelationshipType"/>
+			<xsd:element name="firstName" type="gcap-NUT:FirstName"/>
+			<xsd:element name="lastName" type="gcap-NUT:LastName"/>
+			<xsd:element name="title" type="gcap-NUT:MM"/>
+			<xsd:element name="jobTitle" type="gcap-NUT:JobTitle"/>
+			<xsd:element name="businessTelephoneNumber" type="gcap-NUT:WorkPhone"/>
+			<xsd:element name="homeTelephoneNumber" type="gcap-NUT:CellularPhone"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSCountryAttributes">
+		<xsd:sequence>
+			<xsd:element name="directDebitRequired" type="gcap-NAT:DirectDebit"/>
+			<xsd:element name="exPostel" type="gcap-NAT:Ex-Postel"/>
+			<xsd:element name="taxOffice" type="gcap-NAT:TaxOffice"/>
+			<xsd:element name="RIOIndicator" type="gcap-NAT:RIOIndicator"/>
+			<xsd:element name="RIPurchaseOrder" type="gcap-NAT:RIPurchaseOrder"/>
+			<xsd:element name="ERPurchaseOrder" type="gcap-NAT:ERPurchaseOrder"/>
+		</xsd:sequence>
+	</xsd:complexType>
+        <xsd:simpleType name="string3">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string30">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string50">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string10">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string40">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string100">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="UniqueCutomerReference">  
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

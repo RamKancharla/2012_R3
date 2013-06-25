@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="DequeueDADService.wsdl" name="DequeueDADService">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueDADService/#wsdl.interface(Dequeue_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMDAD_SubmitDraftQuoteMessage/CCRMDAD_SubmitDraftQuoteMessage.wsdl" name="CCRMDAD_SubmitDraftQuoteMessage">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage#wsdl.interface(CCRMDAD_SubmitDraftQuoteMessage)"
+                        callbackInterface="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage#wsdl.interface(CCRMDAD_SubmitDraftQuoteMessageCallback)"/>
+    </reference>
+</componentType>

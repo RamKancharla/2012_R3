@@ -1,0 +1,167 @@
+<?xml version = '1.0' encoding = 'utf-8'?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns:tracc="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns:rpacc="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"> 
+ <wsdl:types>
+  <xsd:schema xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"> 
+   <xsd:complexType name="OpportunityRequest">
+    <xsd:sequence>
+     <xsd:element name="eaiHeader" minOccurs="0" type="xsdLocal:publishTrustOpportunityEaiHeader" nillable="true"/>
+     <xsd:element name="ActiveQuote" minOccurs="0" type="xsd:boolean" nillable="true"/>
+     <xsd:element name="CloseDate" minOccurs="0" type="xsd:date" nillable="true"/>
+     <xsd:element name="CurrencyCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ExpectedRevenue" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ExpectedRevenueDate" minOccurs="0" type="xsd:date" nillable="true"/>
+     <xsd:element name="FTMonthlyRecurring" minOccurs="0" type="xsd:double" nillable="true"/>
+     <xsd:element name="FTOneTimeRevenue" minOccurs="0" type="xsd:double" nillable="true"/>
+     <xsd:element name="IsPoRequired" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="MonthlyRecurring" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="OneTimeRevenue" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="OpportunityCampaignData" minOccurs="0" maxOccurs="unbounded" type="xsdLocal:OpportunityCampaignInfo" nillable="true"/>
+      <xsd:element name="OpportunityDescription" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="OpportunityName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="OpportunityNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="OpportunityProductData" minOccurs="0" maxOccurs="unbounded" type="xsdLocal:OpportunityProductInfo" nillable="true"/>
+     <xsd:element name="OpportunityTeamData" minOccurs="0" maxOccurs="unbounded" type="xsdLocal:OpportunityTeamInfo" nillable="true"/>
+     <xsd:element name="OpportunityType" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="OwnerEmailId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Probability" minOccurs="0" type="xsd:double" nillable="true"/>
+      <xsd:element name="PurchaseOrderNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SFDCAccountId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SFDCOpptyId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelAccountId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelOpptyId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Stage" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="WinLossReason" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="UtahBlockedOpportunities" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="publishOpportunity" type="xsdLocal:OpportunityRequest"/>
+   <xsd:complexType name="publishTrustOpportunityEaiHeader">
+    <xsd:sequence>
+     <xsd:element name="applicationId" type="xsdLocal:string10"/>
+     <xsd:element name="transactionId" type="xsdLocal:string30"/>
+     <xsd:element name="messageId" type="xsdLocal:string30"/>
+     <xsd:element name="messageHistory" type="xsdLocal:string100"/>
+     <xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+     <xsd:element name="timeStamp" type="xsd:dateTime"/>
+     <xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+     <xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+     <xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="OpportunityCampaignInfo">
+    <xsd:sequence>
+     <xsd:element name="CampaignSourceCode" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="OpportunityProductInfo">
+    <xsd:sequence>
+     <xsd:element name="FreeTrialFlag" minOccurs="0" type="xsd:boolean" nillable="true"/>
+     <xsd:element name="RevenueMasteringFlag" minOccurs="0" type="xsd:boolean" nillable="true"/>
+     <xsd:element name="InstalledTo" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="MonthlyRecurringRevenue" minOccurs="0" type="xsd:double" nillable="true"/>
+     <xsd:element name="OneTimeRevenue" minOccurs="0" type="xsd:double" nillable="true"/>
+     <xsd:element name="ProductComments" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ProductFamily" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Quantity" minOccurs="0" type="xsd:double" nillable="true"/>
+     <xsd:element name="RevenueType" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelId" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="OpportunityTeamInfo">
+    <xsd:sequence>
+     <xsd:element name="EmployeeEmailAddress" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="BasicResponse">
+    <xsd:sequence>
+     <xsd:element name="eaiHeader" type="xsdLocal:publishTrustOpportunityEaiHeader"/>
+     <xsd:element name="response" type="xsdLocal:Response"/>
+     <xsd:element name="responseCode" type="xsdLocal:ResponseCode"/>
+     <xsd:element name="responseMessage" type="xsdLocal:Message"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="basicResponseElement">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="ResponseHeader" type="xsdLocal:BasicResponse"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:simpleType name="Response">
+    <xsd:restriction base="xsd:token">
+     <xsd:enumeration value="0"/>
+     <xsd:enumeration value="1"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ResponseCode">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="250"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Message">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="4000"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="string30">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="30"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="string50">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="50"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="string10">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="10"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="string40">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="40"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="string3">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="3"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="string100">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="100"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+  </xsd:schema>
+ </wsdl:types>
+ <wsdl:message name="publishOpportunityManagement">
+  <wsdl:part name="parameter" element="tns:publishOpportunity"/>
+ </wsdl:message>
+ <wsdl:message name="basicResponse">
+  <wsdl:part name="parameter" element="tns:basicResponseElement"/>
+ </wsdl:message>
+ <wsdl:portType name="publishOpportunityService">
+  <wsdl:operation name="publishOpportunity">
+   <wsdl:input message="tns:publishOpportunityManagement"/>
+   <wsdl:output message="tns:basicResponse"/>
+  </wsdl:operation>
+ </wsdl:portType>
+ <wsdl:binding name="publishOpportunitySOAP" type="tns:publishOpportunityService">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <wsdl:operation name="publishOpportunity">
+   <soap:operation style="document" soapAction="publishOpportunity"/>
+   <wsdl:input>
+    <soap:body use="literal"/>
+   </wsdl:input>
+   <wsdl:output>
+    <soap:body use="literal"/>
+   </wsdl:output>
+  </wsdl:operation>
+ </wsdl:binding>
+ <wsdl:service name="publishOpportunityService">
+  <wsdl:port name="publishOpportunity" binding="tns:publishOpportunitySOAP">
+   <soap:address location="http://inkaban3ua-eai01:7777/event/SFDCOP/PublishOpportunity_RS"/>
+  </wsdl:port>
+ </wsdl:service>
+</wsdl:definitions>

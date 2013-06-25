@@ -1,0 +1,21 @@
+<?binding.jca Polling_SAPContacts_db.jca?>
+<definitions name="Polling_SAPContacts" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Polling_SAPContacts/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Polling_SAPContacts/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/PollingSAPContacts">
+    <plt:partnerLinkType name="Polling_SAPContacts_plt">
+        <plt:role name="Polling_SAPContacts_role">
+            <plt:portType name="tns:Polling_SAPContacts_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/PollingSAPContacts" schemaLocation="PollingSAPContacts_table.xsd"/>
+        </schema>
+    </types>
+    <message name="SapcmPollingVCollection_msg">
+        <part name="SapcmPollingVCollection" element="top:SapcmPollingVCollection"/>
+    </message>
+    <portType name="Polling_SAPContacts_ptt">
+        <operation name="receive">
+            <input message="tns:SapcmPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

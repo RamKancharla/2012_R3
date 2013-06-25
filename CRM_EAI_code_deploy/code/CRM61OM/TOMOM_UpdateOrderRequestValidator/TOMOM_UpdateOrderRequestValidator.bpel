@@ -1,0 +1,260 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Jun 26 11:43:14 GMT+05:30 2008
+  Author:  SP41293
+  Purpose: Synchronous BPEL Process
+  * Version      Date         Author                  Description Of Change 
+*  1.0         29/12/09       Sreeja                 Modified the mapping in AsnIdForOLI activity,mapped the hdr technicalfulfilment to OLI technicalfulfilmentStatus. 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TOMOM_UpdateOrderRequestValidator" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns12="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOMInvoker" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidatorStub" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/Exception" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="anchorToTOMOM_UpdateOrderRequestValidator" partnerLinkType="client:TOMOM_UpdateOrderRequestValidator" myRole="TOMOM_UpdateOrderRequestValidatorProvider"/>
+    <partnerLink name="TOMOM_UpdateOrderRequestValidatorStub" partnerRole="TOMOM_UpdateOrderRequestValidatorStubProvider" partnerLinkType="ns5:TOMOM_UpdateOrderRequestValidatorStub"/>
+    <partnerLink name="TF_ManageOrderLineStatus" partnerRole="TF_ManageOrderLineStatusProvider" partnerLinkType="ns10:TF_ManageOrderLineStatus"/>
+    <partnerLink myRole="TOMOMInvokerRequester" name="TOMOMInvoker" partnerRole="TOMOMInvokerProvider" partnerLinkType="ns12:TOMOMInvoker"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="updateOrderRequestIV" messageType="client:TOMOM_UpdateOrderRequestValidatorRequestMessage"/>
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="updateOrderRequestOV" messageType="client:TOMOM_UpdateOrderRequestValidatorResponseMessage"/>
+    <variable name="SuccessResponse" type="xsd:string"/>
+    <variable name="failureCode" type="xsd:string"/>
+    <variable name="InvTOMOMRequestValidatorIV" messageType="ns5:TOMOM_UpdateOrderRequestValidatorStubRequestMessage"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="UnknownError" type="xsd:string"/>
+    <variable name="SuccessResponseMsg" type="xsd:string"/>
+    <variable name="error" type="xsd:string"/>
+    <variable name="InvreleaseOLICorrelationWait_IV" messageType="ns12:TOMOMInvokerReleaseOLICorrelationWaitRequestMessage"/>
+    <variable name="InvTOMOMInvokerOrderHeaderCorrelationWait_IV" messageType="ns12:TOMOMInvokerReleaseOrderHeaderCorrelationWaitRequestMessage"/>
+    <variable name="InvManageOrderLineStatus_IV" messageType="ns10:TF_ManageOrderLineStatusRequestMessage"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in TOMOM_UpdateOrderRequestValidator.wsdl) -->
+    <scope name="UpdateOrderRequestValidator">
+      <faultHandlers>
+        <catchAll>
+          <sequence name="SeqErrorHandling">
+            <assign name="AsgCatchALL">
+              <copy>
+                <from variable="updateOrderRequestIV" part="payload" query="/ns1:orderResponseStatus/ns1:eaiHeader"/>
+                <to variable="updateOrderRequestOV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+              </copy>
+              <copy>
+                <from variable="failureCode"/>
+                <to variable="updateOrderRequestOV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns6:response"/>
+              </copy>
+              <copy>
+                <from variable="error"/>
+                <to variable="updateOrderRequestOV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns6:responseCode"/>
+              </copy>
+              <copy>
+                <from variable="runtimeFault" part="summary"/>
+                <to variable="updateOrderRequestOV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns6:responseMessage"/>
+              </copy>
+            </assign>
+            <bpelx:exec name="SetErrorTitle" language="java" version="1.3">
+              <![CDATA[setCompositeInstanceTitle(getTitle()+ " ;Error");]]>
+            </bpelx:exec>
+          </sequence>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="SeqUpdateOrderRequestValidator">
+        <receive name="rcvOrderStatus" partnerLink="anchorToTOMOM_UpdateOrderRequestValidator" portType="client:TOMOM_UpdateOrderRequestValidator" operation="validateOrderStatus" variable="updateOrderRequestIV" createInstance="yes"/>
+        <assign name="AsgInitVariables">
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessResponseCode','Value', '0')"/>
+            <to variable="SuccessResponse"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','FailureCode','Value', '1')"/>
+            <to variable="failureCode"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','UnknownError','Value', '00300-EAI-UNKNOWN-ERROR')"/>
+            <to variable="UnknownError"/>
+          </copy>
+          <copy>
+            <from expression="'REQUEST OPERATION SUCCESSFUL'"/>
+            <to variable="SuccessResponseMsg"/>
+          </copy>
+          <copy>
+            <from expression="'UNKNOWN ERROR'"/>
+            <to variable="error"/>
+          </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+          <![CDATA[String orderId = "null";              
+String title = "";              
+String headerTechnicalFulfilmentStatus = "null";             
+String oliTechnicalFulfilmentStatus = "null";             
+             
+try{             
+    if (null != ((oracle.xml.parser.v2.XMLElement)getVariableData("updateOrderRequestIV","payload","/ns1:orderResponseStatus/ns1:orderHeader/ns7:CRMOrderId")).getFirstChild() ) {             
+        orderId = ((oracle.xml.parser.v2.XMLElement)getVariableData("updateOrderRequestIV","payload","/ns1:orderResponseStatus/ns1:orderHeader/ns7:CRMOrderId")).getFirstChild().getNodeValue();             
+    }             
+    if (null != ((oracle.xml.parser.v2.XMLElement)getVariableData("updateOrderRequestIV","payload","/ns1:orderResponseStatus/ns1:orderHeader/ns7:technicalFulfilmentStatus")).getFirstChild() ) {             
+        headerTechnicalFulfilmentStatus = ((oracle.xml.parser.v2.XMLElement)getVariableData("updateOrderRequestIV","payload","/ns1:orderResponseStatus/ns1:orderHeader/ns7:technicalFulfilmentStatus")).getFirstChild().getNodeValue();             
+    }             
+    if (0 != ( (oracle.xml.parser.v2.XMLElement) getVariableData("updateOrderRequestIV","payload","/ns1:orderResponseStatus")).getChildrenByTagName("ns1:orderLineItem").getLength() ) {        
+        // Update includes an order line        
+        if (null != ((oracle.xml.parser.v2.XMLElement)getVariableData("updateOrderRequestIV","payload","/ns1:orderResponseStatus/ns1:orderLineItem/ns7:technicalFulfilmentStatus")).getFirstChild() ) {        
+            // Order line has a status        
+            oliTechnicalFulfilmentStatus = ((oracle.xml.parser.v2.XMLElement)getVariableData("updateOrderRequestIV","payload","/ns1:orderResponseStatus/ns1:orderLineItem/ns7:technicalFulfilmentStatus")).getFirstChild().getNodeValue();             
+        }        
+    }        
+    title = orderId + " : " + headerTechnicalFulfilmentStatus + " : " + oliTechnicalFulfilmentStatus;              
+    setCompositeInstanceTitle(title);              
+} catch(Exception e) {              
+    setCompositeInstanceTitle(";Fault");              
+}]]>
+        </bpelx:exec>
+        <scope name="ValidateXML">
+          <faultHandlers>
+            <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+              <sequence name="SeqHandleDataValidationFailure">
+                <assign name="AsgInvalidDataResponseCode">
+                  <copy>
+                    <from expression="'UNKNOWN ERROR'"/>
+                    <to variable="error"/>
+                  </copy>
+                </assign>
+                <throw name="ThrInvalidVariablesException" faultName="bpelx:invalidVariable" faultVariable="runtimeFault"/>
+              </sequence>
+            </catch>
+          </faultHandlers>
+          <sequence name="SeqValidateXML">
+            <assign name="TransOrderRequestToOrderRequestValidator">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransOrderRequestToOrderRequestValidator.xsl',bpws:getVariableData('updateOrderRequestIV','payload'))"/>
+                <to variable="InvTOMOMRequestValidatorIV" part="payload"/>
+              </copy>
+            </assign>
+            <invoke name="InvTOMOM_UpdateOrderRequestValidatorStub" partnerLink="TOMOM_UpdateOrderRequestValidatorStub" portType="ns5:TOMOM_UpdateOrderRequestValidatorStub" operation="initiate" inputVariable="InvTOMOMRequestValidatorIV"/>
+          </sequence>
+        </scope>
+        <scope name="ScopeManageOrderLine">
+          <sequence name="SeqManageOrderLine">
+            <switch name="SwitchOnTracingId">
+              <case condition="bpws:getVariableData('updateOrderRequestIV','payload','/ns1:orderResponseStatus/ns1:eaiHeader/ns6:tracingId')!=&quot;&quot; ">
+                <bpelx:annotation>
+                  <bpelx:pattern>tracingId is not empty</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqNotifyWaitingTOMOM_Invoker">
+                  <switch name="SwitchOLIOrHeaderUpdate">
+                    <case condition="starts-with(bpws:getVariableData('updateOrderRequestIV','payload','/ns1:orderResponseStatus/ns1:eaiHeader/ns6:tracingId'),&quot;OLI_&quot;)">
+                      <bpelx:annotation>
+                        <bpelx:pattern>OLI</bpelx:pattern>
+                      </bpelx:annotation>
+                      <sequence name="SeqNotifyTOMOM_InvokerThatOLIUpdatesAreFinished">
+                        <assign name="AsnIdForOLI">
+                          <copy>
+                            <from expression="bpws:getVariableData('updateOrderRequestIV','payload','/ns1:orderResponseStatus/ns1:eaiHeader/ns6:tracingId')"/>
+                            <to variable="InvreleaseOLICorrelationWait_IV" part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns6:tracingId"/>
+                          </copy>
+                          <copy>
+                            <from variable="updateOrderRequestIV" part="payload" query="/ns1:orderResponseStatus/ns1:orderHeader/ns7:technicalFulfilmentStatus"/>
+                            <to variable="InvreleaseOLICorrelationWait_IV" part="payload" query="/ns1:orderRequest/ns1:orderLineItem/ns7:technicalFulfilmentStatus"/>
+                          </copy>
+                          <copy>
+                            <from variable="updateOrderRequestIV" part="payload" query="/ns1:orderResponseStatus/ns1:eaiHeader/ns6:tracingId"/>
+                            <to variable="InvreleaseOLICorrelationWait_IV" part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns6:instanceId"/>
+                          </copy>
+                        </assign>
+                        <invoke name="InvTOMOLICorrelationWait" partnerLink="TOMOMInvoker" portType="ns12:TOMOMInvoker" operation="releaseOLICorrelationWait" inputVariable="InvreleaseOLICorrelationWait_IV"/>
+                      </sequence>
+                    </case>
+                    <otherwise>
+                      <sequence name="SeqNotifyTOMOM_InvokerThatHeaderUpdatesAreFinished">
+                        <assign name="AsnIdForHeader">
+                          <copy>
+                            <from expression="bpws:getVariableData('updateOrderRequestIV','payload','/ns1:orderResponseStatus/ns1:eaiHeader/ns6:tracingId')"/>
+                            <to variable="InvTOMOMInvokerOrderHeaderCorrelationWait_IV" part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns6:tracingId"/>
+                          </copy>
+                          <copy>
+                            <from variable="updateOrderRequestIV" part="payload" query="/ns1:orderResponseStatus/ns1:orderHeader/ns7:technicalFulfilmentStatus"/>
+                            <to variable="InvTOMOMInvokerOrderHeaderCorrelationWait_IV" part="payload" query="/ns1:orderRequest/ns1:orderLineItem/ns7:technicalFulfilmentStatus"/>
+                          </copy>
+                          <copy>
+                            <from variable="updateOrderRequestIV" part="payload" query="/ns1:orderResponseStatus/ns1:eaiHeader/ns6:tracingId"/>
+                            <to variable="InvTOMOMInvokerOrderHeaderCorrelationWait_IV" part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns6:instanceId"/>
+                          </copy>
+                        </assign>
+                        <invoke name="InvTOMOrderHeaderCorrelationWait" partnerLink="TOMOMInvoker" portType="ns12:TOMOMInvoker" operation="releaseOrderHeaderCorrelationWait" inputVariable="InvTOMOMInvokerOrderHeaderCorrelationWait_IV"/>
+                      </sequence>
+                    </otherwise>
+                  </switch>
+                </sequence>
+              </case>
+              <otherwise>
+                <sequence name="Sequence_1">
+                  <assign name="TranUpdateOrderRequestToManageOrderLineStatus">
+                    <bpelx:annotation>
+                      <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                      <from expression="ora:processXSLT('TranUpdateOrderRequestToManageOrderLine.xsl',bpws:getVariableData('updateOrderRequestIV','payload'))"/>
+                      <to part="manageOrderLine" variable="InvManageOrderLineStatus_IV"/>
+                    </copy>
+                  </assign>
+                  <invoke name="InvManageOrderLineStatus" partnerLink="TF_ManageOrderLineStatus" portType="ns10:TF_ManageOrderLineStatus" operation="manageOrderLineStatus" inputVariable="InvManageOrderLineStatus_IV"/>
+                </sequence>
+              </otherwise>
+            </switch>
+            <assign name="AsgTOMUpdateResponse">
+              <copy>
+                <from variable="updateOrderRequestIV" part="payload" query="/ns1:orderResponseStatus/ns1:eaiHeader"/>
+                <to variable="updateOrderRequestOV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+              </copy>
+              <copy>
+                <from variable="SuccessResponse"/>
+                <to variable="updateOrderRequestOV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns6:response"/>
+              </copy>
+              <copy>
+                <from variable="updateOrderRequestIV" part="payload" query="/ns1:orderResponseStatus/ns1:orderHeader/ns7:CRMOrderId"/>
+                <to variable="updateOrderRequestOV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns6:responseCode"/>
+              </copy>
+              <copy>
+                <from variable="SuccessResponseMsg"/>
+                <to variable="updateOrderRequestOV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns6:responseMessage"/>
+              </copy>
+            </assign>
+          </sequence>
+        </scope>
+      </sequence>
+    </scope>
+    <!-- Generate reply to synchronous request -->
+    <reply name="rlyValidateResponse" partnerLink="anchorToTOMOM_UpdateOrderRequestValidator" portType="client:TOMOM_UpdateOrderRequestValidator" operation="validateOrderStatus" variable="updateOrderRequestOV"/>
+  </sequence>
+</process>

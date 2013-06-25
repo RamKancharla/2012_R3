@@ -1,0 +1,88 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGAM_Invoker" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="CPFGAM_POLLING_V.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/CPFGAM_POLLING_V/"/>
+    <import location="UpdateINTERFACE_BUFFER.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateINTERFACE_BUFFER/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/InterfaceManager"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl"
+            importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices"
+            location="MM_GCAPInbound_Exp_AccountManagementInterface_PARef.wsdl"
+            importType="wsdl"/>
+    <service name="ReadCPFGAM_POLLING_V" ui:wsdlLocation="CPFGAM_POLLING_V.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/CPFGAM_POLLING_V/#wsdl.interface(CPFGAM_POLLING_V_ptt)"/>
+        <binding.jca config="CPFGAM_POLLING_V_db.jca"/>
+    </service>
+    <component name="CPFGAM_Invoker">
+        <implementation.bpel src="CPFGAM_Invoker.bpel"/>
+    </component>
+    <reference name="AAA"
+               ui:wsdlLocation="MM_GCAPInbound_Exp_AccountManagementInterface_PARef.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices#wsdl.interface(AccountManagementInterface)"/>
+        <binding.ws port="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices/PA#wsdl.endpoint(Exp_AccountManagementInterface_PA_AccountManagementInterfaceHttpService/Exp_AccountManagementInterface_PA_AccountManagementInterfaceHttpPort)"
+                    location="MM_GCAPInbound_Exp_AccountManagementInterface_PARef.wsdl"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <binding.ws port="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices#wsdl.endpoint(AccountManagementService/AccountManagementPort)"
+                    location="MM_GCAPInbound_Exp_AccountManagementInterface_PARef.wsdl"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="InterfaceManager"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+        <binding.ws port="http://xmlns.oracle.com/InterfaceManager#wsdl.endpoint(InterfaceManager/InterfaceManager)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/client?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="SequenceReleaser"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="UpdateINTERFACE_BUFFER" ui:wsdlLocation="UpdateINTERFACE_BUFFER.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateINTERFACE_BUFFER/#wsdl.interface(UpdateINTERFACE_BUFFER_ptt)"/>
+        <binding.jca config="UpdateINTERFACE_BUFFER_db.jca"/>
+    </reference>
+    <wire>
+        <source.uri>ReadCPFGAM_POLLING_V</source.uri>
+        <target.uri>CPFGAM_Invoker/ReadCPFGAM_POLLING_V</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGAM_Invoker/InterfaceManager</source.uri>
+        <target.uri>InterfaceManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGAM_Invoker/AAA</source.uri>
+        <target.uri>AAA</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGAM_Invoker/UpdateINTERFACE_BUFFER</source.uri>
+        <target.uri>UpdateINTERFACE_BUFFER</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>CPFGAM_Invoker/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+</composite>

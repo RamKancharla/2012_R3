@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 sp2 (http://www.altova.com) by Ramakrishnan Sivarajan (Reuters) -->
+<!--********************************************************************************
+	* Module:      EAI.XSD.007_CommonProductTypes.xsd
+	* Type:       	XSD Schema
+	* Description: The schema used for Common Product Type Message attributes
+	*
+	* Change History
+	* Version     Date       Author             Description Of Change
+	*
+	* 0.1         25/07/07   Mark Flynn         Initial version                
+	* 0.2         06/08/07   Rob Billington		Added new elements for Product Reference Data                
+	*                                           Renamed ProductId to ProductID for consistency
+	* 0.3         08/10/07   Rob Billington		Set total digits size for attribute and value IDs                
+	*                                           Added ProductName and Product Description, Attribute Name, Value Name, Product Type                
+	*                                           Added Configuration Description                
+	*                                           Added mappings to the Siebel Logical Data Model as CDM is no longer maintained.                
+	* 0.4         13/10/07   Rob Billington     Set type of attribute name to be xsd:string            
+	* 0.5         11/11/07   Rob Billington     Set type of ProductID to be xsd:string  
+	*                                           Changed equivalent data types to use latest Siebel LDM
+	*                                           Added length constraints for attributes and values  
+	* 1.0         16/05/08   Andrew Humphreys   Changed namespaces to be AAA owned        
+	**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:gcap="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonProductTypes"
+	xmlns:gcap-sa="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations"
+	targetNamespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/CommonProductTypes"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.5">
+	<xsd:import
+		namespace="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/SchemaAnnotations"
+		schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd" />
+	<xsd:simpleType name="ProductID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[PRODUCT].[INTEGRATION ID]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>1-7CFGTY34</content>
+					<comment>
+						Unique ID for a product generated from the ROW
+						ID.
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="15" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AttributeID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[ATTRIBUTE].[INTEGRATION ID]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>1-FEF2-1</content>
+					<comment>
+						Siebel integration ID for a configurable
+						attribute of a product
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="15" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ValueID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[ATTRIBUTE VALID VALUE].[INTEGRATION
+					ID]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>1-7ZXRMJ</content>
+					<comment>
+						Siebel integration ID for a configurable
+						attribute value of a product
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="15" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ValueName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[ATTRIBUTE VALID VALUE].[VALUE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>BT Radianz</content>
+					<comment>
+						Example value of the Delivery Network attribute
+						for a product.
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="50" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SPN">
+		<!-- RB 08/10/2007 This field should not be used in interface definitions.  Use GlobalPLI instead.
+			I've not removed it yet because it is referred to in the Electronic Fulfilment interface specifications. -->
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					CDM v2.0 CONFIGURED PRODUCT.SPN
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>XTRDFPDF</content>
+					<comment>
+						The Siebel Smart Part Number for a customisable
+						product.
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="15" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="GlobalPLI">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[ATTRIBUTE PRICE ADJUSTMENT].[BILLING
+					PLI CODE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>XTRDFPDF</content>
+					<comment>The Global PLI for a product.</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[PRODUCT].[NAME]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Reuters 3000 Xtra v6</content>
+					<comment>
+						The product name for Reuters 3000 Xtra Version 6
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductDescription">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[PRODUCT].[DESCRIPTION]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Reuters 3000 Xtra v6</content>
+					<comment>
+						The product description for Reuters 3000 Xtra
+						Version 6
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="255" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[PRODUCT].[STATUS]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Not Yet Launched - Alpha</content>
+					<comment>Not Yet Launched - Beta</comment>
+					<content>Available for Sale</content>
+					<content>Withdrawn</content>
+					<comment>Obsolescence</comment>
+					<comment>EOL</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<!--  Note: Enumeration is not used in this version of the schema but may be in future -->
+			<xsd:maxLength value="30" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AttributeName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[ATTRIBUTE].[NAME]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Delivery Mechanism</content>
+					<comment>
+						The human readable name for the delivery
+						mechanism attribute
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="100" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[PRODUCT].[TYPE]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Domestic</content>
+					<comment />
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>Global</content>
+					<comment />
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<!--  Note: Enumeration is not used in this version of the schema but may be in future -->
+			<!--  TBD What is the min/max length of a product type? -->
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ConfigurationDescription">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem>
+					[SIEBEL LDM].[ATTRIBUTE PRICE ADJUSTMENT].[INVOICE
+					DESCRIPTION]
+				</gcap-sa:EquivalentDataItem>
+				<gcap-sa:Example>
+					<content>Reuters 3000 Xtra v6 H/I</content>
+					<comment>
+						A unique description of the commercial product
+						configuration.
+					</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="255" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

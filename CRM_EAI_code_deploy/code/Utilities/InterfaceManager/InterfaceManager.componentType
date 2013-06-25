@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="InterfaceManager.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </service>
+    <reference ui:wsdlLocation="InterfaceConfigSelectStatesOfRecentMessages.wsdl" name="InterfaceConfigSelectStatesOfRecentMessages">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectStatesOfRecentMessages/#wsdl.interface(InterfaceConfigSelectStatesOfRecentMessages_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="InterfaceConfig.wsdl" name="InterfaceConfig">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfig/#wsdl.interface(InterfaceConfig_ptt)"/>
+    </reference>
+</componentType>

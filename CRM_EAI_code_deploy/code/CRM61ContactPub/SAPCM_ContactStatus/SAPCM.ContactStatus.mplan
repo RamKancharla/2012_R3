@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="SAPCM.ContactStatus" wsdlTargetNamespace="http://trm.com:I065:ARCash:ContactManagement_Send" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="OP_ReceiveErrorResponse_Async">
+      <switch>
+         <case name="Case_1_SAPCM.ContactStatus.OP_ReceiveErrorResponse_Async" executionType="queued">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/MT_Contact_To_PublishContactRequestReponse.xsl,$in.MT_Contact)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="SAPCM.PublishContactStatus" operation="initiate"/>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

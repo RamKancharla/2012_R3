@@ -1,0 +1,17 @@
+<definitions
+     name="CrossRefService"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+         location="http://eaidev2:8004/CPFGEF_OrderFulfilmentCrossRefService/CrossRefServiceSplitOrderSOAPPort?wsdl"/>
+    <plnk:partnerLinkType name="CrossRefServicePortType_PL">
+        <plnk:role name="CrossRefServicePortType_Role">
+            <plnk:portType name="tns:CrossRefServicePortType"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

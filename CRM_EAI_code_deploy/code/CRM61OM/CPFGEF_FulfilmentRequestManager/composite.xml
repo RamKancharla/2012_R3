@@ -1,0 +1,42 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGEF_FulfilmentRequestManager" revision="1.0" state="on">
+    <import location="CPFGEF_FulfilmentRequestManager.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager"/>
+    <import location="CrossRefService.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelator.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="CPFGEF_FulfilmentRequestManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.interface(CPFGEF_FulfilmentRequestManagerCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.interface(CPFGEF_FulfilmentRequestManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.endpoint(CPFGEF_FulfilmentRequestManager/CPFGEF_FulfilmentRequestManager)"/>
+    </service>
+    <component name="CPFGEF_FulfilmentRequestManager">
+        <implementation.bpel src="CPFGEF_FulfilmentRequestManager.bpel"/>
+        <property name="preference.maxWaitForElectronicFulfilmentStatus">P0Y0M0DT0H5M0S</property>
+        
+    </component>
+    <reference name="CPFGEF_FulfilmentRequestCorrelator" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelator.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelator)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelatorCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.endpoint(CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelator)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestCorrelator/rcvFulfilmentRequestCorrelator?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.endpoint(CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelatorCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CrossRefService" ui:wsdlLocation="CrossRefService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService#wsdl.interface(CrossRefServicePortType)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="CrossRefService.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService#wsdl.endpoint(CrossRefService/CrossRefServiceSplitOrderSOAPPort)"/>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CPFGEF_FulfilmentRequestManager/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_FulfilmentRequestManager/CrossRefService</source.uri>
+        <target.uri>CrossRefService</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_FulfilmentRequestManager/CPFGEF_FulfilmentRequestCorrelator</source.uri>
+        <target.uri>CPFGEF_FulfilmentRequestCorrelator</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

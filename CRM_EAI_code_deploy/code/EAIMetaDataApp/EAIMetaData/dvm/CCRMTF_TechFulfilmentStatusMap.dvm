@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="CCRMTF_TechFulfilmentStatusMap" xmlns="http://xmlns.oracle.com/dvm">
+<description>Maps technical fulfilment status values for order headers and order line items.
+Used By:
+CCRMTF_PropagateOrderStatus</description><columns><column name="TOM_OLI_STATUS"/><column name="CRM_OLI_STATUS"/><column name="TOM_HDR_STATUS"/><column name="CRM_HDR_STATUS"/></columns>
+<rows><row><cell>in progress</cell><cell>Pending Fulfilment</cell><cell/><cell/></row>
+<row><cell/><cell/><cell>complete</cell><cell>Complete</cell></row>
+<row><cell>not required</cell><cell>Not Required</cell><cell/><cell/></row>
+<row><cell>not started</cell><cell>Not Started</cell><cell/><cell/></row>
+<row><cell>ready for service</cell><cell>Ready for Service</cell><cell/><cell/></row>
+<row><cell>complete</cell><cell>Complete</cell><cell/><cell/></row>
+<row><cell/><cell/><cell>in progress</cell><cell>Pending Fulfilment</cell></row>
+<row><cell/><cell/><cell>allocated</cell><cell>Allocated</cell></row>
+<row><cell/><cell/><cell>on hold</cell><cell>On Hold</cell></row>
+<row><cell/><cell/><cell>not required</cell><cell>Not Required</cell></row>
+<row><cell/><cell/><cell>assigned</cell><cell>Assigned</cell></row>
+<row><cell/><cell/><cell>technically ready to migrate</cell><cell>Technically Ready to Migrate</cell></row>
+</rows></dvm>

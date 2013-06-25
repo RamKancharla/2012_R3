@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:	EAI.MSG.EAI.169_BasicResponse
+*				
+* Type:		XML Schema Document
+* Description:	EAI Internal Basic response
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	==========	==================		===============================
+*  0.01		22/10/2007	G PATCHIPULUSU			Initial Version
+*
+*
+*************************************************************************/-->
+<xsd:schema xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-mt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"  targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:complexType name="_BasicResponse">
+		<xsd:sequence>
+   <xsd:element name="eaiHeader" type="gcap-mt:EaiHeader"/>
+   <xsd:element name="basicResponse" type="gcap-mt:BasicResponse"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="basicResponse" type="xsdLocal:_BasicResponse"/>
+</xsd:schema>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="MQServiceStatusCheck.wsdl" name="client">
+        <interface.wsdl interface="http://xmlns.oracle.com/MQServiceStatusCheck#wsdl.interface(MQServiceStatusCheck)" callbackInterface="http://xmlns.oracle.com/MQServiceStatusCheck#wsdl.interface(MQServiceStatusCheckCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="SuccessDatabseUpdateAdapter.wsdl" name="SuccessDatabseUpdateAdapter">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/SuccessDatabseUpdateAdapter/#wsdl.interface(SuccessDatabseUpdateAdapter_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="QueueDownDatabseUpdateAdapter.wsdl" name="QueueDownDatabseUpdateAdapter">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/QueueDownDatabseUpdateAdapter/#wsdl.interface(QueueDownDatabseUpdateAdapter_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="MQAdapterToCheckQueueStatus.wsdl" name="MQAdapterToCheckQueueStatus">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerMQAdapterToCheckQueueStatus/#wsdl.interface(Enqueue_ptt)"/>
+    </reference>
+</componentType>

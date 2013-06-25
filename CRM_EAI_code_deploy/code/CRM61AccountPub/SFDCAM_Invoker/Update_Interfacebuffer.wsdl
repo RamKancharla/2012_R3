@@ -1,0 +1,21 @@
+<?binding.jca Update_Interfacebuffer_db.jca?>
+<definitions name="Update_Interfacebuffer" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Interfacebuffer/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/db/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Interfacebuffer/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateInterfacebuffer">
+    <plt:partnerLinkType name="Update_Interfacebuffer_plt">
+        <plt:role name="Update_Interfacebuffer_role">
+            <plt:portType name="tns:Update_Interfacebuffer_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateInterfacebuffer" schemaLocation="UpdateInterfacebuffer_table.xsd"/>
+        </schema>
+    </types>
+    <message name="InterfaceBufferCollection_msg">
+        <part name="InterfaceBufferCollection" element="top:InterfaceBufferCollection"/>
+    </message>
+    <portType name="Update_Interfacebuffer_ptt">
+        <operation name="update">
+            <input message="tns:InterfaceBufferCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

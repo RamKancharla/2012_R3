@@ -1,0 +1,48 @@
+<definitions
+     name="SFDCAM_AccountEventManager"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_AccountEventManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_AccountEventManager"
+     xmlns:imp1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/SFDCAM_AccountEventManager"
+                 schemaLocation="SFDCAM_AccountEventManager.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" schemaLocation="EAI.MSG.SFDC.AM.236_PublishAccountEventRequest.xsd"/>
+        </xsd:schema>       
+        
+         <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish"
+                 schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.MSG.AM.176_AccountEvent.xsd"/>
+        </schema>
+    </types>
+    <message name="SFDCAM_AccountEventManagerResponseMessage">
+        <part name="payload" element="client:SFDCAM_AccountEventManagerProcessResponse"/>
+    </message>
+    <message name="SFDCAM_AccountEventManagerRequestMessage">
+        <part name="accountEvent" element="imp1:accountEvent"/>
+    </message>
+    <portType name="SFDCAM_AccountEventManagerCallback">
+        <operation name="onResult">
+            <input message="client:SFDCAM_AccountEventManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="SFDCAM_AccountEventManager">
+        <operation name="initiate">
+            <input message="client:SFDCAM_AccountEventManagerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SFDCAM_AccountEventManager">
+        <plnk:role name="SFDCAM_AccountEventManagerProvider">
+            <plnk:portType name="client:SFDCAM_AccountEventManager"/>
+        </plnk:role>
+        <plnk:role name="SFDCAM_AccountEventManagerRequester">
+            <plnk:portType name="client:SFDCAM_AccountEventManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

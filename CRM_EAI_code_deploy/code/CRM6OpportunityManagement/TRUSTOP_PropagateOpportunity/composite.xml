@@ -1,0 +1,33 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TRUSTOP_PropagateOpportunity" revision="1.0" state="on">
+    <import location="TRUSTOP_PropagateOpportunity.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTOP_OpportunityManager/TRUSTOP_OpportunityManager.wsdl" importType="wsdl"/>
+    <service name="TRUSTOP_PropagateOpportunity" ui:wsdlLocation="TRUSTOP_PropagateOpportunity.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity#wsdl.interface(TRUSTOP_PropagateOpportunity)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_PropagateOpportunity#wsdl.endpoint(TRUSTOP_PropagateOpportunity/TRUSTOP_PropagateOpportunity)"/>
+    </service>
+    <component name="TRUSTOP_PropagateOpportunityProcess">
+        <implementation.bpel src="TRUSTOP_PropagateOpportunityProcess.bpel"/>
+        
+        
+    </component>
+    <reference name="TRUSTOP_OpportunityManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTOP_OpportunityManager/TRUSTOP_OpportunityManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager#wsdl.interface(TRUSTOP_OpportunityManager)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager#wsdl.interface(TRUSTOP_OpportunityManagerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager#wsdl.endpoint(TRUSTOP_OpportunityManager/TRUSTOP_OpportunityManager)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTOP_OpportunityManager/anchorToTRUSTOP_OpportunityManager?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/TRUSTOP_OpportunityManager#wsdl.endpoint(TRUSTOP_OpportunityManager/TRUSTOP_OpportunityManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>TRUSTOP_PropagateOpportunity</source.uri>
+        <target.uri>TRUSTOP_PropagateOpportunityProcess/TRUSTOP_PropagateOpportunity</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TRUSTOP_PropagateOpportunityProcess/TRUSTOP_OpportunityManager</source.uri>
+        <target.uri>TRUSTOP_OpportunityManager</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGAM_POLLING_V.wsdl" name="ReadCPFGAM_POLLING_V">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/CPFGAM_POLLING_V/#wsdl.interface(CPFGAM_POLLING_V_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="MM_GCAPInbound_Exp_AccountManagementInterface_PARef.wsdl" name="AAA">
+        <interface.wsdl interface="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/AccountManagementServices#wsdl.interface(AccountManagementInterface)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="UpdateINTERFACE_BUFFER.wsdl" name="UpdateINTERFACE_BUFFER">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateINTERFACE_BUFFER/#wsdl.interface(UpdateINTERFACE_BUFFER_ptt)"/>
+    </reference>
+    <reference name="SequenceReleaser"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+</componentType>

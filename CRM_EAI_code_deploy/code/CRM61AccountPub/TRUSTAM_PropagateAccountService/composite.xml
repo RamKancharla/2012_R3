@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TRUSTAM_PropagateAccountService" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import importType="wsdl" location="EAI.SRV.EXT.SFDC.050_ReceiveAccountFromSFDC.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount"
+            location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TRUSTAM_PropagateAccount/TRUSTAM_PropagateAccount.wsdl"
+            importType="wsdl"/>
+    <service name="SFDCAM.PropagateAccountService_ep" ui:wsdlLocation="EAI.SRV.EXT.SFDC.050_ReceiveAccountFromSFDC.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish#wsdl.interface(publishAccountsService)"/>
+        <binding.ws location="EAI.SRV.EXT.SFDC.050_ReceiveAccountFromSFDC.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish#wsdl.endpoint(publishAccountsService/publishAccounts)"/>
+    </service>
+    <component name="SFDCAM.PropagateAccountService">
+        <implementation.mediator src="SFDCAM.PropagateAccountService.mplan"/>
+    </component>
+    <reference name="SFDCAM.TRUSTSoapAdp"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/TRUSTAM_PropagateAccount/TRUSTAM_PropagateAccount.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount#wsdl.interface(TRUSTAM_PropagateAccount)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount#wsdl.endpoint(TRUSTAM_PropagateAccount/TRUSTAM_PropagateAccount)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMSYNC/TRUSTAM_PropagateAccount/anchorToTRUSTAM_PropagateAccount?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>SFDCAM.PropagateAccountService_ep</source.uri>
+        <target.uri>SFDCAM.PropagateAccountService/SFDCAM.PropagateAccountService</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SFDCAM.PropagateAccountService/SFDCAM.TRUSTSoapAdp</source.uri>
+        <target.uri>SFDCAM.TRUSTSoapAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

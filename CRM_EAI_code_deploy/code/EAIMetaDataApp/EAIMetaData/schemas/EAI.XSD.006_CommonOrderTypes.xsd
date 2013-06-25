@@ -1,0 +1,3819 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.XSD.006_CommonOrderTypes.xsd
+*						
+* Type:				XML Schema Document
+* Description:	The schema used for Common Order Message attributes
+*
+*
+* Change History
+* Version		Date				Author									Description Of Change
+* =======	========	==================		===============================
+*  0.01			05/07/07		G PATCHIPULUSU				Initial Version
+*  0.02			16/07/07		G PATCHIPULUSU				Added SubmissionResponseOrderHeader complex type
+*  0.03			23/07/07		G PATCHIPULUSU				Corrected the billing type enumeration
+*  0.04			11/08/07		G PATCHIPULUSU				Added CCRM and CS specific types
+*  0.05			12/08/07		G PATCHIPULUSU				Added order line acion code in the response OLI complex type
+*  0.06			13/08/07		G PATCHIPULUSU				Removed order line acion code, lookup needs to be done rather than using action code 
+*  0.07			16/08/07		G PATCHIPULUSU				Nillable elements have been added 
+*  0.08			07/09/07		G PATCHIPULUSU				In the order line Removed user number which is length 4 and added User ID which is of length 6 added complex types
+*																					to support 132, 138 etc schemas
+*  0.09			11/09/07		G PATCHIPULUSU				Added the country complex type with minimum length 1
+*  0.10			17/09/07		G PATCHIPULUSU				Moved the subscriber from order header to order line and added AstResponseOLI with asset ingertaion id
+*  0.11			18/09/07		G PATCHIPULUSU				Added asset ingertaion id to CCRMCompassOLI
+*  0.12			26/09/07		G PATCHIPULUSU				Changed AKR type from _AKR to NillableAKR in complex types CompassOLI, _OLI, _CCRMOM_OLI and CCRMCompassOLI
+*  0.13			17/10/07		S VUPPALA				Added _BillingAmendCCRM_OLI complex, changed enumeration for STB
+*  0.14			18/10/07		G PATCHIPULUSU				Added complex types for user creation and add user details to CCRMOM_OLI
+*  0.15			19/10/07		S VUPPALA				Changed types in CCRMOM_OLI complex type																					
+*  0.16			06/11/07		G PATCHIPULUSU				Added Stop Date Change and Start Date Change in the enumeration for CRM Order line action codes
+*  0.17			07/11/07		G PATCHIPULUSU				Changed the _DOB type to string as the data need to be passed to as is to CS
+*  0.18			23/11/07		G PATCHIPULUSU				Added permissioningSystem, manualPermissioningRequired, freeTrailFlag elements and its types
+*  0.19			31/12/07		G PATCHIPULUSU				Changed billng type from 'Once-off' to 'Once-Off'
+*  0.20			09/11/08		G PATCHIPULUSU				Under "CompassOLI" complex type, removed discount and added permission date, PBI 136
+*  0.21			10/01/08		G PATCHIPULUSU				Added install date, removal date, permissioning stats, interface for billing and interface for fulfilment under CCRMOM_OLI complex type - Sprint 6 changes
+*  0.22			15/02/08		S VUPPALA				Changed itemNumber type from ItemNumber to NillableAssetIntegrationId for PBI 128	
+*  0.23			05/03/08		G PATCHIPULUSU				Added restriction for AKR to be between 0 and 999 
+*  0.24			13/03/08		G PATCHIPULUSU				Added Once-OffDebit and Once-OffCredit billing types 
+*  0.25			19/03/08		G PATCHIPULUSU				First Name length had been reduced to 20 and Last Name length redcued to 30 from 50
+*  0.26			28/03/08		S PATEL					Reverted back the length of First name and Last Name length to 50 for the defect-12956 resolution  
+*  0.27			04/04/08		S GANNAVARAPU				Added UserIdType(ProductLoginType from Siebel Side) and ParentOrderItemId to CCRMOM_OLI ComplexType as part of PBI-579 and PBI-090
+*  0.28			24/04/08		S GANNAVARAPU				Changed the Usernumber type from int to String of length 30                                                                                      Added ProductIntegrationId,FreeTrailEndDate,ConfiguredAttribute to CCRMOM_OLI ComplexType as Part of PBI-334
+*  0.29			25/04/08		S GANNAVARAPU				Added '-' and 'Update' to OrderLineActionCode Enumeration.
+*  0.30			03/06/08		S GANNAVARAPU				Made the maxlength of the Subscriber for validation to 9 in "CCRMOM_OLI" Complex type.
+*  0.31			13/06/08		S GANNAVARAPU				Removed the validation on userid in CCRMOM_OLI Complex type as part of R1 CR.
+*  0.32			23/06/08		Sreeja Prasad				Added the elements for CCRMOMOrderHeader and  CCRMOM_OLI and new types TOMOrderHeader,TOMOLI and TOMResponseOLI.
+*  0.33			02/07/08		Sreeja Prasad				Added the element businessCase in TOMOLI.
+*  0.34			03/07/08		Sreeja Prasad				Added the elements technicalOrderOwner and actualInstallationDate in CCRMOMOrderHeader, and lastUpdateDate,mandatorytechFulfilmentFlag,technicalVettingFlag
+											and actualInstallationDate in CCRMOM_OLI and technicalOrderOwner and actualInstallationDate in TOMOrderHeader and 
+											mandatorytechFulfilmentFlag,actualInstallationDate and technicalVettingFlag in TOMOLI.
+*  0.35			04/07/08		Sreeja Prasad				Added AssignedOMS in CCRMOMOrderHeader and ILA in CCRMOM_OLI.
+*  0.36			04/07/08		Rob Billington				Moved legacy order number from TOMOrderHeader to TOMOLI
+*  0.37			06/07/08		Rob Billington				Removed enumeration constraints on TechnicalFulfilmentStatus and OLITechnicalFulfilmentStatus 
+*  0.38			07/07/08		Sreeja Prasad				Added the elements freeTrialDuration,depermissionDate and permissionDate in TOMOLI.  
+*  0.39			09/07/08		Rob Billington				Renamed accountLocId to accountId TOMOrderHeader
+*  0.40			30/07/08		Hemamalini.T.S				Changed Email length from 30 to 50 as siebel is sending the length 50
+*  0.41			08/08/08		Sunil V					Changed the AssetIntegrationId type to AssetIntegrationId from NillableAssetIntegrationId for r1 bug
+*  0.42			08/08/08		Sunil V					Added Special Price Change in order line action code
+*  0.43			18/08/08		Sreeja Prasad				Added SID in ResponseOLI and AstResponseOLI.
+*  0.44			19/08/08		Sreeja Prasad				Modified the _SID restriction.
+*  0.45			22/08/08		Sreeja Prasad				Modified the length of OrderNote to 50 and added CSPO,SSPersonId and SLPersonId as part of PBI 577.
+*  0.46			02/09/08		Sreeja Prasad				Added  SalesSpecialist and AccountManager to  CCRMOMOrderHeader for PBI 577.
+*  0.47			04/09/08		anvv sharma				Added WorkPhone,RCRMePlatformId,RCRMSupportLanguage,RCRMSegGrpEndUserActivity,RCRMRegionalFocus,
+											RCRMMarketingConsentSetDate,RCRMManualPermissionedFlag,RCRMLocalLastName,RCRMLocalFirstName,RCRMLocalDACSId
+											RCRMLegalConsentSetDate,RCRMLegalConsent,RCRMLastUpdatedProfileDate,RCRMFTLFlagSetDate,RCRMFTLCompleteFlag
+											RCRMErrorCode,RCRMDirectMarketing,RCRMCPfGTempURL,RCRMBillingAccount,RCRMActionCode,RCRMAAAUpdatedProfileDate,
+											PrimaryAccountId,ParentOrderItemId,MM,EmailAddres for PBI-333
+*  0.48			10/09/08		anvv sharma				Added ResponseCode, RCRMErrorContext, ModId for PBI-333
+*  0.49			29/09/08		S GANNAVARAPU				Added TargetSystem field in the order header to filter the TOM Orders(Defect # 18715)
+*  0.50			09/10/08		Rob Billington				Added ReutersMessagingId, BillingPlatform, umbrellaProductId and MarketFocus
+*  0.51                 21/10/08                Chandra Sekhar                          Added minOccurs="0" maxOccurs="unbounded" to quote note in TOMOrderHeader
+*  0.52                 31/10/08                Rob Billington                          Added ILA to CCRM OLI
+*  0.53			03/11/08		Sreeja Prasad				Added firstName and lastName fields to TOMOLI for defect# 21360.
+*  0.54                 18/11/08                Chandra Sekhar                           Added minOccurs="0" maxOccurs="unbounded" to quote note in CCRMOMOrderHeader  
+*  0.55                 12/02/09                Sreeja prasad                           Added minOccurs="1" for _CCRMOMFirstName and _CCRMOMLastName for defect 23270.
+*  0.56                 16/02/09                Rob Billington				Corrected first name and last name types used in TOMResponseOrderHeader and type for OMSfirstName in CCRMOMOrderHeader
+*  0.57                 16/02/09                Sreeja Prasad				Modified the maxLength of _CCRMOMFirstName to 20 and _CCRMOMLastName to 30 and also removed the minOccurs=1.
+*  0.58                 29/06/09                Rob Billington				Added ExpectedTechnicallyReadyToMigrateDate to TOMResponseOrderHeader for PBI-6000
+*  0.59                 09/02/10		Sreeja Prasad				Added ExpectedTRTMDate,OldContactUserId,CpfgErrorMessage,InstallSubscriberNumber,InstallSubscriberAccountId,InstallSubAccountNumber,InstallLocationAccountId for PBI-381 & PBI-421 
+*  0.60                 11/02/10		Sreeja Prasad				Added PermBillFlag in AstResponseOLI & CompassOLI, renamed Subscriber to billToSubscriberNumber & SubAccount to billToSubAccountNumber in CCRMOM_OLI for PBI -421.
+*  0.61                 19/02/10		Sreeja Prasad				Removed Added PermBillFlag in AstResponseOLI as this should not effect the current functionality for Feb22nd release. 
+*  0.62			03/03/10		Surya G					Added validation for "InstallTo" elements in CCRMOM_OLI
+*  0.63			24/03/10		Damodar					Added SAPBillable,SAPItemNumber,PONumber,InstallLocationAccountNumber,BillToAccountNumber in CCRMOM_OLI as part of SAP Integration
+*  0.64			03/05/10		Mallesh					Added RCRMField1 in CCRMOMOrderHeader and RCRMField2,RCRMField3 in CCRMOM_OLI as part of SAP Integration
+*  0.65			17/05/10		Mallesh					Added SoldToAccountNumber,RCRMField6,RCRMField7 in CCRMOMOrderHeader and SAPOrderNumber,RCRMField6,RCRMField7,RCRMField1,
+											RCRMField8,RCRMField9,RCRMField10,SAPActionCode,SAPBusinessCase,CalculatedListPrice,ListPrice,BillingPeriod,PublishContactToSAP,ContactStatus in CCRMOM_OLI as part of SAP Integration
+*  0.66                 10/03/10                Sreeja					Added PermBillFlag in AstResponseOLI for PBI-421 (CDM Changes)
+*  0.67                 29/04/10                Sreeja					Modified the installSubscriberNumber & billToSubscriberNumber length to 22 from 9 as part of  CCBoard ( migrating the order management of the ex-Thomson business ) & 
+											modified the field RCRMePlatformId length to 100
+*  0.68                 10/03/10                Sreeja					Added contactID in CCRMOM_OLI for PBI-500(Athena Manual Perm) where RCRMField4 will be mapped to this field											
+*  0.69                 23/03/10                Satish P				Added installToSubscriber and installToItemNumber in CompassOLI for PBI-537 (CDM Changes)						 
+*  0.70                 01/07/10                Chakrapani				Added PPLId in CCRMOM_OLI for CR119 as part of SAP integration.
+*  0.71                 20/07/10                Sreeja   				Added orderOwner,userGroup,userDomain,serverId,contactJobFunction,contactAnonymityReason,contactAnonymityFlag,SEADummyField1,SEADummyField2 for CR 5862(SEA Integration for auto perm)
+*  0.72                 22/07/10                Swathi                                  Added netPriceDisplay,creditDebit for CR 5347
+*  0.73                 30/07/10		Sreeja					Added the complex types for CR 5862(SEA auto perm) ATHOrderRequest,ATHUserLineItem,ATHResponseOrderHeader,ATHResponseOLI
+*  0.74                 06/12/10		Ram					Added the businessCase and permissionSystem in CompassOLI node for SEA FT Conversion orders
+*  0.75		        13/12/10		Albin 				        MaxLength of contactJobFunction has changed to 100.
+*  0.76			16/12/10		Albin					As part of CR 15407  "PO Number Change"  has beed added to the restriction of  CCRMOLIActionCode         
+*  0.77             	13/01/11        	Lavanya                                 As part of CR477 Added two fields RCRMSAPConCountry,RCRMDiscountReason at header level and OLI level respectively.
+*  0.78		        08/03/11		TANMAY S			        As part of CR 15630 added new tag 'pricelistCurrency' in CompassOrderHeader and  tag 'CurrencyCode' in CCRMOMOrderHeader
+*  0.79		        02/08/11		Ram			        	As part of CR 18222 added enumeration value - 'Recontract' for CCRMOLIActionCode and _CRMNillableOLIActionCode
+*  0.80             12/12/2011      Harshitha				Added primaryUUID as part of CR 9849
+*************************************************************************/-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:gcap-cut="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.61">
+<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+             schemaLocation="EAI.XSD.002_CommonUserTypes.xsd"/>
+	<xsd:complexType name="CCRMOMOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderNumber" type="xsdLocal:_CRMOrderNumber"/>
+			<xsd:element name="AAATransactionId" type="xsdLocal:AAATransactionId"/>
+			<xsd:element name="installDate" type="xsdLocal:InstallDate"/>
+			<xsd:element name="removalDate" type="xsdLocal:RemovalDate"/>
+			<xsd:element name="orderNote" type="xsdLocal:OrderNote"/>
+			<xsd:element name="orderStatus" type="xsdLocal:OrderStatus"/>
+			<xsd:element name="phone" type="xsdLocal:Phone"/>
+			<xsd:element name="OMSlastName" type="xsdLocal:OMSLastName"/>
+			<xsd:element name="OMSfirstName" type="xsdLocal:OMSFirstName"/>
+			<xsd:element name="email" type="xsdLocal:Email"/>
+			
+			<xsd:element name="businessCase" type="xsdLocal:_CRMBusinessCase"/>
+			<xsd:element name="accountLocId" type="xsdLocal:AccountLocId"/>
+			<xsd:element name="technicalOrderNo" type="xsdLocal:TechnicalOrderNo"/>
+			<xsd:element name="technicalOrderOwner" type="xsdLocal:TechnicalOrderOwner"/>
+			<xsd:element name="technicalFulfilmentStatusReason" type="xsdLocal:TechnicalFulfilmentStatusReason"/>
+			<xsd:element name="technicalFulfilmentStatus" type="xsdLocal:TechnicalFulfilmentStatus"/>
+			<xsd:element name="plannedInstallDate" type="xsdLocal:PlannedInstallDate"/>
+			<xsd:element name="poNumber" type="xsdLocal:PONumber"/>
+			<xsd:element name="custRequiredDate" type="xsdLocal:CustRequiredDate"/>
+			<xsd:element name="actualInstallationDate" type="xsdLocal:ActualInstallDate"/>
+			<xsd:element name="account" type="xsdLocal:Account"/>
+			<xsd:element name="accountLocation" type="xsdLocal:AccountLocation"/>
+			<xsd:element name="orderType" type="xsdLocal:OrderType"/>
+			<xsd:element name="quoteNote" type="xsdLocal:QuoteNote" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="quoteNumber" type="xsdLocal:QuoteNumber"/>
+			<xsd:element name="quoteRevisionNumber" type="xsdLocal:QuoteRevisionNumber"/>
+			<xsd:element name="assignedOMS" type="xsdLocal:AssignedOMS"/>
+			<xsd:element name="salesSpecialist" type="xsdLocal:SalesSpecialist"/>
+			<xsd:element name="currencyCode" type="xsdLocal:CurrencyCode"/>
+			<xsd:element name="accountManager" type="xsdLocal:AccountManager"/>
+			<xsd:element name="targetSystem" type="xsdLocal:TargetSystem"/>
+			<xsd:element name="expectedTRTMDate" type="xsdLocal:ExpectedTRTMDate"/>
+			<xsd:element name="orderOwner" type="xsdLocal:OrderOwner"/>
+
+			<!-- SAP Integration--> 
+			<xsd:element name="RCRMField1" type="xsdLocal:string50" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SoldToAccountNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField6" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField7" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<!-- end-->
+			 <!--As part of CR477 a new field RCRMSAPConCountry is added at hearder level-->
+			<xsd:element name="RCRMSAPConCountry" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ResponseMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="response" type="xsdLocal:Response"/>
+			<xsd:element name="responseCode" type="xsdLocal:ResponseCode"/>
+			<xsd:element name="version" type="xsdLocal:MessageVersion"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ResponseOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="response" type="xsdLocal:Response"/>
+			<xsd:element name="requestStatus" type="xsdLocal:RequestStatus"/>
+			<xsd:element name="CRMOrderNumber" type="xsdLocal:_CRMOrderNumber"/>
+			<xsd:element name="orderNumber" type="xsdLocal:CSOrderNumber"/>
+			<xsd:element name="entrepriseCode" type="xsdLocal:EnterpriseCode"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SubmissionResponseOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="response" type="xsdLocal:Response"/>
+			<xsd:element name="requestStatus" type="xsdLocal:RequestStatus"/>
+			<xsd:element name="CRMOrderNumber" type="xsdLocal:_CRMOrderNumber"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AstResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="rootItemId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="itemNumber" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="ILA" type="xsdLocal:_ILA"/>
+			<xsd:element name="userNumber" type="xsdLocal:UserNumber"/>
+			<xsd:element name="userId" type="xsdLocal:UserID"/>
+			<xsd:element name="QUID" type="xsdLocal:_QUID"/>
+			<xsd:element name="orderLinestatus" type="xsdLocal:OrderLinestatus"/>
+			<xsd:element name="SID" type="xsdLocal:_SID"/>
+			<xsd:element name="requestStatus" type="xsdLocal:RequestStatus"/>
+			<xsd:element name="assetIntegrationId" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="permBillFlag" type="xsdLocal:PermBillFlag"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="itemNumber" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="ILA" type="xsdLocal:_ILA"/>
+			<xsd:element name="userNumber" type="xsdLocal:UserNumber"/>
+			<xsd:element name="userId" type="xsdLocal:UserID"/>
+			<xsd:element name="QUID" type="xsdLocal:_QUID"/>
+			<xsd:element name="orderLinestatus" type="xsdLocal:OrderLinestatus"/>
+			<xsd:element name="SID" type="xsdLocal:_SID"/>
+			<xsd:element name="requestStatus" type="xsdLocal:RequestStatus"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="OrderHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderNumber" type="xsdLocal:_CRMOrderNumber"/>
+			<xsd:element name="subscriber" type="xsdLocal:CSSubscriber"/>
+			<xsd:element name="installDate" type="xsdLocal:InstallDate"/>
+			<xsd:element name="removalDate" type="xsdLocal:RemovalDate"/>
+			<xsd:element name="orderNote" type="xsdLocal:OrderNote"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_OLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="actionCode" type="xsdLocal:OLIActionCode"/>
+			<xsd:element name="salesCode" type="xsdLocal:SalesCode"/>
+			<xsd:element name="subAccount" type="xsdLocal:SubAccount"/>
+			<xsd:element name="PLI" type="xsdLocal:_PLI"/>
+			<xsd:element name="AKR" type="xsdLocal:NillableAKR"/>
+			<xsd:element name="userNumber" type="xsdLocal:UserNumber"/>
+			<xsd:element name="QUID" type="xsdLocal:_QUID"/>
+			<xsd:element name="discount" type="xsdLocal:Discount"/>
+			<xsd:element name="specialPrice" type="xsdLocal:SpecialPrice"/>
+			<xsd:element name="specialPriceCurr" type="xsdLocal:SpecialPriceCurr"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsdLocal:SpecialPriceRestrictionDate"/>
+			<xsd:element name="itemNumber" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="startStopBillingDate" type="xsdLocal:StartStopBillingDate"/>
+			<xsd:element name="billingType" type="xsdLocal:BillingType"/>
+			<xsd:element name="billingNote" type="xsdLocal:BillingNote"/>
+			<xsd:element name="STB" type="xsdLocal:_STB"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CCRMOM_OLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="rootItemId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="parentOrderItemId" type="xsdLocal:ParentOrderItemId"/>
+			<xsd:element name="actionCode" type="xsdLocal:CCRMOLIActionCode"/>
+			<xsd:element name="businessCase" type="xsdLocal:_CRMBusinessCase"/>
+			<xsd:element name="salesCode" type="xsdLocal:_CRMNillableSalesCode"/>
+			<xsd:element name="billToSubscriberNumber" type="xsdLocal:CRMSubscriber"/>
+			<xsd:element name="billToSubAccountNumber" type="xsdLocal:_NillableSubAccount"/>
+			<xsd:element name="PLI" type="xsdLocal:_NillablePLI"/>
+			<xsd:element name="productIntegrationId" type="xsdLocal:ProductIntegrationId"/>
+			<xsd:element name="permissioningSystem" type="xsdLocal:PermissioningSystem"/>
+			<xsd:element name="manualPermissioningRequired" type="xsdLocal:ManualPermissioningRequired"/>
+			<xsd:element name="AKR" type="xsdLocal:NillableAKR"/>
+			<xsd:element name="userID" type="xsd:string"/>
+			<xsd:element name="userIDType" type="xsdLocal:UserIDType"/>
+			<xsd:element name="userNumber" type="xsdLocal:UserNumber"/>
+			<xsd:element name="firstName" type="xsdLocal:_CCRMOMFirstName"/>
+			<xsd:element name="lastname" type="xsdLocal:_CCRMOMLastName"/>
+			<xsd:element name="dob" type="xsdLocal:_DOB"/>
+			<xsd:element name="isNewUser" type="xsdLocal:_IsNewUser"/>
+			<xsd:element name="QUID" type="xsdLocal:_QUID"/>
+			<xsd:element name="installDate" type="xsdLocal:InstallDate"/>
+			<xsd:element name="removalDate" type="xsdLocal:RemovalDate"/>
+			<xsd:element name="discount" type="xsdLocal:Discount"/>
+			<xsd:element name="specialPrice" type="xsdLocal:SpecialPrice"/>
+			<xsd:element name="specialPriceCurr" type="xsdLocal:SpecialPriceCurr"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsdLocal:SpecialPriceRestrictionDate"/>
+			<xsd:element name="itemNumber" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="startStopBillingDate" type="xsdLocal:StartStopBillingDate"/>
+			<xsd:element name="billingType" type="xsdLocal:_NillableCCRMOMBillingType"/>
+			<xsd:element name="billingNote" type="xsdLocal:BillingNote"/>
+			<xsd:element name="freeTrailFlag" type="xsdLocal:FreeTrailFlag"/>
+			<xsd:element name="freeTrailEndDate" type="xsdLocal:FreeTrialEndDate"/>
+			<xsd:element name="STB" type="xsdLocal:_STB"/>
+			<xsd:element name="assetIntegrationId" type="xsdLocal:AssetIntegrationId"/>
+			<xsd:element name="orderLineStatus" type="xsdLocal:OrderLineStatus"/>
+			<xsd:element name="permissioningStatus" type="xsdLocal:PermissioningStatus"/>
+			<xsd:element name="interfaceForBilling" type="xsdLocal:InterfaceForBilling"/>
+			<xsd:element name="interfaceForFulfilment" type="xsdLocal:InterfaceForFulfilment"/>
+			<xsd:element name="configuredAttribute" type="xsdLocal:_CCRMOMConfiguredAttribute" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="technicalFulfilmentReq" type="xsdLocal:TechnicalFulfilmentReq"/>
+			
+			<xsd:element name="technicalApprovalReq" type="xsdLocal:TechnicalApprovalReq"/>
+			<xsd:element name="fulfilmentStatus" type="xsdLocal:FulfilmentStatus"/>
+			<xsd:element name="fulfilmentIntegrationFlag" type="xsdLocal:FulfilmentIntegrationFlag"/>
+			
+			
+			<xsd:element name="billingAccountId" type="xsdLocal:BillingAccount"/>
+			<xsd:element name="technicalFulfilmentFlag" type="xsdLocal:TechnicalFulfilmentFlag"/>
+			
+			<xsd:element name="quantity" type="xsdLocal:Quantity"/>
+			<xsd:element name="product" type="xsdLocal:Product"/>
+			<xsd:element name="altInstalBillingId" type="xsdLocal:AltInstalBillingId"/>
+			<xsd:element name="freeTrialDuration" type="xsdLocal:FreeTrialDuration"/>
+			<xsd:element name="freeTrialStartDate" type="xsdLocal:FreeTrialStartDate"/>
+			<xsd:element name="lastUpdateDate" type="xsdLocal:LastUpdateDate"/>
+			<xsd:element name="mandatorytechFulfilmentFlag" type="xsdLocal:TechnicalVettingFlag"/>
+			<xsd:element name="technicalVettingFlag" type="xsdLocal:TechnicalVettingFlag"/>
+			
+			<!-- modified for PBI-333 -->
+			<xsd:element name="WorkPhone" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ResponseCode" type="xsdLocal:_ResponseCode" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMePlatformId" type="xsdLocal:_RCRMePlatformId" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMSupportLanguage" type="xsdLocal:_RCRMSupportLanguage" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMSegGrpEndUserActivity" type="xsdLocal:_RCRMSegGrpEndUserActivity" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMRegionalFocus" type="xsdLocal:_RCRMRegionalFocus" minOccurs="0"  maxOccurs="1"/>
+			<xsd:element name="RCRMMarketingConsentSetDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMManualPermissionedFlag" type="xsdLocal:_RCRMManualPermissionedFlag" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLocalLastName" type="xsdLocal:_RCRMLocalLastName" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLocalFirstName" type="xsdLocal:_RCRMLocalFirstName" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLocalDACSId" type="xsdLocal:_RCRMLocalDACSId" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLegalConsentSetDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLegalConsent" type="xsdLocal:_RCRMLegalConsent" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMLastUpdatedProfileDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMFTLFlagSetDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMFTLCompleteFlag" type="xsdLocal:_RCRMFTLCompleteFlag" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMErrorContext" type="xsdLocal:_RCRMErrorContext" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMErrorCode" type="xsdLocal:_RCRMErrorCode" minOccurs="0" maxOccurs="1"/>
+
+                        <!--As part of CR477 RCRMDiscountReason is added at OLI level -->
+                         
+                        <xsd:element name="RCRMDiscountReason" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+
+
+			<xsd:element name="RCRMDirectMarketing" type="xsdLocal:_RCRMDirectMarketing" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMCPfGTempURL" type="xsdLocal:_RCRMCPfGTempURL" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMBillingAccount" type="xsdLocal:_RCRMBillingAccount" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMActionCode" type="xsdLocal:_RCRMActionCode" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMAAAUpdatedProfileDate" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="PrimaryAccountId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ParentOrderItemId" type="xsdLocal:_ParentOrderItemId" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ModId" type="xsdLocal:_ModId" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="MM" type="xsdLocal:_MM" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="EmailAddress" type="xsdLocal:_EmailAddress" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ILA" type="xsdLocal:_ILA" minOccurs="0" maxOccurs="1"/>
+			<!-- end -->
+		        <xsd:element name="contactMarketFocus" type="xsdLocal:MarketFocus"
+				minOccurs="0"/>
+		        <xsd:element name="billingPlatform" type="xsdLocal:BillingPlatform"
+				minOccurs="0"/>
+			 <xsd:element name="MxPDBName" type="xsdLocal:RCRMMxPDBName" minOccurs="0" maxOccurs="1"/>
+		        <xsd:element name="umbrellaProductIntegrationId"
+				type="xsdLocal:ProductIntegrationId" minOccurs="0"/>
+		        <xsd:element name="contactReutersMessagingId"
+				type="xsdLocal:ReutersMessagingId" minOccurs="0"/>
+
+			<xsd:element name="oldContactUserId" type="xsdLocal:OldContactUserId" minOccurs="0" maxOccurs="1"/>	
+			<xsd:element name="CpfgErrorMessage" type="xsdLocal:CpfgErrorMessage" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="installSubscriberNumber" type="xsdLocal:CRMSubscriber" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="installSubscriberAccountId" type="xsdLocal:InstallSubscriberAccountId" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="installSubAccountNumber" type="xsdLocal:_NillableSubAccount" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="installLocationAccountId" type="xsdLocal:InstallLocationAccountId" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ContactId" type="xsdLocal:UserNumber" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="userGroup" type="xsdLocal:UserGroup" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="userDomain" type="xsdLocal:UserGroup" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="serverId" type="xsdLocal:UserGroup" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="contactJobFunction" type="xsdLocal:string100" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="contactAnonymityReason" type="xsdLocal:UserGroup" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="contactAnonymityFlag" type="xsdLocal:ContactAnonymityFlag" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="isDelete" type="xsdLocal:IsDelete" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SEADummyField1" type="xsdLocal:UserGroup" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SEADummyField2" type="xsdLocal:UserGroup" minOccurs="0" maxOccurs="1"/>
+			
+			<!-- modified for CR5347 -->
+			<xsd:element name="netPriceDisplay" type="xsdLocal:NetPriceDisplay" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="creditDebit" type="xsdLocal:CreditDebit" minOccurs="0" maxOccurs="1"/>
+                        <!-- end -->
+
+			<!-- SAP Integration--> 
+			<xsd:element name="SAPBillable" type="xsdLocal:string1" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SAPItemNumber" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="PONumber" type="xsdLocal:string50" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="InstallLocationAccountNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="BillToAccountNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField2" type="xsdLocal:string50" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField3" type="xsdLocal:string50" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SAPOrderNumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField6" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField7" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField1" type="xsdLocal:string50" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField8" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField9" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="RCRMField10" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SAPActionCode" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SAPBusinessCase" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="CalculatedListPrice" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ListPrice" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="BillingPeriod" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="PublishContactToSAP" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ContactStatus" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="PPLId" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="primaryUUID" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      
+			<!-- end-->
+
+               </xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_BillingAmendCCRM_OLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMNillableOLIId"/>
+			<xsd:element name="rootItemId" type="xsdLocal:_CRMNillableOLIId"/>
+			<xsd:element name="actionCode" type="xsdLocal:_CRMNillableOLIActionCode"/>
+			<xsd:element name="salesCode" type="xsdLocal:_CRMNillableSalesCode"/>
+			<xsd:element name="subscriber" type="xsdLocal:_NillableCSSubscriber"/>
+			<xsd:element name="subAccount" type="xsdLocal:_NillableSubAccount"/>
+			<xsd:element name="PLI" type="xsdLocal:_NillablePLI"/>
+			<xsd:element name="AKR" type="xsdLocal:NillableAKR"/>
+			<xsd:element name="userID" type="xsdLocal:UserID"/>
+			<xsd:element name="QUID" type="xsdLocal:_QUID"/>
+			<xsd:element name="discount" type="xsdLocal:Discount"/>
+			<xsd:element name="specialPrice" type="xsdLocal:SpecialPrice"/>
+			<xsd:element name="specialPriceCurr" type="xsdLocal:SpecialPriceCurr"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsdLocal:SpecialPriceRestrictionDate"/>
+			<xsd:element name="itemNumber" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="startStopBillingDate" type="xsdLocal:StartStopBillingDate"/>
+			<xsd:element name="billingType" type="xsdLocal:_NillableCCRMOMBillingType"/>
+			<xsd:element name="billingNote" type="xsdLocal:BillingNote"/>
+			<xsd:element name="STB" type="xsdLocal:_STB"/>
+			<xsd:element name="assetIntegrationId" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="orderLineStatus" type="xsdLocal:NillableOrderLineStatus"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CCRMOM_OLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="actionCode" type="xsdLocal:CCRMOLIActionCode"/>
+			<xsd:element name="salesCode" type="xsdLocal:CCRMSalesCode"/>
+			<xsd:element name="subAccount" type="xsdLocal:SubAccount"/>
+			<xsd:element name="PLI" type="xsdLocal:_PLI"/>
+			<xsd:element name="AKR" type="xsdLocal:NillableAKR"/>
+			<xsd:element name="userNumber" type="xsdLocal:UserNumber"/>
+			<xsd:element name="QUID" type="xsdLocal:_QUID"/>
+			<xsd:element name="discount" type="xsdLocal:Discount"/>
+			<xsd:element name="specialPrice" type="xsdLocal:SpecialPrice"/>
+			<xsd:element name="specialPriceCurr" type="xsdLocal:SpecialPriceCurr"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsdLocal:SpecialPriceRestrictionDate"/>
+			<xsd:element name="itemNumber" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="startStopBillingDate" type="xsdLocal:StartStopBillingDate"/>
+			<xsd:element name="billingType" type="xsdLocal:CCRMOMBillingType"/>
+			<xsd:element name="billingNote" type="xsdLocal:BillingNote"/>
+			<xsd:element name="STB" type="xsdLocal:_STB"/>
+			<xsd:element name="assetIntegrationId" type="xsdLocal:NillableAssetIntegrationId"/>
+  </xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="MessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsdLocal:CSActionCode"/>
+			<xsd:element name="version" type="xsdLocal:MessageVersion"/>
+			<xsd:element name="userId" type="xsdLocal:ApplicationUserID"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CCRMMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsdLocal:CCRMActionCode"/>
+			<xsd:element name="version" type="xsdLocal:NillableMessageVersion"/>
+			<xsd:element name="userId" type="xsdLocal:NillableApplicationUserID"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="NillableMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsdLocal:NillableCSActionCode"/>
+			<xsd:element name="version" type="xsdLocal:NillableMessageVersion"/>
+			<xsd:element name="userId" type="xsdLocal:NillableApplicationUserID"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CompassMessageHeader">
+		<xsd:sequence>
+			<xsd:element name="messageId" type="xsd:string"/>
+			<xsd:element name="transactionId" type="xsd:string"/>
+			<xsd:element name="messageHistory" type="xsd:string"/>
+			<xsd:element name="tracingId" type="xsd:string"/>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="timeStamp" type="xsd:dateTime"/>
+			<xsd:element name="userId" type="xsd:string"/>
+			<xsd:element name="objectSystem" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CompassOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderNumber" type="xsdLocal:_CRMOrderNumber"/>
+			<xsd:element name="subscriber" type="xsdLocal:CSSubscriber"/>
+			<xsd:element name="installDate" type="xsdLocal:InstallDate"/>
+			<xsd:element name="removalDate" type="xsdLocal:RemovalDate"/>
+			<xsd:element name="po" type="xsdLocal:CSPO"/>
+			<xsd:element name="orderNote" type="xsdLocal:OrderNote"/>
+			<xsd:element name="ssPersonId" type="xsdLocal:SSPersonId"/>
+			<xsd:element name="slPersonId" type="xsdLocal:SLPersonId"/>
+			<xsd:element name="pricelistCurrency" type="xsdLocal:CSPricelistCurrency"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CCRMCompassOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderNumber" type="xsdLocal:_CRMOrderNumber"/>
+			<xsd:element name="installDate" type="xsdLocal:InstallDate"/>
+			<xsd:element name="removalDate" type="xsdLocal:RemovalDate"/>
+			<xsd:element name="orderNote" type="xsdLocal:OrderNote"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CompassOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="actionCode" type="xsdLocal:OLIActionCode"/>
+			<xsd:element name="businessCase" type="xsdLocal:_CRMBusinessCase"/>
+			<xsd:element name="salesCode" type="xsdLocal:SalesCode"/>
+			<xsd:element name="subAccount" type="xsdLocal:SubAccount"/>
+			<xsd:element name="PLI" type="xsdLocal:_PLI"/>
+			<xsd:element name="AKR" type="xsdLocal:NillableAKR"/>
+			<xsd:element name="permissioningSystem" type="xsdLocal:PermissioningSystem"/>
+			<xsd:element name="userID" type="xsdLocal:UserID"/>
+			<xsd:element name="QUID" type="xsdLocal:_QUID"/>
+			<xsd:element name="permissionDate" type="xsdLocal:PermissionDate"/>
+			<xsd:element name="specialPrice" type="xsdLocal:SpecialPrice"/>
+			<xsd:element name="specialPriceCurr" type="xsdLocal:SpecialPriceCurr"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsdLocal:SpecialPriceRestrictionDate"/>
+			<xsd:element name="itemNumber" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="startStopBillingDate" type="xsdLocal:StartStopBillingDate"/>
+			<xsd:element name="billingType" type="xsdLocal:BillingType"/>
+			<xsd:element name="billingNote" type="xsdLocal:BillingNote"/>
+			<xsd:element name="STB" type="xsdLocal:_STB"/>
+			<xsd:element name="permBillFlag" type="xsdLocal:PermBillFlag"/>
+			<xsd:element name="installToSubscriber" type="xsdLocal:_NillableCSSubscriber"/>
+			<xsd:element name="installToItemNumber" type="xsdLocal:NillableAssetIntegrationId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CCRMCompassOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="rootItemId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="actionCode" type="xsdLocal:OLIActionCode"/>
+			<xsd:element name="salesCode" type="xsdLocal:SalesCode"/>
+			<xsd:element name="subscriber" type="xsdLocal:CSSubscriber"/>
+			<xsd:element name="subAccount" type="xsdLocal:SubAccount"/>
+			<xsd:element name="PLI" type="xsdLocal:_PLI"/>
+			<xsd:element name="AKR" type="xsdLocal:NillableAKR"/>
+			<xsd:element name="userID" type="xsdLocal:UserID"/>
+			<xsd:element name="QUID" type="xsdLocal:_QUID"/>
+			<xsd:element name="discount" type="xsdLocal:Discount"/>
+			<xsd:element name="specialPrice" type="xsdLocal:SpecialPrice"/>
+			<xsd:element name="specialPriceCurr" type="xsdLocal:SpecialPriceCurr"/>
+			<xsd:element name="specialPriceRestrictionDate" type="xsdLocal:SpecialPriceRestrictionDate"/>
+			<xsd:element name="itemNumber" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="startStopBillingDate" type="xsdLocal:StartStopBillingDate"/>
+			<xsd:element name="billingType" type="xsdLocal:BillingType"/>
+			<xsd:element name="billingNote" type="xsdLocal:BillingNote"/>
+			<xsd:element name="STB" type="xsdLocal:_STB"/>
+			<xsd:element name="assetIntegrationId" type="xsdLocal:AssetIntegrationId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSUserHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderNumber" type="xsdLocal:_CRMOrderNumber"/>
+			<xsd:element name="subscriber" type="xsdLocal:CSSubscriber"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CSUserOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="userID" type="xsdLocal:UserID"/>
+			<xsd:element name="userNumber" type="xsdLocal:UserNumber"/>
+			<xsd:element name="firstName" type="xsdLocal:_CSFirstName"/>
+			<xsd:element name="lastName" type="xsdLocal:_CSLastName"/>
+			<xsd:element name="securityIdentifier" type="xsdLocal:_SecurityIdentifier"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="_CCRMOMConfiguredAttribute">
+		<xsd:sequence>
+			<xsd:element name="attributeName" type="xsdLocal:_CCRMOMAttributeName"/>
+			<xsd:element name="value" type="xsdLocal:_CCRMOMAttributeValue"/>
+			<xsd:element name="attributeIntegrationId" type="xsdLocal:AttributeIntegrationId"/>
+			<xsd:element name="valueIntegrationId" type="xsdLocal:ValueIntegrationId"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="QuoteNote">
+		<xsd:sequence>
+			<xsd:element name="type" type="xsdLocal:Type"/>
+			<xsd:element name="noteId" type="xsdLocal:NoteId"/>
+			<xsd:element name="installationNotes" type="xsdLocal:InstallationNotes"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TOMOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="quoteNumber" type="xsdLocal:QuoteNumber"/>
+			<xsd:element name="quoteRevisionNumber" type="xsdLocal:QuoteRevisionNumber"/>
+			<xsd:element name="orderType" type="xsdLocal:OrderType"/>
+			<xsd:element name="orderNumber" type="xsdLocal:TOMOrderNumber"/>
+			<xsd:element name="OMSContactId" type="xsdLocal:OMSContactId"/>
+			<xsd:element name="quoteNote" type="xsdLocal:QuoteNote" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="accountId" type="xsdLocal:AccountLocId"/>
+			<xsd:element name="poNumber" type="xsdLocal:PONumber"/>
+			<xsd:element name="orderStatus" type="xsdLocal:OrderStatus"/>
+			<xsd:element name="custRequiredDate" type="xsdLocal:CustRequiredDate"/>
+			<xsd:element name="actualInstallationDate" type="xsdLocal:ActualInstallDate"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TOMOLI">
+		<xsd:sequence>
+			<xsd:element name="PLI" type="xsdLocal:_NillablePLI"/>
+			<xsd:element name="productIntegrationId" type="xsdLocal:ProductIntegrationId"/>
+			<xsd:element name="assetIntegrationId" type="xsdLocal:NillableAssetIntegrationId"/>
+			<xsd:element name="quantity" type="xsdLocal:Quantity"/>
+			<xsd:element name="Id" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="rootItemId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="parentOrderItemId" type="xsdLocal:ParentOrderItemId"/>
+			<xsd:element name="actionCode" type="xsdLocal:CCRMOLIActionCode"/>
+			<xsd:element name="technicalApprovalReq" type="xsdLocal:TechnicalApprovalReq"/>
+			<xsd:element name="technicalFulfilmentReq" type="xsdLocal:TechnicalFulfilmentReq"/>
+			<xsd:element name="technicalFulfilmentStatus" type="xsdLocal:OLITechnicalFulfilmentStatus"/>
+			<xsd:element name="billingAccountId" type="xsdLocal:BillingAccount"/>
+			<xsd:element name="altInstalBillingId" type="xsdLocal:AltInstalBillingId"/>
+			<xsd:element name="configuredAttribute" type="xsdLocal:_CCRMOMConfiguredAttribute" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="productName" type="xsdLocal:Product"/>
+			<xsd:element name="orderLineStatus" type="xsdLocal:OrderLineStatus"/>
+			<xsd:element name="permissioningStatus" type="xsdLocal:PermissioningStatus"/>
+			<xsd:element name="AKR" type="xsdLocal:NillableAKR"/>
+			<xsd:element name="ILA" type="xsdLocal:_ILA"/>
+			<xsd:element name="userID" type="xsd:string"/>
+			<xsd:element name="userIDType" type="xsdLocal:UserIDType"/>
+			<xsd:element name="custRequiredDate" type="xsdLocal:CustRequiredDate"/>
+			<xsd:element name="lastUpdateDate" type="xsdLocal:LastUpdateDate"/>
+			<xsd:element name="businessCase" type="xsdLocal:_CRMBusinessCase"/>
+			<xsd:element name="legacyOrderNumber" type="xsdLocal:LegacyOrderNumber"/>
+			<xsd:element name="freeTrialDuration" type="xsdLocal:FreeTrialDuration"/>
+			<xsd:element name="permissionDate" type="xsdLocal:PermissionDate"/>
+			<xsd:element name="depermissionDate" type="xsdLocal:DepermissionDate"/>
+			<xsd:element name="firstName" type="gcap-cut:FirstName"/>
+			<xsd:element name="lastname" type="gcap-cut:LastName"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TOMResponseOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="CRMOrderId" type="xsdLocal:CRMOrderId"/>
+			<xsd:element name="actualInstallationDate" type="xsdLocal:PlannedInstallDateTimeNillables"/>
+			<xsd:element name="plannedInstallationDate" type="xsdLocal:PlannedInstallDateTimeNillables"/>
+			<xsd:element name="technicalFulfilmentStatus" type="xsdLocal:TechnicalFulfilmentStatus"/>
+			<xsd:element name="technicalFulfilmentStatusReason" type="xsdLocal:TechnicalFulfilmentStatusReason"/>
+			<xsd:element name="firstName" type="xsdLocal:OMSFirstName"/>
+			<xsd:element name="lastname" type="xsdLocal:OMSLastName"/>
+			<xsd:element name="email" type="xsdLocal:Email"/>
+			<xsd:element name="phone" type="xsdLocal:Phone"/>
+			<xsd:element name="requestStatus" type="xsdLocal:RequestStatus"/>
+			<xsd:element name="technicalOrderNumber" type="xsdLocal:TechnicalOrderNumber"/>
+			<xsd:element name="CSOrderNumber" type="xsdLocal:CSOrderNumber"/>
+			<!--xsd:element name="ExpectedTechnicallyReadyToMigrateDate" type="xsd:date" minOccurs="0"/-->
+			<xsd:element name="ExpectedTechnicallyReadyToMigrateDate" type="xsdLocal:PlannedInstallDateTimeNillables" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TOMResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="plannedInstallationDate" type="xsdLocal:PlannedInstallDateTimeNillables"/>
+			<xsd:element name="actualInstallationDate" type="xsdLocal:PlannedInstallDateTimeNillables"/>
+			<xsd:element name="technicalFulfilmentStatus" type="xsdLocal:OLITechnicalFulfilmentStatus"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ATHOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="orderNumber" type="xsdLocal:_CRMOrderNumber"/>
+			<xsd:element name="subscriberNumber" type="xsdLocal:InstallSubscriberAccountId"/>
+			<xsd:element name="subAccount" type="xsdLocal:InstallSubAccountNumber"/>
+			<xsd:element name="requestorCode" type="xsd:string"/>
+			<xsd:element name="Login" type="xsdLocal:Login" nillable="true"/>
+			<xsd:element name="email" type="xsdLocal:Email" nillable="true"/>
+			<xsd:element name="targetDate" type="xsdLocal:RemovalDate" nillable="true"/>
+			<xsd:element name="noOfRecords" type="xsdLocal:NoOfRecords" nillable="true"/>
+			<xsd:element name="actionCode" type="xsdLocal:_CRMBusinessCase"/>			
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ATHUserLineItem">
+		<xsd:sequence>
+			<xsd:element name="userId" type="xsdLocal:AthUserId" nillable="true"/>
+			<xsd:element name="businessCase" type="xsdLocal:_CRMBusinessCase"/>
+			<xsd:element name="referenceUserId" type="xsdLocal:AthUserId" nillable="true"/>
+		      	<xsd:element name="firstName" type="xsd:string" />
+			<xsd:element name="lastName" type="xsd:string"/>
+			<xsd:element name="phoneNumber" type="xsdLocal:Phone" nillable="true"/>
+			<xsd:element name="emailAddress" type="xsdLocal:Email" />
+			<xsd:element name="serverName" type="xsdLocal:ServerName" nillable="true"/>
+			<xsd:element name="serverType" type="xsdLocal:ServerType" nillable="true" />
+			<xsd:element name="jobFunction" type="xsdLocal:JobFunction" nillable="true"/>
+			<xsd:element name="seedAccount" type="xsdLocal:SeedAccount" nillable="true"/>
+			<xsd:element name="userGroup" type="xsdLocal:UserGroup" nillable="true"/>
+			<xsd:element name="domain" type="xsdLocal:Domain"  nillable="true"/>
+			<xsd:element name="anonimityFlag" type="xsdLocal:AnonymityFlag"/>
+			<xsd:element name="anonimityReason" type="xsdLocal:UserGroup"/>
+			<xsd:element name="TSAID" type="xsdLocal:TSAID" nillable="true"/>
+			<xsd:element name="system" type="xsdLocal:System"/>
+			<xsd:element name="login" type="xsdLocal:Login" nillable="true"/>
+			<xsd:element name="password" type="xsdLocal:Password" nillable="true"/>
+			<xsd:element name="subscriberNumber" type="xsdLocal:InstallSubscriberAccountId"  nillable="true"/>
+			<xsd:element name="subAccount" type="xsdLocal:InstallSubAccountNumber"  nillable="true"/>
+			<xsd:element name="operation" type="xsdLocal:_CRMBusinessCase"/>
+			<xsd:element name="ProductList" type="xsdLocal:PLIList" maxOccurs="unbounded"/>	
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PLIList">
+	<xsd:sequence>
+			<xsd:element name="PLI" type="xsdLocal:_PLI"/>
+			<xsd:element name="PLIName" type="xsdLocal:Product" nillable="true"/>
+			<xsd:element name="PLIType" type="xsd:string" nillable="true"/>
+			<xsd:element name="status" type="xsdLocal:Status" nillable="true"/>
+			<xsd:element name="startDate" type="xsdLocal:InstallDate" nillable="true"/>
+			<xsd:element name="EndDate" type="xsdLocal:RemovalDate" nillable="true"/>	
+			<xsd:element name="freeTrial" type="xsdLocal:FreeTrailFlag" nillable="true"/>
+			<xsd:element name="action" type="xsdLocal:CCRMActionCode" />
+			<xsd:element name="orderLineNumber" type="xsdLocal:_CRMOLIId"/>
+	</xsd:sequence>
+        </xsd:complexType>
+	<xsd:complexType name="ATHResponseOrderHeader">
+		<xsd:sequence>
+			<xsd:element name="transactionId" type="xsdLocal:AthTransactionId"/>
+			<xsd:element name="referenceRequestId" type="xsdLocal:AthUserId"/>
+			<xsd:element name="responseDate" type="xsdLocal:PlannedInstallDate"/>
+			<xsd:element name="subscriberNumber" type="xsdLocal:InstallSubscriberAccountId"/>
+			<xsd:element name="subAccount" type="xsdLocal:InstallSubAccountNumber"/>
+			<xsd:element name="actionCode" type="xsdLocal:_CRMBusinessCase"/>		
+			<xsd:element name="status" type="xsdLocal:Status"/>
+			<xsd:element name="noOfRecords" type="xsdLocal:NoOfRecords"/>
+			<xsd:element name="noOfSuccessRecords" type="xsdLocal:NoOfRecords"/>
+			<xsd:element name="noOfFailedRecords" type="xsdLocal:NoOfRecords"/>			
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ATHResponseOLI">
+		<xsd:sequence>
+			<xsd:element name="transactionId" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="transactionStatus" type="xsdLocal:RequestStatus"/>
+			<xsd:element name="userId" type="xsdLocal:AthUserId"/>
+			<xsd:element name="subscriberNumber" type="xsdLocal:InstallSubscriberAccountId"/>
+			<xsd:element name="subAccount" type="xsdLocal:InstallSubAccountNumber"/>
+			<xsd:element name="actionCode" type="xsdLocal:_CRMBusinessCase"/>
+			<xsd:element name="errorCode" type="xsdLocal:RequestStatus"/>
+			<xsd:element name="errorMessage" type="xsdLocal:_RCRMErrorContext"/>
+			<xsd:element name="referenceUserId" type="xsdLocal:AthUserId" nillable="true"/>
+			<xsd:element name="ProductList" type="xsdLocal:ResponsePLIList" maxOccurs="unbounded"/>	
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ResponsePLIList">
+	<xsd:sequence>
+			<xsd:element name="PLI" type="xsdLocal:_PLI"/>
+			<xsd:element name="orderLineNumber" type="xsdLocal:_CRMOLIId"/>
+			<xsd:element name="errorCode" type="xsdLocal:RequestStatus" />
+			<xsd:element name="errorMessage" type="xsdLocal:_RCRMErrorContext"/>	
+	</xsd:sequence>
+        </xsd:complexType>
+	<xsd:simpleType name="_CSFirstName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Geratayya</content>
+					<comment>First Name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CSLastName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Patchipulusu</content>
+					<comment>Last Name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CCRMOMFirstName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Geratayya</content>
+					<comment>First Name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CCRMOMLastName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Patchipulusu</content>
+					<comment>Last Name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_SecurityIdentifier">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="32"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AssetIntegrationId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM Asset integration id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableAssetIntegrationId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>CRM Asset integration id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ProductIntegrationId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>Product Integration Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderLineStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Ready for Billing</content>
+					<comment>Status of the order line</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PermissioningStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Permissioned</content>
+					<comment>Permissioning status of the order line</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="InterfaceForBilling">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>Should be interafaced for billing</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="InterfaceForFulfilment">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:InterfaceForFulfilment/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>Should be interfaced for fulfilment</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillablePermissioningStatus">
+		<xsd:union memberTypes="xsdLocal:PermissioningStatus xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableInterfaceForBilling">
+		<xsd:union memberTypes="xsdLocal:InterfaceForBilling xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableInterfaceForFulfilment">
+		<xsd:union memberTypes="xsdLocal:InterfaceForFulfilment xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMBusinessCase">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableOrderLineStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Ready for Billing</content>
+					<comment>Status of the order line</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Ready for Billing</content>
+					<comment>Status of the order line</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="InstallDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Install date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="FreeTrialEndDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>FreeTrail End Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SpecialPrice">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>207.25</content>
+					<comment>Special price; special price can be either +ve or -ve</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:decimal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Discount">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>005.00</content>
+					<comment>Discount in 999.99 format as discount can be 100%</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:decimal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="RemovalDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Removal Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="_DOB">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Removal Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="StartStopBillingDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Start stop billing date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SpecialPriceRestrictionDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Special Price Restriction Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="PermissionDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Permission Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderLinestatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>R</content>
+					<comment>Status of the order line, R - for bill released</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BilledFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>Billed</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>N</content>
+					<comment>Not billed</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Y"/>
+			<xsd:enumeration value="N"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_IsNewUser">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>New User has to be created</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Y"/>
+			<xsd:enumeration value="N"/>
+			<xsd:enumeration value=""/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_STB">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>Striaght through billing</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>N</content>
+					<comment>No striaght through billing</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Y"/>
+			<xsd:enumeration value="N"/>
+			<xsd:enumeration value="F"/>
+			<xsd:enumeration value=""/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BillingType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>R</content>
+					<comment>Recurring</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>O</content>
+					<comment>Once-Off</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="R"/>
+			<xsd:enumeration value="O"/>
+			<xsd:enumeration value="D"/>
+			<xsd:enumeration value="C"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CCRMOMBillingType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Recurring</content>
+					<comment>Recurring</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>Once-Off</content>
+					<comment>Once-Off</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Recurring"/>
+			<xsd:enumeration value="Once-Off"/>
+			<xsd:enumeration value="Once-OffDebit"/>
+			<xsd:enumeration value="Once-OffCredit"/>
+			<xsd:enumeration value="RecurringDebit"/>
+			<xsd:enumeration value="RecurringCredit"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_NillableCCRMOMBillingType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Recurring</content>
+					<comment>Recurring</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>Once-Off</content>
+					<comment>Once-Off</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value=""/>
+			<xsd:enumeration value="Recurring"/>
+			<xsd:enumeration value="Once-Off"/>
+			<xsd:enumeration value="Once-OffDebit"/>
+			<xsd:enumeration value="Once-OffCredit"/>
+			<xsd:enumeration value="RecurringDebit"/>
+			<xsd:enumeration value="RecurringCredit"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubAccount">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>001</content>
+					<comment>Sub Account number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_NillableSubAccount">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>001</content>
+					<comment>Sub Account number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="_QUID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2678</content>
+					<comment>QUID for Reuters + products</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="UserID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2678</content>
+					<comment>User IDr</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="UserNumber">
+				<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>Contact Row Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="UserIDType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>QUID</content>
+					<comment>User ID Type</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMOLIId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ParentOrderItemId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMNillableOLIId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderLineNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>001</content>
+					<comment>Order Line number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ItemNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2678</content>
+					<comment>Item number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="_AKR">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>101</content>
+					<comment>Admin keystation number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="0"/>
+			<xsd:maxExclusive value="1000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableAKR">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>101</content>
+					<comment>Admin keystation number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsdLocal:_AKR xsdLocal:EmptyString"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="_ILA">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>00AB71</content>
+					<comment>IDN Logical Address</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CSSubscriber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>UK41237</content>
+					<comment>Subscriber number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="7"/>
+			<xsd:maxLength value="7"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_NillableCSSubscriber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>UK41237</content>
+					<comment>Subscriber number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="9"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CRMSubscriber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>UK41237</content>
+					<comment>Subscriber number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RequestStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A000</content>
+					<comment>Success</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Ennn</content>
+					<comment>Error or failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>UNKNOWN ERROR</content>
+					<comment>Error or failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RequestStatusMessage">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="60"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderNote">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BillingNote">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Billing note which appears in the invoice</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="109"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableCRMOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CSOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="EnterpriseCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessageId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TransactionId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TracingId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ResponseCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CSActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>OM05</content>
+					<comment>Order Create</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="4"/>
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableCSActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>OM05</content>
+					<comment>Order Create</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CCRMActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>OM05</content>
+					<comment>Order Create</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OLIActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>I</content>
+					<comment>Install</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>R</content>
+					<comment>Removal</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CCRMOLIActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Add</content>
+					<comment>Install</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>Delete</content>
+					<comment>Removal</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Add"/>
+			<xsd:enumeration value="Delete"/>
+			<xsd:enumeration value="Stop Date Change"/>
+			<xsd:enumeration value="Start Date Change"/>
+			<xsd:enumeration value="AKR Change"/>
+			<xsd:enumeration value="FT Extension"/>
+			<xsd:enumeration value="Billing Account Change"/>
+			<xsd:enumeration value="Update"/>
+			<xsd:enumeration value="Special Price Change"/>
+			<xsd:enumeration value="Billing Note Change"/>
+			<xsd:enumeration value="PO Number Change"/>
+			<xsd:enumeration value="User Swap"/>
+			<xsd:enumeration value="Recontract"/>
+			<xsd:enumeration value="Repermission"/>
+			<xsd:enumeration value="-"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMNillableOLIActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Add</content>
+					<comment>Install</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>Delete</content>
+					<comment>Removal</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value=""/>
+			<xsd:enumeration value="Add"/>
+			<xsd:enumeration value="Delete"/>
+			<xsd:enumeration value="Stop Date Change"/>
+			<xsd:enumeration value="Start Date Change"/>
+			<xsd:enumeration value="AKR Change"/>
+			<xsd:enumeration value="FT Extension"/>
+			<xsd:enumeration value="Billing Account Change"/>
+			<xsd:enumeration value="PO Number Change"/>
+			<xsd:enumeration value="Update"/>
+			<xsd:enumeration value="Recontract"/>
+			<xsd:enumeration value="Repermission"/>
+			<xsd:enumeration value="-"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SalesCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CCRMSalesCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CRMNillableSalesCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessageVersion">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A</content>
+					<comment>Message Version</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableMessageVersion">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>A</content>
+					<comment>Message Version</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ApplicationUserID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Brian.Knights@reuters.com</content>
+					<comment>User id, who initiated the change</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NillableApplicationUserID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Brian.Knights@reuters.com</content>
+					<comment>User id, who initiated the change</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ObjectSystem">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Siebel</content>
+					<comment>Application which request the action</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="8"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Response">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>0</content>
+					<comment>Success</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>1</content>
+					<comment>Failure</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="0"/>
+			<xsd:enumeration value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Message">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Order line status message</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="60"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_PLI">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>XK3INTD1</content>
+					<comment>Price list item</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_NillablePLI">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>XK3INTD1</content>
+					<comment>Price list item</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SpecialPriceCurr">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>GBP</content>
+					<comment>Special price currency</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CountryCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>FR</content>
+					<comment>Country code for France</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="2"/>
+			<xsd:maxLength value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="country">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>France</content>
+					<comment>Country name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessagHistory">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>CRM;EAI;</content>
+					<comment>Applications the message has been passed through</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PermissioningSystem">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>SPM</content>
+					<comment>System where the product need to be permissioned</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ManualPermissioningRequired">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>permissioned manually</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>N</content>
+					<comment>Auto permissioning or permissioning not required</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Y"/>
+			<xsd:enumeration value="N"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FreeTrailFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>Free trail</comment>
+				</gcap-sa:Example>
+				<gcap-sa:Example>
+					<content>N</content>
+					<comment>Not a free trial</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Y"/>
+			<xsd:enumeration value="N"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="EmptyString">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CCRMOMAttributeName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Color</content>
+					<comment>Configured Attribute Name</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="75"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="_CCRMOMAttributeValue">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Red</content>
+					<comment>Configured Attribute Value</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AttributeIntegrationId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Attribute Integration Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ValueIntegrationId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Value Integration Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Phone">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OMSFirstName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OMSLastName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Email">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Field5">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Field4">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Field3">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Field3</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Field2">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Field2</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Field1">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Field1</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountLocId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>AccountLocId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TechnicalOrderNo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>TechnicalOrderNo</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TechnicalFulfilmentStatusReason">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Status Reason</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="150"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TechnicalFulfilmentStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OLITechnicalFulfilmentStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PlannedInstallDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Planned Install Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	
+	
+	 <xsd:simpleType name="PlannedInstallDateTimeNillables">
+       <xsd:union memberTypes="xsd:dateTime xsd:date xsdLocal:emptyString"/>
+    </xsd:simpleType>
+    <xsd:simpleType name="emptyString">
+		<xsd:restriction base="xsd:string">
+		    <xsd:maxLength value="0"/>
+	    </xsd:restriction>
+     </xsd:simpleType>
+   
+	<xsd:simpleType name="ActualInstallDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Planned Install Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="PONumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CustRequiredDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Planned Install Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Account">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountLocation">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="QuoteNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="QuoteRevisionNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Phone Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="22"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TechnicalFulfilmentReq">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Y</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TechnicalApprovalReq">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Y</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FulfilmentStatus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Y</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FulfilmentIntegrationFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Y</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BillingIntegrationFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Y</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BillingAccount">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>BillingAccount</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TechnicalFulfilmentFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>BillingAccount</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Quantity">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>BillingAccount</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Product">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Product</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AltInstalBillingId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>AltInstalBillingId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FreeTrialDuration">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>AltInstalBillingId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="FreeTrialStartDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>FreeTrail Start Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="InstallationNotes">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Product</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+        <xsd:simpleType name="Type">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Type</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NoteId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>NoteId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>  
+	<xsd:simpleType name="TOMOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>TOMOrderNumber</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OMSContactId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>OMSContactId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LegacyOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>LegacyOrderNumber</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LastUpdateDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>DateTime</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:dateTime"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CRMOrderId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example/>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TechnicalOrderNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>technical Order number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TechnicalOrderOwner">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>1-zqA12</content>
+					<comment>technical Order number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="200"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TechnicalVettingFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>TechnicalVettingFlag</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AssignedOMS">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Y</content>
+					<comment>TechnicalVettingFlag</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DepermissionDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Depermission Date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="_SID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>001</content>
+					<comment>SID</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+		<xsd:simpleType name="CSPO">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Purchase Order Number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SSPersonId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Sales specialist person id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SLPersonId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Sales Account Manager Person Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CSPricelistCurrency">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Pricelist Currency</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SalesSpecialist">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Sales Account Manager Person Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+      <xsd:simpleType name="AAATransactionId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>LegacyOrderNumber</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CurrencyCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Currency Code data for Chinese Pricelist</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountManager">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Sales Account Manager Person Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+<!--added for PBI-333 -->
+
+
+	<xsd:simpleType name="_ResponseCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Response Code</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMePlatformId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM ePlatform Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMSupportLanguage">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Support Language</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMSegGrpEndUserActivity">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM SegGrp EndUserActivity</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="255"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMRegionalFocus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Regional Focus</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMManualPermissionedFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Manual Permissioned Flag</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMLocalLastName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Local LastName</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMLocalFirstName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Local FirstName</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMLocalDACSId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Local DACSId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMLegalConsent">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Legal Consent</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMFTLCompleteFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM FTL CompleteFlag</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMErrorContext">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Error Context</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMErrorCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Error Code</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMDirectMarketing">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Direct Marketing</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="_RCRMCPfGTempURL">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM CPfG Temp URL</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMBillingAccount">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Billing Account</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_RCRMActionCode">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>RCRM Action Code</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_ParentOrderItemId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Parent Order Item Id</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_ModId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>MM</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="_MM">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>MM</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="_EmailAddress">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>Email Address</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+<!--end for PBI-333 -->
+
+<!--Added Target System for the defect 18715 -->
+<xsd:simpleType name="TargetSystem">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>CS;TOM;CPfG;</content>
+					<comment>Target System(s) to where an order needs to be sent</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="255"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+<!--Added for CRM6.2.100 PBI  -->
+<xsd:simpleType name="MarketFocus">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>Europe</content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+<xsd:simpleType name="BillingPlatform">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+<xsd:simpleType name="RCRMMxPDBName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="320"/>
+		</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="ReutersMessagingId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>rob.billington.reuters.com@reuters.net</content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+<xsd:simpleType name="ExpectedTRTMDate">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>2007-04-25</content>
+					<comment>Install date</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:union memberTypes="xsd:date">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:token">
+					<xsd:enumeration value=""/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+</xsd:simpleType>
+<xsd:simpleType name="OldContactUserId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="320"/>
+		</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CpfgErrorMessage">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="ContactSegGrpEndUserActivity">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="255"/>
+		</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="InstallSubscriberNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>SubscriberNumber</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="InstallSubscriberAccountId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>SubscriberAccountId</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+					<xsd:maxLength value="15"/>
+		</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="InstallSubAccountNumber">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>BillingAccount</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="InstallLocationAccountId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>BillingAccount</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+					<xsd:maxLength value="15"/>
+		</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PermBillFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>P</content>
+					<comment>P or B</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrderOwner">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>P</content>
+					<comment>P or B</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="UserGroup">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>P</content>
+					<comment>P or B</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ContactAnonymityFlag">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<gcap-sa:EquivalentDataItem/>
+					<gcap-sa:Example>
+						<content>P</content>
+						<comment>P or B</comment>
+					</gcap-sa:Example>
+				</xsd:appinfo>
+			</xsd:annotation>
+			<xsd:restriction base="xsd:string">
+				<xsd:maxLength value="1"/>
+			</xsd:restriction>
+	</xsd:simpleType>	
+	<xsd:simpleType name="AnonymityFlag">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>P</content>
+					<comment>P or B</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NetPriceDisplay">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CreditDebit">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content></content>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ServerName">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="ServerType">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="JobFunction">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="SeedAccount">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Domain">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Login">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Password">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment></comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Status">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>ACTIVE/DLETED/INACTIVE</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="System">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>SAFE/TSA/ATHENA</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AthUserId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment>SAFE/TSA/ATHENA</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AthTransactionId">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>001</content>
+					<comment>Sub Account number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="NoOfRecords">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>001</content>
+					<comment>Sub Account number</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:positiveInteger"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="IsDelete">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content>P</content>
+					<comment>P or B</comment>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TSAID">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<gcap-sa:EquivalentDataItem/>
+				<gcap-sa:Example>
+					<content/>
+					<comment/>
+				</gcap-sa:Example>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+<xsd:simpleType name="string1">
+	<xsd:annotation>
+		<xsd:appinfo>
+			<gcap-sa:EquivalentDataItem/>
+			<gcap-sa:Example/>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<xsd:restriction base="xsd:string">
+		<xsd:maxLength value="1"/>
+	</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="string30">
+	<xsd:annotation>
+		<xsd:appinfo>
+			<gcap-sa:EquivalentDataItem/>
+			<gcap-sa:Example/>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<xsd:restriction base="xsd:string">
+		<xsd:maxLength value="30"/>
+	</xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="string50">
+	<xsd:annotation>
+		<xsd:appinfo>
+			<gcap-sa:EquivalentDataItem/>
+			<gcap-sa:Example/>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<xsd:restriction base="xsd:string">
+		<xsd:maxLength value="50"/>
+	</xsd:restriction>
+</xsd:simpleType>
+
+
+<xsd:simpleType name="string100">
+	<xsd:annotation>
+		<xsd:appinfo>
+			<gcap-sa:EquivalentDataItem/>
+			<gcap-sa:Example/>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<xsd:restriction base="xsd:string">
+		<xsd:maxLength value="100"/>
+	</xsd:restriction>
+</xsd:simpleType>
+</xsd:schema>

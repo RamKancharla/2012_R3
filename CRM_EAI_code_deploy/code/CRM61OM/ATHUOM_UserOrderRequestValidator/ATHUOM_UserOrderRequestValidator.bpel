@@ -1,0 +1,238 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+* Module:      ATHUOM_UserOrderRequestValidator.bpel
+* Description: Synchronous BPEL Process that validates the xml
+* Change History
+* Version      Date         Author                  Description Of Change 
+   1.0        18/06/09      Dasaradh                 IntialVersion
+   1.1        03/08/09      Sreeja                   Modified the TransUserOrderRequestToUserOrderRequestResponse.xsl, TransUserOrderRequestFailureResponse.xsl and 
+                                                     added TransUserOrderReqToSplitterNBatcherReq.xsl for PBI-104 and athena response schema change.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHUOM_UserOrderRequestValidator" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/Exception" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub" xmlns:ns2="http://xml.netbeans.org/schema/BillingNotifyMessage" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="anchorToATHUOM_UserOrderRequestValidator" partnerLinkType="client:ATHUOM_UserOrderRequestValidator" myRole="ATHUOM_UserOrderRequestValidatorProvider"/>
+    <partnerLink name="ATHUOM_UserOrderRequestValidatorStub" partnerRole="ATHUOM_UserOrderRequestValidatorStubProvider" partnerLinkType="ns3:ATHUOM_UserOrderRequestValidatorStub"/>
+    <partnerLink myRole="CCRMOM_SubmitUserOrderRequestRequester" name="CCRMOM_SubmitUserOrderRequest" partnerRole="CCRMOM_SubmitUserOrderRequestProvider" partnerLinkType="ns7:CCRMOM_SubmitUserOrderRequest"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="RcvUserOrderRequestIV" messageType="client:ATHUOM_UserOrderRequestValidatorRequestMessage"/>
+    <variable name="RplyUserOrderRequestStatusOV" messageType="client:ATHUOM_UserOrderRequestValidatorResponseMessage"/>
+    <variable name="InvUserOrderRequestValidatorStubIV" messageType="ns3:ATHUOM_UserOrderRequestValidatorStubRequestMessage"/>
+    <variable name="RcvOrderRequestTemp" messageType="client:EAIOM_UserOrderRequestValidatorRequestMessage"/>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="index" type="xsd:nonNegativeInteger"/>
+    <variable name="InvUserOrderRequestIV" messageType="ns7:CCRMOM_SubmitUserOrderRequestRequestMessage"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in ATHUOM_UserOrderRequestValidator.wsdl) -->
+    <scope name="ScpUserOrderRequestValidator">
+      <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+          <bpelx:exec name="AsgRemotFault" language="java" version="1.5">
+            <![CDATA[String transId ="";           
+String title="";         
+try           
+{           
+transId = ((oracle.xml.parser.v2.XMLElement)                              
+                        getVariableData("RcvUserOrderRequestIV", "payload", "/ns2:billingInfoRequest/ns2:body/ns2:userDetail/ns2:transactionId")).getFirstChild().getNodeValue();                                 
+title=(transId!=null ? transId+ "Fault" : "null");                   
+setCompositeInstanceTitle(title);           
+         
+}           
+catch(Exception e)           
+{           
+setCompositeInstanceTitle("null");           
+}]]>
+          </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+          <bpelx:exec name="AsgSelectinFailure" language="java" version="1.5">
+            <![CDATA[String transId ="";          
+String title="";        
+try          
+{          
+transId = ((oracle.xml.parser.v2.XMLElement)                             
+                        getVariableData("RcvUserOrderRequestIV", "payload", "/ns2:billingInfoRequest/ns2:body/ns2:userDetail/ns2:transactionId")).getFirstChild().getNodeValue();                                
+title=(transId!=null ? transId+ "Fault" : "null");              
+setCompositeInstanceTitle(title);          
+        
+}          
+catch(Exception e)          
+{          
+setCompositeInstanceTitle("null");          
+}]]>
+          </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+          <sequence name="Sequence_1">
+            <bpelx:exec name="AsgBindingFault" language="java" version="1.5">
+              <![CDATA[String transId ="";          
+String title="";        
+try          
+{          
+transId = ((oracle.xml.parser.v2.XMLElement)                             
+                        getVariableData("RcvUserOrderRequestIV", "payload", "/ns2:billingInfoRequest/ns2:body/ns2:userDetail/ns2:transactionId")).getFirstChild().getNodeValue();                                
+title=(transId!=null ? transId+ "Fault" : "null");                
+setCompositeInstanceTitle(title);          
+        
+}          
+catch(Exception e)          
+{          
+setCompositeInstanceTitle("null");          
+}]]>
+            </bpelx:exec>
+          </sequence>
+        </catch>
+        <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+          <sequence name="Sequence_3">
+            <assign name="TransUserOrderRequestFailureResponse">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransUserOrderRequestFailureResponse.xsl',bpws:getVariableData('RcvUserOrderRequestIV','payload'))"/>
+                <to variable="RplyUserOrderRequestStatusOV" part="payload"/>
+              </copy>
+            </assign>
+            <assign name="AssignErrorMsg">
+              <copy>
+                <from variable="runtimeFault" part="summary"/>
+                <to variable="RplyUserOrderRequestStatusOV" part="payload" query="/ns2:billingInfoResponse/ns2:messageBody/ns2:tranDetail[bpws:getVariableData('index')]/ns2:error[bpws:getVariableData('index')]/ns2:errorMsg"/>
+              </copy>
+            </assign>
+          </sequence>
+        </catch>
+        <catchAll>
+          <bpelx:exec name="AsgGenericFault" language="java" version="1.5">
+            <![CDATA[setCompositeInstanceTitle("UNKNOWN ERROR");]]>
+          </bpelx:exec>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="SeqSplitter">
+        <receive name="RcvUserOrderRequestIn" partnerLink="anchorToATHUOM_UserOrderRequestValidator" portType="client:ATHUOM_UserOrderRequestValidator" operation="validateUserOrder" variable="RcvUserOrderRequestIV" createInstance="yes"/>
+        <assign name="TransRcvUserOrderRequestToRcvUserOrderRequestTemp">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransRcvUserOrderRequestToRcvUserOrderRequestTemp.xsl',bpws:getVariableData('RcvUserOrderRequestIV','payload'))"/>
+            <to variable="RcvOrderRequestTemp" part="UserOrderRequest"/>
+          </copy>
+        </assign>
+        <assign name="AsgInitialVariables">
+          <copy>
+            <from expression="ora:generateGUID()"/>
+            <to variable="RcvOrderRequestTemp" part="UserOrderRequest" query="/ns1:UserOrderRequest/ns1:eaiHeader/ns4:tracingId"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="RcvOrderRequestTemp" part="UserOrderRequest" query="/ns1:UserOrderRequest/ns1:eaiHeader/ns4:messageId"/>
+          </copy>
+          <copy>
+            <from expression="ora:getCompositeInstanceId()"/>
+            <to variable="RcvOrderRequestTemp" part="UserOrderRequest" query="/ns1:UserOrderRequest/ns1:eaiHeader/ns4:instanceId"/>
+          </copy>
+          <copy>
+            <from expression="1"/>
+            <to variable="index"/>
+          </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+          <![CDATA[String transId ="";           
+String title="";         
+try           
+{           
+transId = ((oracle.xml.parser.v2.XMLElement)                              
+                        getVariableData("RcvUserOrderRequestIV", "payload", "/ns2:billingInfoRequest/ns2:header/ns2:transactionId")).getFirstChild().getNodeValue();                                 
+title=(transId!=null ? transId : "null");                  
+setCompositeInstanceTitle(title);           
+         
+}           
+catch(Exception e)           
+{           
+setCompositeInstanceTitle("null");           
+}]]>
+        </bpelx:exec>
+        <scope name="ValidateXML">
+          <faultHandlers>
+            <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+              <throw name="ThrowinvalidVariables" faultName="bpelx:invalidVariables" faultVariable="runtimeFault"/>
+            </catch>
+          </faultHandlers>
+          <sequence name="SeqValidateXML">
+            <assign name="TransUserOrderRequestValidatorToUserOrderRequestValidatorStub">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransUserOrderRequestValidatorToUserOrderRequestValidatorStub.xsl',bpws:getVariableData('RcvOrderRequestTemp','UserOrderRequest'))"/>
+                <to variable="InvUserOrderRequestValidatorStubIV" part="payload"/>
+              </copy>
+            </assign>
+            <invoke name="InvUserOrderRequestValidatorStub" partnerLink="ATHUOM_UserOrderRequestValidatorStub" portType="ns3:ATHUOM_UserOrderRequestValidatorStub" operation="validateUserOrder" inputVariable="InvUserOrderRequestValidatorStubIV"/>
+          </sequence>
+        </scope>
+        <switch name="SwitchOnSeibleOrder">
+          <case condition="bpws:getVariableData('RcvOrderRequestTemp','UserOrderRequest','/ns1:UserOrderRequest/ns1:messageHeader/ns1:orderNumber') != &quot;&quot;">
+            <empty name="SeibelOrder"/>
+          </case>
+          <otherwise>
+            <scope name="InvSpiltterRequest">
+              <sequence name="SeqSplitter">
+                <assign name="TransUserOrderReqToSplitterReq">
+                  <bpelx:annotation>
+                    <bpelx:pattern>transformation</bpelx:pattern>
+                  </bpelx:annotation>
+                  <copy>
+                    <from expression="ora:processXSLT('TransUserOrderReqToSplitterReq.xsl',bpws:getVariableData('RcvOrderRequestTemp','UserOrderRequest'))"/>
+                    <to variable="InvUserOrderRequestIV" part="SEARequest"/>
+                  </copy>
+                </assign>
+                <invoke name="InvUserOrderRequest" partnerLink="CCRMOM_SubmitUserOrderRequest" portType="ns7:CCRMOM_SubmitUserOrderRequest" operation="splitSEAOrder" inputVariable="InvUserOrderRequestIV"/>
+              </sequence>
+            </scope>
+          </otherwise>
+        </switch>
+        <assign name="TransUserOrderRequestToUserOrderRequestResponse">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:processXSLT('TransUserOrderRequestToUserOrderRequestResponse.xsl',bpws:getVariableData('RcvOrderRequestTemp','UserOrderRequest'))"/>
+            <to variable="RplyUserOrderRequestStatusOV" part="payload"/>
+          </copy>
+        </assign>
+      </sequence>
+    </scope>
+    <!-- Generate reply to synchronous request -->
+    <reply name="RplyUserOrderRequestStatusOut" partnerLink="anchorToATHUOM_UserOrderRequestValidator" portType="client:ATHUOM_UserOrderRequestValidator" operation="validateUserOrder" variable="RplyUserOrderRequestStatusOV"/>
+  </sequence>
+</process>

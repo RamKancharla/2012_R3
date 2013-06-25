@@ -1,0 +1,76 @@
+<adapter-config name="CPFG_StubAccountStore" adapter="Database Adapter" wsdlLocation="CPFG_StubAccountStore.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/DREPCRM6_EAIOWNER" UIConnectionName="DREPCRM6_EAIOWNER" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@10.15.35.23:1522:DOMCRM6"/>
+      <property name="UserName" value="eaiowner"/>
+      <property name="Password" value="E8D26CEB17C942CF78415AE2B31C2AA9"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-interaction portType="CPFG_StubAccountStore_ptt" operation="merge">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="CPFGStubAccountStore.CpfgAccount"/>
+      <property name="DmlType" value="merge"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="CPFG_StubAccountStore-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+  <endpoint-interaction portType="CPFG_StubAccountStore_ptt" operation="write">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="CPFGStubAccountStore.CpfgAccount"/>
+      <property name="DmlType" value="write"/>
+      <property name="MappingsMetaDataURL" value="CPFG_StubAccountStore-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+  <endpoint-interaction portType="CPFG_StubAccountStore_ptt" operation="delete">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="CPFGStubAccountStore.CpfgAccount"/>
+      <property name="DmlType" value="delete"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="CPFG_StubAccountStore-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+  <endpoint-interaction portType="CPFG_StubAccountStore_ptt" operation="insert">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="CPFGStubAccountStore.CpfgAccount"/>
+      <property name="DmlType" value="insert"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="CPFG_StubAccountStore-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+  <endpoint-interaction portType="CPFG_StubAccountStore_ptt" operation="update">
+    <interaction-spec className="oracle.tip.adapter.db.DBWriteInteractionSpec">
+      <property name="DescriptorName" value="CPFGStubAccountStore.CpfgAccount"/>
+      <property name="DmlType" value="update"/>
+      <property name="DetectOmissions" value="true"/>
+      <property name="OptimizeMerge" value="true"/>
+      <property name="MappingsMetaDataURL" value="CPFG_StubAccountStore-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+  <endpoint-interaction portType="CPFG_StubAccountStore_ptt" operation="CPFG_StubAccountStoreSelect_id">
+    <interaction-spec className="oracle.tip.adapter.db.DBReadInteractionSpec">
+      <property name="DescriptorName" value="CPFGStubAccountStore.CpfgAccount"/>
+      <property name="QueryName" value="CPFG_StubAccountStoreSelect"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+      <property name="MappingsMetaDataURL" value="CPFG_StubAccountStore-or-mappings.xml"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

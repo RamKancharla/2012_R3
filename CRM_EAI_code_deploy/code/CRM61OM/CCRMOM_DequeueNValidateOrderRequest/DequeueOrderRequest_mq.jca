@@ -1,0 +1,11 @@
+<adapter-config name="DequeueOrderRequest" adapter="MQSeriesAdapter" wsdlLocation="DequeueOrderRequest.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemoteCRMtoEAI" adapterRef=""/>
+  <endpoint-activation portType="Dequeue_ptt" operation="Dequeue" UITransmissionPrimitive="Dequeue">
+    <activation-spec className="oracle.tip.adapter.mq.inbound.ActivationSpecImpl">
+      <property name="QueueName" value="${mq.token.prefix}CRM_EAI_014_ORD_RQST_Q"/>
+    </activation-spec>
+    <input/>
+  </endpoint-activation>
+
+</adapter-config>

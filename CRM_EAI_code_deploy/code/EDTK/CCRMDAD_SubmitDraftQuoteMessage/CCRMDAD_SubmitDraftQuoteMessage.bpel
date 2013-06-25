@@ -1,0 +1,79 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Mar 30 16:19:45 GMT+05:30 2011
+  Author:  rijoy.purayil
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMDAD_SubmitDraftQuoteMessage" targetNamespace="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueue_DrafttQuoteService/" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.reuters.com/ns/2011/03/03/GCAP/EAI/DraftQuoteUpload" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:client="http://xmlns.oracle.com/CCRMDAD_SubmitDraftQuoteMessage" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:CCRMDAD_SubmitDraftQuoteMessage" myRole="CCRMDAD_SubmitDraftQuoteMessageProvider" partnerRole="CCRMDAD_SubmitDraftQuoteMessageRequester"/>
+        <partnerLink name="Enqueue_DraftQuoteService" partnerRole="Enqueue_role" partnerLinkType="ns1:Enqueue_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:CCRMDAD_SubmitDraftQuoteMessageRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CCRMDAD_SubmitDraftQuoteMessageResponseMessage"/>
+        <variable name="Inv_EnqueueDftQuoteVar" messageType="ns1:ListOfGenQuoteInterface_msg"/>
+    </variables>
+        <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="setCustomTitleFault" language="java" version="1.3">
+                <![CDATA[setCompositeInstanceTitle("Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMDAD_SubmitDraftQuoteMessage.wsdl) -->
+        <receive name="rcvDraftQuoteMsg" partnerLink="client" portType="client:CCRMDAD_SubmitDraftQuoteMessage" operation="initiate" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+                <bpelx:exec name="SetTitle_DADId" language="java" version="1.5">
+            <![CDATA[String DADId = "";       
+if (null != ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns2:ListOfQuoteInterface/ns2:Quote/ns2:TransactionId")).getFirstChild()){      
+    DADId = ((oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns2:ListOfQuoteInterface/ns2:Quote/ns2:TransactionId")).getFirstChild().getNodeValue();                
+ }      
+setCompositeInstanceTitle( "DAD Id:" + " " + DADId );]]>
+        </bpelx:exec>
+        
+        <assign name="TransDraftQuoteMsqToEnqueueMsg">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransDraftReqMsgToEnqueueDraftQuote.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="Inv_EnqueueDftQuoteVar" part="ListOfGenQuoteInterface"/>
+            </copy>
+        </assign>
+        <invoke name="InvEnqueue" partnerLink="Enqueue_DraftQuoteService" portType="ns1:Enqueue_ptt" operation="Enqueue" inputVariable="Inv_EnqueueDftQuoteVar"/>
+    </sequence>
+</process>

@@ -1,0 +1,69 @@
+<definitions
+     name="CCRMOM_PropagateUserOrderRequest"
+     targetNamespace="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://schemas.oracle.com/bpel/extension"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement"
+     xmlns:pns1="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest/correlationset"
+     xmlns:ns2="http://www.siebel.com/xml/AthenaRequest"
+     xmlns:client="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest"
+    >
+    <import namespace="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest/correlationset"
+         location="CCRMOM_PropagateUserOrderRequest_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://schemas.oracle.com/bpel/extension"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.siebel.com/xml/AthenaRequest"
+             xmlns:client="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement">
+            <import namespace="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest" schemaLocation="CCRMOM_PropagateUserOrderRequest.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://schemas.oracle.com/bpel/extension"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.siebel.com/xml/AthenaRequest"
+             xmlns:client="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement">
+            <xsd:import namespace="http://www.siebel.com/xml/AthenaRequest" schemaLocation="EAI.MSG.CCRM.UOM.283_UserOrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://schemas.oracle.com/bpel/extension"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement"
+             xmlns:ns2="http://www.siebel.com/xml/AthenaRequest" xmlns:client="http://xmlns.oracle.com/CCRMOM_PropagateUserOrderRequest">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.CCRM.UOM.282_UserOrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMOM_PropagateUserOrderRequestResponseMessage">
+        <part name="payload" element="client:CCRMOM_PropagateUserOrderRequestProcessResponse"/>
+    </message>
+    <message name="CCRMOM_PropagateUserOrderRequestRequestMessage">
+        <part name="payload" element="ns3:userOrderRequest"/>
+    </message>
+    <message name="CRMUpdateStatusMsg">
+        <part name="payload" element="ns2:AthenaRequest"/>
+    </message>
+    <portType name="CCRMOM_PropagateUserOrderRequestCallback">
+        <operation name="onResult">
+            <input message="client:CCRMOM_PropagateUserOrderRequestResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMOM_PropagateUserOrderRequest">
+        <operation name="rcvOrderRequest">
+            <input message="client:CCRMOM_PropagateUserOrderRequestRequestMessage"/>
+        </operation>
+        <operation name="rcvOrderStatus">
+            <input name="CRMOrderStatus" message="client:CRMUpdateStatusMsg"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOM_PropagateUserOrderRequest">
+        <plnk:role name="CCRMOM_PropagateUserOrderRequestProvider">
+            <plnk:portType name="client:CCRMOM_PropagateUserOrderRequest"/>
+        </plnk:role>
+        <plnk:role name="CCRMOM_PropagateUserOrderRequestRequester">
+            <plnk:portType name="client:CCRMOM_PropagateUserOrderRequestCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:CorrProp" messageType="client:CRMUpdateStatusMsg" part="payload"
+         query="/ns2:AthenaRequest/ns2:MessageId"/>
+    <bpws:propertyAlias propertyName="pns1:CorrProp" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/mq/headerAthenaOrderRequest/"
+         messageType="ns4:AthenaRequest_msg" part="AthenaRequest" query="/ns2:AthenaRequest/ns2:MessageId"/>
+</definitions>

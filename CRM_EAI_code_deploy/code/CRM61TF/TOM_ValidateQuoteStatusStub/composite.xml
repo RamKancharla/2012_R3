@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TOM_ValidateQuoteStatusStub" revision="1.0" state="on">
+    <import location="TOM_ValidateQuoteStatusStub.wsdl" namespace="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub"/>
+    <service name="client" ui:wsdlLocation="TOM_ValidateQuoteStatusStub.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub#wsdl.interface(TOM_ValidateQuoteStatusStub)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://xmlns.oracle.com/TOM_ValidateQuoteStatusStub#wsdl.endpoint(TOM_ValidateQuoteStatusStub/TOM_ValidateQuoteStatusStub)"/>
+    </service>
+    <component name="TOM_ValidateQuoteStatusStub">
+        <implementation.bpel src="TOM_ValidateQuoteStatusStub.bpel"/>
+    </component>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>TOM_ValidateQuoteStatusStub/client</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

@@ -1,0 +1,134 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Oct 04 10:59:38 GMT+05:30 2010
+  Author:  SN66205
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOM_PropagateContactStatus" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/2008/02/15/GCAP/RCRM" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CCRMOM_PropagateContactStatus/correlationset" xmlns:ns2="http://www.siebel.com/xml/ContactExternalIO" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToCCRMOM_PropagateContactStatus" partnerLinkType="client:CCRMOM_PropagateContactStatus" myRole="CCRMOM_PropagateContactStatusProvider" partnerRole="CCRMOM_PropagateContactStatusRequester"/>
+        <partnerLink name="SiebelRCRMContactInbound" partnerRole="RCRM_spcContact_spcInbound_Role" partnerLinkType="ns1:RCRM_spcContact_spcInbound_PL"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="receivePropagateContactStatus" messageType="client:CCRMOM_PropagateContactStatusRequestMessage"/>
+        <variable name="outputVariable" messageType="client:CCRMOM_PropagateContactStatusResponseMessage"/>
+        <variable name="Invoke_1_RCRM_spcContact_spcInbound_spcOperatiion_InputVariable" messageType="ns1:RCRM_spcContact_spcInbound_spcOperatiion_Input"/>
+        <variable name="Invoke_1_RCRM_spcContact_spcInbound_spcOperatiion_OutputVariable" messageType="ns1:RCRM_spcContact_spcInbound_spcOperatiion_Output"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSetOnUUID" properties="ns3:UUID"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.3">
+                <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)                                     
+     getVariableData("receivePropagateContactStatus","payload","/ns1:RCRM_spcContact_spcInbound_spcOperatiion_Input/ns2:ContactExternalIO/ns2:Contact/ns2:Id")).getFirstChild().getNodeValue();            
+setCompositeInstanceTitle("Fault: " + UUID);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.3">
+                <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)      
+getVariableData("receivePropagateContactStatus","payload","/ns1:RCRM_spcContact_spcInbound_spcOperatiion_Input/ns2:ContactExternalIO/ns2:Contact/ns2:Id")).getFirstChild().getNodeValue();             
+setCompositeInstanceTitle(UUID);]]>
+            </bpelx:exec>
+        </catch>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMOM_PropagateContactStatus.wsdl) -->
+        <receive name="receiveInput" partnerLink="anchorToCCRMOM_PropagateContactStatus" portType="client:CCRMOM_PropagateContactStatus" operation="initiate" variable="receivePropagateContactStatus" createInstance="yes">
+            <correlations>
+                <correlation initiate="yes" set="CorrelationSetOnUUID"/>
+            </correlations>
+        </receive>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+            <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)    
+getVariableData("receivePropagateContactStatus","payload","/ns1:RCRM_spcContact_spcInbound_spcOperatiion_Input/ns2:ContactExternalIO/ns2:Contact/ns2:Id")).getFirstChild().getNodeValue();           
+setCompositeInstanceTitle(UUID);]]>
+        </bpelx:exec>
+        <scope name="Scope_1">
+            <!-- <faultHandlers>
+                <catchAll>
+                    <bpelx:exec name="AsgCustomTitleFault" language="java"
+                                version="1.3">
+                        <![CDATA[String UUID = ((oracle.xml.parser.v2.XMLElement)                                         
+     getVariableData("receivePropagateContactStatus","payload","/ns1:RCRM_spcContact_spcInbound_spcOperatiion_Input/ns2:ContactExternalIO/ns2:Contact/ns2:Id")).getFirstChild().getNodeValue();                
+setCompositeInstanceTitle("Fault: "+"SBL-OM-Flt: " + UUID);]]>
+                    </bpelx:exec>
+                </catchAll>
+            </faultHandlers>-->
+            <sequence name="Sequence_1">
+                <assign name="TransUpdateTypeToSiebel">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransUpdateTypeToSiebel.xsl',bpws:getVariableData('receivePropagateContactStatus','payload'))"/>
+                        <to variable="Invoke_1_RCRM_spcContact_spcInbound_spcOperatiion_InputVariable" part="RCRM_spcContact_spcInbound_spcOperatiion_Input"/>
+                    </copy>
+                </assign>
+                <invoke name="InvRCRMContactInbound" partnerLink="SiebelRCRMContactInbound" portType="ns1:RCRM_spcContact_spcInbound" operation="RCRM_spcContact_spcInbound_spcOperatiion" inputVariable="Invoke_1_RCRM_spcContact_spcInbound_spcOperatiion_InputVariable" outputVariable="Invoke_1_RCRM_spcContact_spcInbound_spcOperatiion_OutputVariable"/>
+            </sequence>
+        </scope>
+        <assign name="AsgResponse">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('AsgResponse.xsl',bpws:getVariableData('Invoke_1_RCRM_spcContact_spcInbound_spcOperatiion_OutputVariable','RCRM_spcContact_spcInbound_spcOperatiion_Output'))"/>
+                <to variable="outputVariable" part="payload"/>
+            </copy>
+        </assign>
+        <!--<assign name="AsgResponse">
+            <copy>
+                <from variable="Invoke_1_RCRM_spcContact_spcInbound_spcOperatiion_OutputVariable"
+                      part="RCRM_spcContact_spcInbound_spcOperatiion_Output"
+                      query="/ns1:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns1:Error_spcCode"/>
+                <to variable="outputVariable" part="payload"
+                    query="/ns1:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns1:Error_spcCode"/>
+            </copy>
+            <copy>
+                <from variable="Invoke_1_RCRM_spcContact_spcInbound_spcOperatiion_OutputVariable"
+                      part="RCRM_spcContact_spcInbound_spcOperatiion_Output"
+                      query="/ns1:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns1:Error_spcMessage"/>
+                <to variable="outputVariable" part="payload"
+                    query="/ns1:RCRM_spcContact_spcInbound_spcOperatiion_Output/ns1:Error_spcMessage"/>
+            </copy>
+        </assign>-->
+        <invoke name="callbackClient" partnerLink="anchorToCCRMOM_PropagateContactStatus" portType="client:CCRMOM_PropagateContactStatusCallback" operation="onResult" inputVariable="outputVariable"/>
+    </sequence>
+</process>

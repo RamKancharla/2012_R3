@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<!--
+	*********************************************************************************************************
+	* Module:      EAI.MSG.ELM.AM.301_PublishAccount.xsd
+	* Type:        XSD Schema
+	* Description: The schema used in EAI components to publish the account data to subscribers
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	*  1.0	     25/08/11   Phani Kumar            Created for Accounts interface with ELM
+        ********************************************************************************************************** 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:elmam="http://www.reuters.com/ns/2010/07/07/SAMI/ELM/AM/AccountPublish"
+            targetNamespace="http://www.reuters.com/ns/2010/07/07/SAMI/ELM/AM/AccountPublish"
+            elementFormDefault="qualified">
+ <xsd:element name="AccountPublish" type="elmam:AccountsType"></xsd:element>
+ <xsd:complexType name="AccountsType">
+  <xsd:sequence>
+   <xsd:element name="Accounts" type="elmam:AccountDetails"></xsd:element>
+   <xsd:element name="Position" type="elmam:PositionDetails"></xsd:element>
+   <xsd:element name="Address" type="elmam:AddressDetails"></xsd:element>
+   <xsd:element name="ActionCode" type="xsd:string"/>
+   <xsd:element name="timeStamp" type="xsd:string"/>
+   <xsd:element name="messageHistory" type="xsd:string"/>
+   <xsd:element name="Id" type="xsd:string"/>
+   <xsd:element name="applicationId" type="xsd:string"/>
+   <xsd:element name="instanceId" type="xsd:string"/>
+   <xsd:element name="messageId" type="xsd:string"/>
+   <xsd:element name="tracingId" type="xsd:string"/>
+   <xsd:element name="transactionId" type="xsd:string"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="AccountDetails">
+  <xsd:sequence>
+   <!-- Wave2 New Elements CR#531 -->
+   <xsd:element name="RCRMFinancialCharges" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="vatCode" type="xsd:string"/>
+   <xsd:element name="payTerms" type="xsd:string"/>
+   <!-- END Wave2 Changes  -->
+   <xsd:element name="Name" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Name1" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Name2" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Name3" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="PhoneNumber" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="CustomerRefereceNumber" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="AccountClass" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="site" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="subscribernumber" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="internalaccountflag" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="BillingCurrency" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="BillingFrequency" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="AccountStatus" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="ParentCustRefereceNumber" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="AccountFamily" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="InvoiceDeliveryMethod" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="HardCopyDispMethod" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="ExtBillingAcc" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="SoftDollarCode" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="SAPPublishedFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ContractType" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="TRSCAgreementType" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="LegalEntityFlag" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="BusinessChannel" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="IndustryType_SubType" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="BillingLanguageDesc" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="FaxNumber" type="xsd:string"/>
+   <xsd:element name="PriceList" type="xsd:string"/>
+   <xsd:element name="CorrespondenceVariant" type="xsd:string"/>
+   <xsd:element name="UrgentBillingFlag" type="xsd:string"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="AddressDetails">
+  <xsd:sequence>
+   <xsd:element name="FloorAddress" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="AddressName_Street" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="AddressName_Street1" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="AddressName_Street2" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="AddressName_Street3" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="PostalCode" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="City" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Country" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="State" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Region" type="xsd:string" minOccurs="0"></xsd:element>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PositionDetails">
+  <xsd:sequence>
+   <xsd:element name="publishContactToSAP" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ActiveFName" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="ActiveLName" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="ActiveMM" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="EMAIL" minOccurs="0" type="xsd:string"></xsd:element>
+   <xsd:element name="TELEPHONE" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Position_Street" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Position_Street1" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Position_Street2" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Position_Street3" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="PostalCode" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="City" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="Country" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="State" type="xsd:string" minOccurs="0"></xsd:element>
+   <xsd:element name="LoginName" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="PositionType" type="xsd:string" minOccurs="0"
+                maxOccurs="9999"></xsd:element>
+   <xsd:element name="FaxNum" type="xsd:string"></xsd:element>
+   <xsd:element name="LoginId" type="xsd:string"></xsd:element>
+  </xsd:sequence>
+ </xsd:complexType>
+</xsd:schema>

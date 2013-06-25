@@ -1,0 +1,33 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMMG_SubmitTicket" revision="1.0" state="on">
+    <import location="CCRMMG_SubmitTicket.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TTMG_Invoker/TTMG_Invoker.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="CCRMMG_SubmitTicket.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket#wsdl.interface(CCRMMG_SubmitTicket)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket#wsdl.endpoint(CCRMMG_SubmitTicket/CCRMMG_SubmitTicket)"/>
+    </service>
+    <component name="CCRMMG_SubmitTicket">
+        <implementation.bpel src="CCRMMG_SubmitTicket.bpel"/>
+        
+        
+    </component>
+    <reference name="TTMG_Invoker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TTMG_Invoker/TTMG_Invoker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker#wsdl.interface(TTMG_Invoker)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker#wsdl.interface(TTMG_InvokerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker#wsdl.endpoint(TTMG_Invoker/TTMG_Invoker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TTMG_Invoker/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker#wsdl.endpoint(TTMG_Invoker/TTMG_InvokerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMMG_SubmitTicket/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMMG_SubmitTicket/TTMG_Invoker</source.uri>
+        <target.uri>TTMG_Invoker</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

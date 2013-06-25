@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+             xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+             xmlns:s="http://www.w3.org/2001/XMLSchema"
+             xmlns:s0="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/AccountAction/TRUSTAccountActivity"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             targetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/AccountAction/TRUSTAccountActivity">
+  <types>
+    <s:schema xmlns:s="http://www.w3.org/2001/XMLSchema"
+              xmlns:tns="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/AccountAction/TRUSTAccountActivity"
+              elementFormDefault="qualified"
+              targetNamespace="http://www.reuters.com/ns/2011/09/12/GCAP/EAI/AccountGateway/AccountAction/TRUSTAccountActivity">
+      <s:element name="getAH">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="rcrmAccountThin" type="tns:RcrmAccountThin"
+                       minOccurs="1" maxOccurs="1"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getAHResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="getAHResult" type="tns:RCRMAccoutActionData_Output"
+                       minOccurs="1" maxOccurs="1"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RcrmAccountThin">
+        <s:sequence>
+          <s:element name="RCRMFieldH2" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldH1" type="s:string" minOccurs="0"/>
+          <s:element name="TargetSystem" type="s:string" minOccurs="0"/>
+          <s:element name="SourceSystem" type="s:string" minOccurs="0"/>
+          <s:element name="Timestamp" type="s:string" minOccurs="0"/>
+          <s:element name="ActionThinBc" type="tns:ArrayOfActionThinBc" minOccurs="0"/>
+          <s:element name="TotalNoOfRecords" type="s:string" minOccurs="0"/>
+          <s:element name="AccountSFDCId" type="s:string" minOccurs="0"/>
+          <s:element name="PageNumber" type="s:string" minOccurs="0"/>
+          <s:element name="AccountSiebelId" type="s:string" minOccurs="0"/>
+          <s:element name="AccountNumber" type="s:string" minOccurs="0"/>
+          <s:element name="MessageId" type="s:string" minOccurs="0"/>
+          <s:element name="SearchSpec" type="s:string" minOccurs="0"/>
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfActionThinBc">
+        <s:sequence>
+          <s:element name="ActionThinBc" type="tns:ActionThinBc" nillable="true"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ActionThinBc">
+        <s:sequence>
+          <s:element name="RCRMFieldL5" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldL4" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldL3" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldL2" type="s:string" minOccurs="0"/>
+          <s:element name="RCRMFieldL1" type="s:string" minOccurs="0"/>
+          <s:element name="ContactFullName" type="s:string" minOccurs="0"/>
+          <s:element name="Description" type="s:string" minOccurs="0"/>
+          <s:element name="Created" type="s:string" minOccurs="0"/>
+          <s:element name="ActivityId" type="s:string" minOccurs="0"/>
+          <s:element name="SubType" type="s:string" minOccurs="0"/>
+          <s:element name="Abstract" type="s:string" minOccurs="0"/>
+          <s:element name="PlannedStartDate" type="s:string" minOccurs="0"/>
+          <s:element name="PlannedEndDate" type="s:string" minOccurs="0"/>
+          <s:element name="Status" type="s:string" minOccurs="0"/>
+          <s:element name="ActivityType" type="s:string" minOccurs="0"/>
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RCRMAccoutActionData_Output">
+        <s:sequence>
+          <s:element name="Error_spcCode" type="s:string" minOccurs="0"/>
+          <s:element name="Error_spcMessage" type="s:string" minOccurs="0"/>
+          <s:element name="Object_spcId" type="s:string" minOccurs="0"/>
+          <s:element name="Process_spcInstance_spcId" type="s:string"
+                     minOccurs="0"/>
+          <s:element name="Siebel_spcOperation_spcObject_spcId" type="s:string"
+                     minOccurs="0"/>
+          <s:element name="rcrmAccountThin" type="tns:RcrmAccountThin"
+                     minOccurs="0"/>
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </types>
+  <message name="GetActivityHistorySoapIn">
+    <part name="parameters" element="s0:getAH"/>
+  </message>
+  <message name="GetActivityHistorySoapOut">
+    <part name="parameters" element="s0:getAHResponse"/>
+  </message>
+  <portType name="GetActivityHistoryServ">
+    <operation name="GetActivityHistory">
+      <input message="s0:GetActivityHistorySoapIn"/>
+      <output message="s0:GetActivityHistorySoapOut"/>
+    </operation>
+  </portType>
+  <binding name="GetActivityHistorySoap" type="s0:GetActivityHistoryServ">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="GetActivityHistory">
+      <soap:operation soapAction="GetActivityHistory" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="GetActivityHistoryServ">
+    <port name="GetActivityHistory" binding="s0:GetActivityHistorySoap">
+      <soap:address location="http://inkaban3ua-eai01:7777/event/AGATEWAY/ActivityRS"/>
+    </port>
+  </service>
+</definitions>

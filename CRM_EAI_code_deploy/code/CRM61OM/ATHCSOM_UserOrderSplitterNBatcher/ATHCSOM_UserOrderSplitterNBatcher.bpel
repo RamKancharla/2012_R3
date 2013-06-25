@@ -1,0 +1,206 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Jun 16 11:30:29 GMT+05:30 2009
+  Author:  SP41293
+  Purpose: Asynchronous BPEL Process
+
+  CHANGE HISTORY
+
+  Date		Author				Comments
+  **********************************************************
+
+  11/12/2009	Surya G				Fix for defect QC#33670 , stopping MOVE messages from SEA with CRM order number from sending it to CoreSuite.
+  06/01/2010    Sreeja                          Modified nonoOfUOLIToSplit to 100 in the TransOrderReqToExtendedOrder.xsl
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHCSOM_UserOrderSplitterNBatcher" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/UserOrderManagement" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderSplitterNBatcher" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_UserOrderFulfilment" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:ATHCSOM_UserOrderSplitterNBatcher" myRole="ATHCSOM_UserOrderSplitterNBatcherProvider" partnerRole="ATHCSOM_UserOrderSplitterNBatcherRequester"/>
+        <partnerLink myRole="ATHCSOM_UserOrderFulfilmentRequester" name="ATHCSOM_UserOrderFulfilment" partnerRole="ATHCSOM_UserOrderFulfilmentProvider" partnerLinkType="ns1:ATHCSOM_UserOrderFulfilment"/>
+        <partnerLink myRole="ATHCSOM_MoveUserRequester" name="ATHCSOM_MoveUser" partnerRole="ATHCSOM_MoveUserProvider" partnerLinkType="ns5:ATHCSOM_MoveUser"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="rcvAthOrderRequestIV" messageType="client:ATHCSOM_UserOrderSplitterNBatcherRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:ATHCSOM_UserOrderSplitterNBatcherResponseMessage"/>
+        <variable name="InvATHCSOM_UserOrderFulfilmentIV" messageType="ns1:ATHCSOM_UserOrderFulfilmentRequestMessage"/>
+        <variable name="runtimeFaultVar" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="ExtendedUserOrderSplitterNBatcherReMsg" messageType="client:ExtendedUserOrderSplitterNBatcherReMsg"/>
+        <variable name="userorderLineRestrictionIndex" type="xsd:int"/>
+        <variable name="noOfUserOrderLineSets" type="xsd:int"/>
+        <variable name="InvMoveUserIV" messageType="ns5:ATHCSOM_MoveUserRequestMessage"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="AsgGenericFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.        
+	System.out.println("Hello, World");       
+*/       
+org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvAthOrderRequestIV", "OrderRequest", "/ns2:CSUserOrder/ns2:userOrderHeader/ns2:transactionId"));                                 
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();              
+setCompositeInstanceTitle(Title+" Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ATHCSOM_UserOrderSplitterNBatcher.wsdl) -->
+        <receive name="rcvAthOrderRequest" partnerLink="client" portType="client:ATHCSOM_UserOrderSplitterNBatcher" operation="splitNBatchOrder" variable="rcvAthOrderRequestIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String Title="";         
+try         
+{         
+org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvAthOrderRequestIV", "OrderRequest", "/ns2:CSUserOrder/ns2:userOrderHeader/ns2:transactionId"));                                           
+Title = transId == null ? "" : transId.getFirstChild().getNodeValue();                        
+setCompositeInstanceTitle(Title);           
+}         
+catch (Exception e)         
+{         
+Title = "null";     
+setCompositeInstanceTitle(Title);      
+}]]>
+        </bpelx:exec>
+        <assign name="TransOrderReqToExtendedOrder">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransOrderReqToExtendedOrder.xsl',bpws:getVariableData('rcvAthOrderRequestIV','OrderRequest'))"/>
+                <to variable="ExtendedUserOrderSplitterNBatcherReMsg" part="payload"/>
+            </copy>
+        </assign>
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="0"/>
+                <to variable="userorderLineRestrictionIndex"/>
+            </copy>
+            <copy>
+                <from expression="ceiling(count(bpws:getVariableData('rcvAthOrderRequestIV','OrderRequest','/ns2:CSUserOrder/ns2:userOrderLineItem')) div (bpws:getVariableData('ExtendedUserOrderSplitterNBatcherReMsg','payload','/ns2:ExtendedCSUserOrder/ns2:noOfUOLIToSplit')))"/>
+                <to variable="noOfUserOrderLineSets"/>
+            </copy>
+        </assign>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('rcvAthOrderRequestIV','OrderRequest','/ns2:CSUserOrder/ns2:userOrderHeader/ns2:actionCode')='MOVE'  ">
+                <bpelx:annotation>
+                    <bpelx:pattern>MOVE Action code</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqMoveUser">
+                    <switch name="Switch_2">
+                        <case condition="string-length(bpws:getVariableData('rcvAthOrderRequestIV','OrderRequest','/ns2:CSUserOrder/ns2:userOrderHeader/ns2:siebelOrderNumber')) = 0">
+                            <while name="While_2" condition="bpws:getVariableData('noOfUserOrderLineSets')>0">
+                                <sequence name="Sequence_1">
+                                    <assign name="AsgOrderLineSetIndexUserOrder">
+                                        <copy>
+                                            <from variable="userorderLineRestrictionIndex"/>
+                                            <to variable="ExtendedUserOrderSplitterNBatcherReMsg" part="payload" query="/ns2:ExtendedCSUserOrder/ns2:index"/>
+                                        </copy>
+                                    </assign>
+                                    <assign name="TransOrderRequestToMoveUser">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransOrderRequestToMoveUser.xsl',bpws:getVariableData('ExtendedUserOrderSplitterNBatcherReMsg','payload'))"/>
+                                            <to variable="InvMoveUserIV" part="ATHMoveUser"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvMoveUser" partnerLink="ATHCSOM_MoveUser" portType="ns5:ATHCSOM_MoveUser" operation="moveUser" inputVariable="InvMoveUserIV"/>
+                                    <assign name="ChangeIndexVariables">
+                                        <copy>
+                                            <from expression="bpws:getVariableData('noOfUserOrderLineSets')-1"/>
+                                            <to variable="noOfUserOrderLineSets"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="bpws:getVariableData('userorderLineRestrictionIndex')+1"/>
+                                            <to variable="userorderLineRestrictionIndex"/>
+                                        </copy>
+                                    </assign>
+                                </sequence>
+                            </while>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothingInCaseofCRMOrderNumber"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </case>
+            <otherwise>
+                <while name="While_1" condition="bpws:getVariableData('noOfUserOrderLineSets')>0">
+                    <scope name="ScpUserOrderFulfilment">
+                        <faultHandlers>
+                            <catch faultName="bpelx:remoteFault" faultVariable="runtimeFaultVar">
+                                <bpelx:exec name="AsgCustomTitleFault" language="java" version="1.5">
+                                    <![CDATA[/*Write your java code below e.g.     
+	System.out.println("Hello, World");    
+*/    
+org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvAthOrderRequestIV", "OrderRequest", "/ns2:CSUserOrder/ns2:userOrderHeader/ns2:transactionId"));                                 
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();              
+setCompositeInstanceTitle(Title+" Fault");]]>
+                                </bpelx:exec>
+                            </catch>
+                        </faultHandlers>
+                        <sequence name="SeqCSUserOrderFulfilment">
+                            <assign name="AsgOrderLineSetIndexToUserOrder">
+                                <copy>
+                                    <from variable="userorderLineRestrictionIndex"/>
+                                    <to variable="ExtendedUserOrderSplitterNBatcherReMsg" part="payload" query="/ns2:ExtendedCSUserOrder/ns2:index"/>
+                                </copy>
+                            </assign>
+                            <assign name="TransAthOrderReqToCSOrderReq">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransCSOrderFulfilment.xsl',bpws:getVariableData('ExtendedUserOrderSplitterNBatcherReMsg','payload'))"/>
+                                    <to variable="InvATHCSOM_UserOrderFulfilmentIV" part="AthOrderRequest"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvATHCSOM_UserOrderFulfilment" partnerLink="ATHCSOM_UserOrderFulfilment" portType="ns1:ATHCSOM_UserOrderFulfilment" operation="transformAthOrder" inputVariable="InvATHCSOM_UserOrderFulfilmentIV"/>
+                            <assign name="ChangeIndexVariables">
+                                <copy>
+                                    <from expression="bpws:getVariableData('noOfUserOrderLineSets')-1"/>
+                                    <to variable="noOfUserOrderLineSets"/>
+                                </copy>
+                                <copy>
+                                    <from expression="bpws:getVariableData('userorderLineRestrictionIndex')+1"/>
+                                    <to variable="userorderLineRestrictionIndex"/>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </scope>
+                </while>
+            </otherwise>
+        </switch>
+        <invoke name="callbackClient" partnerLink="client" portType="client:ATHCSOM_UserOrderSplitterNBatcherCallback" operation="onResult" inputVariable="outputVariable"/>
+    </sequence>
+</process>

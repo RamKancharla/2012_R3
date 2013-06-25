@@ -1,0 +1,42 @@
+<definitions
+     name="CPFG_StatusUpdateValidator"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"
+                 schemaLocation="EAI.MSG.EXT.121_PropagateStatusUpdateRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common" schemaLocation="EAI.MSG.EXT.111_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CPFG_StatusUpdateValidatorRequestMessage">
+        <part name="payload" element="ns1:propagateStatusUpdateRequest"/>
+    </message>
+    <message name="CPFG_StatusUpdateValidatorResponseMessage">
+        <part name="payload" element="ns2:basicResponse"/>
+    </message>
+    <portType name="CPFG_StatusUpdateValidator">
+        <operation name="processOpportunityEvent">
+            <input message="client:CPFG_StatusUpdateValidatorRequestMessage"/>
+            <output message="client:CPFG_StatusUpdateValidatorResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CPFG_StatusUpdateValidator">
+        <plnk:role name="CPFG_StatusUpdateValidatorProvider">
+            <plnk:portType name="client:CPFG_StatusUpdateValidator"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

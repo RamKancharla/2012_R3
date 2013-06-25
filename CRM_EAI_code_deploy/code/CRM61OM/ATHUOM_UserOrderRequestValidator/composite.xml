@@ -1,0 +1,45 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHUOM_UserOrderRequestValidator" revision="1.0" state="on">
+    <import location="ATHUOM_UserOrderRequestValidator.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_SubmitUserOrderRequest/CCRMOM_SubmitUserOrderRequest.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHUOM_UserOrderRequestValidatorStub/ATHUOM_UserOrderRequestValidatorStub.wsdl" importType="wsdl"/>
+    <service name="anchorToATHUOM_UserOrderRequestValidator" ui:wsdlLocation="ATHUOM_UserOrderRequestValidator.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator#wsdl.interface(ATHUOM_UserOrderRequestValidator)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator#wsdl.endpoint(ATHUOM_UserOrderRequestValidator/ATHUOM_UserOrderRequestValidator)"/>
+    </service>
+    <component name="ATHUOM_UserOrderRequestValidator">
+        <implementation.bpel src="ATHUOM_UserOrderRequestValidator.bpel"/>
+        
+        
+        <property name="partnerLink.ATHUOM_UserOrderRequestValidatorStub.validateXML" type="xs:string" many="false">true</property>
+    </component>
+    <reference name="CCRMOM_SubmitUserOrderRequest" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_SubmitUserOrderRequest/CCRMOM_SubmitUserOrderRequest.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest#wsdl.interface(CCRMOM_SubmitUserOrderRequest)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest#wsdl.interface(CCRMOM_SubmitUserOrderRequestCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest#wsdl.endpoint(CCRMOM_SubmitUserOrderRequest/CCRMOM_SubmitUserOrderRequest)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_SubmitUserOrderRequest/anchorToCCRMOM_SubmitUserOrderRequest?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest#wsdl.endpoint(CCRMOM_SubmitUserOrderRequest/CCRMOM_SubmitUserOrderRequestCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="ATHUOM_UserOrderRequestValidatorStub" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHUOM_UserOrderRequestValidatorStub/ATHUOM_UserOrderRequestValidatorStub.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub#wsdl.interface(ATHUOM_UserOrderRequestValidatorStub)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidatorStub#wsdl.endpoint(ATHUOM_UserOrderRequestValidatorStub/ATHUOM_UserOrderRequestValidatorStub)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHUOM_UserOrderRequestValidatorStub/anchorToATHUOM_UserOrderRequestValidatorStub?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>anchorToATHUOM_UserOrderRequestValidator</source.uri>
+        <target.uri>ATHUOM_UserOrderRequestValidator/anchorToATHUOM_UserOrderRequestValidator</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHUOM_UserOrderRequestValidator/CCRMOM_SubmitUserOrderRequest</source.uri>
+        <target.uri>CCRMOM_SubmitUserOrderRequest</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHUOM_UserOrderRequestValidator/ATHUOM_UserOrderRequestValidatorStub</source.uri>
+        <target.uri>ATHUOM_UserOrderRequestValidatorStub</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

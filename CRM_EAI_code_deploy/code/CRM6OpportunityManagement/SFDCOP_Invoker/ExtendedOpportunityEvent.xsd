@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" 
+            xmlns="http://www.example.org"
+            xmlns:opty="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" 
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement"
+            elementFormDefault="qualified">
+            <xsd:include schemaLocation="./EAI.MSG.OP.232_OpportunityEvent.xsd"/>
+  <xsd:element name="extendedOpportunityEvent" type="xsdLocal:ExtendedOpportunityEvent"/>
+  <xsd:complexType name="ExtendedOpportunityEvent">
+    <xsd:sequence>
+    <xsd:element name="SFDCObjectId" type="xsd:string"/>
+    <xsd:element name="opportunityEvent" type="opty:OpportunityEvent"/>
+    </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

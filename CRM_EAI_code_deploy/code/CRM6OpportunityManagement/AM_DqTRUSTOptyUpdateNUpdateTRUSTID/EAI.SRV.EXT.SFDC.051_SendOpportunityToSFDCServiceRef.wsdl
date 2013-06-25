@@ -1,0 +1,16 @@
+<definitions
+    
+     targetNamespace="http://soap.sforce.com/schemas/class/OpportunityManagement"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://soap.sforce.com/schemas/class/OpportunityManagement"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <import namespace="http://soap.sforce.com/schemas/class/OpportunityManagement" location="EAI.SRV.EXT.SFDC.051_SendOpportunityToSFDCService.wsdl"/>
+    <plnk:partnerLinkType name="OpportunityManagementPortType_PL">
+        <plnk:role name="OpportunityManagementPortType_Role">
+            <plnk:portType name="tns:OpportunityManagementPortType"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

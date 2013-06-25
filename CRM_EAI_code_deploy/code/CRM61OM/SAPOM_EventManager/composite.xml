@@ -1,0 +1,58 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SAPOM_EventManager" revision="1.0" state="on">
+    <import location="SAPOM_EventManager.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager"/>
+    <import location="WriteContact.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_UserCreation/SAPOM_UserCreation.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="SAPOM_EventManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager#wsdl.interface(SAPOM_EventManagerCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager#wsdl.interface(SAPOM_EventManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager#wsdl.endpoint(SAPOM_EventManager/SAPOM_EventManager)"/>
+    </service>
+    <component name="SAPOM_EventManager">
+        <implementation.bpel src="SAPOM_EventManager.bpel"/>
+        
+        
+    </component>
+    <reference name="WriteContact" ui:wsdlLocation="WriteContact.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/#wsdl.interface(WriteContact_ptt)"/>
+        <binding.jca config="WriteContact_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="SAPOM_UserCreation" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_UserCreation/SAPOM_UserCreation.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.interface(SAPOM_UserCreation)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.interface(SAPOM_UserCreationCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.endpoint(SAPOM_UserCreation/SAPOM_UserCreation)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_UserCreation/SAPOM_UserCreation?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation#wsdl.endpoint(SAPOM_UserCreation/SAPOM_UserCreationCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="AsyncSequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/AsyncSequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/AsyncSequenceChecker/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceCheckerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>SAPOM_EventManager/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM_EventManager/WriteContact</source.uri>
+        <target.uri>WriteContact</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM_EventManager/AsyncSequenceChecker</source.uri>
+        <target.uri>AsyncSequenceChecker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM_EventManager/SAPOM_UserCreation</source.uri>
+        <target.uri>SAPOM_UserCreation</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

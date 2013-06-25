@@ -1,0 +1,24 @@
+<?binding.jca TOMAM_POLLING_VIEW_db.jca?>
+<definitions name="TOMAM_POLLING_VIEW" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/TOMAM_POLLING_VIEW/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/TOMAM_POLLING_VIEW/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/TOMAMPOLLINGVIEW">
+    <plt:partnerLinkType name="TOMAM_POLLING_VIEW_plt">
+        <plt:role name="TOMAM_POLLING_VIEW_role">
+            <plt:portType name="tns:TOMAM_POLLING_VIEW_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/TOMAMPOLLINGVIEW" schemaLocation="TOMAMPOLLINGVIEW_table.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish" schemaLocation="EAI.MSG.TOM.AM.179_PublishAccountEventRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TomamPollingVCollection_msg">
+        <part name="TomamPollingVCollection" element="top:TomamPollingVCollection"/>
+    </message>
+    <portType name="TOMAM_POLLING_VIEW_ptt">
+        <operation name="receive">
+            <input message="tns:TomamPollingVCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

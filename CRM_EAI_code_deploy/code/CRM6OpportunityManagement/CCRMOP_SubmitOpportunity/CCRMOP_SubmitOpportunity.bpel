@@ -1,0 +1,228 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Mar 18 12:14:40 GMT+05:30 2009
+  Author:  sg59930
+  Purpose: Asynchronous BPEL Process
+  * Change History 
+* Version      Date         Author             Description Of Change 
+               22/02/10     Sreeja             Removed the condition for sequence releaser and changed the title to Flt  
+               24/02/10     Vasanthi           Mapped the PurchaseOrder & PurchaseOrderStatus in the TransSubmitOpportunityToSeibelMQ.xsl for PBI-0478  
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOP_SubmitOpportunity" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns7="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity" xmlns:ns6="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity/correlationset" xmlns:ns1="http://www.siebel.com/xml/RCRM%20Opportunity%20Inbound" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/mq/headerenqueueOpportunityStatus/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToCCRMOPSubmitOpportunity" partnerLinkType="client:CCRMOP_SubmitOpportunity" myRole="CCRMOP_SubmitOpportunityProvider" partnerRole="CCRMOP_SubmitOpportunityRequester"/>
+        <partnerLink name="enqueueOpportunityStatus" partnerRole="Enqueue_role" partnerLinkType="ns2:Enqueue_plt"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns3:SequenceReleaser"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="rcvOpportunityStatusIV" messageType="client:CCRMOP_SubmitOpportunityRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CCRMOP_SubmitOpportunityResponseMessage"/>
+        <variable name="SFDCID" type="xsd:string"/>
+        <variable name="InvenqueueOpportunityStatusIV" messageType="ns2:RCRMOpportunityPublish_msg"/>
+        <variable name="rcvTRUSTOpportunityUpdateIV" messageType="client:TRUSTOpportunityUpdatemsg"/>
+        <variable name="InvSequenceReleaserIV" messageType="ns3:SequenceReleaserRequestMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet" properties="ns9:CorrProp"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomtitleOnSelectionFault" language="java" version="1.5">
+                <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)       
+                    getVariableData("rcvOpportunityStatusIV","OpportunityStatus","/ns1:RCRMOpportunityPublish/ns1:Opportunity/ns1:RCRMSFDCOpptyId")).getFirstChild().getNodeValue();        
+String Title=(SFDCID!=null ? ("SFDCOptyID: "+ SFDCID+ ";Flt") : ".;");      
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)       
+                    getVariableData("rcvOpportunityStatusIV","OpportunityStatus","/ns1:RCRMOpportunityPublish/ns1:Opportunity/ns1:RCRMSFDCOpptyId")).getFirstChild().getNodeValue();        
+String Title=(SFDCID!=null ? ("SFDCOptyID: "+ SFDCID+ ";Flt") : ".;");      
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)       
+                    getVariableData("rcvOpportunityStatusIV","OpportunityStatus","/ns1:RCRMOpportunityPublish/ns1:Opportunity/ns1:RCRMSFDCOpptyId")).getFirstChild().getNodeValue();        
+String Title=(SFDCID!=null ? ("SFDCOptyID: "+ SFDCID+ ";Flt") : ".;");      
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:invalidResponse" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnInvalidFault" language="java" version="1.5">
+                <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)         
+                    getVariableData("rcvOpportunityStatusIV","OpportunityStatus","/ns1:RCRMOpportunityPublish/ns1:Opportunity/ns1:RCRMSFDCOpptyId")).getFirstChild().getNodeValue();          
+String Title=(SFDCID!=null ? ("SFDCOptyID: "+ SFDCID+ ";Flt") : ".;");        
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFlt" language="java" version="1.5">
+                <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)       
+                    getVariableData("rcvOpportunityStatusIV","OpportunityStatus","/ns1:RCRMOpportunityPublish/ns1:Opportunity/ns1:RCRMSFDCOpptyId")).getFirstChild().getNodeValue();        
+String Title=(SFDCID!=null ? ("SFDCOptyID: "+ SFDCID+ ";Flt") : ".;");      
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMOP_SubmitOpportunity.wsdl) -->
+        <receive name="rcvOpportunityStatus" partnerLink="anchorToCCRMOPSubmitOpportunity" portType="client:CCRMOP_SubmitOpportunity" operation="sendOpportunity" variable="rcvOpportunityStatusIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+            <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)     
+                    getVariableData("rcvOpportunityStatusIV","OpportunityStatus","/ns1:RCRMOpportunityPublish/ns1:Opportunity/ns1:RCRMSFDCOpptyId")).getFirstChild().getNodeValue();     
+String Title=(SFDCID!=null ? ("SFDCOptyID: "+SFDCID) : ".;");           
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <assign name="AsgInitVariable">
+            <copy>
+                <from variable="rcvOpportunityStatusIV" part="OpportunityStatus" query="/ns1:RCRMOpportunityPublish/ns1:Opportunity/ns1:RCRMSFDCOpptyId"/>
+                <to variable="SFDCID"/>
+            </copy>
+            <copy>
+                <from expression="xref:lookupXRef(&quot;oramds:/apps/EAIMetaData/Xref/CRM_SFDC_OPPTYXREF.xref&quot;,&quot;SFDCOPPTYID&quot;,bpws:getVariableData('SFDCID'), &quot;SIEBELOPPTYID&quot;,false())"/>
+                <to variable="rcvOpportunityStatusIV" part="OpportunityStatus" query="/ns1:RCRMOpportunityPublish/ns1:Opportunity/ns1:Id"/>
+            </copy>
+        </assign>
+        <scope name="ScpenqueueOpportunityStatus">
+            <faultHandlers>
+                <catchAll>
+                    <throw name="ThrInvalidResponse" faultName="bpelx:invalidResponse" faultVariable="runtimeFault"/>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="SeqenqueueOpportunityStatus">
+                <assign name="TransSubmitOpportunityToSeibelMQ">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransSubmitOpportunityToSeibelMQ.xsl',bpws:getVariableData('rcvOpportunityStatusIV','OpportunityStatus'))"/>
+                        <to variable="InvenqueueOpportunityStatusIV" part="RCRMOpportunityPublish"/>
+                    </copy>
+                </assign>
+                <invoke name="InvenqueueOpportunityStatus" partnerLink="enqueueOpportunityStatus" portType="ns2:Enqueue_ptt" operation="Enqueue" inputVariable="InvenqueueOpportunityStatusIV">
+                    <correlations>
+                        <correlation initiate="yes" set="CorrelationSet" pattern="out"/>
+                    </correlations>
+                </invoke>
+                <scope name="Scope_1">
+                    <switch name="Switch_1">
+                        <case condition="bpws:getVariableData('rcvOpportunityStatusIV','OpportunityStatus','/ns1:RCRMOpportunityPublish/ns1:ActionCode')=&quot;UpdateSFDCOpptyID&quot;">
+                            <empty name="DoNothing"/>
+                        </case>
+                        <otherwise>
+                            <sequence name="Sequence_1">
+                                <receive name="rcvTRUSTOpportunityUpdate" createInstance="no" partnerLink="anchorToCCRMOPSubmitOpportunity" portType="client:CCRMOP_SubmitOpportunity" operation="updateOpportunity" variable="rcvTRUSTOpportunityUpdateIV">
+                                    <correlations>
+                                        <correlation initiate="no" set="CorrelationSet"/>
+                                    </correlations>
+                                </receive>
+                                <scope name="ScpSequenceReleaser">
+                                    <faultHandlers>
+                                        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                            <throw name="ThrSequenceReleaserError" faultName="ns8:ThrSequenceReleaserError" faultVariable="runtimeFault"/>
+                                        </catch>
+                                    </faultHandlers>
+                                    <sequence name="SeqSequenceReleaser">
+                                        <assign name="AsgSequenceReleaser">
+                                            <copy>
+                                                <from expression="'EAI'"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:applicationId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:transactionId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:messageId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="'EAI;'"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:messageHistory"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="xp20:current-dateTime()"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:timeStamp"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="ora:getCompositeInstanceId()"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:instanceId"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="1"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:timeToLive"/>
+                                            </copy>
+                                            <copy>
+                                                <from expression="'V'"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:payloadVersion"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="rcvOpportunityStatusIV" part="OpportunityStatus" query="/ns1:RCRMOpportunityPublish/ns1:UserId"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:eaiHeader/ns5:tracingId"/>
+                                            </copy>
+                                            <copy>
+                                                <from variable="rcvOpportunityStatusIV" part="OpportunityStatus" query="/ns1:RCRMOpportunityPublish/ns1:UserId"/>
+                                                <to variable="InvSequenceReleaserIV" part="payload" query="/ns4:releaseSequenceRequest/ns4:correlationID"/>
+                                            </copy>
+                                        </assign>
+                                        <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns3:SequenceReleaser" operation="releaseSequence" inputVariable="InvSequenceReleaserIV"/>
+                                    </sequence>
+                                </scope>
+                            </sequence>
+                        </otherwise>
+                    </switch>
+                </scope>
+            </sequence>
+        </scope>
+        <switch name="SwitchCheckError">
+            <case condition="bpws:getVariableData('rcvTRUSTOpportunityUpdateIV','TRUSTOpportunityUpdate','/ns1:RCRMOpportunityPublish/ns1:ActionCode') = &quot;Error&quot;">
+                <bpelx:exec name="AsgCustomTitleOnSiebelTRUSTFault" language="java" version="1.5">
+                    <![CDATA[String SFDCID = ((oracle.xml.parser.v2.XMLElement)       
+                    getVariableData("rcvOpportunityStatusIV","OpportunityStatus","/ns1:RCRMOpportunityPublish/ns1:Opportunity/ns1:RCRMSFDCOpptyId")).getFirstChild().getNodeValue();       
+String Title=(SFDCID!=null ? ("SFDCOptyID: "+ SFDCID+ " ;SBL-OP-Flt") : ".;");                
+setCompositeInstanceTitle(Title);]]>
+                </bpelx:exec>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

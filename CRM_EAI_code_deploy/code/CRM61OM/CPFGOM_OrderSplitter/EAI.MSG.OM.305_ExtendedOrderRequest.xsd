@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.OM.305_ExtendedOrderRequest.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:	Canonical Order Schema document
+*
+*
+* Change History
+* Version		Date				Author			Description Of Change
+* =======		========		==================		===============================
+*  0.01			10/10/2010		Hema				Initial Version
+*  
+***************************************************************************************************************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.17">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="extendedorderReq" type="xsdLocal:ExtendedOrderReq"/>
+	<xsd:complexType name="ExtendedOrderReq">
+		<xsd:sequence>
+			<xsd:element name="userRecord" type="xsdLocal:UserRecord" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="UserRecord">
+		<xsd:sequence>
+	    <xsd:element name="userNumber" type="xsd:string"/>
+            <xsd:element name="numberOfLines" type="xsd:int"/>
+            <xsd:element name="cumulativeNumberOfLines" type="xsd:int"/>
+            </xsd:sequence>
+        </xsd:complexType>
+</xsd:schema>

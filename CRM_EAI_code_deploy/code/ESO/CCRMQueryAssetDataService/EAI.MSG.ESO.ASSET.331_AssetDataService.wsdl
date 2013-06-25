@@ -1,0 +1,219 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<wsdl:definitions
+     targetNamespace="http://www.reuters.com/ns/2012/01/07/ESO/MTR/AssetDataRequest"
+     xmlns:tracc="http://www.reuters.com/ns/2012/01/07/ESO/MTR/AssetDataRequest"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:rpacc="http://www.reuters.com/ns/2012/01/07/ESO/MTR/AssetDataRequest"
+     xmlns:tns="http://www.reuters.com/ns/2012/01/07/ESO/MTR/AssetDataRequest"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    >
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://www.reuters.com/ns/2012/01/07/ESO/MTR/AssetDataRequest"
+             elementFormDefault="qualified" xmlns:xsdLocal="http://www.reuters.com/ns/2012/01/07/ESO/MTR/AssetDataRequest">
+            <xsd:complexType name="QueryAssetDataEaiHeader">
+                <xsd:sequence>
+                    <xsd:element name="applicationId" type="xsdLocal:string10"/>
+                    <xsd:element name="transactionId" type="xsdLocal:string30"/>
+                    <xsd:element name="messageId" type="xsdLocal:string30"/>
+                    <xsd:element name="messageHistory" type="xsdLocal:string100"/>
+                    <xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+                    <xsd:element name="timeStamp" type="xsd:dateTime"/>
+                    <xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+                    <xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+                    <xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:simpleType name="Response">
+                <xsd:restriction base="xsd:token">
+                    <xsd:enumeration value="0"/>
+                    <xsd:enumeration value="1"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="ResponseCode">
+                <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="250"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="Message">
+                <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="4000"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="string30">
+                <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="30"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="string50">
+                <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="50"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="string10">
+                <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="10"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="string40">
+                <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="40"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="string3">
+                <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="3"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="string100">
+                <xsd:restriction base="xsd:string">
+                    <xsd:maxLength value="100"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:element name="ListOfAssetDetails" type="xsdLocal:AssetDetails"/>
+            <xsd:complexType name="AssetDetails">
+                <xsd:sequence>
+                    <xsd:element name="Assets" maxOccurs="unbounded" minOccurs="0" type="xsdLocal:Asset"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="AssetRequest">
+                <xsd:sequence>
+                <xsd:element name="SearchSpec" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                <xsd:element name="ActionCode" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                <xsd:element name="EmailAddress" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                <xsd:element name="RootIntegrationId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                <xsd:element name="ContactUserId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                <xsd:element name="OwnerContactId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               </xsd:sequence>
+            </xsd:complexType>
+               <xsd:element name="AssetRequestData" type="xsdLocal:AssetRequest"/>
+            <xsd:complexType name="Asset">
+                <xsd:sequence>
+               <xsd:element name="UnInstallDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="Status" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="StartDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="SearchSpec" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="RootIntegrationId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="SpecialPriceDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="SpecialPriceCurrency" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="SpecialPrice" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ServiceAccount" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="SAPPPLId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="RevenueType" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="RenewalTerm" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="RenewalNotificationTerm" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="RenewalDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="RenewalCancellationTerm" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="PermissioningSystem" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="NetPriceCurrencyCode" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="LatestContractNumber" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="LatestAgreementType" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="LatestAgreementTermStatus" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="LastBillPriceCurrencyCode" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="LastBillPrice" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="InitialTerm" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="InflightQuoteOrderCalc" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="FreeTrialFlag" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="FreeTrialEndDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="FixedTermEndDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ContractNumber" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ContactUserId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ContactUUID" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ClientRenewByDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="BillingAccountSite" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="BillingAccountNum" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="AssetSoldToAccountNum" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="AssetLocationAccount" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="AssetInstallAccountNum" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ProductPartNumber" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ProductName" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ProductId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ParentAssetId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="OwnerLastName" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="OwnerFirstName" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="OwnerContactId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="NetPrice" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="IntegrationId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="InstallDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="Id" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="EmailAddress" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="EffectiveEndDate" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="AssetNumber" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ActionCode" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="Attributes" maxOccurs="unbounded" minOccurs="0" type="xsdLocal:Attributes"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Attributes">
+                <xsd:sequence>
+               <xsd:element name="TextValue" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ProductId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ObjectId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="Name" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+               <xsd:element name="ConfigurationModelId" maxOccurs="1" minOccurs="0" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="assetDataRequestElement">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="eaiHeader" minOccurs="0" type="xsdLocal:QueryAssetDataEaiHeader"
+                             nillable="true"/>
+                        <xsd:element ref="xsdLocal:AssetRequestData"/>
+                       
+                       <!-- 
+                        <xsd:element name="Process_spcInstance_spcId" type="xsd:string"/>
+                        <xsd:element name="Object_spcId" type="xsd:string"/>
+                        <xsd:element name="Siebel_spcOperation_spcObject_spcId" type="xsd:string"/>
+                        <xsd:element name="Error_spcCode" type="xsd:string"/>
+                        <xsd:element name="Error_spcMessage" type="xsd:string"/> -->
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="assetDataResponseElement">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="eaiHeader" minOccurs="0" type="xsdLocal:QueryAssetDataEaiHeader"
+                             nillable="true"/>
+                        <xsd:element name="Error_spcCode" type="xsd:string"/>
+                        <xsd:element name="Error_spcMessage" type="xsd:string"/>
+                        <xsd:element name="Object_spcId" type="xsd:string"/>
+                        <xsd:element name="Process_spcInstance_spcId" type="xsd:string"/>
+                        <xsd:element name="Siebel_spcOperation_spcObject_spcId" type="xsd:string"/>
+                        <xsd:element ref="xsdLocal:ListOfAssetDetails"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="assetDataRequest">
+        <wsdl:part name="parameter" element="tracc:assetDataRequestElement"/>
+    </wsdl:message>
+    <wsdl:message name="assetDataResponse">
+        <wsdl:part name="parameter" element="tracc:assetDataResponseElement"/>
+    </wsdl:message>
+    <wsdl:portType name="assetDataService">
+        <wsdl:operation name="queryAssets">
+            <wsdl:input message="tracc:assetDataRequest"/>
+            <wsdl:output message="tracc:assetDataResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="queryAssetsSOAP" type="tracc:assetDataService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="queryAssets">
+            <soap:operation style="document" soapAction="queryAssets"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="assetDataService">
+        <wsdl:port name="queryAssets" binding="tracc:queryAssetsSOAP">
+            <soap:address location="http://inkaban3ua-eai05:8000/soa-infra/services/MEDIATOR/TRUSTAM_PropagateAccountService/SFDCAM.PropagateAccountService_ep"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

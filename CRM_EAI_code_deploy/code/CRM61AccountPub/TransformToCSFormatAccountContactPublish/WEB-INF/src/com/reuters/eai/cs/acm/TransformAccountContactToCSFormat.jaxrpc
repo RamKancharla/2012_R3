@@ -1,0 +1,91 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<jdevws:WebService xmlns:jdevws="http://xmlns.oracle.com/jdeveloper/10130/webservice">
+   <list n="CHILD_NODES">
+      <url path="../../../../../../../public_html/WEB-INF/wsdl/TransformAccountContactToCSFormat.wsdl"/>
+      <url path="TransformAccountContactRequest.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/fixedlengthrequest/_CSResponse.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/acm/accountcontactpublish/_CSAccountContactPublish.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/acm/accountcontactpublish/_CSEaiHeader.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/acm/accountcontactpublish/_CSCompassMessageHeader.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/acm/accountcontactpublish/_CSAccount.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/acm/accountcontactpublish/_CSInstallationAddress.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/acm/accountcontactpublish/_CSBillingAddress.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/acm/accountcontactpublish/_CSContact.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/fixedlengthrequest/FixedLengthRequest.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/fixedlengthrequest/_CSEaiHeader.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/eai/cs/fixedlengthrequest/_CSBasicResponse.java"/>
+      <url path="../../../../../../../public_html/WEB-INF/TransformAccountContactToCSFormat-java-wsdl-mapping.xml"/>
+      <url path="TransformAccountContactRequestImpl.java"/>
+   </list>
+   <hash n="DATA_MODEL">
+      <value n="ATTACHMENT_ENCODING" v="ATTACHMENT_MIME"/>
+      <list n="BD_">
+         <hash>
+            <value n="BD_DEFAULT_DOCUMENT_WRAPPED" v="false"/>
+            <value n="BOUND_PORT_TYPE" v="{http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter}TransformAccountContactRequest"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPBinding"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter}TransformAccountContactRequestSOAP"/>
+            <list n="OP_BINDINGS">
+               <hash>
+                  <value n="BD_SOAP_ACTION" v="urn:#NewOperation"/>
+                  <value n="BD_SOAP_INPUT_USE" v="1"/>
+                  <value n="BD_SOAP_OUTPUT_USE" v="1"/>
+                  <value n="BD_SOAP_STYLE" v="1"/>
+                  <value n="BOUND_OPERATION" v="com.reuters.ns._2007._09._01.gcap.eai.cs.fixedlengthrequest.FixedLengthRequest.transform.com.reuters.ns._2007._09._01.gcap.eai.cs.acm.accountcontactpublish._CSAccountContactPublish"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPOperationBinding"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+         </hash>
+      </list>
+      <list n="custom_schema_urls">
+         <url path="../../../../../../../EAI.MSG.CS.207_FixedLengthConversionResponse.xsd"/>
+         <url path="../../../../../../../EAI.MSG.CS.ACM.228_AccountContactPublishRequest.xsd"/>
+      </list>
+      <value n="GUID" v="fec0a3ed-011f-1000-8001-0a0a0a0a4a8b"/>
+      <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaWebService"/>
+      <list n="PO_">
+         <hash>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPPort"/>
+            <value n="NAME" v="AccountContactRequest"/>
+            <value n="PORT_BINDING_NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter}TransformAccountContactRequestSOAP"/>
+            <list n="PORT_OPS">
+               <hash>
+                  <value n="EXPOSED_BD_OPERATION" v="com.reuters.ns._2007._09._01.gcap.eai.cs.fixedlengthrequest.FixedLengthRequest.transform.com.reuters.ns._2007._09._01.gcap.eai.cs.acm.accountcontactpublish._CSAccountContactPublish"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.PortOperation"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+         </hash>
+      </list>
+      <hash n="PROPERTY_GROUPS">
+         <hash n="WSDL_TO_JAVA_PROPERTIES">
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.WSDLToJavaProperties"/>
+            <value n="WSDL2JAVA_UNWRAP_PARAMETERS" v="false"/>
+         </hash>
+      </hash>
+      <list n="PT_">
+         <hash>
+            <value n="AUTO_SERVICE_INTERFACE"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaPortType"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter}TransformAccountContactRequest"/>
+            <hash n="PROPERTY_GROUPS"/>
+            <value n="PT_CLASS" v="com.reuters.eai.cs.acm.TransformAccountContactRequestImpl"/>
+            <value n="PT_SERVICE_INTERFACE" v="com.reuters.eai.cs.acm.TransformAccountContactRequest"/>
+         </hash>
+      </list>
+      <url n="TARGET_PROJECT" path="../../../../../../../TransformToCSFormatAccountContactPublish.jpr"/>
+      <url n="WS_MAPPING_FILE" path="../../../../../../../public_html/WEB-INF/TransformAccountContactToCSFormat-java-wsdl-mapping.xml"/>
+      <value n="WS_TARGET_NAMESPACE" v="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter"/>
+      <value n="WS_URI" v="TransformAccountContactToCSFormat"/>
+      <list n="WSDL_DEPENDENT_FILES">
+         <url path="../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CS.ACM.228_AccountContactPublishRequest.xsd"/>
+         <url path="../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CS.207_FixedLengthConversionResponse.xsd"/>
+      </list>
+   </hash>
+</jdevws:WebService>

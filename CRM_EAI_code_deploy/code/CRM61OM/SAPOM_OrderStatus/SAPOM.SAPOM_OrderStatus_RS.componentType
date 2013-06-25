@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="EAI.SRV.OM.SAP.68_OrderStatusResponse.wsdl" name="SAPOM.SAPOM_OrderStatus_RS">
+        <interface.wsdl interface="http://trm.com:I027:OrderProcessing:ContractOrderStatusReceive#wsdl.interface(SI_ContractOrderStatusSend_IB_Async)"/>
+    </service>
+    <reference ui:wsdlLocation="http://inkaban3ua-eai01:7777/orabpel/ccrmasync/SAPOM_TransformOrderStatus/SAPOM_TransformOrderStatus?wsdl" name="SAPOM.SAPOM_TransformOrderStatusSOAPAdp">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus#wsdl.interface(SAPOM_TransformOrderStatus)"/>
+    </reference>
+</componentType>

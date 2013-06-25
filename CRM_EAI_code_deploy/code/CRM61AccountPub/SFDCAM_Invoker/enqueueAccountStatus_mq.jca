@@ -1,0 +1,18 @@
+<adapter-config name="enqueueAccountStatus" adapter="MQ Series Adapter" wsdlLocation="enqueueAccountStatus.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemoteCRMtoEAI"/>
+  <endpoint-interaction portType="Enqueue_ptt" operation="Enqueue" UITransmissionPrimitive="Enqueue">
+    <interaction-spec className="oracle.tip.adapter.mq.outbound.InteractionSpecImpl">
+      <property name="PartialDeliveryForDL" value="false"/>
+      <property name="Persistence" value="true"/>
+      <property name="MessageFormat" value="NONE"/>
+      <property name="OnDeliveryFailure" value="DeadLetterQueue"/>
+      <property name="QueueName" value="${mq.token.prefix}EAI_CRM_054_ACCT_SFDC_RPLY_Q"/>
+      <property name="Expiry" value="NEVER"/>
+      <property name="SegmentIfRequired" value="false"/>
+      <property name="MessageType" value="NORMAL"/>
+      <property name="Priority" value="AS_Q_DEF"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

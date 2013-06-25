@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*************************************************************************
+* Module            EAI.SRV.EXT.TOM.024_PropogateQuoteStatusService
+*                   Technical Order Fulfillment
+* Type              Web Services Description Language (WSDL) File 
+* Description       Service to recive the quote status and pass it to Siebel 
+*
+* Change History
+* Version	Date		Author                      Description Of Change
+* ========	========	======================      ===============================
+*  0.01        	24/10/07	Geratayya Patchipulusu      Initial Version
+*  0.02        	29/10/07	Geratayya Patchipulusu      Changed the input parts and response
+*  0.03        	30/10/07	Geratayya Patchipulusu      Changed the message types to inline
+*  0.04        	30/10/07	Geratayya Patchipulusu      Changed the message types to basic
+*  0.05        	18/01/08	Rob Billington              Added new fields to TFVettingStatus for PBI-244 and Defect 10311
+*
+*************************************************************************/
+-->
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/TechFul" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/TechFul">
+	<wsdl:types>
+		<xsd:schema elementFormDefault="qualified" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/TechFul">
+			<xsd:element name="TFVettingStatus">
+			<xsd:complexType>
+				<xsd:sequence>
+					<xsd:element name="applicationId" type="xsd:string"/>
+					<xsd:element name="transactionId" type="xsd:string"/>
+					<xsd:element name="messageId" type="xsd:string"/>
+					<xsd:element name="messageHistory" type="xsd:string"/>
+					<xsd:element name="tracingId" type="xsd:string" nillable="true"/>
+					<xsd:element name="timeStamp" type="xsd:dateTime"/>
+					<xsd:element name="instanceId" type="xsd:string" nillable="true"/>
+					<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+					<xsd:element name="payloadVersion" type="xsd:string"/>
+					<xsd:element name="quoteNumber" type="xsd:string"/>
+					<xsd:element name="revisionNumber" type="xsd:string"/>
+					<xsd:element name="technicalQuoteStatus" type="xsd:string"/>
+					<xsd:element name="technicalQuoteStatusReason" type="xsd:string"/>
+					<xsd:element name="technicalQuoteStatusReasonCode" type="xsd:string"/>
+					<xsd:element name="technicalQuoteStatusUpdatedDate" type="xsd:dateTime"/>
+					<xsd:element name="allocatedIndividualFirstName" type="xsd:string"/>
+					<xsd:element name="allocatedIndividualSurname" type="xsd:string"/>
+					<xsd:element name="allocatedIndividualEmailAddress" type="xsd:string"/>
+					<xsd:element name="allocatedIndividualTelNumber" type="xsd:string"/>
+					<xsd:element name="allocatedIndividualCRMContactId" type="xsd:string"/>
+					
+				</xsd:sequence>
+			</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="vettingStatusPropagationResponse">
+			<xsd:complexType>
+				<xsd:sequence>
+					<xsd:element name="applicationId" type="xsd:string"/>
+					<xsd:element name="transactionId" type="xsd:string"/>
+					<xsd:element name="messageId" type="xsd:string"/>
+					<xsd:element name="messageHistory" type="xsd:string"/>
+					<xsd:element name="tracingId" type="xsd:string" nillable="true"/>
+					<xsd:element name="timeStamp" type="xsd:dateTime"/>
+					<xsd:element name="instanceId" type="xsd:string" nillable="true"/>
+					<xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+					<xsd:element name="payloadVersion" type="xsd:string"/>
+					<xsd:element name="response" type="xsd:string"/>
+					<xsd:element name="responseCode" type="xsd:string"/>
+					<xsd:element name="responseMessage" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="propagateQuoteStatusIn">
+		<wsdl:part name="vettingStatus" element="tns:TFVettingStatus"/>
+	</wsdl:message>
+	<wsdl:message name="propagateQuoteStatusOut">
+		<wsdl:part name="statusSubmissionResponse" element="tns:vettingStatusPropagationResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="PropagateQuoteStatusSoap">
+		<wsdl:operation name="propagateVettingStatus">
+			<documentation xmlns="http://schemas.xmlsoap.org/wsdl/">This method propagates a vetting status</documentation>
+			<wsdl:input message="tns:propagateQuoteStatusIn"/>
+			<wsdl:output message="tns:propagateQuoteStatusOut"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="PropagateQuoteStatusSoap" type="tns:PropagateQuoteStatusSoap">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="propagateVettingStatus">
+			<soap:operation soapAction="propagateVettingStatus" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="PropagateQuoteStatus">
+		<wsdl:port name="PropagateQuoteStatusSoap" binding="tns:PropagateQuoteStatusSoap">
+			<soap:address location="No Target Address"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,33 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TF_ProcessQuoteStatus" revision="1.0" state="on">
+    <import location="TF_ProcessQuoteStatus.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMTF_PropagateQuoteStatus/CCRMTF_PropagateQuoteStatus.wsdl" importType="wsdl"/>
+    <service name="anchorToProcessQuoteStatus" ui:wsdlLocation="TF_ProcessQuoteStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.interface(TF_ProcessQuoteStatusCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.interface(TF_ProcessQuoteStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.endpoint(TF_ProcessQuoteStatus/TF_ProcessQuoteStatus)"/>
+    </service>
+    <component name="TF_ProcessQuoteStatus">
+        <implementation.bpel src="TF_ProcessQuoteStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMTF_PropagateQuoteStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMTF_PropagateQuoteStatus/CCRMTF_PropagateQuoteStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus#wsdl.interface(CCRMTF_PropagateQuoteStatus)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus#wsdl.interface(CCRMTF_PropagateQuoteStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus#wsdl.endpoint(CCRMTF_PropagateQuoteStatus/CCRMTF_PropagateQuoteStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMTF_PropagateQuoteStatus/anchorToPropogateQuoteStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus#wsdl.endpoint(CCRMTF_PropagateQuoteStatus/CCRMTF_PropagateQuoteStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToProcessQuoteStatus</source.uri>
+        <target.uri>TF_ProcessQuoteStatus/anchorToProcessQuoteStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TF_ProcessQuoteStatus/CCRMTF_PropagateQuoteStatus</source.uri>
+        <target.uri>CCRMTF_PropagateQuoteStatus</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

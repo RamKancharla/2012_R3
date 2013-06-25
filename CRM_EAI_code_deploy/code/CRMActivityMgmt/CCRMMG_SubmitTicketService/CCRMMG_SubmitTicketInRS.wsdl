@@ -1,0 +1,30 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<definitions
+     name="SubmitTicketInRS"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/MigrationTicketServices"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/MigrationTicketServices"
+     xmlns:out1="http://www.siebel.com/xml/RCRMTeamTrack"
+     xmlns:inp1="http://www.siebel.com/xml/RCRMTeamTrack"
+    >
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.siebel.com/xml/RCRMTeamTrack" schemaLocation="EAI.MSG.CCRM.MG.269_TicketRequest.xsd" />
+      </schema>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.siebel.com/xml/RCRMTeamTrack" schemaLocation="EAI.MSG.CCRM.MG.269_TicketRequest.xsd" />
+      </schema>
+    </types>
+    <message name="RCRMTeamTrack_request">
+        <part name="RCRMTeamTrack" element="out1:RCRMTeamTrack"/>
+    </message>
+    <message name="RCRMTeamTrack_reply">
+        <part name="RCRMTeamTrack" element="out1:RCRMTeamTrack"/>
+    </message>
+    <portType name="submitTicket_ppt">
+        <operation name="submitTicket">
+            <input message="tns:RCRMTeamTrack_request"/>
+            <output message="tns:RCRMTeamTrack_reply"/>
+        </operation>
+    </portType>
+</definitions>

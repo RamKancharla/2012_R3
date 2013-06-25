@@ -1,0 +1,24 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/RefData/EAI/CS/PM/PriceUpdateParser"
+         location="http://eaidev2:8004/ParseCSPriceUpdateStatus/parsePriceUpdateStatus?WSDL"/>
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+                 schemaLocation="EAI.MSG.CS.209_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+    </types>
+    <plnk:partnerLinkType name="ParseCSPriceUpdateStatus_PL">
+        <plnk:role name="ParseCSPriceUpdateStatus_Role">
+            <plnk:portType name="tns:ParseCSPriceUpdateStatus"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

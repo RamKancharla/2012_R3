@@ -1,0 +1,32 @@
+<adapter-config name="SAPOM_POLLING_V" adapter="Database Adapter" wsdlLocation="SAPOM_POLLING_V.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="INKABAN_BLR" adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName="oracle.tip.adapter.db.DBManagedConnectionFactory">
+      <property name="DriverClassName" value="oracle.jdbc.OracleDriver"/>
+      <property name="PlatformClassName" value="oracle.toplink.platform.database.oracle.Oracle10Platform"/>
+      <property name="ConnectionString" value="jdbc:oracle:thin:@//10.136.164.152:1521/EAIDEV"/>
+      <property name="UserName" value="Eaiowner"/>
+      <property name="Password" value="D17D09B7D556B6F53AC0A5374043425B"/>
+    </non-managed-connection>
+  </connection-factory>
+
+  <endpoint-activation portType="SAPOM_POLLING_V_ptt" operation="receive">
+    <activation-spec className="oracle.tip.adapter.db.DBActivationSpec">
+      <property name="DescriptorName" value="SAPOMPOLLINGV.SapomPollingV"/>
+      <property name="QueryName" value="SAPOM_POLLING_V"/>
+      <property name="PollingStrategy" value="LogicalDeletePollingStrategy"/>
+      <property name="MarkReadColumn" value="STATE"/>
+      <property name="MarkReadValue" value="P"/>
+      <property name="SequencingColumn" value="ID"/>
+      <property name="MaxRaiseSize" value="8"/>
+      <property name="MaxTransactionSize" value="8"/>
+      <property name="PollingInterval" value="11"/>
+      <property name="NumberOfThreads" value="1"/>
+      <property name="UseBatchDestroy" value="true"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+      <property name="MappingsMetaDataURL" value="SAPOM_POLLING_V-or-mappings.xml"/>
+    </activation-spec>
+    <input/>
+  </endpoint-activation>
+
+</adapter-config>

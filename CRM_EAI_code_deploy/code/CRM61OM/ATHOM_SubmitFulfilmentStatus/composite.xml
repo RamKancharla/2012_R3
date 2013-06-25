@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHOM_SubmitFulfilmentStatus" revision="1.0" state="on">
+    <import importType="wsdl" location="ATHOM_OrderFulfilmentStatusRS.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/OM/ATHOM"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHOM_OrderFulfillmentStatus/ATHOM_OrderFulfillmentStatus.wsdl" importType="wsdl"/>
+    <service name="ATHOM.OrderFulfilmentStatusRS_ep" ui:wsdlLocation="ATHOM_OrderFulfilmentStatusRS.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/OM/ATHOM#wsdl.interface(orderFulfilmentStatus_ppt)"/>
+        <binding.ws location="ATHOM_OrderFulfilmentStatusRS.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/OM/ATHOM#wsdl.endpoint(orderFulfilmentStatus_ppt/orderFulfilmentStatus_ppt_pt)"/>
+    </service>
+    <component name="ATHOM.OrderFulfilmentStatusRS">
+        <implementation.mediator src="ATHOM.OrderFulfilmentStatusRS.mplan"/>
+    </component>
+    <reference name="ATHOM.OrderFulfilmentStatusNValidatorSOAPAdp" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHOM_OrderFulfillmentStatus/ATHOM_OrderFulfillmentStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus#wsdl.interface(ATHOM_OrderFulfillmentStatus)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus#wsdl.endpoint(ATHOM_OrderFulfillmentStatus/ATHOM_OrderFulfillmentStatus)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHOM_OrderFulfillmentStatus/ATHOM_OrderFulfillmentStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>ATHOM.OrderFulfilmentStatusRS_ep</source.uri>
+        <target.uri>ATHOM.OrderFulfilmentStatusRS/ATHOM.OrderFulfilmentStatusRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHOM.OrderFulfilmentStatusRS/ATHOM.OrderFulfilmentStatusNValidatorSOAPAdp</source.uri>
+        <target.uri>ATHOM.OrderFulfilmentStatusNValidatorSOAPAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

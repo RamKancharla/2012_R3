@@ -1,0 +1,89 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="OM_OrderDispatcher" revision="1.0" state="on">
+    <import location="OM_OrderDispatcher.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_EventManager/SAPOM_EventManager.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHOM_OrderSplitter/ATHOM_OrderSplitter.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderSplitter/CSOM_OrderSplitter.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_OrderSplitter/CPFGOM_OrderSplitter.wsdl" importType="wsdl"/>
+    <service name="anchorToOrderDispatcher" ui:wsdlLocation="OM_OrderDispatcher.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderDispatcherCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderDispatcher)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.endpoint(OM_OrderDispatcher/OM_OrderDispatcher)"/>
+    </service>
+    <component name="OM_OrderDispatcher">
+        <implementation.bpel src="OM_OrderDispatcher.bpel"/>
+        
+        
+    </component>
+    <reference name="CSOM_OrderSplitter" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderSplitter/CSOM_OrderSplitter.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitter)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitterCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.endpoint(CSOM_OrderSplitter/CSOM_OrderSplitter)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderSplitter/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.endpoint(CSOM_OrderSplitter/CSOM_OrderSplitterCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="SAPOM_EventManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_EventManager/SAPOM_EventManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager#wsdl.interface(SAPOM_EventManager)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager#wsdl.interface(SAPOM_EventManagerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager#wsdl.endpoint(SAPOM_EventManager/SAPOM_EventManager)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPOM_EventManager/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_EventManager#wsdl.endpoint(SAPOM_EventManager/SAPOM_EventManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CPFGOM_OrderSplitter" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_OrderSplitter/CPFGOM_OrderSplitter.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter#wsdl.interface(CPFGOM_OrderSplitter)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter#wsdl.interface(CPFGOM_OrderSplitterCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter#wsdl.endpoint(CPFGOM_OrderSplitter/CPFGOM_OrderSplitter)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGOM_OrderSplitter/anchorToCPFGOMOrderSplitter?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter#wsdl.endpoint(CPFGOM_OrderSplitter/CPFGOM_OrderSplitterCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="ATHOM_OrderSplitter" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHOM_OrderSplitter/ATHOM_OrderSplitter.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter#wsdl.interface(ATHOM_OrderSplitter)" callbackInterface="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter#wsdl.interface(ATHOM_OrderSplitterCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter#wsdl.endpoint(ATHOM_OrderSplitter/ATHOM_OrderSplitter)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/ATHOM_OrderSplitter/anchorToOrderSplitter?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter#wsdl.endpoint(ATHOM_OrderSplitter/ATHOM_OrderSplitterCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CCRMOM_ProxyPropagateOrderStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatus)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.interface(CCRMOM_ProxyPropagateOrderStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.endpoint(CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOM_ProxyPropagateOrderStatus/anchorToProxyPropagateOrderStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM/CCRMOM_ProxyPropagateOrderStatus#wsdl.endpoint(CCRMOM_ProxyPropagateOrderStatus/CCRMOM_ProxyPropagateOrderStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToOrderDispatcher</source.uri>
+        <target.uri>OM_OrderDispatcher/anchorToOrderDispatcher</target.uri>
+    </wire>
+    <wire>
+        <source.uri>OM_OrderDispatcher/CCRMOM_ProxyPropagateOrderStatus</source.uri>
+        <target.uri>CCRMOM_ProxyPropagateOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>OM_OrderDispatcher/CSOM_OrderSplitter</source.uri>
+        <target.uri>CSOM_OrderSplitter</target.uri>
+    </wire>
+    <wire>
+        <source.uri>OM_OrderDispatcher/ATHOM_OrderSplitter</source.uri>
+        <target.uri>ATHOM_OrderSplitter</target.uri>
+    </wire>
+    <wire>
+        <source.uri>OM_OrderDispatcher/SAPOM_EventManager</source.uri>
+        <target.uri>SAPOM_EventManager</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>OM_OrderDispatcher/CPFGOM_OrderSplitter</source.uri>
+        <target.uri>CPFGOM_OrderSplitter</target.uri>
+    </wire>
+</composite>

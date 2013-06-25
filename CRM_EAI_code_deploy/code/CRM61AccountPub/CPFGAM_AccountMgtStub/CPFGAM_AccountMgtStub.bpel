@@ -1,0 +1,308 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Fri Mar 07 01:43:50 GMT 2008
+  Author:  rob.billington
+  Purpose: Synchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFGAM_AccountMgtStub" targetNamespace="http://xmlns.oracle.com/CPFGAM_AccountMgtStub" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://xmlns.oracle.com/CPFGAM_AccountMgtStub" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/db/CPFG_StubAccountStore/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/db/top/CPFGStubAccountStore" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/AccountManagementServices" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="client" partnerLinkType="client:CPFGAM_AccountMgtStub" myRole="CPFGAM_AccountMgtStubProvider"/>
+    <partnerLink name="CPFG_StubAccountStore" partnerRole="CPFG_StubAccountStore_role" partnerLinkType="ns1:CPFG_StubAccountStore_plt"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="client:CPFGAM_AccountMgtStubRequestMessage"/>
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="outputVariable" messageType="client:CPFGAM_AccountMgtStubResponseMessage"/>
+    <variable name="isExistingAccount" type="xsd:boolean"/>
+    <variable name="response" type="xsd:string"/>
+    <variable name="responseCode" type="xsd:string"/>
+    <variable name="responseMessage" type="xsd:string"/>
+    <variable name="Invoke_1_delete_InputVariable" messageType="ns1:CpfgAccountCollection_msg"/>
+    <variable name="InvWriteAccount_write_IV" messageType="ns1:CpfgAccountCollection_msg"/>
+    <variable name="InvFindAccount_CPFG_StubAccountStoreSelect_id_InputVariable" messageType="ns1:CPFG_StubAccountStoreSelect_id_inparameters"/>
+    <variable name="InvFindAccount_CPFG_StubAccountStoreSelect_id_OutputVariable" messageType="ns1:CpfgAccountCollection_msg"/>
+    <variable name="InvUpdate_update_InputVariable" messageType="ns1:CpfgAccountCollection_msg"/>
+    <variable name="Invoke_1_delete_InputVariable_1" messageType="ns1:CpfgAccountCollection_msg"/>
+    <variable name="InvWrite_write_InputVariable" messageType="ns1:CpfgAccountCollection_msg"/>
+    <variable name="InvWrite_write_InputVariable_1" messageType="ns1:CpfgAccountCollection_msg"/>
+    <variable name="InvUpdate_update_InputVariable_1" messageType="ns1:CpfgAccountCollection_msg"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in CPFGAM_AccountMgtStub.wsdl) -->
+    <receive name="receiveInput" partnerLink="client" portType="client:CPFGAM_AccountMgtStub" operation="propagateAccountHierarchy" variable="inputVariable" createInstance="yes"/>
+    <assign name="AsgDefaultResponseValues">
+      <copy>
+        <from expression="1"/>
+        <to variable="response"/>
+      </copy>
+      <copy>
+        <from expression="'00300-AAA-UNKNOWN INTERNAL SERVICE ERROR'"/>
+        <to variable="responseCode"/>
+      </copy>
+      <copy>
+        <from expression="'Internal Error'"/>
+        <to variable="responseMessage"/>
+      </copy>
+    </assign>
+    <assign name="AsnAccountId">
+      <copy>
+        <from variable="inputVariable" part="payload" query="/ns2:propagateAccountHierarchyRequest/ns2:account/ns2:accountID"/>
+        <to variable="InvFindAccount_CPFG_StubAccountStoreSelect_id_InputVariable" part="CPFG_StubAccountStoreSelect_id_inparameters" query="/ns3:CPFG_StubAccountStoreSelect_idInputParameters/ns3:id"/>
+      </copy>
+    </assign>
+    <!-- Generate reply to synchronous request -->
+    <invoke name="InvFindAccount" partnerLink="CPFG_StubAccountStore" portType="ns1:CPFG_StubAccountStore_ptt" operation="CPFG_StubAccountStoreSelect_id" inputVariable="InvFindAccount_CPFG_StubAccountStoreSelect_id_InputVariable" outputVariable="InvFindAccount_CPFG_StubAccountStoreSelect_id_OutputVariable"/>
+    <assign name="AsgIsExistingAccount">
+      <copy>
+        <from expression="0 &lt; ora:countNodes('InvFindAccount_CPFG_StubAccountStoreSelect_id_OutputVariable','CpfgAccountCollection','/ns3:CpfgAccountCollection/ns3:CpfgAccount')"/>
+        <to variable="isExistingAccount"/>
+      </copy>
+    </assign>
+    <switch name="Switch_ActionCode">
+      <case condition="bpws:getVariableData('inputVariable','payload','/ns2:propagateAccountHierarchyRequest/ns2:actionCode') = 'EAI.SRV.EXT.019.ACT003'">
+        <bpelx:annotation>
+          <bpelx:pattern>MODIFY</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_6">
+          <switch name="Switch_2">
+            <case condition="bpws:getVariableData('isExistingAccount')">
+              <bpelx:annotation>
+                <bpelx:pattern>Account Exists</bpelx:pattern>
+              </bpelx:annotation>
+              <sequence name="Sequence_7">
+                <assign name="AsgInputToUpdateIV">
+                  <copy>
+                    <from variable="inputVariable" part="payload" query="/ns2:propagateAccountHierarchyRequest/ns2:account/ns2:accountID"/>
+                    <to variable="InvUpdate_update_InputVariable" part="CpfgAccountCollection" query="/ns3:CpfgAccountCollection/ns3:CpfgAccount/ns3:id"/>
+                  </copy>
+                </assign>
+                <assign name="TransInputToUpdateIV">
+                  <bpelx:annotation>
+                    <bpelx:pattern>transformation</bpelx:pattern>
+                  </bpelx:annotation>
+                  <copy>
+                    <from expression="ora:processXSLT('TransInputToUpdateIV.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                    <to variable="InvUpdate_update_InputVariable" part="CpfgAccountCollection"/>
+                  </copy>
+                </assign>
+                <invoke name="InvUpdate" partnerLink="CPFG_StubAccountStore" portType="ns1:CPFG_StubAccountStore_ptt" operation="update" inputVariable="InvUpdate_update_InputVariable"/>
+                <assign name="AsgSuccess">
+                  <copy>
+                    <from expression="0"/>
+                    <to variable="response"/>
+                  </copy>
+                  <copy>
+                    <from expression="'00218-AAA-ACCOUNT DETAILS UPDATED'"/>
+                    <to variable="responseCode"/>
+                  </copy>
+                  <copy>
+                    <from expression="'SUCCESS'"/>
+                    <to variable="responseMessage"/>
+                  </copy>
+                </assign>
+              </sequence>
+            </case>
+            <otherwise>
+              <assign name="AsgAccountNotKnownError">
+                <copy>
+                  <from expression="1"/>
+                  <to variable="response"/>
+                </copy>
+                <copy>
+                  <from expression="'00215-AAA-ACCOUNT UNKNOWN'"/>
+                  <to variable="responseMessage"/>
+                </copy>
+                <copy>
+                  <from expression="'ACCOUNT DOES NOT EXIST'"/>
+                  <to variable="responseMessage"/>
+                </copy>
+              </assign>
+            </otherwise>
+          </switch>
+        </sequence>
+      </case>
+      <case condition="bpws:getVariableData('inputVariable','payload','/ns2:propagateAccountHierarchyRequest/ns2:actionCode') = 'EAI.SRV.EXT.019.ACT002'">
+        <bpelx:annotation>
+          <bpelx:pattern>REMOVE</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_4">
+          <switch name="Switch_1">
+            <case condition="bpws:getVariableData('isExistingAccount')">
+              <bpelx:annotation>
+                <bpelx:pattern>Existing Account</bpelx:pattern>
+              </bpelx:annotation>
+              <sequence name="Sequence_9">
+                <assign name="AsgIDForDelete">
+                  <copy>
+                    <from variable="inputVariable" part="payload" query="/ns2:propagateAccountHierarchyRequest/ns2:account/ns2:accountID"/>
+                    <to variable="Invoke_1_delete_InputVariable_1" part="CpfgAccountCollection" query="/ns3:CpfgAccountCollection/ns3:CpfgAccount/ns3:id"/>
+                  </copy>
+                </assign>
+                <invoke name="Invoke_1" partnerLink="CPFG_StubAccountStore" portType="ns1:CPFG_StubAccountStore_ptt" operation="delete" inputVariable="Invoke_1_delete_InputVariable_1"/>
+              </sequence>
+            </case>
+            <otherwise>
+              <empty name="DoNothing"/>
+            </otherwise>
+          </switch>
+          <assign name="AsgResponse_2">
+            <copy>
+              <from expression="0"/>
+              <to variable="response"/>
+            </copy>
+            <copy>
+              <from expression="'00217-AAA-ACCOUNT DELETED'"/>
+              <to variable="responseCode"/>
+            </copy>
+            <copy>
+              <from expression="'SUCCESS'"/>
+              <to variable="responseMessage"/>
+            </copy>
+          </assign>
+        </sequence>
+      </case>
+      <case condition="bpws:getVariableData('inputVariable','payload','/ns2:propagateAccountHierarchyRequest/ns2:actionCode') = 'EAI.SRV.EXT.019.ACT001'">
+        <bpelx:annotation>
+          <bpelx:pattern>ADD</bpelx:pattern>
+        </bpelx:annotation>
+        <sequence name="Sequence_12">
+          <switch name="Switch_3">
+            <case condition="bpws:getVariableData('isExistingAccount')">
+              <bpelx:annotation>
+                <bpelx:pattern>Existing Account</bpelx:pattern>
+              </bpelx:annotation>
+              <sequence name="Sequence_11">
+                <assign name="AsgInputToUpdateIV">
+                  <copy>
+                    <from variable="inputVariable" part="payload" query="/ns2:propagateAccountHierarchyRequest/ns2:account/ns2:accountID"/>
+                    <to variable="InvUpdate_update_InputVariable_1" part="CpfgAccountCollection" query="/ns3:CpfgAccountCollection/ns3:CpfgAccount/ns3:id"/>
+                  </copy>
+                </assign>
+                <assign name="TransInputToUpdate">
+                  <bpelx:annotation>
+                    <bpelx:pattern>transformation</bpelx:pattern>
+                  </bpelx:annotation>
+                  <copy>
+                    <from expression="ora:processXSLT('TransInputToUpdateIV.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                    <to variable="InvUpdate_update_InputVariable_1" part="CpfgAccountCollection"/>
+                  </copy>
+                </assign>
+                <invoke name="InvUpdate" partnerLink="CPFG_StubAccountStore" portType="ns1:CPFG_StubAccountStore_ptt" operation="update" inputVariable="InvUpdate_update_InputVariable_1"/>
+                <assign name="AsgSuccess">
+                  <copy>
+                    <from expression="0"/>
+                    <to variable="response"/>
+                  </copy>
+                  <copy>
+                    <from expression="'00218-AAA-ACCOUNT DETAILS UPDATED'"/>
+                    <to variable="responseCode"/>
+                  </copy>
+                  <copy>
+                    <from expression="'An existing account was updated with the details provided'"/>
+                    <to variable="responseMessage"/>
+                  </copy>
+                </assign>
+              </sequence>
+            </case>
+            <otherwise>
+              <sequence name="Sequence_10">
+                <assign name="AsgInputToWriteIV">
+                  <copy>
+                    <from variable="inputVariable" part="payload" query="/ns2:propagateAccountHierarchyRequest/ns2:account/ns2:accountID"/>
+                    <to variable="InvWrite_write_InputVariable_1" part="CpfgAccountCollection" query="/ns3:CpfgAccountCollection/ns3:CpfgAccount/ns3:id"/>
+                  </copy>
+                </assign>
+                <assign name="TransInputToWriteIV">
+                  <bpelx:annotation>
+                    <bpelx:pattern>transformation</bpelx:pattern>
+                  </bpelx:annotation>
+                  <copy>
+                    <from expression="ora:processXSLT('TransInputToWriteIV.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                    <to variable="InvWrite_write_InputVariable_1" part="CpfgAccountCollection"/>
+                  </copy>
+                </assign>
+                <invoke name="InvWrite" partnerLink="CPFG_StubAccountStore" portType="ns1:CPFG_StubAccountStore_ptt" operation="write" inputVariable="InvWrite_write_InputVariable_1"/>
+                <assign name="AsgSuccess">
+                  <copy>
+                    <from expression="0"/>
+                    <to variable="response"/>
+                  </copy>
+                  <copy>
+                    <from expression="'00214-AAA-ACCOUNT CREATED'"/>
+                    <to variable="responseCode"/>
+                  </copy>
+                  <copy>
+                    <from expression="'SUCCESS'"/>
+                    <to variable="responseMessage"/>
+                  </copy>
+                </assign>
+              </sequence>
+            </otherwise>
+          </switch>
+        </sequence>
+      </case>
+      <otherwise>
+        <sequence name="Sequence_8">
+          <assign name="AsgErrorResponse">
+            <copy>
+              <from expression="1"/>
+              <to variable="response"/>
+            </copy>
+            <copy>
+              <from expression="1"/>
+              <to variable="responseCode"/>
+            </copy>
+            <copy>
+              <from expression="'UNKNOWN ACTION CODE' + bpws:getVariableData('inputVariable','payload','/ns2:propagateAccountHierarchyRequest/ns2:actionCode')"/>
+              <to variable="responseMessage"/>
+            </copy>
+          </assign>
+        </sequence>
+      </otherwise>
+    </switch>
+    <assign name="AsgResponse">
+      <copy>
+        <from variable="response"/>
+        <to variable="outputVariable" part="payload" query="/ns2:basicResponse/ns2:response"/>
+      </copy>
+      <copy>
+        <from variable="responseCode"/>
+        <to variable="outputVariable" part="payload" query="/ns2:basicResponse/ns2:responseCode"/>
+      </copy>
+      <copy>
+        <from variable="responseMessage"/>
+        <to variable="outputVariable" part="payload" query="/ns2:basicResponse/ns2:responseMessage"/>
+      </copy>
+    </assign>
+    <reply name="replyOutput" partnerLink="client" portType="client:CPFGAM_AccountMgtStub" operation="propagateAccountHierarchy" variable="outputVariable"/>
+  </sequence>
+</process>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.CCRM.124_UpdateProfileRequest.xsd
+* Type:       	XSD Schema
+* Description: The schema used for FTL within EAI
+*
+* Change History
+* Version     	Date      	Author             Description Of Change
+*
+*  0.01		05/04/07  	Kevin Wood	   Initial Version
+*  0.02		19/04/07  	Geratayya p	   Added UpdateType and moved FTLUserDetails complex type from CommmonUserTypes to FTLRequest
+*  0.03	        02/05/07	anvv		   Draft created for FTL / Update Profile ICF
+*  0.04         15/08/07        Aravind Murthy     Primary Account Details Deleted and Updated Manadatory elements with respect to API spec 
+*  0.05         12/10/08        Rob Billington     Added temporary URL 
+*  0.06         12/10/08        Rob Billington     Added _CPFGStatus and _CPFGStatusReason 
+**********************************************************************************-->
+<xsd:schema xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:gcap="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+            xmlns:gcap-mt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices"
+            xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            version="0.05">
+ <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.002_CommonUserTypes.xsd"/>
+ <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+ <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.003_CommonAccountTypes.xsd"/>
+ <xsd:complexType name="UpdateProfileRequest">
+  <xsd:sequence>
+   <xsd:element name="eaiHeader" type="gcap-mt:EaiHeader"/>
+   <xsd:element name="updateType" type="gcap-mt:UpdateType"/>
+   <xsd:element name="UpdateProfileUserDetails"
+                type="local:UpdateProfileUserDetails"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:element name="UpdateProfileRequest" type="local:UpdateProfileRequest"/>
+ <xsd:complexType name="UpdateProfileUserDetails">
+  <xsd:sequence>
+   <xsd:element name="UUID" type="gcap:UUID" nillable="true"/>
+   <xsd:element name="userID" type="gcap:UserID" nillable="true"/>
+   <xsd:element name="title" type="gcap:Title" nillable="true"/>
+   <xsd:element name="firstName" type="gcap:FirstName" nillable="true"/>
+   <xsd:element name="lastName" type="gcap:LastName" nillable="true"/>
+   <xsd:element name="phoneNumber" type="gcap:PhoneNumber" nillable="true"/>
+   <xsd:element name="emailAddress" type="gcap:EmailAddress" nillable="true"/>
+   <xsd:element name="legalConsentGiven" type="gcap:LegalConsentGiven"
+                nillable="true"/>
+   <xsd:element name="legalConsentGivenOn" type="gcap:LegalConsentGivenOn"
+                nillable="true"/>
+   <xsd:element name="marketingConsentGiven" type="gcap:MarketingConsentGiven"
+                nillable="true"/>
+   <xsd:element name="marketingConsentGivenOn"
+                type="gcap:MarketingConsentGivenOn" nillable="true"/>
+   <xsd:element name="jobRole" type="gcap:JobRole" nillable="true"/>
+   <xsd:element name="FTLCompleted" type="gcap:_FTLCompleted" nillable="true"/>
+   <xsd:element name="FTLCompletedOn" type="gcap:_FTLCompletedOn"
+                nillable="true"/>
+   <xsd:element name="localFirstName" type="gcap:LocalFirstName"
+                nillable="true"/>
+   <xsd:element name="localLastName" type="gcap:LocalLastName" nillable="true"/>
+   <xsd:element name="preferredServiceLanguage"
+                type="gcap:PreferredServiceLanguage" nillable="true"/>
+   <xsd:element name="reutersMessagingId" type="gcap:ReutersMessagingId"
+                nillable="true"/>
+   <xsd:element name="localDACSID" type="gcap:LocalDACSID" nillable="true"/>
+   <xsd:element name="geographicalFocus" type="gcap:GeographicalFocus"
+                nillable="true"/>
+   <xsd:element name="lastUpdatedByAAAOn" type="gcap:LastUpdatedByAAAOn"
+                nillable="true"/>
+   <xsd:element name="lastUpdatedSiebelOn" type="gcap:LastUpdatedSiebelOn"
+                nillable="true"/>
+   <xsd:element name="locationAccountID" type="gcap-cat:AccountID"
+                nillable="true"/>
+   <xsd:element name="temporaryURL" type="gcap:TemporaryURL"
+                nillable="true"/>
+   <xsd:element name="_CPFGStatus" type="xsd:string"
+                nillable="true"/>
+   <xsd:element name="_CPFGStatusReason" type="xsd:string"
+                nillable="true"/>  </xsd:sequence>
+ </xsd:complexType>
+</xsd:schema>

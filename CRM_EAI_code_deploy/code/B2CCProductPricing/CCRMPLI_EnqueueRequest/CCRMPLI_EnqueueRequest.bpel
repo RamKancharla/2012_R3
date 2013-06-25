@@ -1,0 +1,120 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMPLI_EnqueueRequest.bpel
+* Type:        BPEL FILE 
+* Description: A BPEL Process to insert Product Pricing data into HQ and PME Environments of CRM 
+* IDD Reference: B2CC-EAI-I002_ProductsPricing_IDD_v1.1
+* Change History 
+* Version      Date           Author                           Description Of Change 
+*  1.0         14/06/2010     Sandeep Raghupatruni             Initial Version 
+*  1.1          23/08/2010    Damodar                          Added the ProductCategory,PDPDescription,ProductSubType,DADFlag,DatafeedFlag,EikonGroup,TrainingType,PriorityClassification for CR 298
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMPLI_EnqueueRequest" targetNamespace="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" queryLanguage="http://www.w3.org/TR/1999/REC-xpath-19991116" expressionLanguage="http://www.w3.org/TR/1999/REC-xpath-19991116" abstractProcess="no" enableInstanceCompensation="no" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.siebel.com/xml/RCRM%20SAP%20Product%20Pricing" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/CCRMPLI_EnqueueRequest" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2010/06/10/SAMI/EAI/ProductPricing" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/mq/headerHQ_Enqueue/" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/mq/headerPME_Enqueue/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <partnerLink name="PME_Enqueue" partnerRole="Enqueue_role" partnerLinkType="ns2:Enqueue_plt"/>
+        <partnerLink name="HQ_Enqueue" partnerRole="Enqueue_role" partnerLinkType="ns3:Enqueue_plt"/>
+        <partnerLink name="client1"
+                     partnerLinkType="client:CCRMPLI_EnqueueRequest"
+                     myRole="CCRMPLI_EnqueueRequestProvider"/>
+    </partnerLinks>
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="prodPricn_IV" messageType="client:CCRMPLI_EnqueueRequestMessage"/>
+        <variable name="outputVariable" messageType="client:CCRMPLI_EnqueueRequestResponseMessage"/>
+        <variable name="InvPME_Enqueue_IV" messageType="ns2:ListOfRcrmSapProductPricing_msg"/>
+        <variable name="InvHQ_Enqueue_IV" messageType="ns3:ListOfRcrmSapProductPricing_msg"/>
+        <variable name="FaultVar" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="PLID" type="xsd:string"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:bindingFault" faultVariable="FaultVar">
+            <bpelx:exec name="AsgCustErrorTitle" language="java" version="1.3">
+                <![CDATA[String PLID = ((oracle.xml.parser.v2.XMLElement)getVariableData("prodPricn_IV","payload","/ns1:ProductPricing_Request/Header_Details/PPLID")).getFirstChild().getNodeValue();     
+String Title=("BINDING FAULT : PLID: "+PLID);  
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="FaultVar">
+            <bpelx:exec name="AsgCustErrorTitle" language="java" version="1.3">
+                <![CDATA[String PLID = ((oracle.xml.parser.v2.XMLElement)getVariableData("prodPricn_IV","payload","/ns1:ProductPricing_Request/Header_Details/PPLID")).getFirstChild().getNodeValue();    
+String Title=("REMOTE FAULT : PLID: "+PLID);       
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:invalidReply" faultVariable="FaultVar">
+            <bpelx:exec name="AsgCustErrorTitle" language="java" version="1.3">
+                <![CDATA[String PLID = ((oracle.xml.parser.v2.XMLElement)getVariableData("prodPricn_IV","payload","/ns1:ProductPricing_Request/Header_Details/PPLID")).getFirstChild().getNodeValue();    
+String Title=("REPLY FAULT : PLID: "+PLID);       
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustErrorTitle" language="java" version="1.3">
+                <![CDATA[String PLID = ((oracle.xml.parser.v2.XMLElement)getVariableData("prodPricn_IV","payload","/ns1:ProductPricing_Request/Header_Details/PPLID")).getFirstChild().getNodeValue();    
+String Title=("FAULT : PLID: "+PLID);
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="CCRMPLI_EnqueueRequest">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMPLI_EnqueueRequest.wsdl) -->
+        <receive name="receiveInput" partnerLink="client1" portType="client:CCRMPLI_EnqueueRequest" operation="initiate" variable="prodPricn_IV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustTitle" language="java" version="1.3">
+            <![CDATA[String PLID = ((oracle.xml.parser.v2.XMLElement)getVariableData("prodPricn_IV","payload","/ns1:ProductPricing_Request/Header_Details/PPLID")).getFirstChild().getNodeValue();                   
+                            
+String Title=("PLID: "+PLID);                                                
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <flow name="Multi_CRM_Env">
+            <sequence name="HQ_Seq">
+                <assign name="TransEAIToHQ">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransEAIToHQ.xsl',bpws:getVariableData('prodPricn_IV','payload'))"/>
+                        <to variable="InvHQ_Enqueue_IV" part="ListOfRcrmSapProductPricing"/>
+                    </copy>
+                </assign>
+                <invoke name="InvHQ" partnerLink="HQ_Enqueue" portType="ns3:Enqueue_ptt" operation="Enqueue" inputVariable="InvHQ_Enqueue_IV"/>
+            </sequence>
+            <sequence name="PME_Seq">
+                <assign name="TransEAIToPME">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransEAIToPME.xsl',bpws:getVariableData('prodPricn_IV','payload'))"/>
+                        <to variable="InvPME_Enqueue_IV" part="ListOfRcrmSapProductPricing"/>
+                    </copy>
+                </assign>
+                <invoke name="InvPME" partnerLink="PME_Enqueue" portType="ns2:Enqueue_ptt" operation="Enqueue" inputVariable="InvPME_Enqueue_IV"/>
+            </sequence>
+        </flow>
+    </sequence>
+</process>

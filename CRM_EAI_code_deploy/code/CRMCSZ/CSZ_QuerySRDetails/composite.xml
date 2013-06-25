@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSZ_QuerySRDetails" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import importType="wsdl" location="CSZ_CSZQueryDetails.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ"
+            location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CCRM_QuerySRDetails/CSZ_QuerySRDetails.wsdl"
+            importType="wsdl"/>
+    <service name="CSZ.CSZQueryDetails_ep" ui:wsdlLocation="CSZ_CSZQueryDetails.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.interface(getSRDetails_ppt)"/>
+        <binding.ws location="CSZ_CSZQueryDetails.wsdl" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.endpoint(getSRDetails_ppt/getSRDetails_ppt_pt)"/>
+    </service>
+    <component name="CSZ.CSZQueryDetails">
+        <implementation.mediator src="CSZ.CSZQueryDetails.mplan"/>
+    </component>
+    <reference name="CSZ.CCRM_QuerySRDetails"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/MEDIATOR/CCRM_QuerySRDetails/CSZ_QuerySRDetails.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.interface(getSRDetails_ppt)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.endpoint(getSRDetails_ppt/getSRDetails_ppt_pt)"
+                    location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CCRM_QuerySRDetails/CSZ.QuerySRDetails_ep?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CSZ.CSZQueryDetails_ep</source.uri>
+        <target.uri>CSZ.CSZQueryDetails/CSZ.CSZQueryDetails</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSZ.CSZQueryDetails/CSZ.CCRM_QuerySRDetails</source.uri>
+        <target.uri>CSZ.CCRM_QuerySRDetails</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

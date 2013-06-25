@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CPFGAM_BulkAccountManager"
+             targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_BulkAccountManager"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_BulkAccountManager"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CPFG/AM/CPFGAM_BulkAccountManager" schemaLocation="CPFGAM_BulkAccountManager.xsd" />
+		</schema>
+	</types>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<message name="CPFGAM_BulkAccountManagerRequestMessage">
+		<part name="payload" element="client:CPFGAM_BulkAccountManagerProcessRequest"/>
+	</message>
+
+	<message name="CPFGAM_BulkAccountManagerResponseMessage">
+		<part name="payload" element="client:CPFGAM_BulkAccountManagerProcessResponse"/>
+	</message>
+
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- portType implemented by the CPFGAM_BulkAccountManager BPEL process -->
+	<portType name="CPFGAM_BulkAccountManager">
+		<operation name="initiate">
+			<input message="client:CPFGAM_BulkAccountManagerRequestMessage"/>
+		</operation>
+	</portType>
+
+	<!-- portType implemented by the requester of CPFGAM_BulkAccountManager BPEL process
+	for asynchronous callback purposes
+	-->
+	<portType name="CPFGAM_BulkAccountManagerCallback">
+		<operation name="onResult">
+			<input message="client:CPFGAM_BulkAccountManagerResponseMessage"/>
+		</operation>
+	</portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	the CPFGAM_BulkAccountManager partnerLinkType binds the provider and
+	requester portType into an asynchronous conversation.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<plnk:partnerLinkType name="CPFGAM_BulkAccountManager">
+		<plnk:role name="CPFGAM_BulkAccountManagerProvider">
+			<plnk:portType name="client:CPFGAM_BulkAccountManager"/>
+		</plnk:role>
+		<plnk:role name="CPFGAM_BulkAccountManagerRequester">
+			<plnk:portType name="client:CPFGAM_BulkAccountManagerCallback"/>
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

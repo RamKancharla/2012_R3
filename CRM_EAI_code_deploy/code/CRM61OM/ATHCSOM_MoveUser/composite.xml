@@ -1,0 +1,39 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHCSOM_MoveUser" revision="1.0" state="on">
+    <import location="ATHCSOM_MoveUser.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser"/>
+    <import location="TransformMoveUserToCSFormatRef.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" location="CSOM_SubmitOrderToCOMPASSRSRef.wsdl" importType="wsdl"/>
+    <service name="anchorToATHCSOMMoveUser" ui:wsdlLocation="ATHCSOM_MoveUser.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.interface(ATHCSOM_MoveUserCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.interface(ATHCSOM_MoveUser)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser#wsdl.endpoint(ATHCSOM_MoveUser/ATHCSOM_MoveUser)"/>
+    </service>
+    <component name="ATHCSOM_MoveUser">
+        <implementation.bpel src="ATHCSOM_MoveUser.bpel"/>
+        
+        
+    </component>
+    <reference name="SubmitOrderToCOMPASS" ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSRef.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.endpoint(submitOrder_ppt/submitOrder_ppt_pt)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_SubmitOrderToCOMPASS/CSOM.SubmitOrderToCOMPASSRS_ep?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="TransformMoveUserToCSFormat" ui:wsdlLocation="TransformMoveUserToCSFormatRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement#wsdl.interface(TransformMoveUserToCSFormatRequest)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="TransformMoveUserToCSFormatRef.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement#wsdl.endpoint(TransformToCSMoveRequestService/TransformMoveUserToCSFormatRequest)"/>
+    </reference>
+    <wire>
+        <source.uri>anchorToATHCSOMMoveUser</source.uri>
+        <target.uri>ATHCSOM_MoveUser/anchorToATHCSOMMoveUser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHCSOM_MoveUser/SubmitOrderToCOMPASS</source.uri>
+        <target.uri>SubmitOrderToCOMPASS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHCSOM_MoveUser/TransformMoveUserToCSFormat</source.uri>
+        <target.uri>TransformMoveUserToCSFormat</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property> -->
+</composite>

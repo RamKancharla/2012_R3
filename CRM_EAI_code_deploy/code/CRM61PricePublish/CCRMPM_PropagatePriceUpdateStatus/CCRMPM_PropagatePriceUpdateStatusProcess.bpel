@@ -1,0 +1,344 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMPM_PropagatePriceUpdateStatus.bpel 
+* Type:        BPEL Process 
+* Description: Asynchronous BPEL Process that Transforms CS PriceStatus to Siebel PriceStatus .
+* Change History
+* Version      Date         Author                    Description Of Change 
+*  1.0         16/04/08     Hemamalini.T.S            Initial Version 
+*  1.1         18/04/08     Hemamalini.T.S            Changed the target namespace 
+*  1.2         03/12/08	    Surya Gannavarapu	      Changed the title from SiebelFault to SiebelFlt
+*  1.3         02/07/10	    Sreeja		      Changed to MQ for sending the Price status to Siebel, removed the wsdl's
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMPM_PropagatePriceUpdateStatusProcess" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/2008/04/15/GCAP/RCRM" xmlns:ns7="http://www.siebel.com/xml/Price%20List" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns12="http://xmlns.oracle.com/pcbpel/adapter/mq/headerEnqueuePriceUpdateStatus/" xmlns:ns5="http://xmlns.oracle.com/CCRMPM_PropagatePriceUpdateStatus/correlationset" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus" xmlns:ns6="http://www.reuters.com/2008/07/23/GCAP/RCRM" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/PM/PriceUpdate" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns8="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="CCRMPM_PropagatePriceUpdateStatus" partnerLinkType="client:CCRMPM_PropagatePriceUpdateStatus" myRole="CCRMPM_PropagatePriceUpdateStatusProvider" partnerRole="CCRMPM_PropagatePriceUpdateStatusRequester"/>
+        <partnerLink name="SequenceChecker" partnerRole="SequenceCheckerProvider" partnerLinkType="ns8:SequenceChecker"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns8:SequenceReleaser"/>
+        <partnerLink name="EnqueuePriceUpdateStatus" partnerRole="Enqueue_role" partnerLinkType="ns12:Enqueue_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:CCRMPM_PropagatePriceUpdateStatusResponseMessage"/>
+        <variable name="rcvPriceStatus_IV" messageType="client:CCRMPM_PropagatePriceUpdateStatusRequestMessage"/>
+        <variable name="InvSequenceCheckerIV" messageType="ns8:SequenceCheckerRequestMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="unknownError" type="xsd:string"/>
+        <variable name="InvSequenceCheckerOV" messageType="ns8:SequenceCheckerResponseMessage"/>
+        <variable name="UpdateReleaseStatus" messageType="client:ReleaseSequenceMessage"/>
+        <variable name="UniqueId" type="xsd:string"/>
+        <variable name="CRMPLHId" type="xsd:string"/>
+        <variable name="RcvReleaseStatus" messageType="client:CCRMPM_PropagatePriceUpdateStatusRequestMessage"/>
+        <variable name="InvSequenceReleaserIV" messageType="ns8:SequenceReleaserRequestMessage"/>
+        <variable name="rcvUpdatePriceStatusIV" messageType="client:PriceUpdateStatusMessg"/>
+        <variable name="InvEnqueuePriceUpdateStatusIV" messageType="ns12:PricePublish_msg"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet" properties="ns5:PriceCorelationProp"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvPriceStatus_IV", "payload", "/ns1:priceStatus/ns1:priceHeader/ns3:CRMPLHId"));                        
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();     
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvPriceStatus_IV", "payload", "/ns1:priceStatus/ns1:priceHeader/ns3:CRMPLHId"));                        
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();     
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvPriceStatus_IV", "payload", "/ns1:priceStatus/ns1:priceHeader/ns3:CRMPLHId"));                        
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();     
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqGenericError">
+                <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+                    <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvPriceStatus_IV", "payload", "/ns1:priceStatus/ns1:priceHeader/ns3:CRMPLHId"));                        
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();     
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+"; Fault");]]>
+                </bpelx:exec>
+                <assign name="AsgUnknownError">
+                    <copy>
+                        <from variable="unknownError"/>
+                        <to variable="runtimeFault" part="code"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMPM_PropagatePriceUpdateStatus.wsdl) -->
+        <receive name="rcvPriceStatus" partnerLink="CCRMPM_PropagatePriceUpdateStatus" portType="client:CCRMPM_PropagatePriceUpdateStatus" operation="sendPriceUpdateStatus" variable="rcvPriceStatus_IV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <scope name="ScpSubmitPrice">
+            <sequence name="SeqSubmitPrice">
+                <assign name="AssInitVariables">
+                    <copy>
+                        <from expression="ora:generateGUID()"/>
+                        <to variable="UniqueId"/>
+                    </copy>
+                    <copy>
+                        <from expression="bpws:getVariableData('rcvPriceStatus_IV','payload','/ns1:priceStatus/ns1:priceHeader/ns3:CRMPLHId')"/>
+                        <to variable="CRMPLHId"/>
+                    </copy>
+                </assign>
+                <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+                    <![CDATA[org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvPriceStatus_IV", "payload", "/ns1:priceStatus/ns1:priceHeader/ns3:CRMPLHId"));                         
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();      
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId);]]>
+                </bpelx:exec>
+                <!--   <assign name="TranCanPriceStatusToSiebelPriceStatus">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TranCanPriceStatusToSiebelPriceStatus.xsl',bpws:getVariableData('rcvPriceStatus_IV','payload'))"/>
+                        <to variable="InvSubmitPriceStatusIV"
+                            part="SiebelMessage"/>
+                    </copy>
+                </assign>
+                <invoke name="InvSubmitPriceStatus"
+                        partnerLink="SubmitPriceStatus"
+                        portType="ns4:RCRM_spcCompass_spcPrice_spcList_spcItem_spcPort"
+                        operation="RCRMHQNodePricePublish"
+                        inputVariable="InvSubmitPriceStatusIV"
+                        outputVariable="InvSubmitPriceStatusOV"/>  -->
+                <!-- <switch name="CheckSiebelFault">
+                    <case condition="string-length(bpws:getVariableData('InvSubmitPriceStatusOV','Error_spcMessage'))>0">
+                        <bpelx:exec name="AsgCustomTitleSiebelFault"
+                                    language="java" version="1.5">
+                            <![CDATA[String priceListNum = ((oracle.xml.parser.v2.XMLElement) getVariableData("rcvPriceStatus_IV","payload","/ns1:priceStatus/ns1:orderHeader/ns3:priceListNumber")).getFirstChild().getNodeValue();                                           
+String Country = ((oracle.xml.parser.v2.XMLElement) getVariableData("rcvPriceStatus_IV","payload","/ns1:priceStatus/ns1:logicalCountry")).getFirstChild().getNodeValue();        
+        
+String Title=(priceListNum!=null ? ("PL: "+Country+"-"+priceListNum) : ".;")+"SiebelFault";                        
+setCompositeInstanceTitle(Title);]]>
+                        </bpelx:exec>
+                    </case>
+                    <otherwise>
+                        <empty name="DoNothing"/>
+                    </otherwise>
+                </switch>-->
+                <scope name="CheckSequence">
+                    <sequence name="SeqCheckSequence">
+                        <assign name="AsgSequenceCheckerIV">
+                            <copy>
+                                <from expression="'EAI'"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:eaiHeader/ns2:applicationId"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCompositeInstanceId()"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:eaiHeader/ns2:transactionId"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCompositeInstanceId()"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:eaiHeader/ns2:messageId"/>
+                            </copy>
+                            <copy>
+                                <from expression="'EAI;'"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:eaiHeader/ns2:messageHistory"/>
+                            </copy>
+                            <copy>
+                                <from variable="UniqueId"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:eaiHeader/ns2:tracingId"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCurrentDateTime()"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:eaiHeader/ns2:timeStamp"/>
+                            </copy>
+                            <copy>
+                                <from expression="ora:getCompositeInstanceId()"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:eaiHeader/ns2:instanceId"/>
+                            </copy>
+                            <copy>
+                                <from expression="1"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:eaiHeader/ns2:timeToLive"/>
+                            </copy>
+                            <copy>
+                                <from expression="'V'"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:eaiHeader/ns2:payloadVersion"/>
+                            </copy>
+                            <copy>
+                                <from expression=" &quot;PriceManagement.PriceStatus&quot;"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:seqRequestDetails/ns9:context"/>
+                            </copy>
+                            <copy>
+                                <from expression="&quot;Price.PriceListHeaderId&quot;"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:seqRequestDetails/ns9:messageType"/>
+                            </copy>
+                            <copy>
+                                <from variable="CRMPLHId"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:seqRequestDetails/ns9:contextId"/>
+                            </copy>
+                            <copy>
+                                <from variable="UniqueId"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:seqRequestDetails/ns9:correlationID"/>
+                            </copy>
+                            <copy>
+                                <!--from expression="ora:getProcessId()"/-->
+								<from expression="dvm:lookupValue(&quot;oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm&quot;,&quot;Reference&quot;,&quot;PropagatePriceBPELProcess&quot;,&quot;Value&quot;,&quot;CCRMPM_PropagatePriceUpdateStatus&quot;)"/>
+                                <to variable="InvSequenceCheckerIV" part="payload" query="/ns9:checkSequenceRequest/ns9:seqRequestDetails/ns9:process"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvSequenceChecker" partnerLink="SequenceChecker" portType="ns8:SequenceChecker" operation="checkSequence" inputVariable="InvSequenceCheckerIV" outputVariable="InvSequenceCheckerOV">
+                            <correlations>
+                                <correlation initiate="yes" set="CorrelationSet" pattern="out"/>
+                            </correlations>
+                        </invoke>
+                    </sequence>
+                </scope>
+                <scope name="CheckRcvOutcome">
+                    <sequence name="Sequence_3">
+                        <switch name="CheckOutcome">
+                            <case condition="bpws:getVariableData('InvSequenceCheckerOV','payload','/ns10:basicResponse/ns10:basicResponse/ns2:responseMessage')='CONTINUE'">
+                                <empty name="NoPriceLineItemsToProcess"/>
+                            </case>
+                            <case condition="bpws:getVariableData('InvSequenceCheckerOV','payload','/ns10:basicResponse/ns10:basicResponse/ns2:responseMessage')='WAIT'">
+                                <sequence name="SeqWaitAsOutCome">
+                                    <scope name="ReceiveReleaseStatus">
+                                        <faultHandlers>
+                                            <catch faultName="bpws:conflictingReceive" faultVariable="runtimeFault">
+                                                <throw name="ThrConflictingReceiveFault" faultName="bpws:conflictingReceive" faultVariable="runtimeFault"/>
+                                            </catch>
+                                        </faultHandlers>
+                                        <sequence name="SequforWait">
+                                            <receive name="RcvReleaseStatus" createInstance="no" partnerLink="CCRMPM_PropagatePriceUpdateStatus" portType="client:CCRMPM_PropagatePriceUpdateStatus" operation="updateReleaseStatus" variable="UpdateReleaseStatus">
+                                                <correlations>
+                                                    <correlation initiate="no" set="CorrelationSet"/>
+                                                </correlations>
+                                            </receive>
+                                        </sequence>
+                                    </scope>
+                                </sequence>
+                            </case>
+                            <otherwise>
+                                <throw name="ThrSeqCheckerException" faultName="ns8:SequenceCheckerError" faultVariable="runtimeFault"/>
+                            </otherwise>
+                        </switch>
+                        <!--  <switch name="Switch_2">
+                            <case condition="count(bpws:getVariableData('rcvPriceStatus_IV','payload','/ns1:priceStatus/ns1:priceHeader/ns3:priceListNumber'))>0">-->
+                        <!--    </case>
+                            <otherwise>
+                                <sequence name="SeqToReleaseInAnyCase">
+                                    <assign name="TransSeqRelease">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransReleaseSeq.xsl',bpws:getVariableData('InvSequenceCheckerOV','payload'))"/>
+                                            <to variable="InvreleaseSequenceIV"
+                                                part="payload"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvSeqRelaeaser"
+                                            partnerLink="SequenceReleaser"
+                                            portType="ns8:SequenceReleaser"
+                                            operation="releaseSequence"
+                                            inputVariable="InvreleaseSequenceIV"/>
+                                </sequence>
+                            </otherwise>
+                        </switch>-->
+                        <scope name="ScpEnqueuePriceStatus">
+                            <correlationSets>
+                                <correlationSet name="enqueueCorrelationSet" properties="ns5:PriceCorelationProp"/>
+                            </correlationSets>
+                            <sequence name="SeqEnqueuePriceStatus">
+                                <assign name="TransPriceStatusToEnqueueStatus">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransPriceStatusToEnqueueStatus.xsl',bpws:getVariableData('rcvPriceStatus_IV','payload'))"/>
+                                        <to part="PricePublish" variable="InvEnqueuePriceUpdateStatusIV"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvEnqueuePriceUpdateStatus" portType="ns12:Enqueue_ptt" inputVariable="InvEnqueuePriceUpdateStatusIV" partnerLink="EnqueuePriceUpdateStatus" operation="Enqueue">
+                                    <correlations>
+                                        <correlation initiate="yes" set="enqueueCorrelationSet" pattern="out"/>
+                                    </correlations>
+                                </invoke>
+                                <receive name="rcvUpdatePriceStatus" partnerLink="CCRMPM_PropagatePriceUpdateStatus" portType="client:CCRMPM_PropagatePriceUpdateStatus" operation="updatePriceStatus" variable="rcvUpdatePriceStatusIV" createInstance="no">
+                                    <correlations>
+                                        <correlation initiate="no" set="enqueueCorrelationSet"/>
+                                    </correlations>
+                                </receive>
+                                <switch name="SwitchToReleaseSequence">
+                                    <case condition="bpws:getVariableData('rcvUpdatePriceStatusIV','priceUpdateStatus','/ns7:PricePublish/ns7:ActionCode')='Success'">
+                                        <scope name="ScpSequenceReleaser">
+                                            <faultHandlers>
+                                                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                                                    <empty name="SequenceRelRemoteFaultEmptyActivity"/>
+                                                </catch>
+                                            </faultHandlers>
+                                            <sequence name="SequenceReleaser">
+                                                <assign name="TransSeqReleaser">
+                                                    <bpelx:annotation>
+                                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                                    </bpelx:annotation>
+                                                    <copy>
+                                                        <from expression="ora:processXSLT('TransReleaseSequence.xsl',bpws:getVariableData('InvSequenceCheckerOV','payload'))"/>
+                                                        <to variable="InvSequenceReleaserIV" part="payload"/>
+                                                    </copy>
+                                                </assign>
+                                                <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns8:SequenceReleaser" operation="releaseSequence" inputVariable="InvSequenceReleaserIV"/>
+                                            </sequence>
+                                        </scope>
+                                    </case>
+                                    <otherwise>
+                                        <sequence name="SeqSiebelFault">
+                                            <bpelx:exec name="AsgCustomTitleOnSiebelFault" language="java" version="1.5">
+                                                <![CDATA[/*Write your java code below e.g.  
+	System.out.println("Hello, World");     
+*/ 
+org.w3c.dom.Node priceListIdNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("rcvPriceStatus_IV", "payload", "/ns1:priceStatus/ns1:priceHeader/ns3:CRMPLHId"));                          
+String CRMPLHId = priceListIdNode == null ? "" : priceListIdNode.getFirstChild().getNodeValue();       
+setCompositeInstanceTitle("CRMPLHId : " + CRMPLHId+";SiebelFault" );]]>
+                                            </bpelx:exec>
+                                            <empty name="DoNothingOnSiebelError"/>
+                                        </sequence>
+                                    </otherwise>
+                                </switch>
+                            </sequence>
+                        </scope>
+                    </sequence>
+                </scope>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

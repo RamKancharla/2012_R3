@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+    * Module:      EAI.MSG.UTL.268_SequenceCheckerRequest.xsd
+    * Type:        XSD Schema
+    * Description: Schema used in the Sequence module to pass the request to sequencer
+    *
+    * Change History
+    * Version           Date      Author             Description Of Change
+    *
+    * 0.1               23/02/09  S Gannavarapu     Initial version
+    *
+    **********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.1">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.001_SchemaAnnotations.xsd"/>
+	<xsd:element name="sequenceCheckRequest" type="xsdLocal:SequenceCheckRequest"/>
+	<xsd:complexType name="SequenceCheckRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="gcap-cmt:EaiHeader"/>
+			<xsd:element name="seqRequestDetails" type="xsdLocal:SequenceCheckerRequestDetails"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SequenceCheckerRequestDetails">
+		<xsd:sequence>
+			<xsd:element name="context" type="xsd:string"/>
+			<xsd:element name="contextId" type="xsd:string"/>
+			<xsd:element name="process" type="xsd:string"/>
+			<xsd:element name="correlationID" type="xsd:string"/>
+			<xsd:element name="tableName" type="xsd:string"/>
+			<xsd:element name="dataSourceName" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	</xsd:schema>

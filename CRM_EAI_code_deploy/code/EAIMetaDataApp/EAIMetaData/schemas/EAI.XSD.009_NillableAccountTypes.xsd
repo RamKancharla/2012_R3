@@ -1,0 +1,867 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+	* Module:      EAI.XSD.003_CommonAccountTypes.xsd
+	* Type:        XSD Schema
+	* Description: The schema used for Common Account Message attributes
+	*
+	* Change History
+	* Version     Date      Author             Description Of Change
+	*
+	* 0.1         28/11/07   Rob Billington    Initial version
+	* 0.2         15/02/08   Rob Billington    Added BusinessChannel
+	*                                          Added FieldServiceDispatchArea
+	* 0.3         28/03/08   Rob Billington    Added BusinessChannel
+                                                   Renamed StateProvinceCountry to StateProvinceCounty
+                                                   Added Country
+        * 1.0         16/05/08   Subramanya Raju   Added fields as part of PBI-664,665,662
+        * 1.1         21/05/08   ANVV Sharma       Removed Duplicates
+        * 1.2         22/05/08   Surya Gannavarapu Added LandlordPhonenumber
+        * 1.3         22/05/08   Chandra Reddy	   Added floorAddress
+        * 1.4         22/05/08   Surya Gannavarapu Added Account Status 
+	* 1.6         10/06/2008 anvv sharma	   Added SubscriberStatus, PerClient, Suspend, Summary, CRHold
+        * 1.7         12/06/2008 Chandrasekhar     Added SFDCID,HomePage,Segment,Description,OwnerMail 
+        * 1.8	      01/07/2008 Sreeja Prasad     Added InvoicingCenter and CityCode .
+        * 1.9         02/07/2008 Chandrasekhar     Added FaxNumber 
+	* 1.10        02/07/2008 Sreeja Prasad     Added CustomerReference, AccountDescription and AccountNotes. 
+        * 1.11        02/09/2008 Sreeja Prasad     Added TOMIntegrationFlag,MultiCenterNumber,InvoiceDescription,GeoCode, CSIntegrationFlag and AlternateSubscriberNumber and PBI-952. 
+	* 1.12	      18/02/2009 Hemamalini.T.S.   Added CAID,TRSCFlag,AgreementNumber,TDOStatus,TDOCheckDate,CreditCheckStatus,CreditCheckDate.
+        * 1.13        12/03/2009 Sreeja		   Added DirectDebit,Ex-Postel,TaxOffice,RIOIndicator,RIPurchaseOrder and ERPurchaseOrder
+	* 1.14        12/08/09   Sreeja            Added new types TCId,PrimaryAccountFlag,CustomerJourney & ParentAccountClass
+	* 1.15	      06/10/09	 Hema		   Added new field AccountTypeCode
+	* 1.16        25/11/09	Sreeja		   Added ContractType for PBI-0266 
+	* 1.17        09/02/10	Satya		   Added OAID,MasterAccountClass,LegalEntityFlag and CustomerReferenceNumber fields for PBI-422 and PBI-413 as part of Release 2
+    * 1.18        12/02/10	Sreeja		   Added CustomerGroup for PBI-0483_NOM_Customer_Group
+	* 1.19        09/09/10	Rijoy		   OAName for Stratergic Account Heirarchy to AAA 9586
+  * 1.20        10/02/2012 Harshitha Added PrimaryAccountFloorAddress and PrimaryAccountNation as part of  Wave-4
+	**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:local="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes"
+	xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes"
+	targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/NillableAccountTypes"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.18">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" schemaLocation="./EAI.XSD.003_CommonAccountTypes.xsd" />
+	<xsd:simpleType name="AccountID">
+		<xsd:union
+			memberTypes="gcap-cat:AccountID local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountName">
+		<xsd:union
+			memberTypes="gcap-cat:AccountName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Site">
+        <xsd:union
+            memberTypes="gcap-cat:Site local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="City">
+        <xsd:union
+            memberTypes="gcap-cat:City local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountType">
+        <xsd:union
+            memberTypes="gcap-cat:AccountType local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="OrganisationType">
+        <xsd:union
+            memberTypes="gcap-cat:OrganisationType local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubscriberNumber">
+        <xsd:union
+            memberTypes="gcap-cat:SubscriberNumber local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Status">
+        <xsd:union
+            memberTypes="gcap-cat:Status local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Region">
+        <xsd:union
+            memberTypes="gcap-cat:Region local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubRegion">
+        <xsd:union
+            memberTypes="gcap-cat:SubRegion local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="MCCCode">
+        <xsd:union
+            memberTypes="gcap-cat:MCCCode local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="FaxNumber">
+        <xsd:union
+            memberTypes="gcap-cat:FaxNumber local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TelephoneNumber">
+        <xsd:union
+            memberTypes="gcap-cat:TelephoneNumber local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AddressName">
+        <xsd:union
+            memberTypes="gcap-cat:AddressName local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="PostalCode">
+        <xsd:union
+            memberTypes="gcap-cat:PostalCode local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="StateProvinceCounty">
+        <xsd:union
+            memberTypes="gcap-cat:StateProvinceCounty local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Country">
+        <xsd:union
+            memberTypes="gcap-cat:Country local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="StreetAddress">
+        <xsd:union
+            memberTypes="gcap-cat:StreetAddress local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AddressType">
+        <xsd:union
+            memberTypes="gcap-cat:AddressType local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CountryCode">
+        <xsd:union
+            memberTypes="gcap-cat:CountryCode local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubAccountNumber">
+        <xsd:union
+            memberTypes="gcap-cat:SubAccountNumber local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="BusinessChannel">
+        <xsd:union
+            memberTypes="gcap-cat:BusinessChannel local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="FieldServiceDispatchArea">
+        <xsd:union
+            memberTypes="gcap-cat:FieldServiceDispatchArea local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="ContactRelationshipType">
+		<xsd:union
+			memberTypes="gcap-cat:ContactRelationshipType local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CurrencyCode">
+		<xsd:union
+			memberTypes="gcap-cat:CurrencyCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PrimaryAccountCity">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryAccountCity local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+  <xsd:simpleType name="PrimaryAccountFloorAddress">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryAccountFloorAddress local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+ 	<xsd:simpleType name="PrimaryAccountCountry">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryAccountCountry local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PrimaryAccountPostalCode">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryAccountPostalCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PrimaryAccountState">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryAccountState local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PrimaryAccountStreetAddress">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryAccountStreetAddress local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PrimaryAddressName">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryAddressName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="AccountClass">
+		<xsd:union
+			memberTypes="gcap-cat:AccountClass local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="AccountFamily">
+		<xsd:union
+			memberTypes="gcap-cat:AccountFamily local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="BillingFrequency">
+		<xsd:union
+			memberTypes="gcap-cat:BillingFrequency local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CoreSuiteStatus">
+		<xsd:union
+			memberTypes="gcap-cat:CoreSuiteStatus local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ErrorMessage">
+		<xsd:union
+			memberTypes="gcap-cat:ErrorMessage local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="FieldServiceLocation">
+		<xsd:union
+			memberTypes="gcap-cat:FieldServiceLocation local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="OrganisationTypeDesc">
+		<xsd:union
+			memberTypes="gcap-cat:OrganisationTypeDesc local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="SubAccountName">
+		<xsd:union
+			memberTypes="gcap-cat:SubAccountName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SubscriberCountry">
+		<xsd:union
+			memberTypes="gcap-cat:SubscriberCountry local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="SubscriberCountryCode">
+		<xsd:union
+			memberTypes="gcap-cat:SubscriberCountryCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="SubscriberShortName">
+		<xsd:union
+			memberTypes="gcap-cat:SubscriberShortName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="TaxCode">
+		<xsd:union
+			memberTypes="gcap-cat:TaxCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="VATCode">
+		<xsd:union
+			memberTypes="gcap-cat:VATCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="TaxIDNumber">
+		<xsd:union
+			memberTypes="gcap-cat:TaxIDNumber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="AccountLoc">
+		<xsd:union
+			memberTypes="gcap-cat:AccountLoc local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="AddrDescription">
+		<xsd:union
+			memberTypes="gcap-cat:AddrDescription local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ApartmentNumber">
+		<xsd:union
+			memberTypes="gcap-cat:ApartmentNumber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="Descriptor">
+		<xsd:union
+			memberTypes="gcap-cat:Descriptor local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="EmailAddress">
+		<xsd:union
+			memberTypes="gcap-cat:EmailAddress local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="IntegrationId">
+		<xsd:union
+			memberTypes="gcap-cat:IntegrationId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="LandlordName">
+		<xsd:union
+			memberTypes="gcap-cat:LandlordName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="LocalOperatingCompany">
+		<xsd:union
+			memberTypes="gcap-cat:LocalOperatingCompany local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="LocalOperatingCompanySite">
+		<xsd:union
+			memberTypes="gcap-cat:LocalOperatingCompanySite local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ParentAddress">
+		<xsd:union
+			memberTypes="gcap-cat:ParentAddress local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="S-SInstance">
+		<xsd:union
+			memberTypes="gcap-cat:S-SInstance local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="S-SKeyId">
+		<xsd:union
+			memberTypes="gcap-cat:S-SKeyId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="Type">
+		<xsd:union
+			memberTypes="gcap-cat:Type local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="GroupTypeCode">
+		<xsd:union
+			memberTypes="gcap-cat:GroupTypeCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="MasterAccountId">
+		<xsd:union
+			memberTypes="gcap-cat:GroupTypeCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="OrgId">
+		<xsd:union
+			memberTypes="gcap-cat:OrgId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ParentAccountId">
+		<xsd:union
+			memberTypes="gcap-cat:ParentAccountId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PartyName">
+		<xsd:union
+			memberTypes="gcap-cat:PartyName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PartyTypeCode">
+		<xsd:union
+			memberTypes="gcap-cat:PartyTypeCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PartyUId">
+		<xsd:union
+			memberTypes="gcap-cat:PartyUId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PrimaryAddressId">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryAddressId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PrimaryContactId">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryContactId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PrimaryPositionId">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryPositionId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="InternalAccountFlag">
+		<xsd:union
+			memberTypes="gcap-cat:InternalAccountFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PayTerms">
+		<xsd:union
+			memberTypes="gcap-cat:PayTerms local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PrimaryChildId">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryChildId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="QuotronClient">
+		<xsd:union
+			memberTypes="gcap-cat:QuotronClient local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="SysUpdatedBy">
+		<xsd:union
+			memberTypes="gcap-cat:SysUpdatedBy local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="AccountPrimaryAddressId">
+		<xsd:union
+			memberTypes="gcap-cat:AccountPrimaryAddressId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ActiveStatus">
+		<xsd:union
+			memberTypes="gcap-cat:ActiveStatus local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="AddressId">
+		<xsd:union
+			memberTypes="gcap-cat:AddressId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="BillAddressFlag">
+		<xsd:union
+			memberTypes="gcap-cat:BillAddressFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ContactId">
+		<xsd:union
+			memberTypes="gcap-cat:ContactId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="LastUpdatedConAddr">
+		<xsd:union
+			memberTypes="gcap-cat:LastUpdatedConAddr local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="LocalOperatingCompanyId">
+		<xsd:union
+			memberTypes="gcap-cat:LocalOperatingCompanyId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="MainAddressFlag">
+		<xsd:union
+			memberTypes="gcap-cat:MainAddressFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ParentAddressId">
+		<xsd:union
+			memberTypes="gcap-cat:ParentAddressId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="LegacyAddressRef">
+		<xsd:union
+			memberTypes="gcap-cat:LegacyAddressRef local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="LegacyFlag">
+		<xsd:union
+			memberTypes="gcap-cat:LegacyFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="RowId">
+		<xsd:union
+			memberTypes="gcap-cat:RowId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="S-SInstanceId">
+		<xsd:union
+			memberTypes="gcap-cat:S-SInstanceId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="VerifiedFlag">
+		<xsd:union
+			memberTypes="gcap-cat:VerifiedFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="Id">
+		<xsd:union
+			memberTypes="gcap-cat:Id local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="IRASReference">
+		<xsd:union
+			memberTypes="gcap-cat:IRASReference local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="SubscriberName">
+		<xsd:union
+			memberTypes="gcap-cat:SubscriberName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountId">
+		<xsd:union
+			memberTypes="gcap-cat:AccountId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="LandlordPhoneNumber">
+		<xsd:union
+			memberTypes="gcap-cat:LandlordPhoneNumber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="FloorAddress">
+		<xsd:union
+			memberTypes="gcap-cat:FloorAddress local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountStatus">
+		<xsd:union
+			memberTypes="gcap-cat:AccountStatus local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="SubscriberStatus">
+		<xsd:union
+			memberTypes="gcap-cat:SubscriberStatus local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PerClient">
+		<xsd:union
+			memberTypes="gcap-cat:PerClient local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="Suspend">
+		<xsd:union
+			memberTypes="gcap-cat:Suspend local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="Summary">
+		<xsd:union
+			memberTypes="gcap-cat:Summary local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CRHold">
+		<xsd:union
+			memberTypes="gcap-cat:CRHold local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="SFDCID">
+		<xsd:union
+			memberTypes="gcap-cat:SFDCID local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="RelationShipModel">
+		<xsd:union
+			memberTypes="gcap-cat:RelationShipModel local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Segment">
+		<xsd:union
+			memberTypes="gcap-cat:Segment local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Description">
+		<xsd:union
+			memberTypes="gcap-cat:Description local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="OwnerMail">
+		<xsd:union
+			memberTypes="gcap-cat:OwnerMail local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="HomePage">
+		<xsd:union
+			memberTypes="gcap-cat:HomePage local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	
+	
+	<xsd:simpleType name="InvoicingCenter">
+		<xsd:union
+			memberTypes="gcap-cat:InvoicingCenter local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CityCode">
+		<xsd:union
+			memberTypes="gcap-cat:CityCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CustomerReference">
+		<xsd:union
+			memberTypes="gcap-cat:CustomerReference local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountNotes">
+		<xsd:union
+			memberTypes="gcap-cat:AccountNotes local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AccountDescription">
+		<xsd:union
+			memberTypes="gcap-cat:AccountDescription local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TOMIntegrationFlag">
+		<xsd:union
+			memberTypes="gcap-cat:TOMIntegrationFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="MultiCenterNumber">
+		<xsd:union
+			memberTypes="gcap-cat:MultiCenterNumber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="InvoiceDescription">
+		<xsd:union
+			memberTypes="gcap-cat:InvoiceDescription local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="GeoCode">
+		<xsd:union
+			memberTypes="gcap-cat:GeoCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CSIntegrationFlag">
+		<xsd:union
+			memberTypes="gcap-cat:CSIntegrationFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AlternateSubscriberNumber">
+		<xsd:union
+			memberTypes="gcap-cat:AlternateSubscriberNumber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CAID">
+		<xsd:union
+			memberTypes="gcap-cat:CAID local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="TRSCFlag">
+		<xsd:union
+			memberTypes="gcap-cat:TRSCFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="AgreementNumber">
+		<xsd:union
+			memberTypes="gcap-cat:AgreementNumber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TDOStatus">
+        <xsd:union
+            memberTypes="gcap-cat:TDOStatus local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TDOCheckDate">
+        <xsd:union
+            memberTypes="gcap-cat:TDOCheckDate local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CreditCheckStatus">
+        <xsd:union
+            memberTypes="gcap-cat:CreditCheckStatus local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CreditCheckDate">
+        <xsd:union
+            memberTypes="gcap-cat:CreditCheckDate local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="TRSCversion">
+        <xsd:union
+            memberTypes="gcap-cat:TRSCversion local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TermStatus">
+        <xsd:union
+            memberTypes="gcap-cat:TermStatus local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="NonStdContractType">
+        <xsd:union
+            memberTypes="gcap-cat:NonStdContractType local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TRSCStartDate">
+        <xsd:union
+            memberTypes="gcap-cat:TRSCStartDate local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TRSCEndDate">
+        <xsd:union
+            memberTypes="gcap-cat:TRSCEndDate local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="NonStdPriceAdjClause">
+        <xsd:union
+            memberTypes="gcap-cat:NonStdPriceAdjClause local:EmptyString ">
+        </xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="DirectDebit">
+		<xsd:union
+			memberTypes="gcap-cat:DirectDebit local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="Ex-Postel">
+		<xsd:union
+			memberTypes="gcap-cat:Ex-Postel local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="TaxOffice">
+		<xsd:union
+			memberTypes="gcap-cat:TaxOffice local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="RIOIndicator">
+		<xsd:union
+			memberTypes="gcap-cat:RIOIndicator local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="RIPurchaseOrder">
+		<xsd:union
+			memberTypes="gcap-cat:RIPurchaseOrder local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ERPurchaseOrder">
+		<xsd:union
+			memberTypes="gcap-cat:ERPurchaseOrder local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="TCId">
+		<xsd:union
+			memberTypes="gcap-cat:TCId local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="PrimaryAccountFlag">
+		<xsd:union
+			memberTypes="gcap-cat:PrimaryAccountFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="CustomerJourney">
+		<xsd:union
+			memberTypes="gcap-cat:CustomerJourney local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+        <xsd:simpleType name="ParentAccountClass">
+		<xsd:union
+			memberTypes="gcap-cat:ParentAccountClass local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+
+	<xsd:simpleType name="OAID">
+		<xsd:union
+			memberTypes="gcap-cat:OAID local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="OAName">
+		<xsd:union
+			memberTypes="gcap-cat:OAName local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="LegalEntityFlag">
+		<xsd:union
+			memberTypes="gcap-cat:LegalEntityFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="MasterAccountClass">
+		<xsd:union
+			memberTypes="gcap-cat:MasterAccountClass local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CustomerReferenceNumber">
+		<xsd:union
+			memberTypes="gcap-cat:CustomerReferenceNumber local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+
+        <xsd:simpleType name="CMIntegrationFlag">
+		<xsd:union
+			memberTypes="gcap-cat:CMIntegrationFlag local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="EmptyString">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="0" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="AccountTypeCode">
+		<xsd:union
+			memberTypes="gcap-cat:AccountTypeCode local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="ContractType">
+		<xsd:union
+			memberTypes="gcap-cat:ContractType local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="CustomerGroup">
+		<xsd:union
+			memberTypes="gcap-cat:CustomerGroup local:EmptyString ">
+		</xsd:union>
+	</xsd:simpleType>
+	</xsd:schema>

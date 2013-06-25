@@ -1,0 +1,47 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/CS/ACM/AccountContactRequestFormatter"
+     xmlns:csns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:csfns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthRequest"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthRequest" location="EAI.MSG.CS.207_FixedLengthConversionResponse.xsd"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish"
+         location="EAI.MSG.CS.ACM.228_AccountContactPublishRequest.xsd"/>
+    <message name="AccountContactRequest">
+        <part name="parameter" element="csns:CSAccountContactPublish"/>
+    </message>
+    <message name="AccountContactResponse">
+        <part name="parameter" element="csfns:fixedLengthRequest"/>
+    </message>
+    <portType name="TransformAccountContactRequest">
+        <operation name="transform">
+            <input message="tns:AccountContactRequest"/>
+            <output message="tns:AccountContactResponse"/>
+        </operation>
+    </portType>
+    <binding name="TransformAccountContactRequestSOAP" type="tns:TransformAccountContactRequest">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="transform">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="TransformAccountContactToCSFormat">
+        <port name="AccountContactRequest" binding="tns:TransformAccountContactRequestSOAP">
+            <soap:address location="http://10.2.136.231:8888/CRM61AccountPub-TransformToCSFormatAccountContactPublish-context-root/AccountContactRequest"/>
+        </port>
+    </service>
+</definitions>

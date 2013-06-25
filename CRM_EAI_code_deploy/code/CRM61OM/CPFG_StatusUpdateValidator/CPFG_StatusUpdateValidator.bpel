@@ -1,0 +1,498 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Apr 08 17:43:51 GMT+05:30 2008
+  Author:  as37583
+  Purpose: Synchronous BPEL Process
+  
+  Change history
+  
+  04/05/2010      Surya         Moved the AsgCustomTitle to the Switch case branch calling Correlator
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFG_StatusUpdateValidator" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_PropagateFulfillmentStatus" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/DBService/" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/ElectronicFulfilmentServices" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/external/Common" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/DBService" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="client" partnerLinkType="client:CPFG_StatusUpdateValidator" myRole="CPFG_StatusUpdateValidatorProvider"/>
+    <partnerLink name="CPFG_StatusUpdateValidatorStub" partnerRole="CPFG_StatusUpdateValidatorStubProvider" partnerLinkType="client:CPFG_StatusUpdateValidatorStub"/>
+    <partnerLink myRole="CPFGEF_FulfilmentRequestCorrelatorRequester" name="CPFGEF_FulfilmentRequestCorrelator" partnerRole="CPFGEF_FulfilmentRequestCorrelatorProvider" partnerLinkType="ns8:CPFGEF_FulfilmentRequestCorrelator"/>
+    <partnerLink name="DBService" partnerRole="DBService_role" partnerLinkType="ns9:DBService_plt"/>
+    <partnerLink myRole="CPFGEF_PropagateFulfillmentStatusRequester" name="CPFGEF_PropagateFulfillmentStatus" partnerRole="CPFGEF_PropagateFulfillmentStatusProvider" partnerLinkType="ns4:CPFGEF_PropagateFulfillmentStatus"/>
+    <partnerLink name="CPF_UpdateProfile"
+                 partnerRole="CPF_UpdateProfileProvider"
+                 partnerLinkType="ns5:CPF_UpdateProfile"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="RcvStatusRequest_IV" messageType="client:CPFG_StatusUpdateValidatorRequestMessage"/>
+    <variable name="RcvStatusResponse_OV" messageType="client:CPFG_StatusUpdateValidatorResponseMessage"/>
+    <variable name="validateXML_IV" messageType="client:CPFG_StatusUpdateValidatorStubRequestMessage"/>
+    <variable name="FaultVar" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="SuccessResponse" type="xsd:string"/>
+    <variable name="SuccessResponseCode" type="xsd:string"/>
+    <variable name="SuccessResponseMsg" type="xsd:string"/>
+    <variable name="InValidEntityTypeResponse" type="xsd:string"/>
+    <variable name="InValidEntityTypeResponseCode" type="xsd:string"/>
+    <variable name="InValidEntityTypeResponseMsg" type="xsd:string"/>
+    <variable name="InternalErrorResponse" type="xsd:string"/>
+    <variable name="InternalErrorResponseCode" type="xsd:string"/>
+    <variable name="InternalErrorResponseMsg" type="xsd:string"/>
+    <variable name="ElecFfmtReqEntityType" type="xsd:string"/>
+    <variable name="UserEntityType" type="xsd:string"/>
+    <variable name="InvCPF_UpdateProfile_updateUserProfile_InputVariable" messageType="ns5:CPF_UpdateProfileRequestMessage"/>
+    <variable name="InvCPFGEF_FulfilmentRequestCorrelatorIV" messageType="ns8:CPFGEF_FulfilmentStatusUpdate"/>
+    <variable name="FulfilmentRequestId" type="xsd:string"/>
+    <variable name="CRMOrderNumber" type="xsd:string"/>
+    <variable name="InvDBService_OV" messageType="ns9:DBServiceOutput_msg"/>
+    <variable name="InvDBService_IV" messageType="ns9:DBServiceInput_msg"/>
+    <variable name="InvCPFGEF_PropagateFulfillmentStatus_IV" messageType="ns4:CPFGEF_PropagateFulfillmentStatusRequestMessage"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <!-- Receive input from requestor. (Note: This maps to operation defined in CPFG_StatusUpdateValidator.wsdl) -->
+    <scope name="StatusUpdateValidation">
+      <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="FaultVar">
+          <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node entityIDNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("RcvStatusRequest_IV","payload","/ns1:propagateStatusUpdateRequest/ns1:entityID"));    
+     
+ String strEntityID=(entityIDNode!=null ? ("EFRId: "+entityIDNode.getFirstChild().getNodeValue()) : ".;")+" Fault"; 
+ String Title = strEntityID; 
+ setCompositeInstanceTitle(Title);]]>
+          </bpelx:exec>
+          <assign name="AsgRemoteException">
+            <copy>
+              <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponse')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:response"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InValidEntityTypeResponseCode')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseCode"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponseMsg')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseMessage"/>
+            </copy>
+          </assign>
+        </catch>
+        <catch faultName="bpelx:invalidVariables" faultVariable="FaultVar">
+          <bpelx:exec name="AsgCustomTitleOnInvalidVariable" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node entityIDNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("RcvStatusRequest_IV","payload","/ns1:propagateStatusUpdateRequest/ns1:entityID"));    
+     
+ String strEntityID=(entityIDNode!=null ? ("EFRId: "+entityIDNode.getFirstChild().getNodeValue()) : ".;")+" Fault"; 
+ String Title = strEntityID; 
+ setCompositeInstanceTitle(Title);]]>
+          </bpelx:exec>
+          <assign name="AsgInvalidVariable">
+            <copy>
+              <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponse')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:response"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponseCode')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseCode"/>
+            </copy>
+            <copy>
+              <from variable="FaultVar" part="summary"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseMessage"/>
+            </copy>
+          </assign>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="FaultVar">
+          <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node entityIDNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("RcvStatusRequest_IV","payload","/ns1:propagateStatusUpdateRequest/ns1:entityID"));     
+      
+ String strEntityID=(entityIDNode!=null ? ("EFRId: "+entityIDNode.getFirstChild().getNodeValue()) : ".;")+" Fault"; 
+ String Title = strEntityID; 
+ setCompositeInstanceTitle(Title);]]>
+          </bpelx:exec>
+          <assign name="AsgSelectionFailure">
+            <copy>
+              <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponse')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:response"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponseCode')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseCode"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponseMsg')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseMessage"/>
+            </copy>
+          </assign>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="FaultVar">
+          <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node entityIDNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("RcvStatusRequest_IV","payload","/ns1:propagateStatusUpdateRequest/ns1:entityID"));     
+      
+ String strEntityID=(entityIDNode!=null ? ("EFRId: "+entityIDNode.getFirstChild().getNodeValue()) : ".;")+" Fault"; 
+ String Title = strEntityID; 
+ setCompositeInstanceTitle(Title);]]>
+          </bpelx:exec>
+          <assign name="AsgBindingFault">
+            <copy>
+              <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponse')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:response"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponseCode')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseCode"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponseMsg')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseMessage"/>
+            </copy>
+          </assign>
+        </catch>
+        <catchAll>
+          <bpelx:exec name="AsgCustomTitleOnGenException" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node entityIDNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("RcvStatusRequest_IV","payload","/ns1:propagateStatusUpdateRequest/ns1:entityID"));    
+     
+ String strEntityID=(entityIDNode!=null ? ("EFRId: "+entityIDNode.getFirstChild().getNodeValue()) : ".;")+" Fault"; 
+ String Title = strEntityID; 
+ setCompositeInstanceTitle(Title);]]>
+          </bpelx:exec>
+          <assign name="AsgCatchAll">
+            <copy>
+              <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponse')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:response"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponseCode')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseCode"/>
+            </copy>
+            <copy>
+              <from expression="bpws:getVariableData('InternalErrorResponseMsg')"/>
+              <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseMessage"/>
+            </copy>
+          </assign>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="seqStatusUpdateValidation">
+        <receive name="RcvStatusRequest" partnerLink="client" portType="client:CPFG_StatusUpdateValidator" operation="processOpportunityEvent" variable="RcvStatusRequest_IV" createInstance="yes"/>
+        <assign name="AsgInitVariables">
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_StatusUpdateValidatorResponseCodes.dvm','Reference','Success','Response', '')"/>
+            <to variable="SuccessResponse"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_StatusUpdateValidatorResponseCodes.dvm','Reference','Success','ResponseCode', '')"/>
+            <to variable="SuccessResponseCode"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_StatusUpdateValidatorResponseCodes.dvm','Reference','Success','ResponseMessage', '')"/>
+            <to variable="SuccessResponseMsg"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_StatusUpdateValidatorResponseCodes.dvm','Reference','EntityTypeUnknown','Response', '')"/>
+            <to variable="InValidEntityTypeResponse"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_StatusUpdateValidatorResponseCodes.dvm','Reference','EntityTypeUnknown','ResponseCode', '')"/>
+            <to variable="InValidEntityTypeResponseCode"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_StatusUpdateValidatorResponseCodes.dvm','Reference','EntityTypeUnknown','ResponseMessage', '')"/>
+            <to variable="InValidEntityTypeResponseMsg"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_StatusUpdateValidatorResponseCodes.dvm','Reference','InternalError','Response', '')"/>
+            <to variable="InternalErrorResponse"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_StatusUpdateValidatorResponseCodes.dvm','Reference','InternalError','ResponseCode', '')"/>
+            <to variable="InternalErrorResponseCode"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_StatusUpdateValidatorResponseCodes.dvm','Reference','InternalError','ResponseMessage', '')"/>
+            <to variable="InternalErrorResponseMsg"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_EntityStatus.dvm','CPFGStatusCode','ElecFfmtReqEntityType','EAIStatus', 'EAI.SRV.EXT.012.ENT001')"/>
+            <to variable="ElecFfmtReqEntityType"/>
+          </copy>
+          <copy>
+            <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_EntityStatus.dvm','CPFGStatusCode','UserEntityType','EAIStatus', 'EAI.SRV.EXT.012.ENT001')"/>
+            <to variable="UserEntityType"/>
+          </copy>
+          <copy>
+            <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:entityID"/>
+            <to variable="FulfilmentRequestId"/>
+          </copy>
+        </assign>
+        <bpelx:exec import="java.lang.*"/>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+          <![CDATA[String strEntityID = "";                 
+ try {                 
+ oracle.xml.parser.v2.XMLElement entityIDNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("RcvStatusRequest_IV","payload","/ns1:propagateStatusUpdateRequest/ns1:entityID"));                     
+ strEntityID = entityIDNode.getFirstChild().getNodeValue();                  
+ setCompositeInstanceTitle(strEntityID);                 
+      
+ }catch (Exception e) {                 
+ setCompositeInstanceTitle(".; ");     
+ }]]>
+        </bpelx:exec>
+        <assign name="AsgEFRIDToDBarg">
+          <copy>
+            <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:entityID"/>
+            <to variable="InvDBService_IV" part="DBServiceInput_msg" query="/ns10:DBServiceInput/ns10:ELECTRONICFULFIL_REQ_ID"/>
+          </copy>
+        </assign>
+        <invoke name="InvDBService" partnerLink="DBService" portType="ns9:DBService_ptt" operation="DBService" inputVariable="InvDBService_IV" outputVariable="InvDBService_OV"/>
+        <scope name="ValidateXML">
+          <faultHandlers>
+            <catch faultName="bpelx:invalidVariables" faultVariable="FaultVar">
+              <throw name="ThrInvalidVariablesException" faultName="bpelx:invalidVariables" faultVariable="FaultVar"/>
+            </catch>
+          </faultHandlers>
+          <sequence name="SeqValidateXMLStub">
+            <assign name="TranRequestToValidateXML">
+              <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+              </bpelx:annotation>
+              <copy>
+                <from expression="ora:processXSLT('TransStatusUpdateToStatusUpdateForValidation.xsl',bpws:getVariableData('RcvStatusRequest_IV','payload'))"/>
+                <to variable="validateXML_IV" part="payload"/>
+              </copy>
+            </assign>
+            <invoke name="InvValidateXML" partnerLink="CPFG_StatusUpdateValidatorStub" portType="client:CPFG_StatusUpdateValidatorStub" operation="validateXML" inputVariable="validateXML_IV"/>
+          </sequence>
+        </scope>
+        <scope name="ScopePropagateFulfilment">
+          <switch name="PropagateFulfilment">
+            <case condition="bpws:getVariableData('RcvStatusRequest_IV','payload','/ns1:propagateStatusUpdateRequest/ns1:entityType') = bpws:getVariableData('UserEntityType')">
+              <bpelx:annotation>
+                <bpelx:pattern>User Entity Type</bpelx:pattern>
+              </bpelx:annotation>
+              <sequence name="Sequence_1">
+                <assign name="AsgStatusValidToUpdateProfile">
+                  <copy>
+                    <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:entityID"/>
+                    <to variable="InvCPF_UpdateProfile_updateUserProfile_InputVariable" part="payload" query="/ns6:UpdateProfileRequest/ns6:UpdateProfileUserDetails/ns6:UUID"/>
+                  </copy>
+                  <copy>
+                    <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_EntityStatus.dvm','CPFGStatusCode',bpws:getVariableData('RcvStatusRequest_IV','payload','/ns1:propagateStatusUpdateRequest/ns1:entityStatus'),'EAIStatusForUser','ERROR')"/>
+                    <to variable="InvCPF_UpdateProfile_updateUserProfile_InputVariable" part="payload" query="/ns6:UpdateProfileRequest/ns6:UpdateProfileUserDetails/ns6:_CPFGStatus"/>
+                  </copy>
+                  <copy>
+                    <from expression="'UpdateCPfGStatus'"/>
+                    <to variable="InvCPF_UpdateProfile_updateUserProfile_InputVariable" part="payload" query="/ns6:UpdateProfileRequest/ns6:updateType"/>
+                  </copy>
+                  <copy>
+                    <from expression="xp20:current-dateTime()"/>
+                    <to variable="InvCPF_UpdateProfile_updateUserProfile_InputVariable" part="payload" query="/ns6:UpdateProfileRequest/ns6:UpdateProfileUserDetails/ns6:lastUpdatedByAAAOn"/>
+                  </copy>
+                  <copy>
+                    <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_EntityStatus.dvm','CPFGStatusCode',bpws:getVariableData('RcvStatusRequest_IV','payload','/ns1:propagateStatusUpdateRequest/ns1:entityStatus'),'EAIStatusReasonCode','')"/>
+                    <to variable="InvCPF_UpdateProfile_updateUserProfile_InputVariable" part="payload" query="/ns6:UpdateProfileRequest/ns6:UpdateProfileUserDetails/ns6:_CPFGStatusReason"/>
+                  </copy>
+                </assign>
+                <invoke name="InvCPF_UpdateProfile" portType="ns5:CPF_UpdateProfile" inputVariable="InvCPF_UpdateProfile_updateUserProfile_InputVariable"
+                        partnerLink="CPF_UpdateProfile"
+                        operation="updateUserProfile"/>
+                <assign name="AsgBasicResponse">
+                  <copy>
+                    <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+                    <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+                  </copy>
+                  <copy>
+                    <from expression="bpws:getVariableData('SuccessResponse')"/>
+                    <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:response"/>
+                  </copy>
+                  <copy>
+                    <from expression="bpws:getVariableData('SuccessResponseCode')"/>
+                    <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseCode"/>
+                  </copy>
+                  <copy>
+                    <from expression="bpws:getVariableData('SuccessResponseMsg')"/>
+                    <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseMessage"/>
+                  </copy>
+                </assign>
+              </sequence>
+            </case>
+            <case condition="bpws:getVariableData('RcvStatusRequest_IV','payload','/ns1:propagateStatusUpdateRequest/ns1:entityType') = bpws:getVariableData('ElecFfmtReqEntityType')">
+              <bpelx:annotation>
+                <bpelx:pattern>Electronic Fulfilment Entity Type</bpelx:pattern>
+              </bpelx:annotation>
+              <sequence name="SeqPropagateFulfilment">
+                <switch name="Switch_1">
+                  <case condition="bpws:getVariableData('InvDBService_OV','DBServiceOutput','/ns10:DBServiceOutput/ns10:COUNT___')>0">
+                    <sequence name="SeqFulfilmentRequestCorrelator">
+                      <assign name="AsgStatusValidToFulfilmentRequestCorrelator">
+                        <copy>
+                          <from variable="validateXML_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+                          <to variable="InvCPFGEF_FulfilmentRequestCorrelatorIV" part="statusUpdate" query="/client:PropagateCPFGStatusUpdateRequest/client:eaiHeader"/>
+                        </copy>
+                        <copy>
+                          <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_EntityStatus.dvm','CPFGStatusCode',bpws:getVariableData('RcvStatusRequest_IV','payload','/ns1:propagateStatusUpdateRequest/ns1:entityStatus'),'EAIStatus', 'ERROR')"/>
+                          <to part="statusUpdate" query="/client:PropagateCPFGStatusUpdateRequest/client:status" variable="InvCPFGEF_FulfilmentRequestCorrelatorIV"/>
+                        </copy>
+                        <copy>
+                          <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_EntityStatus.dvm','CPFGStatusCode',bpws:getVariableData('RcvStatusRequest_IV','payload','/ns1:propagateStatusUpdateRequest/ns1:entityStatus'),'EAIStatusReasonCode', '00300-AAA')"/>
+                          <to part="statusUpdate" query="/client:PropagateCPFGStatusUpdateRequest/client:statusReasonCode" variable="InvCPFGEF_FulfilmentRequestCorrelatorIV"/>
+                        </copy>
+                        <copy>
+                          <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:entityID"/>
+                          <to part="statusUpdate" query="/client:PropagateCPFGStatusUpdateRequest/client:electronicFulfilmentRequestId" variable="InvCPFGEF_FulfilmentRequestCorrelatorIV"/>
+                        </copy>
+                        <copy>
+                          <from expression="orcl:lookup-table('orderfulfilment','electronicfulfil_req_id',bpws:getVariableData('FulfilmentRequestId'),'order_id','eai/ds/EAIReference')"/>
+                          <to variable="CRMOrderNumber"/>
+                        </copy>
+                      </assign>
+                      <invoke name="InvCPFGEF_FulfilmentRequestCorrelator" partnerLink="CPFGEF_FulfilmentRequestCorrelator" portType="ns8:CPFGEF_FulfilmentRequestCorrelator" operation="receiveFulfilmentStatusUpdate" inputVariable="InvCPFGEF_FulfilmentRequestCorrelatorIV"/>
+                      <bpelx:exec name="AsgCRMOrderNumbertoTitle" language="java" version="1.5">
+                        <![CDATA[String orderNumber =(String)getVariableData("CRMOrderNumber");                                     
+                         
+                                                 
+String Title=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                  
+setCompositeInstanceTitle(Title);]]>
+                      </bpelx:exec>
+                      <assign name="AsgBasicResponse">
+                        <copy>
+                          <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+                          <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+                        </copy>
+                        <copy>
+                          <from expression="bpws:getVariableData('SuccessResponse')"/>
+                          <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:response"/>
+                        </copy>
+                        <copy>
+                          <from expression="bpws:getVariableData('SuccessResponseCode')"/>
+                          <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseCode"/>
+                        </copy>
+                        <copy>
+                          <from expression="bpws:getVariableData('SuccessResponseMsg')"/>
+                          <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseMessage"/>
+                        </copy>
+                      </assign>
+                    </sequence>
+                  </case>
+                  <otherwise>
+                    <sequence name="SeqPropagateFulfillmentStatus">
+                      <assign name="AsgStatusValidToPropagateFulfillmentStatus">
+                        <copy>
+                          <from variable="validateXML_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+                          <to variable="InvCPFGEF_PropagateFulfillmentStatus_IV" part="processStatus" query="/client:PropagateCPFGStatusUpdateRequest/client:eaiHeader"/>
+                        </copy>
+                        <copy>
+                          <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_EntityStatus.dvm','CPFGStatusCode',bpws:getVariableData('RcvStatusRequest_IV','payload','/ns1:propagateStatusUpdateRequest/ns1:entityStatus'),'EAIStatus', 'ERROR')"/>
+                          <to part="processStatus" query="/client:PropagateCPFGStatusUpdateRequest/client:status" variable="InvCPFGEF_PropagateFulfillmentStatus_IV"/>
+                        </copy>
+                        <copy>
+                          <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFG_EntityStatus.dvm','CPFGStatusCode',bpws:getVariableData('RcvStatusRequest_IV','payload','/ns1:propagateStatusUpdateRequest/ns1:entityStatus'),'EAIStatusReasonCode', '00300-AAA')"/>
+                          <to part="processStatus" query="/client:PropagateCPFGStatusUpdateRequest/client:statusReasonCode" variable="InvCPFGEF_PropagateFulfillmentStatus_IV"/>
+                        </copy>
+                        <copy>
+                          <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:entityID"/>
+                          <to part="processStatus" query="/client:PropagateCPFGStatusUpdateRequest/client:electronicFulfilmentRequestId" variable="InvCPFGEF_PropagateFulfillmentStatus_IV"/>
+                        </copy>
+                        <copy>
+                          <from expression="orcl:lookup-table('orderfulfilment','electronicfulfil_req_id',bpws:getVariableData('FulfilmentRequestId'),'order_id','eai/ds/EAIReference')"/>
+                          <to variable="CRMOrderNumber"/>
+                        </copy>
+                      </assign>
+                      <invoke name="InvCPFGEF_PropagateFulfillmentStatus" partnerLink="CPFGEF_PropagateFulfillmentStatus" portType="ns4:CPFGEF_PropagateFulfillmentStatus" operation="processStatus" inputVariable="InvCPFGEF_PropagateFulfillmentStatus_IV"/>
+                      <bpelx:exec name="AsgCRMOrderNumtoTitle" language="java" version="1.5">
+                        <![CDATA[String orderNumber =(String)getVariableData("CRMOrderNumber");                                     
+                         
+                                                 
+String Title=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");                  
+setCompositeInstanceTitle(Title);]]>
+                      </bpelx:exec>
+                      <assign name="AsgBasicResp">
+                        <copy>
+                          <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+                          <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+                        </copy>
+                        <copy>
+                          <from expression="bpws:getVariableData('SuccessResponse')"/>
+                          <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:response"/>
+                        </copy>
+                        <copy>
+                          <from expression="bpws:getVariableData('SuccessResponseCode')"/>
+                          <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseCode"/>
+                        </copy>
+                        <copy>
+                          <from expression="bpws:getVariableData('SuccessResponseMsg')"/>
+                          <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseMessage"/>
+                        </copy>
+                      </assign>
+                    </sequence>
+                  </otherwise>
+                </switch>
+              </sequence>
+            </case>
+            <otherwise>
+              <assign name="AsgFaultResponse">
+                <copy>
+                  <from variable="RcvStatusRequest_IV" part="payload" query="/ns1:propagateStatusUpdateRequest/ns1:eaiHeader"/>
+                  <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:eaiHeader"/>
+                </copy>
+                <copy>
+                  <from expression="bpws:getVariableData('InValidEntityTypeResponse')"/>
+                  <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:response"/>
+                </copy>
+                <copy>
+                  <from expression="bpws:getVariableData('InValidEntityTypeResponseCode')"/>
+                  <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseCode"/>
+                </copy>
+                <copy>
+                  <from expression="bpws:getVariableData('InValidEntityTypeResponseMsg')"/>
+                  <to variable="RcvStatusResponse_OV" part="payload" query="/ns2:basicResponse/ns2:basicResponse/ns3:responseMessage"/>
+                </copy>
+              </assign>
+            </otherwise>
+          </switch>
+        </scope>
+      </sequence>
+    </scope>
+    <!-- Generate reply to synchronous request -->
+    <reply name="replyOutput" partnerLink="client" portType="client:CPFG_StatusUpdateValidator" operation="processOpportunityEvent" variable="RcvStatusResponse_OV"/>
+  </sequence>
+</process>

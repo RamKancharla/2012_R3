@@ -1,0 +1,33 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TRUSTAM_PropagateAccount" revision="1.0" state="on">
+    <import location="TRUSTAM_PropagateAccount.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTAM_AccountManager/TRUSTAM_AccountManager.wsdl" importType="wsdl"/>
+    <service name="anchorToTRUSTAM_PropagateAccount" ui:wsdlLocation="TRUSTAM_PropagateAccount.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount#wsdl.interface(TRUSTAM_PropagateAccount)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_PropagateAccount#wsdl.endpoint(TRUSTAM_PropagateAccount/TRUSTAM_PropagateAccount)"/>
+    </service>
+    <component name="TRUSTAM_PropagateAccount">
+        <implementation.bpel src="TRUSTAM_PropagateAccount.bpel"/>
+        
+        
+    </component>
+    <reference name="TRUSTAM_AccountManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTAM_AccountManager/TRUSTAM_AccountManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.interface(TRUSTAM_AccountManager)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.interface(TRUSTAM_AccountManagerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.endpoint(TRUSTAM_AccountManager/TRUSTAM_AccountManager)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/TRUSTAM_AccountManager/TRUSTAM_AccountManager?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager#wsdl.endpoint(TRUSTAM_AccountManager/TRUSTAM_AccountManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToTRUSTAM_PropagateAccount</source.uri>
+        <target.uri>TRUSTAM_PropagateAccount/anchorToTRUSTAM_PropagateAccount</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TRUSTAM_PropagateAccount/TRUSTAM_AccountManager</source.uri>
+        <target.uri>TRUSTAM_AccountManager</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

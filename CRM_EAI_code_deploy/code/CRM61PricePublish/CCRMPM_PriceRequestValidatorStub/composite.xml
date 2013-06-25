@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPM_PriceRequestValidatorStub" revision="1.0" state="on">
+    <import location="CCRMPM_PriceRequestValidatorStub.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub"/>
+    <service name="client" ui:wsdlLocation="CCRMPM_PriceRequestValidatorStub.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub#wsdl.interface(CCRMPM_PriceRequestValidatorStub)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub#wsdl.endpoint(CCRMPM_PriceRequestValidatorStub/CCRMPM_PriceRequestValidatorStub)"/>
+    </service>
+    <component name="CCRMPM_PriceRequestValidatorStub">
+        <implementation.bpel src="CCRMPM_PriceRequestValidatorStub.bpel"/>
+    </component>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CCRMPM_PriceRequestValidatorStub/client</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

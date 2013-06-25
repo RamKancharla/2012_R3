@@ -1,0 +1,230 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Sep 29 15:01:34 GMT+05:30 2010
+  Author:  Hemamalini.Tirupathi
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFGOM_OrderSplitter" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderSplitter" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/CPFGOM_OrderManager" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToCPFGOMOrderSplitter" partnerLinkType="client:CPFGOM_OrderSplitter" myRole="CPFGOM_OrderSplitterProvider" partnerRole="CPFGOM_OrderSplitterRequester"/>
+        <partnerLink name="CPFGOM_OrderManager" partnerRole="CPFGOM_OrderManagerProvider" partnerLinkType="ns3:CPFGOM_OrderManager"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="CPfGUserSplitterIV" messageType="client:CPFGOM_OrderSplitterRequestMessage"/>
+        <variable name="ExtendedOrderRequest" messageType="client:CPFGOM_OrderSplitterRequestMessage"/>
+        <variable name="UserIndex" type="xsd:int"/>
+        <variable name="UserN" type="xsd:int"/>
+        <variable name="MAXLoop" type="xsd:int"/>
+        <variable name="MINLoop" type="xsd:int"/>
+        <variable name="CPfGDistinctUserRequest" messageType="client:CPfGDistinctUserMessage"/>
+        <variable name="MaxUsers" type="xsd:int"/>
+        <variable name="CPFGExtendedOrderRequest" messageType="client:CPFGExtendedOrderRequest"/>
+        <variable name="Index" type="xsd:int"/>
+        <variable name="MaxOLI" type="xsd:int"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CPFGOM_OrderSplitter.wsdl) -->
+        <receive name="rcvCPfGUserSplitter" partnerLink="anchorToCPFGOMOrderSplitter" portType="client:CPFGOM_OrderSplitter" operation="initiate" variable="CPfGUserSplitterIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="TransDistinctUserIDs">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransDistinctUserIDs.xsl',bpws:getVariableData('CPfGUserSplitterIV','orderRequest'))"/>
+                <to part="extendedOrderRequest" variable="CPFGExtendedOrderRequest"/>
+            </copy>
+        </assign>
+        <assign name="DistinctUsersWithCumulativeTotal">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('DistinctUsersWithCumulativeTotal.xsl',bpws:getVariableData('CPFGExtendedOrderRequest','extendedOrderRequest'))"/>
+                <to variable="CPFGExtendedOrderRequest" part="extendedOrderRequest"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String orderNumber = ((oracle.xml.parser.v2.XMLElement)                      
+                        getVariableData("CPfGUserSplitterIV","orderRequest","/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber")).getFirstChild().getNodeValue();      
+             
+                                     
+ String title=(orderNumber!=null ? ("ORD: "+orderNumber) : ".;");            
+ setCompositeInstanceTitle(title);]]>
+        </bpelx:exec>
+        <assign name="AsgInitVar">
+            <copy>
+                <from expression="1"/>
+                <to variable="UserIndex"/>
+            </copy>
+            <copy>
+                <from expression="count(bpws:getVariableData('CPFGExtendedOrderRequest','extendedOrderRequest','/ns1:extendedorderReq/ns1:userRecord/ns1:userNumber'))"/>
+                <to variable="MaxUsers"/>
+            </copy>
+            <copy>
+                <from expression="1"/>
+                <to variable="MINLoop"/>
+            </copy>
+            <copy>
+                <from expression="ceiling(bpws:getVariableData('MaxUsers') div 20)"/>
+                <to variable="MAXLoop"/>
+            </copy>
+            <copy>
+                <from expression="20"/>
+                <to variable="Index"/>
+            </copy>
+            <copy>
+                <from variable="CPFGExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedorderReq/ns1:userRecord[bpws:getVariableData('MaxUsers')]/ns1:cumulativeNumberOfLines"/>
+                <to variable="MaxOLI"/>
+            </copy>
+        </assign>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('MaxUsers')>20">
+                <bpelx:annotation>
+                    <bpelx:pattern>Users>20</bpelx:pattern>
+                </bpelx:annotation>
+                <assign name="AsgGreaterThan20Users">
+                    <copy>
+                        <from variable="CPFGExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedorderReq/ns1:userRecord[20]/ns1:cumulativeNumberOfLines"/>
+                        <to variable="UserN"/>
+                    </copy>
+                </assign>
+            </case>
+            <otherwise>
+                <assign name="AsgMaxUsers">
+                    <copy>
+                        <from variable="CPFGExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedorderReq/ns1:userRecord[bpws:getVariableData('MaxUsers')]/ns1:cumulativeNumberOfLines"/>
+                        <to variable="UserN"/>
+                    </copy>
+                </assign>
+            </otherwise>
+        </switch>
+        <assign name="TransCPfGExtOrderRequestToCPfGDistinctUsers">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransCPfGExtOrderRequestToCPfGDistinctUsers.xsl',bpws:getVariableData('CPfGUserSplitterIV','orderRequest'))"/>
+                <to variable="CPfGDistinctUserRequest" part="UserRequest"/>
+            </copy>
+        </assign>
+        <assign name="AsgPosN">
+            <copy>
+                <from variable="UserN"/>
+                <to variable="CPfGDistinctUserRequest" part="UserRequest" query="/ns1:UserIdRequest/ns1:PositionN"/>
+            </copy>
+            <copy>
+                <from variable="UserIndex"/>
+                <to variable="CPfGDistinctUserRequest" part="UserRequest" query="/ns1:UserIdRequest/ns1:PositionIndex"/>
+            </copy>
+        </assign>
+        <while name="While_1" condition="bpws:getVariableData('MINLoop')&lt;=bpws:getVariableData('MAXLoop')">
+            <sequence name="SeqInvCPFGOM_OrderManager">
+                <scope name="ScpCPFGOM_OrderManager">
+                    <variables>
+                        <variable name="CPFGOM_OrderManagerIV" messageType="ns3:CPFGOM_OrderManagerRequestMessage"/>
+                    </variables>
+                    <sequence name="SeqCallingOrderManager">
+                        <assign name="TransdistinctUserReqToOrderManager">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransdistinctUserReqToOrderManager.xsl',bpws:getVariableData('CPfGDistinctUserRequest','UserRequest'))"/>
+                                <to variable="CPFGOM_OrderManagerIV" part="orderRequest"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvCPFGOM_OrderManager" partnerLink="CPFGOM_OrderManager" portType="ns3:CPFGOM_OrderManager" operation="initiate" inputVariable="CPFGOM_OrderManagerIV"/>
+                        <assign name="AsgUpdateVariables">
+                            <copy>
+                                <from expression="bpws:getVariableData('UserN')+1"/>
+                                <to variable="UserIndex"/>
+                            </copy>
+                            <copy>
+                                <from expression="bpws:getVariableData('MINLoop')+1"/>
+                                <to variable="MINLoop"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </scope>
+                <switch name="Switch_2">
+                    <case condition="ceiling(bpws:getVariableData('UserN'))>bpws:getVariableData('MaxOLI')">
+                        <empty name="Empty"/>
+                    </case>
+                    <otherwise>
+                        <sequence name="SeqUserN">
+                            <switch name="Switch_3">
+                                <case condition="(bpws:getVariableData('Index')+20)>bpws:getVariableData('MaxUsers')">
+                                    <assign name="AsgMaxUser">
+                                        <copy>
+                                            <from expression="bpws:getVariableData('Index')+(bpws:getVariableData('MaxUsers')-bpws:getVariableData('Index'))"/>
+                                            <to variable="Index"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="CPFGExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedorderReq/ns1:userRecord[bpws:getVariableData('Index')]/ns1:cumulativeNumberOfLines"/>
+                                            <to variable="UserN"/>
+                                        </copy>
+                                    </assign>
+                                </case>
+                                <otherwise>
+                                    <assign name="AsgUsers">
+                                        <copy>
+                                            <from expression="bpws:getVariableData('Index')+20"/>
+                                            <to variable="Index"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="CPFGExtendedOrderRequest" part="extendedOrderRequest" query="/ns1:extendedorderReq/ns1:userRecord[bpws:getVariableData('Index')]/ns1:cumulativeNumberOfLines"/>
+                                            <to variable="UserN"/>
+                                        </copy>
+                                    </assign>
+                                </otherwise>
+                            </switch>
+                        </sequence>
+                    </otherwise>
+                </switch>
+                <assign name="AsgPosOfNextUserSet">
+                    <copy>
+                        <from variable="UserIndex"/>
+                        <to variable="CPfGDistinctUserRequest" part="UserRequest" query="/ns1:UserIdRequest/ns1:PositionIndex"/>
+                    </copy>
+                    <copy>
+                        <from variable="UserN"/>
+                        <to variable="CPfGDistinctUserRequest" part="UserRequest" query="/ns1:UserIdRequest/ns1:PositionN"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+    </sequence>
+</process>

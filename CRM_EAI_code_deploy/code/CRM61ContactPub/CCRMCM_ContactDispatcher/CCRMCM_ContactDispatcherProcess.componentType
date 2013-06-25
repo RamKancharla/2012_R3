@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMCM_ContactDispatcher.wsdl" name="CCRMCM_ContactDispatcher">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcher)" callbackInterface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcherCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TOMCM_ContactManager/TOMCM_ContactManager.wsdl" name="TOMCM_ContactManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager#wsdl.interface(TOMCM_ContactManager)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager#wsdl.interface(TOMCM_ContactManagerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SAPCM_EventManager/SAPCM_EventManager.wsdl" name="SAPCM_EventManager">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager#wsdl.interface(SAPCM_EventManager)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager#wsdl.interface(SAPCM_EventManagerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGCM_ContactManager/CPFGCM_ContactManager.wsdl" name="CPFGCM_ContactManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.interface(CPFGCM_ContactManager)"
+                        callbackInterface="http://xmlns.oracle.com/CPFGCM_ContactManager#wsdl.interface(CPFGCM_ContactManagerCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSCM_ContactManager/CSCM_ContactManager.wsdl" name="CSCM_ContactManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.interface(CSCM_ContactManager)"
+                        callbackInterface="http://xmlns.oracle.com/CSCM_ContactManager#wsdl.interface(CSCM_ContactManagerCallback)"/>
+    </reference>
+    <reference name="SFDCCM_ContactEventManager"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager#wsdl.interface(SFDCCM_ContactEventManager)"
+                        callbackInterface="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager#wsdl.interface(SFDCCM_ContactEventManagerCallback)"/>
+    </reference>
+    <reference name="ELMCM_EventManager"
+               ui:wsdlLocation="http://inkaban3ua-eai05:8000/soa-infra/services/CRMASYNC/ELMCM_EventManager/ELMCM_EventManager.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager#wsdl.interface(ELMCM_EventManager)"/>
+    </reference>
+</componentType>

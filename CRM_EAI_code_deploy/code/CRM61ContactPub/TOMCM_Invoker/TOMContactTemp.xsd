@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish"
+            elementFormDefault="qualified">
+  <xsd:element name="generalContact" type="GeneralContact"/>
+  <xsd:complexType name="GeneralContact">
+    <xsd:sequence>
+      <xsd:element name="contactId" type="xsd:string"/>
+      <xsd:element name="firstName" type="xsd:string"/>
+      <xsd:element name="lastName" type="xsd:string"/>
+      <xsd:element name="emailAddress" type="xsd:string"/>
+      <xsd:element name="contactSubType" type="xsd:string"/>
+      <xsd:element name="phone" type="xsd:string"/>
+      <xsd:element name="parentAccountId" type="xsd:string"/>
+      <xsd:element name="actionCode" type="xsd:string"/>
+      <xsd:element name="employeePositionIntersectionList">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="employeePositionIntersection" minOccurs="0" maxOccurs="unbounded"
+                         type="EmployeePositionIntersection"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="clientContactJobFunctionAccountIntersectionList">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="clientContactJobFunctionAccountIntersection" minOccurs="0" maxOccurs="unbounded"
+                         type="ClientContactJobFunctionAccountIntersection"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="EmployeePositionIntersection">
+    <xsd:sequence>
+      <xsd:element name="positionName" type="xsd:string"/>
+      <xsd:element name="accountId" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ClientContactJobFunctionAccountIntersection">
+    <xsd:sequence>
+      <xsd:element name="jobFunction" type="xsd:string"/>
+      <xsd:element name="accountId" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

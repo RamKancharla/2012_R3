@@ -1,0 +1,361 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Aug 09 21:50:00 GMT+05:30 2010
+  Author:  john.peter
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHOM_OrderManager" targetNamespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager" xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="INTERFACE_BUFFER" partnerRole="INTERFACE_BUFFER_role" partnerLinkType="ns4:INTERFACE_BUFFER_plt"/>
+        <partnerLink myRole="AsyncSequenceCheckerRequester" name="AsyncSequenceChecker" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns6:AsyncSequenceChecker"/>
+        <partnerLink myRole="ATHOMOrderManagerProvider"
+                     name="ATHOMOrderManager1"
+                     partnerLinkType="ns5:ATHOMOrderManager"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="inputVariable" messageType="ns5:ATHOMOrdReqMsg"/>
+        <variable name="OrdReqGroupVar" messageType="ns5:ATHOMOrdReqGroupMsg"/>
+        <variable name="OrdReqVar" messageType="ns5:ATHOMOrdReqMsg"/>
+        <variable name="runtimeFaultVar" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="varSortBasedOnContacts" messageType="ns5:ATHOMOrdReqMsg"/>
+        <variable name="varGroupSimilarOLIs" messageType="ns5:ATHOMOrdReqGroupMsg"/>
+        <variable name="varAsyncSeqCheckerIn" messageType="ns6:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="varAsyncSeqCheckerOut" messageType="ns6:AsyncSequenceCheckerResponseMessage"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFaultVar">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.3">
+                <![CDATA[/*org.w3c.dom.Node transanctionId = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable","ATHOMOrdReqGroupMsgPart","/ns1:ATHOrdear/ns1:eaiHeader/ns2:transactionId"));     
+String TransanctionId = transanctionId == null ? "" : transanctionId.getFirstChild().getNodeValue();                     
+setCompositeInstanceTitle(TransanctionId+" Fault");*/ 
+ 
+try{           
+           
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                       
+                        getVariableData("inputVariable", "ATHOMOrdReqMsgPart", "/client:ATHOrder/client:orderNumber")).getFirstChild().getNodeValue();                                          
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber+ " ; Fault") : ".;");                                                 
+setCompositeInstanceTitle(Title);           
+}           
+catch(Exception e){           
+setCompositeInstanceTitle("ORD: ");           
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFaultVar">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.3">
+                <![CDATA[try{           
+           
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                       
+                        getVariableData("inputVariable", "ATHOMOrdReqMsgPart", "/client:ATHOrder/client:orderNumber")).getFirstChild().getNodeValue();                                          
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber+ " ; Fault") : ".;");                                                 
+setCompositeInstanceTitle(Title);           
+}           
+catch(Exception e){           
+setCompositeInstanceTitle("ORD: ");           
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFaultVar">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFault" language="java" version="1.3">
+                <![CDATA[try{           
+           
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                       
+                        getVariableData("inputVariable", "ATHOMOrdReqMsgPart", "/client:ATHOrder/client:orderNumber")).getFirstChild().getNodeValue();                                          
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber+ " ; Fault") : ".;");                                                 
+setCompositeInstanceTitle(Title);           
+}           
+catch(Exception e){           
+setCompositeInstanceTitle("ORD: ");           
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.3">
+                <![CDATA[try{           
+           
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                       
+                        getVariableData("inputVariable", "ATHOMOrdReqMsgPart", "/client:ATHOrder/client:orderNumber")).getFirstChild().getNodeValue();                                          
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber+ " ; Fault") : ".;");                                                 
+setCompositeInstanceTitle(Title);           
+}           
+catch(Exception e){           
+setCompositeInstanceTitle("ORD: ");           
+}]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ATHOMOrderManager.wsdl) -->
+        <receive name="RcvOrderReqIn" variable="inputVariable" createInstance="yes"
+                 partnerLink="ATHOMOrderManager1"
+                 portType="ns5:ATHOMOrderManager" operation="initiate"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustTitle" language="java" version="1.3">
+            <![CDATA[try{             
+             
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                         
+                        getVariableData("inputVariable", "ATHOMOrdReqMsgPart", "/client:ATHOrder/client:orderNumber")).getFirstChild().getNodeValue();                                            
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber) : ".;");                                                   
+setCompositeInstanceTitle(Title);             
+}             
+catch(Exception e){             
+setCompositeInstanceTitle("ORD: ");             
+}  
+  
+checkpoint();]]>
+        </bpelx:exec>
+        <assign name="AsgInitialVar">
+            <copy>
+                <from variable="inputVariable" part="ATHOMOrdReqMsgPart" query="/ns1:ATHOrder"/>
+                <to variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/ns1:ATHOrder"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:eaiHeader/ns2:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:eaiHeader/ns2:instanceId"/>
+            </copy>
+        </assign>
+        <!--bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+            <![CDATA[org.w3c.dom.Node orderNumberNode = ((oracle.xml.parser.v2.XMLElement)getVariableData("inputVariable','ATHOMOrdReqMsgPart","/ns1:ATHOrder/ns1:orderNumber"));  
+String Title=(orderNumberNode!=null ? ("ORD: "+orderNumberNode.getFirstChild().getNodeValue()) : ".;");  
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec-->
+        <assign name="TransOrderReqestToOrderManagerReq">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransOrderReqestToOrderManagerReq.xsl',bpws:getVariableData('inputVariable','ATHOMOrdReqMsgPart'))"/>
+                <to variable="inputVariable" part="ATHOMOrdReqMsgPart"/>
+            </copy>
+        </assign>
+        <switch name="Switch_FTConevrsion">
+            <case condition="bpws:getVariableData('inputVariable','ATHOMOrdReqMsgPart','/client:ATHOrder/client:ATHOLI/client:businessCase')='FT Conversion'">
+                <assign name="TransSortBasedOnActionCodes">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransBasedOnActionCodes.xsl',bpws:getVariableData('inputVariable','ATHOMOrdReqMsgPart'))"/>
+                        <to variable="inputVariable" part="ATHOMOrdReqMsgPart"/>
+                    </copy>
+                </assign>
+            </case>
+            <otherwise>
+                <empty name="DoNothing"/>
+            </otherwise>
+        </switch>
+        <assign name="TransAthInputToSequence">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransAthInputToSequence.xsl',bpws:getVariableData('OrdReqVar','ATHOMOrdReqMsgPart'))"/>
+                <to variable="varAsyncSeqCheckerIn" part="payload"/>
+            </copy>
+        </assign>
+        <invoke name="InvAsyncSeqChecker" partnerLink="AsyncSequenceChecker" portType="ns6:AsyncSequenceChecker" operation="initiate" inputVariable="varAsyncSeqCheckerIn"/>
+        <receive name="RcvSeqRelease" partnerLink="AsyncSequenceChecker" portType="ns6:AsyncSequenceCheckerCallback" operation="onResult" variable="varAsyncSeqCheckerOut" createInstance="no"/>
+        <assign name="TransSortBasedOnContactIds">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransformSortBasedOnContacts.xsl',bpws:getVariableData('inputVariable','ATHOMOrdReqMsgPart'))"/>
+                <to variable="varSortBasedOnContacts" part="ATHOMOrdReqMsgPart"/>
+            </copy>
+        </assign>
+        <assign name="TransGroupByContactsAndUserIDs">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransformGroupByContactsAndUserIDs.xsl',bpws:getVariableData('varSortBasedOnContacts','ATHOMOrdReqMsgPart'))"/>
+                <to variable="OrdReqGroupVar" part="ATHOMOrdReqGroupMsgPart"/>
+            </copy>
+        </assign>
+        <assign name="TransOperationNActionCodes">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransformActionCodes.xsl',bpws:getVariableData('OrdReqGroupVar','ATHOMOrdReqGroupMsgPart'))"/>
+                <to variable="OrdReqGroupVar" part="ATHOMOrdReqGroupMsgPart"/>
+            </copy>
+        </assign>
+        <scope name="ScpTranformToInterfaceBuffer">
+            <variables>
+                <variable name="iCount" type="xsd:integer"/>
+                <variable name="varPrevContactId" type="xsd:string"/>
+                <variable name="varCurrContactId" type="xsd:string"/>
+                <variable name="varSortBasedOnUsers" messageType="ns5:ATHOMOrdReqGroupMsg"/>
+                <variable name="varPrevUser" type="xsd:string"/>
+                <variable name="varCurrUser" type="xsd:string"/>
+            </variables>
+            <sequence name="SeqGroupOLI">
+                <assign name="Assign_PrevData">
+                    <copy>
+                        <from expression="1"/>
+                        <to variable="iCount"/>
+                    </copy>
+                    <copy>
+                        <from variable="OrdReqGroupVar" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:OrderLine[$iCount]/ns3:userId"/>
+                        <to variable="varPrevUser"/>
+                    </copy>
+                    <copy>
+                        <from variable="OrdReqGroupVar" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:OrderLine[$iCount]/ns3:referenceUserId"/>
+                        <to variable="varPrevContactId"/>
+                    </copy>
+                </assign>
+                <while name="While_1" condition="bpws:getVariableData('iCount')&lt;=ora:countNodes('OrdReqGroupVar','ATHOMOrdReqGroupMsgPart','/client:ATHOrdRequest/client:OrderLine')">
+                    <sequence name="SeqAssignOLI">
+                        <assign name="Assign_CurrData">
+                            <copy>
+                                <from variable="OrdReqGroupVar" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:OrderLine[$iCount]/ns3:userId"/>
+                                <to variable="varCurrUser"/>
+                            </copy>
+                            <copy>
+                                <from variable="OrdReqGroupVar" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:OrderLine[$iCount]/ns3:referenceUserId"/>
+                                <to variable="varCurrContactId"/>
+                            </copy>
+                        </assign>
+                        <switch name="SwitchGroupOLIs">
+                            <case condition="bpws:getVariableData('iCount')=&quot;1&quot;">
+                                <assign name="Assign_FirstOLI">
+                                    <copy>
+                                        <from variable="OrdReqGroupVar" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:OrderLine[$iCount]"/>
+                                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:OrderLine"/>
+                                    </copy>
+                                </assign>
+                            </case>
+                            <case condition="bpws:getVariableData('iCount')!=&quot;1&quot; and (bpws:getVariableData('varPrevContactId')=bpws:getVariableData('varCurrContactId')) and (bpws:getVariableData('varPrevUser')=bpws:getVariableData('varCurrUser'))">
+                                <assign name="Assign_GroupSimilarOLIs">
+                                    <bpelx:insertAfter>
+                                        <bpelx:from variable="OrdReqGroupVar" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:OrderLine[$iCount]/ns3:ProductList"/>
+                                        <bpelx:to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:OrderLine/ns3:ProductList"/>
+                                    </bpelx:insertAfter>
+                                </assign>
+                            </case>
+                            <otherwise>
+                                <assign name="Assign_OLIs">
+                                    <bpelx:append>
+                                        <bpelx:from variable="OrdReqGroupVar" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:OrderLine[$iCount]"/>
+                                        <bpelx:to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest"/>
+                                    </bpelx:append>
+                                </assign>
+                            </otherwise>
+                        </switch>
+                        <assign name="Assign_IncrementCounter">
+                            <copy>
+                                <from expression="bpws:getVariableData('iCount')+1"/>
+                                <to variable="iCount"/>
+                            </copy>
+                            <copy>
+                                <from variable="varCurrUser"/>
+                                <to variable="varPrevUser"/>
+                            </copy>
+                            <copy>
+                                <from variable="varCurrContactId"/>
+                                <to variable="varPrevContactId"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </while>
+                <assign name="Assign_Header">
+                    <copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:eaiHeader"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:eaiHeader"/>
+                    </copy>
+                    <copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:orderNumber"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:orderHeader/ns3:orderNumber"/>
+                    </copy>
+                    <copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:subscriberNumber"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:orderHeader/ns3:subscriberNumber"/>
+                    </copy>
+                    <copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:subAccount"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:orderHeader/ns3:subAccount"/>
+                    </copy>
+                    <copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:requestorCode"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:orderHeader/ns3:requestorCode"/>
+                    </copy>
+                    <copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:Login"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:orderHeader/ns3:Login"/>
+                    </copy>
+                    <copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:email"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:orderHeader/ns3:email"/>
+                    </copy>
+                    <!--copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:targetDate"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:orderHeader/ns3:targetDate"/>
+                    </copy-->
+                    <copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:noOfRecords"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:orderHeader/ns3:noOfRecords"/>
+                    </copy>
+                    <copy>
+                        <from variable="OrdReqVar" part="ATHOMOrdReqMsgPart" query="/client:ATHOrder/client:actionCode"/>
+                        <to variable="varGroupSimilarOLIs" part="ATHOMOrdReqGroupMsgPart" query="/client:ATHOrdRequest/client:orderHeader/ns3:actionCode"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+        <scope name="ScpInsertInterfaceBuffer">
+            <variables>
+                <variable name="InvWriteIntoInterfaceBuffer" messageType="ns4:InterfaceBufferCollection_msg"/>
+            </variables>
+            <sequence name="Sequence_OrderGroupRequest">
+                <assign name="TransOrdReqToOrdGroupReq">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransOrdReqGrpToInterfaceBuffer.xsl',bpws:getVariableData('varGroupSimilarOLIs','ATHOMOrdReqGroupMsgPart'))"/>
+                        <to variable="InvWriteIntoInterfaceBuffer" part="InterfaceBufferCollection"/>
+                    </copy>
+                </assign>
+                <invoke name="InvWriteIntoInterfaceBuffer" partnerLink="INTERFACE_BUFFER" portType="ns4:INTERFACE_BUFFER_ptt" operation="insert" inputVariable="InvWriteIntoInterfaceBuffer"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

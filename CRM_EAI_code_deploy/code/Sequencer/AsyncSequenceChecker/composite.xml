@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="AsyncSequenceChecker" revision="1.0" state="on">
+    <import location="AsyncSequenceChecker.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"/>
+    <import location="RegisterSequence.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/RegisterSequence/"/>
+    <service name="client" ui:wsdlLocation="AsyncSequenceChecker.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceCheckerCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.interface(AsyncSequenceChecker)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker#wsdl.endpoint(AsyncSequenceChecker/AsyncSequenceChecker)"/>
+    </service>
+    <component name="AsyncSequenceChecker">
+        <implementation.bpel src="AsyncSequenceChecker.bpel"/>
+    </component>
+    <reference name="RegisterSequence" ui:wsdlLocation="RegisterSequence.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/RegisterSequence/#wsdl.interface(RegisterSequence_ptt)"/>
+        <binding.jca config="RegisterSequence_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>AsyncSequenceChecker/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>AsyncSequenceChecker/RegisterSequence</source.uri>
+        <target.uri>RegisterSequence</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

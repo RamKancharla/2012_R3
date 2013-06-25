@@ -1,0 +1,161 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Mon Aug 03 11:56:46 GMT+05:30 2009
+  Author:  sg59930
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHCSOM_MoveUser" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHCSOM_MoveUser" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToATHCSOMMoveUser" partnerLinkType="client:ATHCSOM_MoveUser" myRole="ATHCSOM_MoveUserProvider" partnerRole="ATHCSOM_MoveUserRequester"/>
+        <partnerLink name="TransformMoveUserToCSFormat" partnerRole="TransformMoveUserToCSFormatRequest_Role" partnerLinkType="ns1:TransformMoveUserToCSFormatRequest_PL"/>
+        <partnerLink name="SubmitOrderToCOMPASS" partnerRole="submitOrder_pptProvider" partnerLinkType="ns5:submitOrder_pptLT"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="MoveUserIV" messageType="client:ATHCSOM_MoveUserRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:ATHCSOM_MoveUserResponseMessage"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="SuccessResponse" type="xsd:string"/>
+        <variable name="UnKnowError" type="xsd:string"/>
+        <variable name="InvTransformMoveUserToCSFormatIV" messageType="ns1:MoveUserRequest"/>
+        <variable name="InvTransformMoveUserToCSFormatOV" messageType="ns1:FLMoveUserRequest"/>
+        <variable name="InvSubmitOrderToCOMPASSIV" messageType="ns5:fixedLengthOrderRequest_request"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("MoveUserIV", "ATHMoveUser", "/ns1:MoveUser/ns1:userOrderHeader/ns1:transactionId"));                                      
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();                   
+setCompositeInstanceTitle(Title+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("MoveUserIV", "ATHMoveUser", "/ns1:MoveUser/ns1:userOrderHeader/ns1:transactionId"));                                       
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();                    
+setCompositeInstanceTitle(Title+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgCustomTitleOnSelectionFault" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("MoveUserIV", "ATHMoveUser", "/ns1:MoveUser/ns1:userOrderHeader/ns1:transactionId"));                                       
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();                    
+setCompositeInstanceTitle(Title+" Fault");]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <sequence name="SeqUnknownError">
+                <bpelx:exec name="AsgCustomTitleOnGenericFlt" language="java" version="1.5">
+                    <![CDATA[org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("MoveUserIV", "ATHMoveUser", "/ns1:MoveUser/ns1:userOrderHeader/ns1:transactionId"));                                       
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();                    
+setCompositeInstanceTitle(Title+" Fault");]]>
+                </bpelx:exec>
+                <assign name="UnKnownError">
+                    <copy>
+                        <from expression="&quot;UnKnownError&quot;"/>
+                        <to variable="UnKnowError"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ATHCSOM_MoveUser.wsdl) -->
+        <receive name="rcvMoveUser" partnerLink="anchorToATHCSOMMoveUser" portType="client:ATHCSOM_MoveUser" operation="moveUser" variable="MoveUserIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariable">
+            <copy>
+                <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SuccessCode','Value', '0')"/>
+                <to variable="SuccessResponse"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("MoveUserIV", "ATHMoveUser", "/ns1:MoveUser/ns1:userOrderHeader/ns1:transactionId"));                                     
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();                  
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+        <scope name="ScpMoveUserToCSFormat">
+            <faultHandlers>
+                <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                    <throw name="ThrTransformToCSFormatFault" faultName="bpelx:remoteFault" faultVariable="runtimeFault"/>
+                </catch>
+            </faultHandlers>
+            <sequence name="SeqMoveUserToCSFormat">
+                <assign name="TransMoveUserToCSFormat">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransMoveUserToCSFormat.xsl',bpws:getVariableData('MoveUserIV','ATHMoveUser'))"/>
+                        <to variable="InvTransformMoveUserToCSFormatIV" part="parameter"/>
+                    </copy>
+                </assign>
+                <invoke name="InvTransformMoveUserToCSFormat" partnerLink="TransformMoveUserToCSFormat" portType="ns1:TransformMoveUserToCSFormatRequest" operation="transform" inputVariable="InvTransformMoveUserToCSFormatIV" outputVariable="InvTransformMoveUserToCSFormatOV"/>
+            </sequence>
+        </scope>
+        <switch name="SwitchOnResponse">
+            <case condition="bpws:getVariableData('InvTransformMoveUserToCSFormatOV','parameter','/ns1:fixedLengthUserOrderRequest/ns1:basicResponse/ns1:response')=bpws:getVariableData('SuccessResponse')">
+                <bpelx:annotation>
+                    <bpelx:pattern>SuccessResponse</bpelx:pattern>
+                </bpelx:annotation>
+                <scope name="ScpSubmitOrderToCompass">
+                    <faultHandlers>
+                        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+                            <throw name="ThrowRemoteFault" faultName="bpelx:remoteFault" faultVariable="runtimeFault"/>
+                        </catch>
+                    </faultHandlers>
+                    <sequence name="SeqSubmitOrderToCompass">
+                        <assign name="TransTansformMoveUserCSFormatToSubmitToCS">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransTansformMoveUserCSFormatToSubmitToCS.xsl',bpws:getVariableData('InvTransformMoveUserToCSFormatOV','parameter'))"/>
+                                <to variable="InvSubmitOrderToCOMPASSIV" part="fixedLengthOrderRequest"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvSubmitOrderToCOMPASS" partnerLink="SubmitOrderToCOMPASS" portType="ns5:submitOrder_ppt" operation="submitOrder" inputVariable="InvSubmitOrderToCOMPASSIV"/>
+                    </sequence>
+                </scope>
+            </case>
+            <otherwise>
+                <bpelx:exec name="AsgCustomTitleFault" language="java" version="1.5">
+                    <![CDATA[org.w3c.dom.Node transId = ((oracle.xml.parser.v2.XMLElement)getVariableData("MoveUserIV", "ATHMoveUser", "/ns1:MoveUser/ns1:userOrderHeader/ns1:transactionId"));                                       
+String Title = transId == null ? "" : transId.getFirstChild().getNodeValue();                    
+setCompositeInstanceTitle(Title+" Fault");]]>
+                </bpelx:exec>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

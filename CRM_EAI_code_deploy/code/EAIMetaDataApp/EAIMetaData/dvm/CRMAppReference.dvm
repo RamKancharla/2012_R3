@@ -1,0 +1,143 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="CRMAppReference" xmlns="http://xmlns.oracle.com/dvm">
+<description>Reference data used in EAI</description><columns><column name="Reference"/><column name="Value"/></columns>
+<rows><row><cell>SuccessCode</cell><cell>0</cell></row>
+<row><cell>UnknownError</cell><cell>00300-EAI-UNKNOWN-ERROR</cell></row>
+<row><cell>CRMSchemaNameforXMLValidation</cell><cell>EAI.MSG.CCRM.OM.138_OrderRequest.xsd</cell></row>
+<row><cell>CRMOrderCreateActionCode</cell><cell>Create</cell></row>
+<row><cell>CRMBillingReleaseActionCode</cell><cell>Billing</cell></row>
+<row><cell>CreateDynaXActionCode</cell><cell>C</cell></row>
+<row><cell>CRMOLIIDAssetIntIDRefType</cell><cell>CRMOLIID_ASSTID</cell></row>
+<row><cell>CSOrderCreateActionCode</cell><cell>OM05</cell></row>
+<row><cell>CSBillingReleaseActionCode</cell><cell>OM30</cell></row>
+<row><cell>AssetIntIDItemNoRefType</cell><cell>ASSTID_ITEMNO</cell></row>
+<row><cell>LookupDynaXActionCode</cell><cell>R</cell></row>
+<row><cell>CRMOLIIDOrdLineActCodeRefType</cell><cell>CRMOLID_OLAC</cell></row>
+<row><cell>AddOrderLineActionCode</cell><cell>I</cell></row>
+<row><cell>FailureCode</cell><cell>1</cell></row>
+<row><cell>ERR00203Code</cell><cell>00203-EAI-INVALID-ACTION-CODE</cell></row>
+<row><cell>ERR00203Msg</cell><cell>EAI-INVALID ACTION CODE</cell></row>
+<row><cell>CSOrderStatusSchemaforXMLValidation</cell><cell>EAI.MSG.CS.OM.126_OrderStatus.xsd</cell></row>
+<row><cell>LookupSourceDynaXActionCode</cell><cell>V</cell></row>
+<row><cell>LinkDynaXActionCode</cell><cell>L</cell></row>
+<row><cell>DeleteDynaXActionCode</cell><cell>D</cell></row>
+<row><cell>Environment</cell><cell>T</cell></row>
+<row><cell>ReplyToQTemplate</cell><cell>_EI_RPLY_TRIGGER_TRANS_EI</cell></row>
+<row><cell>CSAmendBillDateActionCode</cell><cell>OM40</cell></row>
+<row><cell>CRMBillingMaintenenceActionCode</cell><cell>AmendBillDate</cell></row>
+<row><cell>BillingmaintenenceSchemaNameforXMLValidation</cell><cell>EAI.MSG.CCRM.OM.161_BillingMaintenanceRequest.xsd</cell></row>
+<row><cell>InitialQuoteStatus</cell><cell>New</cell></row>
+<row><cell>schemaNameQuoteRequestValidator</cell><cell>EAI.MSG.CCRM.TF.151_VettingRequest.xsd</cell></row>
+<row><cell>QuoteVettingStatusDynaXRefType</cell><cell>QNoVNo_VETST</cell></row>
+<row><cell>QuoteApprovalRecordDynaXRefType</cell><cell>QNoVNo_APPID</cell></row>
+<row><cell>UserCreationActionCode</cell><cell>I890</cell></row>
+<row><cell>schemaNameQuoteStatusValidator</cell><cell>EAI.MSG.TOM.TF.154_VettingStatus.xsd</cell></row>
+<row><cell>SuccessfullUserCreationCRMOLStatus</cell><cell>User Created</cell></row>
+<row><cell>FailureUserCreationCRMOLStatus</cell><cell>Error</cell></row>
+<row><cell>AmendBillDateCRMOLStatus</cell><cell>Complete</cell></row>
+<row><cell>CRMOLIIDRootIDRefType</cell><cell>CRMOLIID_ROOTID</cell></row>
+<row><cell>Y</cell><cell>Y</cell></row>
+<row><cell>N</cell><cell>N</cell></row>
+<row><cell>Add</cell><cell>Add</cell></row>
+<row><cell>Delete</cell><cell>Delete</cell></row>
+<row><cell>SuccessResponseCode</cell><cell>00100-EAI-SUCCESS</cell></row>
+<row><cell>TOMCompany</cell><cell>DEFAULT</cell></row>
+<row><cell>SequencerContextForOrderStatus</cell><cell>OrderManagement.OrderStatus</cell></row>
+<row><cell>SequencerContextForOrderCreate</cell><cell>OrderManagement.OrderCreation</cell></row>
+<row><cell>SequencerMessageTypeCRM61OM</cell><cell>Order.CRMOrderNumber</cell></row>
+<row><cell>SequenceContextForAccount</cell><cell>TOMAccountManager</cell></row>
+<row><cell>SequencerMessageTypeAccount</cell><cell>AccountDetails.MasterAccountID</cell></row>
+<row><cell>TransformOrderStatusBPELProcess</cell><cell>CSOM_TransformOrderStatus</cell></row>
+<row><cell>TOMAccountManagerBPELProcess</cell><cell>TOMAM_AccountManager</cell></row>
+<row><cell>Billing Release Failure</cell><cell>Billing Release Failure</cell></row>
+<row><cell>Released For Billing</cell><cell>Released for Billing</cell></row>
+<row><cell>CRMAmendBillingAccountActionCode</cell><cell>AmendBillingAccount</cell></row>
+<row><cell>SequenceContextForTOMContact</cell><cell>TOMContactManager</cell></row>
+<row><cell>SequencerMessageTypeContact</cell><cell>ContactDetails.MasterContactID</cell></row>
+<row><cell>TOMContactManagerBPELProcess</cell><cell>TOMCM_ContactManager</cell></row>
+<row><cell>CSSalesCodeForAbort</cell><cell>6</cell></row>
+<row><cell>CRMAmendPermissionDateActionCode</cell><cell>AmendPermissionDate</cell></row>
+<row><cell>OrderBatcherBPELProcess</cell><cell>CSOM_OrderBatcher</cell></row>
+<row><cell>CPFGAccountManagerBPELProcess</cell><cell>CPFGAM_AccountManager</cell></row>
+<row><cell>SequenceContextForCPFG</cell><cell>CPFGAccountManager</cell></row>
+<row><cell>SuccessStatusFromCPFG</cell><cell>COMPLETE</cell></row>
+<row><cell>FailureStatusFromCPFG</cell><cell>ERROR</cell></row>
+<row><cell>CSCodeforExternalContacts</cell><cell>S</cell></row>
+<row><cell>CRMActionCodeForAmendBillDateBeforeRTB</cell><cell>AmendBillDateBeforeRTB</cell></row>
+<row><cell>CRMErrorinPDS</cell><cell>Error in PDS</cell></row>
+<row><cell>CRMSpecialPriceChangeActionCode</cell><cell>Special Price Change</cell></row>
+<row><cell>SequenceContextForSFDCOpportunity</cell><cell>CCRMOPInvoker</cell></row>
+<row><cell>CCRMOPInvokerBPELProcess</cell><cell>CCRMOP_Invoker</cell></row>
+<row><cell>SequencerMessageTypeSFDCOpportunity</cell><cell>SFDC.AccountID</cell></row>
+<row><cell>CRMErrorCodeOnLookUpXRefFailure</cell><cell>X001</cell></row>
+<row><cell>CRMUnknownErrorOnLookUpXRefFailure</cell><cell>X002</cell></row>
+<row><cell>RCRMDummyField3forHQNodePublish</cell><cell>Publish to HQ</cell></row>
+<row><cell>CSACM_AccountRequestStatus</cell><cell>B000</cell></row>
+<row><cell>AccountActionCodeforNonIntegratedCountries</cell><cell>SM05</cell></row>
+<row><cell>SequenceContextForTOMOrders</cell><cell>TF_OrderDispatcher</cell></row>
+<row><cell>SequencerMessageTypeTOMOrders</cell><cell>TOM.OrderHeader.OrderNumber</cell></row>
+<row><cell>PriceListItemStatusforCSPricePublish</cell><cell>Publish to CS</cell></row>
+<row><cell>UpdateOrderRequestValidatorBPELProcess</cell><cell>TOMOM_UpdateOrderRequestValidator</cell></row>
+<row><cell>SequencerContextForCPfGUser</cell><cell>CPfG.UserOrderManager</cell></row>
+<row><cell>SequencerMessageTypeCPfGPUser</cell><cell>CPfG.CPfGUserNumber</cell></row>
+<row><cell>CPfGUserOrderBPELProcess</cell><cell>CPFGOM_UserOrderManager</cell></row>
+<row><cell>TFManageOrderLineStatusBPELProcess</cell><cell>TF_ManageOrderLineStatus</cell></row>
+<row><cell>PropagatePriceBPELProcess</cell><cell>CCRMPM_PropagatePriceUpdateStatus</cell></row>
+<row><cell>SequencerMessageTypeCRM61PM</cell><cell>Price.PriceListHeaderId</cell></row>
+<row><cell>SequencerContextForPriceStatus</cell><cell>PriceManagement.PriceStatus</cell></row>
+<row><cell>DeleteOrderLineActionCode</cell><cell>R</cell></row>
+<row><cell>SequencerMessageTypeCPFGAccount</cell><cell>CPFGAccountDetails.MasterAccountID</cell></row>
+<row><cell>CSCodeforEmployees</cell><cell>R</cell></row>
+<row><cell>DefaultIFaceIndicator</cell><cell>N</cell></row>
+<row><cell>CRMOLStatusOnLookUpXRefFailure</cell><cell>Error</cell></row>
+<row><cell>TOMOrdersBPELProcess</cell><cell>TF_OrderDispatcher</cell></row>
+<row><cell>HQStatusforPriceListPublishtoHQ</cell><cell>Publish to HQ</cell></row>
+<row><cell>SequencerContextForUserStatus</cell><cell>OrderManagement.UserStatus</cell></row>
+<row><cell>ProxyPropagateOrderStatusBPELProcess</cell><cell>CCRMOM_ProxyPropagateOrderStatus</cell></row>
+<row><cell>UserSwapCRMOLStatus</cell><cell>Complete</cell></row>
+<row><cell>AccountValidationFailureCode</cell><cell>X003</cell></row>
+<row><cell>OrderValidationFailureCode</cell><cell>X004</cell></row>
+<row><cell>CPFG_DOMAIN_ID</cell><cell>SL</cell></row>
+<row><cell>DefaultOrganization</cell><cell>XX</cell></row>
+<row><cell>DataSourceNameforSequencer</cell><cell>eai/ds/EAISOA</cell></row>
+<row><cell>SFDCAMInvokerProcess</cell><cell>SFDCAM_Invoker</cell></row>
+<row><cell>SequenceMessageForSFDCAccount</cell><cell>SFDC.AccountID</cell></row>
+<row><cell>SequenceContextForSFDCAccount</cell><cell>CRM-Trust.AccountManagement</cell></row>
+<row><cell>Y</cell><cell>TRSC</cell></row>
+<row><cell>SequenceContextFromTrustAccount</cell><cell>TRUST-CRM.AccountManagement</cell></row>
+<row><cell>SequenceMessageFromTrustAccount</cell><cell>SFDC.SFDCID</cell></row>
+<row><cell>TRUSTAMAccountManager</cell><cell>TRUSTAM_AccountManager</cell></row>
+<row><cell>CCRMOPPublishOpportunityProcess</cell><cell>CCRMOP_PublishOpportunity</cell></row>
+<row><cell>SequenceContextFromCRMOpportunity</cell><cell>CRM-TRUST.OpportunityManagement</cell></row>
+<row><cell>SequenceMessageFromCRMOpportunity</cell><cell>CRM.SiebelOptyID</cell></row>
+<row><cell>SFDCAMAccountEventManagerProcess</cell><cell>SFDCAM_AccountEventManager</cell></row>
+<row><cell>TRUSTOP_OpportunityManagerProcess</cell><cell>TRUSTOP_OpportunityManager</cell></row>
+<row><cell>SequenceContextFromTrustOpportunity</cell><cell>TRUST-CRM.OpportunityManagement</cell></row>
+<row><cell>SequenceMessageFromTrustOpportunity</cell><cell>TRUST.SiebelOptyID</cell></row>
+<row><cell>UserSwapCRMOLStatusManPermReqY</cell><cell>Pending Manual Permissioning</cell></row>
+<row><cell>SequenceContextFromCPFGUpdateProfile</cell><cell>CPfG.UserUUID</cell></row>
+<row><cell>SequenceMessageFromCPFGUpdateProfile</cell><cell>CPfG.UserProfileUpdateToSiebel</cell></row>
+<row><cell>AthenaCreate</cell><cell>OM50</cell></row>
+<row><cell>CCRMOMSubmitUserOrderRequestProcess</cell><cell>CCRMOM_SubmitUserOrderRequest</cell></row>
+<row><cell>NoOfLinestoSplitforBulkTransactions</cell><cell>100</cell></row>
+<row><cell>NoOfLinestoSplitforNonBulkTransactions</cell><cell>25</cell></row>
+<row><cell>EnableCDMFlag</cell><cell>Y</cell></row>
+<row><cell>InstallToOrderRequest</cell><cell>P</cell></row>
+<row><cell>BillToOrderRequest</cell><cell>B</cell></row>
+<row><cell>OrderRequest</cell><cell>C</cell></row>
+<row><cell>TransformOrderStatusProcess</cell><cell>SAPOM_TransformOrderStatus</cell></row>
+<row><cell>SequenceContextForSAPAccount</cell><cell>SAPAMEventManager</cell></row>
+<row><cell>SequencerMessageTypeFromSAPAccount</cell><cell>SAP.AccountID</cell></row>
+<row><cell>SequenceContextForSAPContact</cell><cell>SAPCMEventManager</cell></row>
+<row><cell>SequencerMessageTypeFromSAPContact</cell><cell>SAP.ContactUUID</cell></row>
+<row><cell>SAPAMEventManagerProcess</cell><cell>SAPAM_EventManager</cell></row>
+<row><cell>SAPCMEventManagerProcess</cell><cell>SAPCM_EventManager</cell></row>
+<row><cell>SequencerContextForAthenaUserPerm</cell><cell>AthenaOrderManager</cell></row>
+<row><cell>SequencerMessageTypeForAthenaUserPerm</cell><cell>Athena.SubscriberNumber</cell></row>
+<row><cell>AthenaOrderProcessForPerm</cell><cell>ATHOM_OrderManager</cell></row>
+<row><cell>SequencerMessageTypeForSAPContactSync</cell><cell>SAP.ContactROWID</cell></row>
+<row><cell>SequenceContextForSFDCContact</cell><cell>CRM-Trust.ContactManagement</cell></row>
+<row><cell>SequenceMessageForSFDCContact</cell><cell>SFDC.ContactID</cell></row>
+<row><cell>SFDCCMEventManagerProcess</cell><cell>SFDCCM_ContactEventManager</cell></row>
+</rows>
+</dvm>

@@ -1,0 +1,557 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Sun Oct 19 21:32:15 BST 2008
+  Author:  rob.billington
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CPFGOM_UserOrderManagerProcess" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CPF_UpdateProfile" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns16="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager/correlationset" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/UserManagementServices" xmlns:ns17="http://xmlns.oracle.com/pcbpel/adapter/jms/EnqueuePromoteRequest/" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/CPFGOM_UserOrderManager" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns15="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPfG/Exception" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns20="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg" xmlns:ns13="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/UserManagementServices" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:ns18="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/jms/EnqueueContactPromotionRequest/" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns22="http://xmlns.oracle.com/CCRMCM_ContactDispatcher" xmlns:ns11="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns19="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/CPFGEF_FulfilmentRequestManager" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager" xmlns:ns14="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns21="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CM/CCRM_ContactSpliter" xmlns:ns8="http://xmlns.oracle.com/CPFGCM_ContactManager" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="CPFGOM_UserOrderManager" partnerLinkType="client:CPFGOM_UserOrderManager" myRole="CPFGOM_UserOrderManagerProvider"/>
+        <!--partnerRole="CPFGOM_UserOrderManagerRequester"/>-->
+        <partnerLink name="CPFGEF_FulfilmentRequestManager" partnerLinkType="ns3:CPFGEF_FulfilmentRequestManager" myRole="CPFGEF_FulfilmentRequestManagerRequester" partnerRole="CPFGEF_FulfilmentRequestManagerProvider"/>
+        <partnerLink name="SequenceChecker" partnerRole="SequenceCheckerProvider" partnerLinkType="ns12:SequenceChecker"/>
+        <partnerLink myRole="SequenceReleaserRequester" name="SequenceReleaser" partnerRole="SequenceReleaserProvider" partnerLinkType="ns12:SequenceReleaser"/>
+        <partnerLink name="OM_ManageOrderLineStatus" partnerRole="OM_ManageOrderLineStatusProvider" partnerLinkType="ns16:OM_ManageOrderLineStatus" myRole="OM_ManageOrderLineStatusRequester"/>
+        <partnerLink myRole="CCRMCM_ContactDispatcherRequester" name="CCRMCM_ContactDispatcher" partnerRole="CCRMCM_ContactDispatcherProvider" partnerLinkType="ns22:CCRMCM_ContactDispatcher"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable" messageType="client:CPFGOM_UserOrderManagerRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="ContactPromotionCompleted" type="xsd:boolean"/>
+        <variable name="ReceiveProfileUpdate_updateUserProfile_InputVariable" messageType="client:UpdateProfileRequestMessage"/>
+        <variable name="InvSeqChecker_IV" messageType="ns12:SequenceCheckerRequestMessage"/>
+        <variable name="InvSeqChecker_OV" messageType="ns12:SequenceCheckerResponseMessage"/>
+        <variable name="runTimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="RcvReleaseSequence_IV" messageType="client:ReleaseSequenceMessage"/>
+        <variable name="ReleaseSequence_IV" messageType="ns12:SequenceReleaserRequestMessage"/>
+        <variable name="UniqueId" type="xsd:string"/>
+        <variable name="chkUserPromotion" type="xsd:boolean"/>
+        <variable name="USER_PROMOTION_STATUS" type="xsd:string"/>
+        <variable name="USER_PROMOTED" type="xsd:string"/>
+        <variable name="sensorMessage" type="xsd:string"/>
+        <variable name="USER_PROMOTION_STATUS_REASON" type="xsd:string"/>
+        <!-- <variable name="InvEnqueuePromoteRequestIV"
+                  messageType="ns17:contactEvent_msg"/> -->
+        <variable name="fulfilmentResponseIndex" type="xsd:int"/>
+        <variable name="orderResponseIndex" type="xsd:int"/>
+        <variable name="firstFulfilmentRequest" messageType="ns3:CPFGEF_FulfilmentRequestManagerRequestMessage"/>
+        <variable name="secondFulfilmentRequest" messageType="ns3:CPFGEF_FulfilmentRequestManagerRequestMessage"/>
+        <variable name="firstOrderStatusUpdate" messageType="ns16:OM_ManageOrderLineStatusRequestMessage"/>
+        <variable name="secondOrderStatusUpdate" messageType="ns16:OM_ManageOrderLineStatusRequestMessage"/>
+        <variable name="secondFulfilmentResult" messageType="ns3:CPFGEF_OrderStatusUpdateMessage"/>
+        <variable name="countofOLI" type="xsd:int"/>
+        <variable name="firstFulfilmentResultMessage" messageType="ns3:CPFGEF_OrderStatusUpdateMessage"/>
+        <variable name="xpath" type="xsd:string"/>
+        <variable name="xpath2" type="xsd:string"/>
+        <variable name="nodCheck" type="xsd:boolean"/>
+        <!--  <variable name="InvContactSpliterPromoteRequestIV"
+                  messageType="ns21:CCRMCM_ContactSpliterRequestMessage"/> -->
+        <variable name="InvCCRMCM_ContactDispatcherIV" messageType="ns22:CCRMCM_ContactDispatcherRequestMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CPfGCorrelationSet" properties="ns5:Corr_CPfG_prop"/>
+        <correlationSet name="CorrelationSequence" properties="ns5:Corr_RelSeq_Prop"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForRemoteFault" language="java" version="1.3">
+                <![CDATA[String userNumber = (String)getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:userNumber");  
+String orderNumber = (String)getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:CRMOLIId");    
+String CPfGorderNumber=(userNumber!=null ? ("ORD:" +orderNumber+"; UUID: "+userNumber) : ".;");   
+String Title = CPfGorderNumber+";Fault";             
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="ns15:SequenceCheckerError" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForSeqError" language="java" version="1.3">
+                <![CDATA[String userNumber = (String)getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:userNumber");  
+String orderNumber = (String)getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:CRMOLIId");    
+String CPfGorderNumber=(userNumber!=null ? ("ORD:" +orderNumber+"; UUID: "+userNumber) : ".;");   
+String Title = CPfGorderNumber+";Fault";             
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForSelectionFailure" language="java" version="1.3">
+                <![CDATA[String userNumber = (String)getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:userNumber");   
+String orderNumber = (String)getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:CRMOLIId");     
+String CPfGorderNumber=(userNumber!=null ? ("ORD:" +orderNumber+"; UUID: "+userNumber) : ".;");    
+String Title = CPfGorderNumber+";Fault";              
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runTimeFault">
+            <bpelx:exec name="AsgCustomTitleForBindingFault" language="java" version="1.3">
+                <![CDATA[String userNumber = (String)getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:userNumber");   
+String orderNumber = (String)getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:CRMOLIId");     
+String CPfGorderNumber=(userNumber!=null ? ("ORD:" +orderNumber+"; UUID: "+userNumber) : ".;");    
+String Title = CPfGorderNumber+";Fault";              
+setCompositeInstanceTitle(Title);]]>
+            </bpelx:exec>
+        </catch>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CPFGOM_UserOrderManager.wsdl) -->
+        <receive name="receiveInput" partnerLink="CPFGOM_UserOrderManager" portType="client:CPFGOM_UserOrderManager" operation="initiate" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariable">
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="UniqueId"/>
+            </copy>
+            <copy>
+                <from expression="false()"/>
+                <to variable="chkUserPromotion"/>
+            </copy>
+            <copy>
+                <from expression="''"/>
+                <to variable="USER_PROMOTION_STATUS"/>
+            </copy>
+            <copy>
+                <from expression="'CPFG_PROMOTION_COMPLETE'"/>
+                <to variable="USER_PROMOTED"/>
+            </copy>
+            <copy>
+                <from expression="1"/>
+                <to variable="fulfilmentResponseIndex"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="SetCustomTitle" language="java" version="1.3">
+            <![CDATA[String orderId = "null";   
+String UUID = "null";   
+   
+try{    
+if (null != ( (oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber") ).getFirstChild() ) {   
+    orderId = ( (oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderHeader/ns1:CRMOrderNumber") ).getFirstChild().getNodeValue();   
+}           
+if (null != ( (oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:userNumber") ).getFirstChild() ) {   
+    UUID = ( (oracle.xml.parser.v2.XMLElement) getVariableData("inputVariable","payload","/ns1:orderRequest/ns1:orderLineItem/ns1:userNumber") ).getFirstChild().getNodeValue();   
+}                                   
+setCompositeInstanceTitle( orderId + " : " + UUID );   
+}    
+catch(Exception e)    
+{    
+    setCompositeInstanceTitle( orderId + " : Fault");   
+}]]>
+        </bpelx:exec>
+        <assign name="TransClearOLIPermStatusOnInput">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransClearOLIPermStatusOnInput.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                <to variable="inputVariable" part="payload"/>
+            </copy>
+        </assign>
+        <switch name="SwitchIsNewUser">
+            <case condition="bpws:getVariableData('inputVariable','payload','/ns1:orderRequest/ns1:orderLineItem[1]/ns1:isNewUser') != &quot;Y&quot;">
+                <bpelx:annotation>
+                    <bpelx:pattern>Existing User</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqPromoteContact">
+                    <assign name="AsgUserPromotion">
+                        <copy>
+                            <from expression="true()"/>
+                            <to variable="chkUserPromotion"/>
+                        </copy>
+                        <copy>
+                            <from variable="USER_PROMOTED"/>
+                            <to variable="USER_PROMOTION_STATUS"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </case>
+            <otherwise>
+                <sequence name="SeqisNewUser">
+                    <scope name="StartSequencing">
+                        <sequence name="SeqCheckSequence">
+                            <assign name="AsgSequenceCheckerIV">
+                                <copy>
+                                    <from variable="UniqueId"/>
+                                    <to variable="inputVariable" part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns2:tracingId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="'EAI'"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:eaiHeader/ns2:applicationId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:eaiHeader/ns2:transactionId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:eaiHeader/ns2:messageId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="'EAI;'"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:eaiHeader/ns2:messageHistory"/>
+                                </copy>
+                                <copy>
+                                    <from variable="inputVariable" part="payload" query="/ns1:orderRequest/ns1:eaiHeader/ns2:tracingId"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:eaiHeader/ns2:tracingId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCurrentDateTime()"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:eaiHeader/ns2:timeStamp"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getCompositeInstanceId()"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:eaiHeader/ns2:instanceId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="1"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:eaiHeader/ns2:timeToLive"/>
+                                </copy>
+                                <copy>
+                                    <from expression="'V'"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:eaiHeader/ns2:payloadVersion"/>
+                                </copy>
+                                <copy>
+                                    <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SequencerContextForCPfGUser','Value', 'CPfG.UserOrderManager')"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:seqRequestDetails/ns13:context"/>
+                                </copy>
+                                <copy>
+                                    <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CRMAppReference.dvm','Reference','SequencerMessageTypeCPfGUser','Value', 'CPfG.CPfGUserNumber')"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:seqRequestDetails/ns13:messageType"/>
+                                </copy>
+                                <copy>
+                                    <from expression="bpws:getVariableData('inputVariable','payload','/ns1:orderRequest/ns1:orderLineItem[1]/ns1:userNumber')"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:seqRequestDetails/ns13:contextId"/>
+                                </copy>
+                                <copy>
+                                    <from expression="ora:getProcessId()"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:seqRequestDetails/ns13:process"/>
+                                </copy>
+                                <copy>
+                                    <from variable="UniqueId"/>
+                                    <to variable="InvSeqChecker_IV" part="payload" query="/ns13:checkSequenceRequest/ns13:seqRequestDetails/ns13:correlationID"/>
+                                </copy>
+                            </assign>
+                            <invoke name="InvSeqChecker" partnerLink="SequenceChecker" portType="ns12:SequenceChecker" operation="checkSequence" inputVariable="InvSeqChecker_IV" outputVariable="InvSeqChecker_OV">
+                                <correlations>
+                                    <correlation initiate="yes" set="CorrelationSequence" pattern="out"/>
+                                </correlations>
+                            </invoke>
+                            <switch name="CheckOutcome">
+                                <case condition="bpws:getVariableData('InvSeqChecker_OV','payload','/ns14:basicResponse/ns14:basicResponse/ns2:responseMessage')='WAIT'">
+                                    <sequence name="SeqProcessWait">
+                                        <scope name="ScpWaitAsOutCome">
+                                            <sequence name="SeqProcessWait">
+                                                <receive name="RcvReleaseSequence" partnerLink="CPFGOM_UserOrderManager" portType="client:CPFGOM_UserOrderManager" operation="releaseSequence" variable="RcvReleaseSequence_IV" createInstance="no">
+                                                    <correlations>
+                                                        <correlation initiate="no" set="CorrelationSequence"/>
+                                                    </correlations>
+                                                </receive>
+                                            </sequence>
+                                        </scope>
+                                    </sequence>
+                                </case>
+                                <case condition="bpws:getVariableData('InvSeqChecker_OV','payload','/ns14:basicResponse/ns14:basicResponse/ns2:responseMessage')='CONTINUE'">
+                                    <empty name="NoUsersToProcess"/>
+                                </case>
+                                <otherwise>
+                                    <throw name="ThrSeqCheckerException" faultName="ns15:SequenceCheckerError" faultVariable="runTimeFault"/>
+                                </otherwise>
+                            </switch>
+                        </sequence>
+                    </scope>
+                    <assign name="TransInputToSplitter_ContactPromoteRequest">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransInputToEnqueueContactPromoteRequest.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                            <to variable="InvCCRMCM_ContactDispatcherIV" part="payload"/>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke_CCRMCM_ContactDispatcher" partnerLink="CCRMCM_ContactDispatcher" portType="ns22:CCRMCM_ContactDispatcher" inputVariable="InvCCRMCM_ContactDispatcherIV" operation="dispatchContact">
+                        <correlations>
+                            <correlation initiate="yes" set="CPfGCorrelationSet" pattern="out"/>
+                        </correlations>
+                    </invoke>
+                    <receive name="ReceiveProfileUpdate" partnerLink="CPFGOM_UserOrderManager" portType="client:CPFGOM_UserOrderManager" operation="updateUserProfile" variable="ReceiveProfileUpdate_updateUserProfile_InputVariable" createInstance="no">
+                        <correlations>
+                            <correlation initiate="no" set="CPfGCorrelationSet"/>
+                        </correlations>
+                    </receive>
+                    <assign name="TransOrderUserToSequenceReleaser">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransOrderUserToSequenceReleaser.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                            <to variable="ReleaseSequence_IV" part="payload"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvSequenceReleaser" partnerLink="SequenceReleaser" portType="ns12:SequenceReleaser" operation="releaseSequence" inputVariable="ReleaseSequence_IV"/>
+                    <assign name="AsgUserPromotion">
+                        <copy>
+                            <from expression="true()"/>
+                            <to variable="chkUserPromotion"/>
+                        </copy>
+                        <copy>
+                            <from variable="ReceiveProfileUpdate_updateUserProfile_InputVariable" part="payload" query="/ns9:UpdateProfileRequest/ns9:UpdateProfileUserDetails/ns9:_CPFGStatus"/>
+                            <to variable="USER_PROMOTION_STATUS"/>
+                        </copy>
+                        <copy>
+                            <from variable="ReceiveProfileUpdate_updateUserProfile_InputVariable" part="payload" query="/ns9:UpdateProfileRequest/ns9:UpdateProfileUserDetails/ns9:_CPFGStatusReason"/>
+                            <to variable="USER_PROMOTION_STATUS_REASON"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </otherwise>
+        </switch>
+        <switch name="chkUserPromotion">
+            <case condition="(&quot;CPFG_PROMOTION_COMPLETE&quot; = bpws:getVariableData('USER_PROMOTION_STATUS') ) and bpws:getVariableData('chkUserPromotion') = true()">
+                <bpelx:annotation>
+                    <bpelx:pattern>Promotion OK</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="SeqchkUserPromotion">
+                    <assign name="TransInputToFulfilmentRequest">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransInputToFulfilmentRequest.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                            <to variable="firstFulfilmentRequest" part="orderRequest"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvFulfilmentRequestManager" partnerLink="CPFGEF_FulfilmentRequestManager" portType="ns3:CPFGEF_FulfilmentRequestManager" operation="fulfilOrder" inputVariable="firstFulfilmentRequest"/>
+                    <switch name="Switch_1">
+                        <case condition="bpws:getVariableData('inputVariable','payload','/ns1:orderRequest/ns1:orderLineItem/ns1:businessCase')='User Swap'">
+                            <sequence name="Sequence_5">
+                                <receive name="ReceiveFulfilmentResult" partnerLink="CPFGEF_FulfilmentRequestManager" portType="ns3:CPFGEF_FulfilmentRequestManagerCallback" operation="onResult" variable="firstFulfilmentResultMessage" createInstance="no"/>
+                                <assign name="AsnCountOLI">
+                                    <copy>
+                                        <from expression="ora:countNodes('firstFulfilmentResultMessage','statusUpdate','/ns3:orderStatusUpdate/ns3:orderLineItem')"/>
+                                        <to variable="countofOLI"/>
+                                    </copy>
+                                </assign>
+                                <while name="While_1" condition="bpws:getVariableData('fulfilmentResponseIndex') &lt;= bpws:getVariableData('countofOLI')">
+                                    <scope name="ScopeCopyInitialFulfilmentStatusToInput">
+                                        <variables>
+                                            <variable name="permissioningStatusReasonCode" type="xsd:string"/>
+                                            <variable name="permissioningStatus" type="xsd:string"/>
+                                            <variable name="CRMOLIId" type="xsd:string"/>
+                                        </variables>
+                                        <sequence name="Sequence_2">
+                                            <assign name="AsgNewPermissioningStatusToInputMessage">
+                                                <copy>
+                                                    <from variable="firstFulfilmentResultMessage" part="statusUpdate" query="/ns3:orderStatusUpdate/ns3:orderLineItem[bpws:getVariableData('fulfilmentResponseIndex')]/ns3:CRMOLIId"/>
+                                                    <to variable="CRMOLIId"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="firstFulfilmentResultMessage" part="statusUpdate" query="/ns3:orderStatusUpdate/ns3:orderLineItem[bpws:getVariableData('fulfilmentResponseIndex')]/ns3:permissioningStatus"/>
+                                                    <to variable="permissioningStatus"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="firstFulfilmentResultMessage" part="statusUpdate" query="/ns3:orderStatusUpdate/ns3:orderLineItem[bpws:getVariableData('fulfilmentResponseIndex')]/ns3:permissioningStatusReasonCode"/>
+                                                    <to variable="permissioningStatusReasonCode"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="permissioningStatus"/>
+                                                    <to variable="inputVariable" part="payload" query="/ns1:orderRequest/ns1:orderLineItem[ns1:CRMOLIId=bpws:getVariableData('CRMOLIId')]/ns1:permissioningStatus"/>
+                                                </copy>
+                                                <copy>
+                                                    <from variable="permissioningStatusReasonCode"/>
+                                                    <to variable="inputVariable" part="payload" query="/ns1:orderRequest/ns1:orderLineItem[ns1:CRMOLIId=bpws:getVariableData('CRMOLIId')]/ns1:ResponseCode"/>
+                                                </copy>
+                                                <copy>
+                                                    <from expression="bpws:getVariableData('fulfilmentResponseIndex') + 1"/>
+                                                    <to variable="fulfilmentResponseIndex"/>
+                                                </copy>
+                                            </assign>
+                                        </sequence>
+                                    </scope>
+                                </while>
+                                <assign name="TransFilterLinesForFirstOrderStatusUpdate">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransFilterLinesForFirstOrderStatusUpdate.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                                        <to variable="firstOrderStatusUpdate" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <switch name="SwitchStatusUpdatesForNonUserSwapLines">
+                                    <case condition="count(bpws:getVariableData('firstOrderStatusUpdate','payload','/ns11:orderStatus/ns11:orderLineItem')) > 0">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>Send OLI Status to CRM</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <sequence name="Sequence_3">
+                                            <invoke name="InvOM_ManageOrderLineStatus" partnerLink="OM_ManageOrderLineStatus" portType="ns16:OM_ManageOrderLineStatus" operation="manageOrderLineStatus" inputVariable="firstOrderStatusUpdate"/>
+                                        </sequence>
+                                    </case>
+                                    <otherwise>
+                                        <empty name="DoNothing"/>
+                                    </otherwise>
+                                </switch>
+                                <assign name="TransPrepareUserSwapOrderLines">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransPrepareUserSwapOrderLines.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                                        <to variable="secondFulfilmentRequest" part="orderRequest"/>
+                                    </copy>
+                                </assign>
+                                <switch name="SwitchNumberOfUserSwapLines">
+                                    <case condition="count(bpws:getVariableData('secondFulfilmentRequest','orderRequest','/ns3:orderRequest/ns3:orderLineItem')) > 0">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>User Swap Lines</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <sequence name="Sequence_1">
+                                            <invoke name="InvFulfilmentRequestManagerForUserSwapLines" partnerLink="CPFGEF_FulfilmentRequestManager" portType="ns3:CPFGEF_FulfilmentRequestManager" operation="fulfilOrder" inputVariable="secondFulfilmentRequest"/>
+                                            <receive name="ReceiveFulfilmentRequestManagerForUserSwapLines" partnerLink="CPFGEF_FulfilmentRequestManager" portType="ns3:CPFGEF_FulfilmentRequestManagerCallback" operation="onResult" variable="secondFulfilmentResult" createInstance="no"/>
+                                            <assign name="AsgInitialiseFulfilmentRequestIndex">
+                                                <copy>
+                                                    <from expression="1"/>
+                                                    <to variable="fulfilmentResponseIndex"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="TransClearAllOLIPermissioningStatuses">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransClearAllOLIPermissioningStatuses.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                                                    <to variable="inputVariable" part="payload"/>
+                                                </copy>
+                                            </assign>
+                                            <assign name="AsgCountOLI">
+                                                <copy>
+                                                    <from expression="count(bpws:getVariableData('secondFulfilmentResult','statusUpdate','/ns3:orderStatusUpdate/ns3:orderLineItem'))"/>
+                                                    <to variable="countofOLI"/>
+                                                </copy>
+                                            </assign>
+                                            <while name="While_2" condition="bpws:getVariableData('fulfilmentResponseIndex') &lt;= bpws:getVariableData('countofOLI')">
+                                                <scope name="ScopeCopyUserSwapDepermissionFulfilmentStatusToInput">
+                                                    <variables>
+                                                        <variable name="CRMOLIId" type="xsd:string"/>
+                                                        <variable name="permissioningStatus" type="xsd:string"/>
+                                                        <variable name="permissioningStatusReason" type="xsd:string"/>
+                                                    </variables>
+                                                    <assign name="AsgUserSwapDepermPermissioningStatusToInputMessage">
+                                                        <copy>
+                                                            <from variable="secondFulfilmentResult" part="statusUpdate" query="/ns3:orderStatusUpdate/ns3:orderLineItem[bpws:getVariableData('fulfilmentResponseIndex')]/ns3:CRMOLIId"/>
+                                                            <to variable="CRMOLIId"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from variable="secondFulfilmentResult" part="statusUpdate" query="/ns3:orderStatusUpdate/ns3:orderLineItem[bpws:getVariableData('fulfilmentResponseIndex')]/ns3:permissioningStatus"/>
+                                                            <to variable="permissioningStatus"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from variable="secondFulfilmentResult" part="statusUpdate" query="/ns3:orderStatusUpdate/ns3:orderLineItem[bpws:getVariableData('fulfilmentResponseIndex')]/ns3:permissioningStatusReasonCode"/>
+                                                            <to variable="permissioningStatusReason"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from variable="permissioningStatus"/>
+                                                            <to variable="inputVariable" part="payload" query="/ns1:orderRequest/ns1:orderLineItem[ns1:CRMOLIId=bpws:getVariableData('CRMOLIId')]/ns1:permissioningStatus"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from variable="permissioningStatusReason"/>
+                                                            <to variable="inputVariable" part="payload" query="/ns1:orderRequest/ns1:orderLineItem[ns1:CRMOLIId=bpws:getVariableData('CRMOLIId')]/ns1:billingNote"/>
+                                                        </copy>
+                                                        <copy>
+                                                            <from expression="bpws:getVariableData('fulfilmentResponseIndex') +1"/>
+                                                            <to variable="fulfilmentResponseIndex"/>
+                                                        </copy>
+                                                    </assign>
+                                                </scope>
+                                            </while>
+                                            <assign name="TransExtractLinesWithUpdatedPermStatus">
+                                                <bpelx:annotation>
+                                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                                </bpelx:annotation>
+                                                <copy>
+                                                    <from expression="ora:processXSLT('TransExtractLinesWithNonBlankPermStatus.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                                                    <to variable="secondOrderStatusUpdate" part="payload"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvManageOrderLineStatusForUserSwapLines" partnerLink="OM_ManageOrderLineStatus" portType="ns16:OM_ManageOrderLineStatus" operation="manageOrderLineStatus" inputVariable="secondOrderStatusUpdate"/>
+                                        </sequence>
+                                    </case>
+                                    <otherwise>
+                                        <empty name="NoUserSwapLinesToSend"/>
+                                    </otherwise>
+                                </switch>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </case>
+            <otherwise>
+                <sequence name="SeqErrorPromotion">
+                    <assign name="TransCPfGOrderToManagerOrder">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransCPfGOrderToManagerOrder.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                            <to variable="firstOrderStatusUpdate" part="payload"/>
+                        </copy>
+                    </assign>
+                    <assign name="AsnCountOLI">
+                        <copy>
+                            <from expression="ora:countNodes('inputVariable','payload','/ns1:orderRequest/ns1:orderLineItem')"/>
+                            <to variable="countofOLI"/>
+                        </copy>
+                        <copy>
+                            <from expression="1"/>
+                            <to variable="orderResponseIndex"/>
+                        </copy>
+                    </assign>
+                    <while name="While_3" condition="bpws:getVariableData('orderResponseIndex') &lt;= bpws:getVariableData('countofOLI')">
+                        <sequence name="Sequence_4">
+                            <assign name="AsgPromotionStatusToManageOrder">
+                                <copy>
+                                    <from expression="dvm:lookupValue('oramds:/apps/EAIMetaData/dvm/CPFGUM_ResponseErrorCodesMap.dvm','CPFGResponseCode',bpws:getVariableData('USER_PROMOTION_STATUS_REASON'),'CRMResponseCode',bpws:getVariableData('USER_PROMOTION_STATUS_REASON'))"/>
+                                    <to variable="firstOrderStatusUpdate" part="payload" query="/ns11:orderStatus/ns11:orderLineItem[$orderResponseIndex]/ns11:requestStatus"/>
+                                </copy>
+                                <copy>
+                                    <from expression="bpws:getVariableData('orderResponseIndex')+1"/>
+                                    <to variable="orderResponseIndex"/>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </while>
+                    <invoke name="OM_ManageOrderLineStatus" partnerLink="OM_ManageOrderLineStatus" portType="ns16:OM_ManageOrderLineStatus" operation="manageOrderLineStatus" inputVariable="firstOrderStatusUpdate"/>
+                </sequence>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

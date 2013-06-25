@@ -1,0 +1,16 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser" location="http://eaidev2:8004/ParseUserStatus/parseUserStatus?WSDL"/>
+    <plnk:partnerLinkType name="ParseCSUserStatus_PL">
+        <plnk:role name="ParseCSUserStatus_Role">
+            <plnk:portType name="tns:ParseCSUserStatus"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

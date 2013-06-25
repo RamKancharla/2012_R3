@@ -1,0 +1,26 @@
+<adapter-config name="PollOnELMCM_POLLING_VW" adapter="Database Adapter"
+                wsdlLocation="PollOnELMCM_POLLING_VW.wsdl"
+                xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  <connection-factory location="eis/DB/EAISOA" UIConnectionName="Connection1"
+                      adapterRef=""/>
+  <endpoint-activation portType="PollOnELMCM_POLLING_VW_ptt"
+                       operation="receive">
+    <activation-spec className="oracle.tip.adapter.db.DBActivationSpec">
+      <property name="DescriptorName"
+                value="PollOnELMCM_POLLING_VW.ElmcmPollingV"/>
+      <property name="QueryName" value="PollOnELMCM_POLLING_VWSelect"/>
+      <property name="MappingsMetaDataURL"
+                value="PollOnELMCM_POLLING_VW-or-mappings.xml"/>
+      <property name="PollingStrategy" value="LogicalDeletePollingStrategy"/>
+      <property name="MarkReadColumn" value="STATE"/>
+      <property name="MarkReadValue" value="P"/>
+      <property name="SequencingColumn" value="ID"/>
+      <property name="MaxRaiseSize" value="10"/>
+      <property name="MaxTransactionSize" value="unlimited"/>
+      <property name="PollingInterval" value="10"/>
+      <property name="NumberOfThreads" value="1"/>
+      <property name="UseBatchDestroy" value="false"/>
+      <property name="ReturnSingleResultSet" value="false"/>
+    </activation-spec>
+  </endpoint-activation>
+</adapter-config>

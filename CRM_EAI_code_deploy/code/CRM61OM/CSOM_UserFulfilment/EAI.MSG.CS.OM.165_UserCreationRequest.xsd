@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:       EAI.MSG.CCRM.OM.165_UserCreationRequest.xsd
+*               UserOrderFullFillment
+* Type:         XML Schema Document
+* Description:  Compass User Schema document including message header
+*               which is required by Compass. The helps in generating the fixed length message for User Creation Request
+*
+* Change History
+* Version       Date        Author                  Description Of Change
+* =======       ========    ==================      ===============================
+*  0.01          18/10/07    SGANNAVARAPU (Satyam)       Initial Version
+* 
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" xmlns:comt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonOrderTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.006_CommonOrderTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="compassUser" type="xsdLocal:CompassUser"/>
+	<xsd:complexType name="CompassUser">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="logicalCountry" type="comt:CountryCode"/>
+			<xsd:element name="messageHeader" type="comt:CompassMessageHeader"/>
+			<xsd:element name="userHeader" type="comt:_CSUserHeader"/>
+			<xsd:element name="userLineItem" type="comt:_CSUserOLI" maxOccurs="300"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

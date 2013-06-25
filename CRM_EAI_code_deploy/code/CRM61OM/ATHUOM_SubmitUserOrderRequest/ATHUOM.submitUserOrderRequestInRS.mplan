@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="ATHUOM.submitUserOrderRequestInRS" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/SubmitUserOrderRequest" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="submitUserOrderRequest">
+      <switch>
+         <case name="Case_1_ATHUOM.submitUserOrderRequestInRS.submitUserOrderRequest" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TransAthenaUserOrderRequestToValidate.xsl,$in.billingInfoRequest)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="ATHUOM.UserOrderRequstValidatorSOAPAdp" operation="validateUserOrder">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/TransValidationResponseToAthena.xsl,$in.payload)" name="$out.billingInfoResponse"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

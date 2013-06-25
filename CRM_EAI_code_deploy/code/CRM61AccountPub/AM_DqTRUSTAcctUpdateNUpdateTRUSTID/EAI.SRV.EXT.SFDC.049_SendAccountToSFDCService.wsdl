@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Web Services API : AccountManagement
+-->
+<definitions targetNamespace="http://soap.sforce.com/schemas/class/AccountManagement" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://soap.sforce.com/schemas/class/AccountManagement">
+ <types>
+  <xsd:schema elementFormDefault="qualified" targetNamespace="http://soap.sforce.com/schemas/class/AccountManagement">
+   <xsd:element name="DebuggingInfo">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="debugLog" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:simpleType name="ID">
+    <xsd:restriction base="xsd:string">
+     <xsd:length value="18"/>
+     <xsd:pattern value="[a-zA-Z0-9]{18}"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LogCategory">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="Db"/>
+     <xsd:enumeration value="Workflow"/>
+     <xsd:enumeration value="Validation"/>
+     <xsd:enumeration value="Callout"/>
+     <xsd:enumeration value="Apex_code"/>
+     <xsd:enumeration value="Apex_profiling"/>
+     <xsd:enumeration value="All"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LogCategoryLevel">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="Internal"/>
+     <xsd:enumeration value="Finest"/>
+     <xsd:enumeration value="Finer"/>
+     <xsd:enumeration value="Fine"/>
+     <xsd:enumeration value="Debug"/>
+     <xsd:enumeration value="Info"/>
+     <xsd:enumeration value="Warn"/>
+     <xsd:enumeration value="Error"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:complexType name="LogInfo">
+    <xsd:sequence>
+     <xsd:element name="category" type="tns:LogCategory"/>
+     <xsd:element name="level" type="tns:LogCategoryLevel"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:simpleType name="LogType">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="None"/>
+     <xsd:enumeration value="Debugonly"/>
+     <xsd:enumeration value="Db"/>
+     <xsd:enumeration value="Profiling"/>
+     <xsd:enumeration value="Callout"/>
+     <xsd:enumeration value="Detail"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:element name="DebuggingHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="categories" minOccurs="0" maxOccurs="unbounded" type="tns:LogInfo"/>
+      <xsd:element name="debugLevel" type="tns:LogType"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="CallOptions">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="client" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="SessionHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="sessionId" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="AllowFieldTruncationHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="allowFieldTruncation" type="xsd:boolean"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:complexType name="AccountIdUpdateRequest">
+    <xsd:sequence>
+     <xsd:element name="SFDCId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelCustNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelId" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="AccountRequest">
+    <xsd:sequence>
+     <xsd:element name="AccountCAID" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountClass" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountTeamData" minOccurs="0" maxOccurs="unbounded" type="tns:AccountTeam" nillable="true"/>
+     <xsd:element name="AgreementNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AgreementStatus" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="BusinessChannel" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ContractType" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="CreditCheckDate" minOccurs="0" type="xsd:date" nillable="true"/>
+     <xsd:element name="CreditCheckStatus" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="CurrencyCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="CustomerJourney" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="CustomerType" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Description" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Fax" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ISPrimaryAccount" minOccurs="0" type="xsd:boolean" nillable="true"/>
+     <xsd:element name="LegalEntity" minOccurs="0" type="xsd:boolean" nillable="true"/>
+     <xsd:element name="LocalAccountName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalCity" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalCountry" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalPostal" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalState" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="LocalStreet" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="MCCCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Name" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="NomCustomerGroup" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="OwnerEmail" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Phone" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Region" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Segment" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SFDCId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingCity" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingCountry" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingPostal" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingState" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="ShippingStreet" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelAccountStatus" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelCustomerNumber" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelParentAcc" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelUltParentAcc" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="TCID" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="TDOCheckDate" minOccurs="0" type="xsd:date" nillable="true"/>
+     <xsd:element name="TDOStatus" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="Website" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="AccountTeam">
+    <xsd:sequence>
+     <xsd:element name="AccountTeamEmail" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountTeamFirstName" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="AccountTeamLastName" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="TRUSTResponse">
+    <xsd:sequence>
+     <xsd:element name="Comments" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SFDCId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="SiebelId" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="StatusCode" minOccurs="0" type="xsd:string" nillable="true"/>
+     <xsd:element name="StatusDescription" minOccurs="0" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="publishAccount">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="accRequest" type="tns:AccountRequest" nillable="true"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="publishAccountResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" type="tns:TRUSTResponse" nillable="true"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="updateSiebelId">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="accRequest" type="tns:AccountIdUpdateRequest" nillable="true"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="updateSiebelIdResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" type="tns:TRUSTResponse" nillable="true"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+  </xsd:schema>
+ </types>
+ <!-- Message for the header parts -->
+ <message name="Header">
+  <part name="AllowFieldTruncationHeader" element="tns:AllowFieldTruncationHeader"/>
+  <part name="CallOptions" element="tns:CallOptions"/>
+  <part name="DebuggingHeader" element="tns:DebuggingHeader"/>
+  <part name="DebuggingInfo" element="tns:DebuggingInfo"/>
+  <part name="SessionHeader" element="tns:SessionHeader"/>
+ </message>
+ <!-- Operation Messages -->
+ <message name="publishAccountRequest">
+  <part element="tns:publishAccount" name="parameters"/>
+ </message>
+ <message name="publishAccountResponse">
+  <part element="tns:publishAccountResponse" name="parameters"/>
+ </message>
+ <message name="updateSiebelIdRequest">
+  <part element="tns:updateSiebelId" name="parameters"/>
+ </message>
+ <message name="updateSiebelIdResponse">
+  <part element="tns:updateSiebelIdResponse" name="parameters"/>
+ </message>
+ <portType name="AccountManagementPortType">
+  <operation name="publishAccount">
+   <input message="tns:publishAccountRequest"/>
+   <output message="tns:publishAccountResponse"/>
+  </operation>
+  <operation name="updateSiebelId">
+   <input message="tns:updateSiebelIdRequest"/>
+   <output message="tns:updateSiebelIdResponse"/>
+  </operation>
+ </portType>
+ <binding name="AccountManagementBinding" type="tns:AccountManagementPortType">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="publishAccount">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
+    <soap:header use="literal" part="AllowFieldTruncationHeader" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:header use="literal" part="DebuggingInfo" message="tns:Header"/>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+  <operation name="updateSiebelId">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
+    <soap:header use="literal" part="AllowFieldTruncationHeader" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:header use="literal" part="DebuggingInfo" message="tns:Header"/>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+ </binding>
+ <service name="AccountManagementService">
+  <documentation></documentation>
+  <port binding="tns:AccountManagementBinding" name="AccountManagement">
+   <soap:address location="${trust.protocol}://${trust.host}/services/Soap/class/AccountManagement"/>
+  </port>
+ </service>
+</definitions>

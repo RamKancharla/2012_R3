@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:	EAI.MSG.CCRM.TF.159_VetRequestSubmissionStatus
+*		Technical Fulfillment (CCRM)
+* Type:		XML Schema Document
+* Description:  Internal message format used to reply the status of submission of the Quote to EAI
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		15/10/2007	G PATCHIPULUSU			Initial Version
+*
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul" xmlns:cqt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonQuoteTypes" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/TechFul" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonQuoteTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.008_CommonQuoteTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="quoteSubmissionStatus" type="xsdLocal:QuoteSubmissionStatus"/>
+	<xsd:complexType name="QuoteSubmissionStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="response" type="cqt:_CCRMVettingResponse"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

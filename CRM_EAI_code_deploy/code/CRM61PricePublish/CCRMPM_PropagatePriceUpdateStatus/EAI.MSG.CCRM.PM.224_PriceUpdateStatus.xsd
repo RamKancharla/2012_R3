@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by Brian Knights (Reuters UK) -->
+<!--
+/*************************************************************************
+* Module:		EAI.MSG.CCRM.PM.224_PriceUpdateStatus.xsd
+*
+* Type:			XML Schema Document
+* Description:  	Price Status Schema document including message header
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		14/04/08	Sreeja Prasad			Initial Version
+
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:gcap-cps="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/PriceUpdateStatus" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonPriceStructures" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.014_CommonPriceStructures.xsd"/>
+	<xsd:element name="priceStatus" type="xsdLocal:PriceStatus"/>
+	<xsd:complexType name="PriceStatus">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="priceHeaderStatus" type="gcap-cps:_CCRMPriceUpdateHeaderStatus"/>
+			<xsd:element name="priceLineItemStatus" type="gcap-cps:_CCRMPriceUpdateLineItemStatus" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

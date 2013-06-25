@@ -1,0 +1,224 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      ATHOM_OrderSplitter.bpel 
+* Type:        BPEL Process 
+* Description: Asynchronous BPEL Process that splits OrderRequest based on subscriber.
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         13/08/2010   Sreeja                  Initial Version 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="ATHOM_OrderSplitter" targetNamespace="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/ATHOMOrderManager" xmlns:client="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOM_OrderSplitter" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/OrderManagement" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2010/07/15/GCAP/EAI/ATH/ATHOMOrderManager" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToOrderSplitter" partnerLinkType="client:ATHOM_OrderSplitter" myRole="ATHOM_OrderSplitterProvider" partnerRole="ATHOM_OrderSplitterRequester"/>
+        <partnerLink name="ATHOMOrderManager" partnerLinkType="ns3:ATHOMOrderManager" partnerRole="ATHOMOrderManagerProvider"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="rcvOrderRequest" messageType="client:ATHOM_OrderSplitterRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="outputVariable" messageType="client:ATHOM_OrderSplitterResponseMessage"/>
+        <variable name="distinctSubscriberIV" messageType="client:DistinctSubscriberMsg"/>
+        <variable name="FlowN_DistinctSubscribers_Variable" type="xsd:int"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgBindFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+ try{          
+          
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                      
+                        getVariableData("rcvOrderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderNumber")).getFirstChild().getNodeValue();                                         
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber+ " ; Fault") : ".;");                                                
+setCompositeInstanceTitle(Title);          
+}          
+catch(Exception e){          
+setCompositeInstanceTitle("ORD: ");          
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgRemoteFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+ try{          
+          
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                      
+                        getVariableData("rcvOrderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderNumber")).getFirstChild().getNodeValue();                                         
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber+ " ; Fault") : ".;");                                                
+setCompositeInstanceTitle(Title);          
+}          
+catch(Exception e){          
+setCompositeInstanceTitle("ORD: ");          
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+            <bpelx:exec name="AsgSelectionFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+ try{          
+          
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                      
+                        getVariableData("rcvOrderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderNumber")).getFirstChild().getNodeValue();                                         
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber+ " ; Fault") : ".;");                                                
+setCompositeInstanceTitle(Title);          
+}          
+catch(Exception e){          
+setCompositeInstanceTitle("ORD: ");          
+}]]>
+            </bpelx:exec>
+        </catch>
+        <catchAll>
+            <bpelx:exec name="AsgGenericFault" language="java" version="1.5">
+                <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+ try{          
+          
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                      
+                        getVariableData("rcvOrderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderNumber")).getFirstChild().getNodeValue();                                         
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber+ " ; Fault") : ".;");                                                
+setCompositeInstanceTitle(Title);          
+}          
+catch(Exception e){          
+setCompositeInstanceTitle("ORD: ");          
+}]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in ATHOM_OrderSplitter.wsdl) -->
+        <receive name="receiveInput" partnerLink="anchorToOrderSplitter" portType="client:ATHOM_OrderSplitter" operation="splitOrder" variable="rcvOrderRequest" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+ try{         
+         
+String OrdNumber = ((oracle.xml.parser.v2.XMLElement)                                     
+                        getVariableData("rcvOrderRequest", "orderRequest", "/ns1:orderRequest/ns1:orderNumber")).getFirstChild().getNodeValue();                                        
+String Title=(OrdNumber!=null ? ("ORD: "+ OrdNumber) : ".;");                                               
+setCompositeInstanceTitle(Title);         
+}         
+catch(Exception e){         
+setCompositeInstanceTitle("ORD: ");         
+}]]>
+        </bpelx:exec>
+        <!--  <assign name="TransSortSubscriber">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransSortSubscriber.xsl',bpws:getVariableData('rcvOrderRequest','orderRequest'))"/>
+                <to variable="rcvOrderRequest" part="orderRequest"/>
+            </copy>
+        </assign>-->
+        <assign name="TransDistinctSubscriber">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransDistinctSubscriber.xsl',bpws:getVariableData('rcvOrderRequest','orderRequest'))"/>
+                <to variable="distinctSubscriberIV" part="distinctSubscriberRequest"/>
+            </copy>
+        </assign>
+        <bpelx:flowN name="FlowN_DistinctSubscribers" N="count(bpws:getVariableData('distinctSubscriberIV','distinctSubscriberRequest','/ns1:orderRequest/ns1:orderLineItem'))" indexVariable="FlowN_DistinctSubscribers_Variable">
+            <sequence name="Sequence_1">
+                <scope name="SingleSubscriberScope">
+                    <variables>
+                        <variable name="extOrderRequestIV" messageType="client:ATHOM_OrderSplitterRequestMessage"/>
+                        <variable name="singleSubscriberIV" messageType="client:ATHOM_OrderSplitterRequestMessage"/>
+                        <variable name="InvATHOMOrderManagerIV" messageType="ns3:ATHOMOrdReqMsg"/>
+                    </variables>
+                    <sequence name="SeqSingleSubscriber">
+                        <assign name="AsgSubscriber">
+                            <copy>
+                                <from variable="distinctSubscriberIV" part="distinctSubscriberRequest" query="/ns1:orderRequest/ns1:orderLineItem[bpws:getVariableData('FlowN_DistinctSubscribers_Variable')]/ns1:subscriberNumber"/>
+                                <to variable="rcvOrderRequest" part="orderRequest" query="/ns1:orderRequest/ns1:subscriberNumber"/>
+                            </copy>
+                            <!--  <copy>
+                                <from expression="bpws:getVariableData('distinctSubscriberIV','distinctSubscriberRequest','/ns1:orderRequest/ns1:orderLineItem[bpws:getVariableData(&quot;FlowN_DistinctSubscribers_Variable&quot;)]/ns1:subscriberNumber')"/>
+                                <to variable="extOrderRequestIV"
+                                    part="extOrderRequest"
+                                    query="/ns1:extOrderRequest/ns1:subscriberNumber"/>
+                            </copy> -->
+                        </assign>
+                        <assign name="TransOrderRequestToExtendOrderRequest">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransOrderRequestToExtendOrderRequest.xsl',bpws:getVariableData('rcvOrderRequest','orderRequest'))"/>
+                                <to variable="extOrderRequestIV" part="orderRequest"/>
+                            </copy>
+                        </assign>
+                        <assign name="TransExtendedRequestToSingleRequest">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransExtendedRequestToSingleRequest.xsl',bpws:getVariableData('extOrderRequestIV','orderRequest'))"/>
+                                <to variable="singleSubscriberIV" part="orderRequest"/>
+                            </copy>
+                        </assign>
+                        <!-- <assign name="Transform_2">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('Transformation_2.xsl',bpws:getVariableData('singleSubscriberIV','singleSubscriberRequest'))"/>
+                            <to variable="extOrderRequestIV"
+                                part="extOrderRequest"/>
+                        </copy>
+                    </assign>-->
+                        <assign name="TransSubscriberRequestToOrderManger">
+                            <bpelx:annotation>
+                                <bpelx:pattern>transformation</bpelx:pattern>
+                            </bpelx:annotation>
+                            <copy>
+                                <from expression="ora:processXSLT('TransSubscriberRequestToOrderManger.xsl',bpws:getVariableData('singleSubscriberIV','orderRequest'))"/>
+                                <to variable="InvATHOMOrderManagerIV" part="ATHOMOrdReqMsgPart"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvATHOMOrderManager" partnerLink="ATHOMOrderManager" portType="ns3:ATHOMOrderManager" operation="initiate" inputVariable="InvATHOMOrderManagerIV"/>
+                    </sequence>
+                </scope>
+            </sequence>
+        </bpelx:flowN>
+        <invoke name="callbackClient" partnerLink="anchorToOrderSplitter" portType="client:ATHOM_OrderSplitterCallback" operation="onResult" inputVariable="outputVariable"/>
+    </sequence>
+</process>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="TF_ProcessQuoteStatus.wsdl" name="anchorToProcessQuoteStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.interface(TF_ProcessQuoteStatus)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ProcessQuoteStatus#wsdl.interface(TF_ProcessQuoteStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMTF_PropagateQuoteStatus/CCRMTF_PropagateQuoteStatus.wsdl" name="CCRMTF_PropagateQuoteStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus#wsdl.interface(CCRMTF_PropagateQuoteStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF/CCRMTF_PropagateQuoteStatus#wsdl.interface(CCRMTF_PropagateQuoteStatusCallback)"/>
+    </reference>
+</componentType>

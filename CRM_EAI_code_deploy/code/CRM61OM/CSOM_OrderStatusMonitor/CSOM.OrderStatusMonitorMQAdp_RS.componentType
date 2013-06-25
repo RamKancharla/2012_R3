@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="OrderStatusMonitorMQAdp.wsdl" name="CSOM.OrderStatusMonitorMQAdp_RS">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerOrderStatusMonitorMQAdp/#wsdl.interface(monitorOrderStatus_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformUserStatus/CSOM_TransformUserStatus.wsdl" name="CSOM.TransformUserStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus#wsdl.interface(CSOM_TransformUserStatus)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_TransformOrderStatus/CSOM_TransformOrderStatus.wsdl" name="CSOM.TransformOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus#wsdl.interface(CSOM_TransformOrderStatus)"/>
+    </reference>
+    <reference ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/CSACM_TransformAccountContactPublishStatus/CSACM_TransformAccountContactPublishStatus.wsdl" name="CSACM.TransformAccountContactPublishStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/CSACM_TransformAccountContactPublishStatus#wsdl.interface(CSACM_TransformAccountContactPublishStatus)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSPM_TransformPriceUpdateStatus/CSPM_TransformPriceUpdateStatus.wsdl" name="CSPM.TransformPriceUpdateStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CSPM_TransformPriceUpdateStatus#wsdl.interface(CSPM_TransformPriceUpdateStatus)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSGPM_PropagateGPStatusLogs/CSGPM_PropagateGPStatusLogs.wsdl" name="CSPM.PropagateGPStatusLogsSOAPAdp">
+        <interface.wsdl interface="http://xmlns.oracle.com/CSGPM_PropagateGPStatusLogs#wsdl.interface(CSGPM_PropagateGPStatusLogs)"/>
+    </reference>
+</componentType>

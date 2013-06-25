@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMTF_QuoteRequestValidator.wsdl" name="anchorToQuoteRequestValidator">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/TF#wsdl.interface(CCRMTF_QuoteRequestValidator)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/TF_ManageQuote/TF_ManageQuote.wsdl" name="TF_ManageQuote">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote#wsdl.interface(TF_ManageQuote)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TF/TF_ManageQuote#wsdl.interface(TF_ManageQuoteCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMTF_ValidateQuoteRequestStub/CCRMTF_ValidateQuoteRequestStub.wsdl" name="CCRMTF_ValidateQuoteRequestStub">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMTF_ValidateQuoteRequestStub#wsdl.interface(CCRMTF_ValidateQuoteRequestStub)"/>
+    </reference>
+</componentType>

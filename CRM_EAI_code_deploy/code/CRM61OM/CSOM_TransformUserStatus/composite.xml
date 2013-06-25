@@ -1,0 +1,42 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CSOM_TransformUserStatus" revision="1.0" state="on">
+    <import location="CSOM_TransformUserStatus.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus"/>
+    <import location="ParseUserStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderSplitter/CSOM_OrderSplitter.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="CSOM_TransformUserStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus#wsdl.interface(CSOM_TransformUserStatusCallback)" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus#wsdl.interface(CSOM_TransformUserStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement//CSOM_TransformUserStatus#wsdl.endpoint(CSOM_TransformUserStatus/CSOM_TransformUserStatus)"/>
+    </service>
+    <component name="CSOM_TransformUserStatus">
+        <implementation.bpel src="CSOM_TransformUserStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="CSOM_OrderSplitter" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderSplitter/CSOM_OrderSplitter.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitter)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.interface(CSOM_OrderSplitterCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.endpoint(CSOM_OrderSplitter/CSOM_OrderSplitter)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CSOM_OrderSplitter/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/CSOM_OrderSplitter#wsdl.endpoint(CSOM_OrderSplitter/CSOM_OrderSplitterCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="ParseUserStatus" ui:wsdlLocation="ParseUserStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser#wsdl.interface(ParseCSUserStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="ParseUserStatus.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser#wsdl.endpoint(ParseCSUserStatus/parseUserStatus)"/>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>CSOM_TransformUserStatus/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_TransformUserStatus/ParseUserStatus</source.uri>
+        <target.uri>ParseUserStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSOM_TransformUserStatus/CSOM_OrderSplitter</source.uri>
+        <target.uri>CSOM_OrderSplitter</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

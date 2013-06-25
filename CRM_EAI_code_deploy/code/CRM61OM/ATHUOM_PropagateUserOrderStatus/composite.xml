@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHUOM_PropagateUserOrderStatus" revision="1.0" state="on">
+    <import location="ATHUOM_PropagateUserOrderStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus"/>
+    <import location="EAI.SRV.EXT.ATH.062_PropagateUserOrderStatusServiceRef.wsdl" namespace="http://service.coresuitews.sea.athena.thomsonreuters.com/"/>
+    <service name="anchorToATHUOM_PropagateUserOrderStatus" ui:wsdlLocation="ATHUOM_PropagateUserOrderStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.interface(ATHUOM_PropagateUserOrderStatusCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.interface(ATHUOM_PropagateUserOrderStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus#wsdl.endpoint(ATHUOM_PropagateUserOrderStatus/ATHUOM_PropagateUserOrderStatus)"/>
+    </service>
+    <component name="ATHUOM_PropagateUserOrderStatus">
+        <implementation.bpel src="ATHUOM_PropagateUserOrderStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="BillingNotifyResponseServiceService" ui:wsdlLocation="EAI.SRV.EXT.ATH.062_PropagateUserOrderStatusServiceRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://service.coresuitews.sea.athena.thomsonreuters.com/#wsdl.interface(BillingInfoResponseService)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="EAI.SRV.EXT.ATH.062_PropagateUserOrderStatusServiceRef.wsdl" port="http://service.coresuitews.sea.athena.thomsonreuters.com/#wsdl.endpoint(BillingNotifyResponseServiceService/BillingNotifyResponseServicePort)"/>
+    </reference>
+    <wire>
+        <source.uri>anchorToATHUOM_PropagateUserOrderStatus</source.uri>
+        <target.uri>ATHUOM_PropagateUserOrderStatus/anchorToATHUOM_PropagateUserOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHUOM_PropagateUserOrderStatus/BillingNotifyResponseServiceService</source.uri>
+        <target.uri>BillingNotifyResponseServiceService</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property> -->
+</composite>

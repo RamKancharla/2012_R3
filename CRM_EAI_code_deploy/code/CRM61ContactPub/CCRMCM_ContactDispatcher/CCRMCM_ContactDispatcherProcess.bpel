@@ -1,0 +1,209 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Aug 10 10:21:42 GMT+05:30 2010
+  Author:  rijoy.purayil
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMCM_ContactDispatcherProcess" targetNamespace="http://xmlns.oracle.com/CCRMCM_ContactDispatcher" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://xmlns.oracle.com/CSCM_ContactManager" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPCM_EventManager" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/CPFGCM_ContactManager" xmlns:client="http://xmlns.oracle.com/CCRMCM_ContactDispatcher" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/ACM/AccountContactPublish" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:bpel2="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:ns9="http://xmlns.oracle.com/CRM61ContactPub/SFDCCM_ContactEventManager/SFDCCM_ContactEventManager"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:ns8="http://xmlns.oracle.com/CRM61ContactPub_jws/ELMCM_EventManager/ELMCM_EventManager">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="CCRMCM_ContactDispatcher" partnerLinkType="client:CCRMCM_ContactDispatcher" myRole="CCRMCM_ContactDispatcherProvider" partnerRole="CCRMCM_ContactDispatcherRequester"/>
+        <partnerLink myRole="TOMCM_ContactManagerRequester" name="TOMCM_ContactManager" partnerRole="TOMCM_ContactManagerProvider" partnerLinkType="ns1:TOMCM_ContactManager"/>
+        <partnerLink name="CSCM_ContactManager" partnerRole="CSCM_ContactManagerProvider" partnerLinkType="ns4:CSCM_ContactManager" myRole="CSCM_ContactManagerRequester"/>
+        <partnerLink name="CPFGCM_ContactManager" myRole="CPFGCM_ContactManagerRequester" partnerRole="CPFGCM_ContactManagerProvider" partnerLinkType="ns5:CPFGCM_ContactManager"/>
+        <partnerLink myRole="SAPCM_EventManagerRequester" name="SAPCM_EventManager" partnerRole="SAPCM_EventManagerProvider" partnerLinkType="ns7:SAPCM_EventManager"/>
+        <partnerLink name="SFDCCM_ContactEventManager"
+                     partnerLinkType="ns9:SFDCCM_ContactEventManager"
+                     partnerRole="SFDCCM_ContactEventManagerProvider"
+                     myRole="SFDCCM_ContactEventManagerRequester"/>
+        <partnerLink name="ELMCM_EventManager"
+                     partnerRole="ELMCM_EventManagerProvider"
+                     partnerLinkType="ns8:ELMCM_EventManager"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="inputVariable" messageType="client:CCRMCM_ContactDispatcherRequestMessage"/>
+        <variable name="outputVariable" messageType="client:CCRMCM_ContactDispatcherResponseMessage"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMCM_ContactDispatcher.wsdl) -->
+        <scope name="ScpDispatchContact">
+            <variables>
+                <variable name="TOMCM_ContactVar" messageType="ns1:TOMCM_ContactManagerRequestMessage"/>
+                <variable name="InvCPFGCM_initiateVar" messageType="ns5:CPFGCM_ContactManagerRequestMessage"/>
+                <variable name="SAPCM_ContactVar" messageType="ns7:SAPCM_EventManagerRequestMessage"/>
+                <variable name="Invoke_1_manageContact_InputVariable" messageType="ns4:CSCM_ContactManagerRequestMessage"/>
+                <variable name="SFDCCM_ContactVar" messageType="ns9:SFDCCM_ContactEventManagerRequestMessage"/>
+                <variable name="varELMCM_EventManagerIn"
+                          messageType="ns8:ELMCM_EventManagerRequestMessage"/>
+            </variables>
+            <faultHandlers>
+                <catchAll>
+                    <bpelx:exec name="AsgFailureTitle" language="java" version="1.5">
+                        <![CDATA[String ContactID ="";                
+String title="";              
+               
+ContactID = ((oracle.xml.parser.v2.XMLElement)                                                    
+                         getVariableData("inputVariable","payload","/ns2:contactEvent/ns2:contact/ns2:UUID")).getFirstChild().getNodeValue();  
+String Title=(ContactID!=null ? ("ContactID: "+ ContactID+ ";Fault") : ".;");                                          
+setCompositeInstanceTitle(Title);]]>
+                    </bpelx:exec>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="SeqDispatchContact">
+                <receive name="receiveInput" partnerLink="CCRMCM_ContactDispatcher" portType="client:CCRMCM_ContactDispatcher" operation="dispatchContact" variable="inputVariable" createInstance="yes"/>
+                <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+                    <![CDATA[String ContactID ="";                
+String title="";              
+               
+ContactID = ((oracle.xml.parser.v2.XMLElement)                                                    
+                         getVariableData("inputVariable","payload","/ns2:contactEvent/ns2:contact/ns2:UUID")).getFirstChild().getNodeValue();            
+title=(ContactID!=null ? ("Contact Id: "+ContactID):"Amend Contact");                
+setCompositeInstanceTitle(title);]]>
+                </bpelx:exec>
+                <sequence name="SeqTOMCM">
+                    <assign name="AsgInputToTOM">
+                        <copy>
+                            <from variable="inputVariable" part="payload"
+                                  query="/ns2:contactEvent"/>
+                            <to variable="TOMCM_ContactVar" part="contactEvent"
+                                query="/ns2:contactEvent"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvTOMCM" partnerLink="TOMCM_ContactManager" portType="ns1:TOMCM_ContactManager" operation="initiate" inputVariable="TOMCM_ContactVar"/>
+                </sequence>
+                <switch name="Switch1">
+                    <case condition="bpws:getVariableData('inputVariable','payload','/ns2:contactEvent/ns2:contact/ns2:RCRMSourceSystem')!='TRUST'">
+                        <sequence name="Sequence1">
+                            <sequence name="Sequence1">
+                                <switch name="SwitchToSendSFDC">
+                                    <case condition="ora:getPreference(&quot;SFDCCMInterfaceStatus&quot;)='ON' and bpws:getVariableData('inputVariable','payload','/ns2:contactEvent/ns2:contact/ns2:ContactNumber')!=''">
+                                        <sequence name="SeqSFDCCM">
+                                            <assign name="AsgInputToSFDC">
+                                                <copy>
+                                                    <from variable="inputVariable"
+                                                          part="payload"
+                                                          query="/ns2:contactEvent"/>
+                                                    <to variable="SFDCCM_ContactVar"
+                                                        part="payload"
+                                                        query="/ns2:contactEvent"/>
+                                                </copy>
+                                            </assign>
+                                            <invoke name="InvSFDCCM"
+                                                    inputVariable="SFDCCM_ContactVar"
+                                                    partnerLink="SFDCCM_ContactEventManager"
+                                                    portType="ns9:SFDCCM_ContactEventManager"
+                                                    operation="process"
+                                                    bpelx:invokeAsDetail="no"/>
+                                        </sequence>
+                                    </case>
+                                    <otherwise>
+                                        <empty name="NoAction"/>
+                                    </otherwise>
+                                </switch>
+                            </sequence>
+                        </sequence>
+                    </case>
+                    <otherwise>
+                        <empty name="NoAction"/>
+                    </otherwise>
+                </switch>
+                <sequence name="SeqCPFGCM">
+                    <assign name="AsgInputToCPFG">
+                        <copy>
+                            <from variable="inputVariable" part="payload"
+                                  query="/ns2:contactEvent"/>
+                            <to variable="InvCPFGCM_initiateVar" part="contactEvent"
+                                query="/ns2:contactEvent"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvCPFGCM" partnerLink="CPFGCM_ContactManager" portType="ns5:CPFGCM_ContactManager" operation="initiate" inputVariable="InvCPFGCM_initiateVar"/>
+                </sequence>
+                <sequence name="SeqTOSAPCM">
+                    <assign name="AsgInputToSAP">
+                        <copy>
+                            <from variable="inputVariable" part="payload"
+                                  query="/ns2:contactEvent"/>
+                            <to variable="SAPCM_ContactVar" part="contactEvent"
+                                query="/ns2:contactEvent"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvSAPCM" partnerLink="SAPCM_EventManager" portType="ns7:SAPCM_EventManager" operation="initiate" inputVariable="SAPCM_ContactVar"/>
+                </sequence>
+                <sequence name="SeqCSCM">
+                    <switch name="Switch_1">
+                        <case condition="(bpws:getVariableData('inputVariable','payload','/ns2:contactEvent/ns2:actionCode')=&quot;EAI.SRV.CCRM.027.ACT.002&quot;)">
+                            <sequence name="Sequence_1">
+                                <assign name="TransformContactToCSContactRequest">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('contactEvent_To_CSPublishAccountContactRequest1.xsl',bpws:getVariableData('inputVariable','payload'))"/>
+                                        <to variable="Invoke_1_manageContact_InputVariable" part="payload"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvCSCM" partnerLink="CSCM_ContactManager" portType="ns4:CSCM_ContactManager" operation="manageContact" inputVariable="Invoke_1_manageContact_InputVariable"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="NO_ACTION"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+                <sequence name="SeqELMCM">
+                    <assign name="AsnELMCMInput">
+                        <copy>
+                            <from variable="inputVariable" part="payload"
+                                  query="/ns2:contactEvent"/>
+                            <to variable="varELMCM_EventManagerIn"
+                                part="payload" query="/ns2:contactEvent"/>
+                        </copy>
+                    </assign>
+                    <invoke name="InvELMCM_EventManager"
+                            inputVariable="varELMCM_EventManagerIn"
+                            partnerLink="ELMCM_EventManager"
+                            portType="ns8:ELMCM_EventManager"
+                            operation="initiate"/>
+                </sequence>
+            </sequence>
+        </scope>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+    </sequence>
+</process>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMPM_PropagatePriceUpdates" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import importType="wsdl" location="CCRMPM_PropagatePriceUpdates_RS.wsdl" namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM"/>
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator"
+            location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMPM_PriceRequestValidator/CCRMPM_PriceRequestValidator.wsdl"
+            importType="wsdl"/>
+    <service name="CCRMPM.PropagatePriceUpdates_RS_ep" ui:wsdlLocation="CCRMPM_PropagatePriceUpdates_RS.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM#wsdl.interface(propagatePriceUpdate_ppt)"/>
+        <binding.ws location="CCRMPM_PropagatePriceUpdates_RS.wsdl" port="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM#wsdl.endpoint(propagatePriceUpdate_ppt/propagatePriceUpdate_ppt_pt)"/>
+    </service>
+    <component name="CCRMPM.PropagatePriceUpdates_RS">
+        <implementation.mediator src="CCRMPM.PropagatePriceUpdates_RS.mplan"/>
+    </component>
+    <reference name="CCRMPM.PriceRequestValidatorSyncSOAPAdp"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMPM_PriceRequestValidator/CCRMPM_PriceRequestValidator.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator#wsdl.interface(CCRMPM_PriceRequestValidator)"/>
+        <binding.ws port="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator#wsdl.endpoint(CCRMPM_PriceRequestValidator/CCRMPM_PriceRequestValidator)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMPM_PriceRequestValidator/anchorToPricerequestValidator?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>CCRMPM.PropagatePriceUpdates_RS_ep</source.uri>
+        <target.uri>CCRMPM.PropagatePriceUpdates_RS/CCRMPM.PropagatePriceUpdates_RS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMPM.PropagatePriceUpdates_RS/CCRMPM.PriceRequestValidatorSyncSOAPAdp</source.uri>
+        <target.uri>CCRMPM.PriceRequestValidatorSyncSOAPAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

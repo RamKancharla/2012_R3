@@ -1,0 +1,188 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Sep 23 16:01:21 GMT+05:30 2009
+  Author:  dk54958
+  Purpose: Asynchronous BPEL Process
+    * 
+    *
+    * Change History
+    * Version           Date      Author             Description Of Change
+    *
+    * 0.1               16/02/10  Damodar              Mapping of masterAccountClass,legalEntityFlag and customerReferenceNumber fields for PBI-422
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TOMAM_AccountManagerProcess" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/AccountPublish" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/TOMACCount/" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/AM/AccountManager" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/WriteAccount/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/jms/DequeueAccount/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/AM/AccountPublish" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/db/WriteTOMAccount/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink myRole="AsyncSequenceCheckerRequester" name="AsyncSequenceChecker" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns5:AsyncSequenceChecker"/>
+        <partnerLink name="WriteTOMAccount" partnerRole="WriteTOMAccount_role" partnerLinkType="ns8:WriteTOMAccount_plt"/>
+        <partnerLink myRole="TOMAM_AccountManagerProvider" name="TOMAM_AccountManager" partnerRole="TOMAM_AccountManagerRequester" partnerLinkType="client:TOMAM_AccountManager"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="RequestAccountIV" element="ns4:accountPubRequest"/>
+        <variable name="CheckSequenceIV" messageType="ns5:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="HeaderVariable" type="xsd:string"/>
+        <variable name="ReceiveSequenceReleaseIV" messageType="ns5:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="installAddress" element="ns4:accountPubRequest"/>
+        <variable name="PrimaryAddress" element="ns4:accountPubRequest"/>
+        <variable name="InvWriteTOMIV" messageType="ns8:InterfaceBufferCollection_msg"/>
+        <variable name="inputVariable" messageType="client:TOMAM_AccountManagerRequestMessage"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TOMAM_AccountManager.wsdl) -->
+        <receive name="receiveInput" variable="inputVariable" createInstance="yes" partnerLink="TOMAM_AccountManager" portType="client:TOMAM_AccountManager" operation="initiate"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[String acntID = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("inputVariable", "accountEvent", "/ns2:accountEvent/ns2:account/ns2:id")).getFirstChild().getNodeValue();                                    
+setCompositeInstanceTitle("Account ID: " + acntID);]]>
+        </bpelx:exec>
+        <assign name="TransDequeueAccountEventToManageAccountRequest">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransDequeueAccountEventToManageAccountRequest.xsl',bpws:getVariableData('inputVariable','accountEvent'))"/>
+                <to variable="RequestAccountIV"/>
+            </copy>
+        </assign>
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="&quot;TOMAM_AccountManager&quot;"/>
+                <to variable="HeaderVariable"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="RequestAccountIV" query="/ns4:accountPubRequest/ns4:eaiHeader/ns3:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="RequestAccountIV" query="/ns4:accountPubRequest/ns4:eaiHeader/ns3:instanceId"/>
+            </copy>
+        </assign>
+        <assign name="TransInputToSequenceCheck">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransInputToSequenceCheck.xsl',bpws:getVariableData('RequestAccountIV'))"/>
+                <to variable="CheckSequenceIV" part="payload"/>
+            </copy>
+        </assign>
+        <invoke name="InvSequenceChecker" partnerLink="AsyncSequenceChecker" portType="ns5:AsyncSequenceChecker" operation="initiate" inputVariable="CheckSequenceIV"/>
+        <receive name="ReceiveSequenceRelease" partnerLink="AsyncSequenceChecker" portType="ns5:AsyncSequenceCheckerCallback" operation="onResult" variable="ReceiveSequenceReleaseIV" createInstance="no"/>
+        <assign name="TransPrimaryAddress">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransformationPrimaryAddress.xsl',bpws:getVariableData('RequestAccountIV'))"/>
+                <to variable="PrimaryAddress"/>
+            </copy>
+        </assign>
+        <switch name="Switch_1">
+            <case condition="bpws:getVariableData('RequestAccountIV','/ns4:accountPubRequest/ns4:account/ns4:hierarchyType')='Billing'">
+                <bpelx:annotation>
+                    <bpelx:pattern>Billing Account</bpelx:pattern>
+                </bpelx:annotation>
+                <sequence name="Sequence_1">
+                    <assign name="TransInstallAdddress">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('Transforminstalladress.xsl',bpws:getVariableData('RequestAccountIV'))"/>
+                            <to variable="installAddress"/>
+                        </copy>
+                    </assign>
+                    <switch name="Switch_2">
+                        <case condition="count(bpws:getVariableData('PrimaryAddress','/ns4:accountPubRequest/ns4:account/ns4:address'))='0'">
+                            <bpelx:annotation>
+                                <bpelx:pattern>No Primary Address Provided</bpelx:pattern>
+                            </bpelx:annotation>
+                            <assign name="TransNonPrimaryInstallAddressToTOM">
+                                <bpelx:annotation>
+                                    <bpelx:pattern>transformation</bpelx:pattern>
+                                </bpelx:annotation>
+                                <copy>
+                                    <from expression="ora:processXSLT('TransNonPriamaryInstallAddToTOM.xsl',bpws:getVariableData('installAddress'))"/>
+                                    <to variable="RequestAccountIV"/>
+                                </copy>
+                            </assign>
+                        </case>
+                        <otherwise>
+                            <sequence name="Sequence_4">
+                                <assign name="TransInstallAddressToTOM">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransformationInstallationAddToTOM.xsl',bpws:getVariableData('installAddress'))"/>
+                                        <to variable="RequestAccountIV"/>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </case>
+            <otherwise>
+                <sequence name="Sequence_2">
+                    <assign name="TransPrimaryAddressToTOM">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransformationPrimaryAddresstoTOM.xsl',bpws:getVariableData('PrimaryAddress'))"/>
+                            <to variable="RequestAccountIV"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </otherwise>
+        </switch>
+        <scope name="SubmitAccount">
+            <sequence name="Sequence_5">
+                <assign name="TransInvBufferToDBWrite">
+                    <bpelx:annotation>
+                        <bpelx:pattern>transformation</bpelx:pattern>
+                    </bpelx:annotation>
+                    <copy>
+                        <from expression="ora:processXSLT('TransInvBufferToDBWrite.xsl',bpws:getVariableData('RequestAccountIV'))"/>
+                        <to variable="InvWriteTOMIV" part="InterfaceBufferCollection"/>
+                    </copy>
+                </assign>
+                <invoke name="InvWriteTOM" partnerLink="WriteTOMAccount" portType="ns8:WriteTOMAccount_ptt" operation="insert" inputVariable="InvWriteTOMIV"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

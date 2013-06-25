@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.OM.306_DistinctUserIdRequest.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:	Canonical Order Schema document
+*
+*
+* Change History
+* Version		Date				Author									Description Of Change
+* =======	        ========	            ==================		                                                ===============================
+*  0.01			15-oct-2010			Hema
+
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.11">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+        <xsd:include schemaLocation="EAI.MSG.OM.125_OrderRequest.xsd"/>
+
+	<xsd:element name="UserIdRequest" type="xsdLocal:UserIdRequest"/>
+
+	<xsd:complexType name="UserIdRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="logicalCountry" type="xsd:string"/>
+			<xsd:element name="PositionIndex" type="xsd:string"/>
+                        <xsd:element name="PositionN" type="xsd:string"/>
+			<xsd:element name="messageHeader" type="xsdLocal:CanonicalMessageHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:CanonicalOrderHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:CanonicalOLI" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

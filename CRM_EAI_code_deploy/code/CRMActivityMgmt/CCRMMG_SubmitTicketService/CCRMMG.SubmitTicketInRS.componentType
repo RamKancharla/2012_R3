@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMMG_SubmitTicketInRS.wsdl" name="CCRMMG.SubmitTicketInRS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/MigrationTicketServices#wsdl.interface(submitTicket_ppt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CCRMMG_SubmitTicket/CCRMMG_SubmitTicket.wsdl" name="CCRMMG.SubmitTicketSOAPAdp">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMMG_SubmitTicket#wsdl.interface(CCRMMG_SubmitTicket)"/>
+    </reference>
+</componentType>

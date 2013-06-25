@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *****************************************************************************************************************
+ *   Module:        EAI.MSG.CPFG.EF.217_GetOrderDetailsResponse
+ *   Type:          XSD Schema										         
+ *   Description:   Schema used within EAI for responses from the CPFGEF_OrderFulfilmentCrossRefService                           
+ *													        
+ *   Change History											        
+ *   Version        Date     	Author                                  Description Of Change                   
+ *												                
+ *   0.1            10/04/08    Rob Billington                          Initial Version					        
+ *   0.2            14/04/08    anvv sharma                             Modified Schemas to Refer Local Namespaces
+ *   0.3            16/04/08    Rob Billington                          Removed String constraints
+ *   0.4            17/04/08    Rob Billington                          Added reference to common structures and changed
+ *                                                                      encoding to UTF-8
+ *   0.5            18/04/08    Rob Billington                          Replaced xsd:import with xsd:include
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+            xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+            elementFormDefault="qualified" version="0.5">
+  <xsd:include schemaLocation="EAI.XSD.015_CPFGEF_OrderFulfilmentCrossRefServiceCommonStructures.xsd"/>
+
+  <xsd:element name="getOrderDetailsResponse"
+               type="tns:GetOrderDetailsResponse"/>
+               
+  <xsd:complexType name="GetOrderDetailsResponse">
+    <xsd:sequence>
+      <xsd:element name="eaiHeader" type="tns:EaiHeader"/>
+      <xsd:element name="crmOrder" type="tns:CanonicalOrder"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

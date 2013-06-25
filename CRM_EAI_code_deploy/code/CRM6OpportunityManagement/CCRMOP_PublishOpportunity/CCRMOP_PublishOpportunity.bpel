@@ -1,0 +1,154 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Mar 10 10:58:17 GMT+05:30 2009
+  Author:  sg59930
+  Purpose: Asynchronous BPEL Process
+    ******************Change History************************
+Version		Date		Author		Comments
+              01/04/2010      Sreeja          Mapped the fields IsPoRequired & PurchaseOrderNumber for the defect#35949
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMOP_PublishOpportunity" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://www.reuters.com/ns/2007/09/01/GCAP/external/SFDC/OpportunityManagementServices" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns13="http://xmlns.oracle.com/pcbpel/adapter/db/WriteOpportunity/" xmlns:ns7="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity/correlationset" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns12="http://www.reuters.com/ns/2007/09/01/GCAP/external/CEP/UserManagementServices" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity" xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns11="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:ns8="http://www.reuters.com/ns/2007/09/01/GCAP/external/SFDC/OpportunityManagementServices/SFDCOP_Invoker" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="anchorToCCRMOP_PublishOpportunity" partnerLinkType="client:CCRMOP_PublishOpportunity" myRole="CCRMOP_PublishOpportunityProvider" partnerRole="CCRMOP_PublishOpportunityRequester"/>
+        <partnerLink myRole="AsyncSequenceCheckerRequester" name="AsyncSequenceChecker" partnerRole="AsyncSequenceCheckerProvider" partnerLinkType="ns10:AsyncSequenceChecker"/>
+        <partnerLink name="WriteOpportunity" partnerRole="WriteOpportunity_role" partnerLinkType="ns13:WriteOpportunity_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <variable name="PublishOpportunityIV" messageType="client:CCRMOP_PublishOpportunityRequestMessage"/>
+        <variable name="outputVariable" messageType="client:CCRMOP_PublishOpportunityResponseMessage"/>
+        <variable name="INSTANCE_ID" type="xsd:string"/>
+        <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+        <variable name="CheckSequenceIV" messageType="ns10:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="SequenceCheckerOV" messageType="ns10:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="InvCCRMOP_Invoker_process_InputVariable" element="ns2:opportunityEvent"/>
+        <variable name="InvWriteOpportunityIV" messageType="ns13:InterfaceBufferCollection_msg"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CRMCorrelationSet" properties="ns7:CRMCorrProp"/>
+    </correlationSets>
+    <faultHandlers>
+        <catchAll>
+            <bpelx:exec name="AsgCutomTitleGenericError" language="java" version="1.5">
+                <![CDATA[org.w3c.dom.Node seibelIdNode = ((oracle.xml.parser.v2.XMLElement)                                               
+                        getVariableData("PublishOpportunityIV","payload","/ns2:opportunityEvent/ns2:opportunity/ns2:siebelOptyID"));           
+String seibelOptyId = seibelIdNode == null ? "" : seibelIdNode.getFirstChild().getNodeValue();                      
+setCompositeInstanceTitle("siebelOptyID : " + seibelOptyId+" ;Fault");]]>
+            </bpelx:exec>
+        </catchAll>
+    </faultHandlers>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMOP_PublishOpportunity.wsdl) -->
+        <receive name="receiveInput" partnerLink="anchorToCCRMOP_PublishOpportunity" portType="client:CCRMOP_PublishOpportunity" operation="initiate" variable="PublishOpportunityIV" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="INSTANCE_ID"/>
+            </copy>
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="PublishOpportunityIV" part="payload" query="/ns2:opportunityEvent/ns2:eaiHeader/ns3:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="&quot;EAI&quot;"/>
+                <to variable="PublishOpportunityIV" part="payload" query="/ns2:opportunityEvent/ns2:eaiHeader/ns3:applicationId"/>
+            </copy>
+            <copy>
+                <from variable="INSTANCE_ID"/>
+                <to variable="PublishOpportunityIV" part="payload" query="/ns2:opportunityEvent/ns2:eaiHeader/ns3:transactionId"/>
+            </copy>
+            <copy>
+                <from variable="INSTANCE_ID"/>
+                <to variable="PublishOpportunityIV" part="payload" query="/ns2:opportunityEvent/ns2:eaiHeader/ns3:messageId"/>
+            </copy>
+            <copy>
+                <from expression="&quot;EAI;&quot;"/>
+                <to variable="PublishOpportunityIV" part="payload" query="/ns2:opportunityEvent/ns2:eaiHeader/ns3:messageHistory"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCurrentDateTime()"/>
+                <to variable="PublishOpportunityIV" part="payload" query="/ns2:opportunityEvent/ns2:eaiHeader/ns3:timeStamp"/>
+            </copy>
+            <copy>
+                <from variable="INSTANCE_ID"/>
+                <to variable="PublishOpportunityIV" part="payload" query="/ns2:opportunityEvent/ns2:eaiHeader/ns3:instanceId"/>
+            </copy>
+            <copy>
+                <from expression="0"/>
+                <to variable="PublishOpportunityIV" part="payload" query="/ns2:opportunityEvent/ns2:eaiHeader/ns3:timeToLive"/>
+            </copy>
+            <copy>
+                <from expression="&quot;A&quot;"/>
+                <to variable="PublishOpportunityIV" part="payload" query="/ns2:opportunityEvent/ns2:eaiHeader/ns3:payloadVersion"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+            <![CDATA[org.w3c.dom.Node seibelIdNode = ((oracle.xml.parser.v2.XMLElement)                                          
+                        getVariableData("PublishOpportunityIV","payload","/ns2:opportunityEvent/ns2:opportunity/ns2:siebelOptyID"));      
+String seibelOptyId = seibelIdNode == null ? "" : seibelIdNode.getFirstChild().getNodeValue();                 
+setCompositeInstanceTitle("siebelOptyID : " + seibelOptyId);]]>
+        </bpelx:exec>
+        <assign name="TransInputToCCRMOP_Invoker">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransInputToCCRMOP_Invoker.xsl',bpws:getVariableData('PublishOpportunityIV','payload'))"/>
+                <to variable="InvCCRMOP_Invoker_process_InputVariable"/>
+            </copy>
+        </assign>
+        <assign name="TransInputToWriteCCRMOP">
+            <bpelx:annotation>
+                <bpelx:pattern>transformation</bpelx:pattern>
+            </bpelx:annotation>
+            <copy>
+                <from expression="ora:processXSLT('TransInputToWriteCCRMOP.xsl',bpws:getVariableData('InvCCRMOP_Invoker_process_InputVariable'))"/>
+                <to variable="InvWriteOpportunityIV" part="InterfaceBufferCollection"/>
+            </copy>
+        </assign>
+        <sequence name="CheckSequencer">
+            <assign name="TransInputToSequenceCheck">
+                <bpelx:annotation>
+                    <bpelx:pattern>transformation</bpelx:pattern>
+                </bpelx:annotation>
+                <copy>
+                    <from expression="ora:processXSLT('TransInputToSequenceCheck.xsl',bpws:getVariableData('PublishOpportunityIV','payload'))"/>
+                    <to variable="CheckSequenceIV" part="payload"/>
+                </copy>
+            </assign>
+            <invoke name="InvSequenceChecker" partnerLink="AsyncSequenceChecker" portType="ns10:AsyncSequenceChecker" operation="initiate" inputVariable="CheckSequenceIV"/>
+            <receive name="ReceiveSequenceRelease" partnerLink="AsyncSequenceChecker" portType="ns10:AsyncSequenceCheckerCallback" operation="onResult" variable="SequenceCheckerOV" createInstance="no"/>
+        </sequence>
+        <invoke name="InvWriteOpportunity" partnerLink="WriteOpportunity" portType="ns13:WriteOpportunity_ptt" operation="insert" inputVariable="InvWriteOpportunityIV"/>
+    </sequence>
+</process>

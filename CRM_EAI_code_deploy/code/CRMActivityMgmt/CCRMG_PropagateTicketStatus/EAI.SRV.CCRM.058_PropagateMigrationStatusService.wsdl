@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?Siebel-Property-Set EscapeNames="false"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsdLocal1="http://www.siebel.com/xml/RCRMTeamTrack"
+             targetNamespace="http://www.reuters.com/ns/2009/26/03/GCAP/RCRM"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="http://www.reuters.com/ns/2009/26/03/GCAP/RCRM">
+  <types>
+    <xsd:schema elementFormDefault="qualified"
+                attributeFormDefault="unqualified"
+                xmlns:xsdLocal1="http://www.siebel.com/xml/RCRMTeamTrack"
+                targetNamespace="http://www.siebel.com/xml/RCRMTeamTrack"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:annotation>
+        <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All
+                           rights reserved. Siebel XSD Generation</xsd:documentation>
+      </xsd:annotation>
+      <xsd:element name="RCRMTeamTrack" type="xsdLocal1:RCRMTeamTrack"></xsd:element>
+      <xsd:complexType name="RCRMTeamTrackTopElmt">
+        <xsd:sequence>
+          <xsd:element name="RCRMTeamTrack" maxOccurs="1" minOccurs="1"
+                       type="xsdLocal1:RCRMTeamTrack"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="RCRMTeamTrack">
+        <xsd:sequence>
+          <xsd:element name="Timestamp" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="TargetSystem" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="SourceSystem" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="MessageType" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="MessageId" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="IntObjectName" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="IntObjectFormat" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="ActionCode" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="RCRMAction" maxOccurs="1" minOccurs="1"
+                       type="xsdLocal1:RCRMAction"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="RCRMAction">
+        <xsd:sequence>
+          <xsd:element name="UUID" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="Status" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="ProductName" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="MigrationDate" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="LegacyID" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="Id" maxOccurs="1" minOccurs="0" type="xsd:string"></xsd:element>
+          <xsd:element name="Field3" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="Field2" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="Field1" maxOccurs="1" minOccurs="0"
+                       type="xsd:string"></xsd:element>
+          <xsd:element name="CID" maxOccurs="1" minOccurs="0" type="xsd:string"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+    <xsd:schema elementFormDefault="qualified"
+                attributeFormDefault="unqualified"
+                targetNamespace="http://www.reuters.com/ns/2009/26/03/GCAP/RCRM"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="http://www.siebel.com/xml/RCRMTeamTrack"></xsd:import>
+      <xsd:element name="InvokeInbound_Input">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="xsdLocal1:RCRMTeamTrack"></xsd:element>
+            <xsd:element name="Process_spcInstance_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Status" type="xsd:string"></xsd:element>
+            <xsd:element name="Object_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Siebel_spcOperation_spcObject_spcId"
+                         type="xsd:string"></xsd:element>
+            <xsd:element name="sAct_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcCode" type="xsd:string"></xsd:element>
+            <xsd:element name="Activity_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="sStatus" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcMessage" type="xsd:string"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="InvokeInbound_Output">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Activity_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcCode" type="xsd:string"></xsd:element>
+            <xsd:element name="Error_spcMessage" type="xsd:string"></xsd:element>
+            <xsd:element ref="xsdLocal1:RCRMTeamTrack"></xsd:element>
+            <xsd:element name="Object_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Process_spcInstance_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="Siebel_spcOperation_spcObject_spcId"
+                         type="xsd:string"></xsd:element>
+            <xsd:element name="Status" type="xsd:string"></xsd:element>
+            <xsd:element name="sAct_spcId" type="xsd:string"></xsd:element>
+            <xsd:element name="sStatus" type="xsd:string"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </types>
+  <message name="InvokeInbound_Input">
+    <part name="InvokeInbound_Input" element="tns:InvokeInbound_Input"></part>
+  </message>
+  <message name="InvokeInbound_Output">
+    <part name="InvokeInbound_Output" element="tns:InvokeInbound_Output"></part>
+  </message>
+  <portType name="RCRMMSTInboundWF">
+    <operation name="InvokeInbound">
+      <input message="tns:InvokeInbound_Input"></input>
+      <output message="tns:InvokeInbound_Output"></output>
+    </operation>
+  </portType>
+  <binding name="RCRMMSTInboundWF" type="tns:RCRMMSTInboundWF">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+                  style="document"></soap:binding>
+    <operation name="InvokeInbound">
+      <soap:operation soapAction="document/http://www.reuters.com/ns/2009/26/03/GCAP/RCRM:InvokeInbound"></soap:operation>
+      <input>
+        <soap:body use="literal"></soap:body>
+      </input>
+      <output>
+        <soap:body use="literal"></soap:body>
+      </output>
+    </operation>
+  </binding>
+  <service name="RCRMMSTInboundWS">
+    <port binding="tns:RCRMMSTInboundWF" name="RCRMMSTInboundWF">
+      <soap:address location="${siebel.protocol}://${siebel.host}/eai_enu/start.swe?SWEExtSource=WebService&amp;SWEExtCmd=Execute&amp;UserName=${siebel.UserName}&amp;Password=${siebel.Password}"></soap:address>
+    </port>
+  </service>
+</definitions>

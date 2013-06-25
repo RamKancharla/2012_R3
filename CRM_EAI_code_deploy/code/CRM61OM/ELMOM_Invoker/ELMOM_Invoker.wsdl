@@ -1,0 +1,44 @@
+<definitions
+     name="ELMOM_Invoker"
+     targetNamespace="http://xmlns.oracle.com/ELMOM_Invoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:client="http://xmlns.oracle.com/ELMOM_Invoker"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/ELMOM_Invoker" schemaLocation="ELMOM_Invoker.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.ELM.101_UpdateOrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ELMOM_InvokerResponseMessage">
+        <part name="payload" element="client:ELMOM_InvokerProcessResponse"/>
+    </message>
+    <message name="ELMOM_InvokerRequestMessage">
+        <part name="payload" element="client:ELMOM_InvokerProcessRequest"/>
+    </message>
+    <message name="ELMOMType">
+        <part name="ELMOMType" element="ns1:elmOrderRequest"/>
+    </message>
+    <portType name="ELMOM_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:ELMOM_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="ELMOM_Invoker">
+        <operation name="initiate">
+            <input message="client:ELMOM_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ELMOM_Invoker">
+        <plnk:role name="ELMOM_InvokerProvider">
+            <plnk:portType name="client:ELMOM_Invoker"/>
+        </plnk:role>
+        <plnk:role name="ELMOM_InvokerRequester">
+            <plnk:portType name="client:ELMOM_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

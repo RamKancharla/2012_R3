@@ -1,0 +1,55 @@
+<definitions
+     name="UpdateInterfaceBuffer"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateInterfaceBuffer/"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateInterfaceBuffer/"
+     xmlns:db="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateInterfaceBuffer"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+    >
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateInterfaceBuffer" schemaLocation="UpdateInterfaceBuffer.xsd" />
+      </schema>
+    </types>
+    <message name="UpdateInterfaceBufferInput_msg">
+        <part name="UpdateInterfaceBufferInput_msg" element="db:UpdateInterfaceBufferInput"/>
+    </message>
+    <portType name="UpdateInterfaceBuffer_ptt">
+        <operation name="UpdateInterfaceBuffer">
+            <input message="tns:UpdateInterfaceBufferInput_msg"/>
+        </operation>
+    </portType>
+    <binding name="UpdateInterfaceBuffer_binding" type="tns:UpdateInterfaceBuffer_ptt">
+    <jca:binding  />
+        <operation name="UpdateInterfaceBuffer">
+      <jca:operation
+          SqlString="update interface_buffer set state=&apos;C&apos; where id=? and state=&apos;P&apos;"
+          InteractionSpec="oracle.tip.adapter.db.DBPureSQLInteractionSpec" >
+      </jca:operation>
+            <input/>
+        </operation>
+    </binding>
+    <service name="UpdateInterfaceBuffer">
+        <port name="UpdateInterfaceBuffer_pt" binding="tns:UpdateInterfaceBuffer_binding">
+<!--Your runtime connection is declared in 
+J2EE_HOME/application-deployments/default/DbAdapter/oc4j-ra.xml 
+These mcf properties here are from your design time connection and 
+save you from having to edit that file and restart the application server 
+if eis/DB/EAISOA is missing. 
+These mcf properties are safe to remove.-->
+      <jca:address location="eis/DB/EAISOA" UIConnectionName="B2CCQA"
+          ManagedConnectionFactory="oracle.tip.adapter.db.DBManagedConnectionFactory"
+          mcf.DriverClassName="oracle.jdbc.OracleDriver"
+          mcf.PlatformClassName="oracle.toplink.internal.databaseaccess.Oracle9Platform"
+          mcf.ConnectionString="jdbc:oracle:thin:@//10.136.164.184:1521/EAIB2CCQ"
+          mcf.UserName="eaiowner"
+          mcf.Password="D17D09B7D556B6F53AC0A5374043425B" />
+        </port>
+    </service>
+  <plt:partnerLinkType name="UpdateInterfaceBuffer_plt" >
+    <plt:role name="UpdateInterfaceBuffer_role" >
+      <plt:portType name="tns:UpdateInterfaceBuffer_ptt" />
+    </plt:role>
+  </plt:partnerLinkType>
+</definitions>

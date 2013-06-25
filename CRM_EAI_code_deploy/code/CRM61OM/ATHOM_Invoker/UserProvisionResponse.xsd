@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+    xmlns:tns="http://sea.thomsonone.com/SEA/Service/2010-07-19"
+    elementFormDefault="qualified">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <metadata>
+                <Creator>ThomsonReuters MIS Group</Creator>
+                <Author Href="mailto:alex.berenshtein@thomson.com">Alex Berenshtein</Author>
+                <Contributor/>
+                <Created>07-19-2010</Created>
+                <Modified/>
+                <Description>User Provision Response</Description>
+                <Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+                <Language codeListID="ISO639-2">eng</Language>
+                <ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+                <Requires/>
+                <Copyright/>
+                <Status>Draft</Status>
+                <StatusDescription>Awaiting approval</StatusDescription>
+                <Version>1.0</Version>
+                <Project>SEA Siebel Integration</Project>
+                <Title>UserProvisionResponse</Title>
+            </metadata>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:include schemaLocation="SEACommonType.xsd"/>
+    <xsd:element name="UserProvisionResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="MessageHeader" type="tns:ResponseHeaderStructure"></xsd:element>
+    <xsd:element name="MessageBody">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="UserInfo" type="tns:ResponseDetailStructure" maxOccurs="unbounded"></xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+            </xsd:sequence>
+             </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,16 @@
+<definitions
+    
+     targetNamespace="http://schemas.hp.com/SM/7"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns="http://schemas.hp.com/SM/7"
+    >
+    <import namespace="http://schemas.hp.com/SM/7" location="oramds:/apps/EAIMetaData/WSDL_Cache/TOM_QM.wsdl"/>
+    <plnk:partnerLinkType name="TOM_PL">
+        <plnk:role name="TOM_Role">
+            <plnk:portType name="ns:TOM"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

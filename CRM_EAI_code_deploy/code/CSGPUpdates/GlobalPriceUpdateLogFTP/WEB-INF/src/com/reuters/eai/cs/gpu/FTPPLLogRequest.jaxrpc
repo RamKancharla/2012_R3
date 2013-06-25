@@ -1,0 +1,91 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<jdevws:WebService xmlns:jdevws="http://xmlns.oracle.com/jdeveloper/10130/webservice">
+   <list n="CHILD_NODES">
+      <url path="../../../../../../../public_html/WEB-INF/wsdl/FTPPLLogRequest.wsdl"/>
+      <url path="FTPPLLogRequest_PortType.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/commonmessagetypes/Response.java"/>
+      <url path="../../../ns/_2007/_01/_25/gcap/eai/cs/gpm/pricemanagement/PropagateGPStatusReq.java"/>
+      <url path="../../../ns/_2007/_01/_25/gcap/eai/cs/gpm/pricemanagement/EaiHeader.java"/>
+      <url path="../../../ns/_2007/_01/_25/gcap/eai/cs/gpm/pricemanagement/PropagateGPStatusRes.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/commonmessagetypes/CompassMessageHeader.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/schemaannotations/Example.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/commonmessagetypes/BasicResponse.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/commonmessagetypes/CSCompassMessageHeader.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/commonmessagetypes/EaiHeader.java"/>
+      <url path="../../../ns/_2007/_09/_01/gcap/commonmessagetypes/_CCRMMessageHeader.java"/>
+      <url path="../../../../../../../public_html/WEB-INF/FTPPLLogRequest-java-wsdl-mapping.xml"/>
+      <url path="FTPPLLogRequest.java"/>
+   </list>
+   <hash n="DATA_MODEL">
+      <value n="ATTACHMENT_ENCODING" v="ATTACHMENT_MIME"/>
+      <list n="BD_">
+         <hash>
+            <value n="BD_DEFAULT_DOCUMENT_WRAPPED" v="false"/>
+            <value n="BOUND_PORT_TYPE" v="{http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog}FTPPLLogRequest"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPBinding"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog}FTPPLLogSOAP"/>
+            <list n="OP_BINDINGS">
+               <hash>
+                  <value n="BD_SOAP_ACTION" v="urn:#NewOperation"/>
+                  <value n="BD_SOAP_INPUT_USE" v="1"/>
+                  <value n="BD_SOAP_OUTPUT_USE" v="1"/>
+                  <value n="BD_SOAP_STYLE" v="1"/>
+                  <value n="BOUND_OPERATION" v="com.reuters.ns._2007._01._25.gcap.eai.cs.gpm.pricemanagement.PropagateGPStatusRes.FTPLogRequest.com.reuters.ns._2007._01._25.gcap.eai.cs.gpm.pricemanagement.PropagateGPStatusReq"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPOperationBinding"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+         </hash>
+      </list>
+      <list n="custom_schema_urls">
+         <url path="../../../../../../../EAI.MSG.CSGPM.243_PropagateGPStatus.xsd"/>
+      </list>
+      <value n="GUID" v="eef06b93-011a-1000-8003-0a0f3d7802bb"/>
+      <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaWebService"/>
+      <list n="PO_">
+         <hash>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.SOAPPort"/>
+            <value n="NAME" v="FTPLogRequest"/>
+            <value n="PORT_BINDING_NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog}FTPPLLogSOAP"/>
+            <list n="PORT_OPS">
+               <hash>
+                  <value n="EXPOSED_BD_OPERATION" v="com.reuters.ns._2007._01._25.gcap.eai.cs.gpm.pricemanagement.PropagateGPStatusRes.FTPLogRequest.com.reuters.ns._2007._01._25.gcap.eai.cs.gpm.pricemanagement.PropagateGPStatusReq"/>
+                  <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.PortOperation"/>
+                  <hash n="PROPERTY_GROUPS"/>
+               </hash>
+            </list>
+            <hash n="PROPERTY_GROUPS"/>
+         </hash>
+      </list>
+      <hash n="PROPERTY_GROUPS">
+         <hash n="WSDL_TO_JAVA_PROPERTIES">
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.WSDLToJavaProperties"/>
+            <value n="WSDL2JAVA_DEFAULT_PACKAGE" v="com.reuters.eai.cs.gpu"/>
+            <value n="WSDL2JAVA_UNWRAP_PARAMETERS" v="false"/>
+         </hash>
+      </hash>
+      <list n="PT_">
+         <hash>
+            <value n="AUTO_SERVICE_INTERFACE"/>
+            <value n="DEFAULT_NAME" v="false"/>
+            <value n="MODEL_CLASS" v="oracle.jdeveloper.webservices.model.java.JavaPortType"/>
+            <value n="NAME" v="{http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog}FTPPLLogRequest"/>
+            <hash n="PROPERTY_GROUPS"/>
+            <value n="PT_CLASS" v="com.reuters.eai.cs.gpu.FTPPLLogRequest"/>
+            <value n="PT_SERVICE_INTERFACE" v="com.reuters.eai.cs.gpu.FTPPLLogRequest_PortType"/>
+         </hash>
+      </list>
+      <url n="TARGET_PROJECT" path="../../../../../../../GlobalPriceUpdateLogFTP.jpr"/>
+      <url n="WS_MAPPING_FILE" path="../../../../../../../public_html/WEB-INF/FTPPLLogRequest-java-wsdl-mapping.xml"/>
+      <value n="WS_TARGET_NAMESPACE" v="http://www.reuters.com/ns/2007/09/01/GCAP/CSGPM/PropagatePriceUpdateLog"/>
+      <value n="WS_URI" v="FTPPLLogRequest"/>
+      <list n="WSDL_DEPENDENT_FILES">
+         <url path="../../../../../../../public_html/WEB-INF/wsdl/EAI.XSD.001_SchemaAnnotations.xsd"/>
+         <url path="../../../../../../../public_html/WEB-INF/wsdl/EAI.XSD.005_CommonMessageTypes.xsd"/>
+         <url path="../../../../../../../public_html/WEB-INF/wsdl/EAI.MSG.CSGPM.243_PropagateGPStatus.xsd"/>
+      </list>
+   </hash>
+</jdevws:WebService>

@@ -1,0 +1,167 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Aug 10 14:57:31 GMT+05:30 2010
+  Author:  Tanmay.Saxena
+  Purpose: Asynchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="MQServiceStatusCheck" targetNamespace="http://xmlns.oracle.com/MQServiceStatusCheck" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:ns7="http://xmlns.oracle.com/pcbpel/adapter/db/top/SuccessDatabseUpdateAdapter" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/pcbpel/adapter/jms/JMSAdapter/" xmlns:client="http://xmlns.oracle.com/MQServiceStatusCheck" xmlns:ns6="http://xmlns.oracle.com/pcbpel/adapter/db/SuccessDatabseUpdateAdapter/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns9="http://xmlns.oracle.com/pcbpel/adapter/db/top/QueueDownDatabseUpdateAdapter" xmlns:ns1="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns2="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/mq/headerMQAdapterToCheckQueueStatus/" xmlns:ns8="http://xmlns.oracle.com/pcbpel/adapter/db/QueueDownDatabseUpdateAdapter/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink name="client" partnerLinkType="client:MQServiceStatusCheck" myRole="MQServiceStatusCheckProvider" partnerRole="MQServiceStatusCheckRequester"/>
+        <partnerLink name="SuccessDatabseUpdateAdapter" partnerRole="SuccessDatabseUpdateAdapter_role" partnerLinkType="ns6:SuccessDatabseUpdateAdapter_plt"/>
+        <partnerLink name="QueueDownDatabseUpdateAdapter" partnerRole="QueueDownDatabseUpdateAdapter_role" partnerLinkType="ns8:QueueDownDatabseUpdateAdapter_plt"/>
+        <partnerLink name="MQAdapterToCheckQueueStatus" partnerRole="Enqueue_role" partnerLinkType="ns10:Enqueue_plt"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="inputVariable" messageType="client:MQServiceStatusCheckRequestMessage"/>
+        <variable name="outputVariable" messageType="client:MQServiceStatusCheckResponseMessage"/>
+        <variable name="CountVar" type="xsd:int"/>
+        <variable name="WhileLoopVar" type="xsd:boolean"/>
+        <variable name="InvokeSuccessResponseUpdateDBAdapter_update_InputVariable" messageType="ns6:EaiServiceStatusCollection_msg"/>
+        <variable name="InvokeQueueDownDatabseUpdateAdapter_update_InputVariable" messageType="ns8:EaiServiceStatusCollection_msg"/>
+        <variable name="InvokeMQAdapterToCheckQueueStatus_Enqueue_InputVariable" messageType="ns10:MQServiceStatusCheckProcessRequest_msg"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in MQServiceStatusCheck.wsdl) -->
+        <receive name="receiveInput" partnerLink="client" portType="client:MQServiceStatusCheck" operation="initiate" variable="inputVariable" createInstance="yes"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AssignInitalizeVariables">
+            <copy>
+                <from expression="0"/>
+                <to variable="CountVar"/>
+            </copy>
+            <copy>
+                <from expression="boolean('true')"/>
+                <to variable="WhileLoopVar"/>
+            </copy>
+        </assign>
+        <assign name="AssignQueueInput">
+            <copy>
+                <from variable="inputVariable" part="payload" query="/client:MQServiceStatusCheckProcessRequest/client:input"/>
+                <to variable="InvokeMQAdapterToCheckQueueStatus_Enqueue_InputVariable" part="MQServiceStatusCheckProcessRequest" query="/client:MQServiceStatusCheckProcessRequest/client:input"/>
+            </copy>
+        </assign>
+        <while name="While_1" condition="bpws:getVariableData('WhileLoopVar') = boolean('true')">
+            <sequence name="Sequence_1">
+                <scope name="MainScope">
+                    <faultHandlers>
+                        <catchAll>
+                            <scope name="ScopeToUpdateDatabaseAsQueueDown">
+                                <faultHandlers>
+                                    <catchAll>
+                                        <assign name="AssignForFailureToUpdateDbWithQueueDown">
+                                            <copy>
+                                                <from expression="'Failed While trying to update the Database for Queue Down'"/>
+                                                <to variable="outputVariable" part="payload" query="/client:MQServiceStatusCheckProcessResponse/client:result"/>
+                                            </copy>
+                                        </assign>
+                                    </catchAll>
+                                </faultHandlers>
+                                <sequence name="SequenceToUpdateQueueDownInDatabase">
+                                    <assign name="AssignInvokeQueueDownInitializeVars">
+                                        <copy>
+                                            <from expression="'MQ Interface'"/>
+                                            <to variable="InvokeQueueDownDatabseUpdateAdapter_update_InputVariable" part="EaiServiceStatusCollection" query="/ns9:EaiServiceStatusCollection/ns9:EaiServiceStatus/ns9:system"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="'DOWN'"/>
+                                            <to variable="InvokeQueueDownDatabseUpdateAdapter_update_InputVariable" part="EaiServiceStatusCollection" query="/ns9:EaiServiceStatusCollection/ns9:EaiServiceStatus/ns9:status"/>
+                                        </copy>
+                                        <copy>
+                                            <from expression="xp20:current-dateTime()"/>
+                                            <to variable="InvokeQueueDownDatabseUpdateAdapter_update_InputVariable" part="EaiServiceStatusCollection" query="/ns9:EaiServiceStatusCollection/ns9:EaiServiceStatus/ns9:timeStamp"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvokeQueueDownDatabseUpdateAdapter" partnerLink="QueueDownDatabseUpdateAdapter" portType="ns8:QueueDownDatabseUpdateAdapter_ptt" operation="update" inputVariable="InvokeQueueDownDatabseUpdateAdapter_update_InputVariable"/>
+                                    <assign name="AssignFailureResult">
+                                        <copy>
+                                            <from expression="'MQ Interface is DOWN'"/>
+                                            <to variable="outputVariable" part="payload" query="/client:MQServiceStatusCheckProcessResponse/client:result"/>
+                                        </copy>
+                                    </assign>
+                                </sequence>
+                            </scope>
+                        </catchAll>
+                    </faultHandlers>
+                    <sequence name="SequenceInvokeQueue">
+                        <invoke name="InvokeMQAdapterToCheckQueueStatus" partnerLink="MQAdapterToCheckQueueStatus" portType="ns10:Enqueue_ptt" operation="Enqueue" inputVariable="InvokeMQAdapterToCheckQueueStatus_Enqueue_InputVariable"/>
+                        <scope name="ScopeUpdateSuccessStatusInDb">
+                            <faultHandlers>
+                                <catchAll>
+                                    <assign name="AssignDatabseSuccessUpdateFailure">
+                                        <copy>
+                                            <from expression="'Failed While trying to update the Database for Queue Up'"/>
+                                            <to variable="outputVariable" part="payload" query="/client:MQServiceStatusCheckProcessResponse/client:result"/>
+                                        </copy>
+                                    </assign>
+                                </catchAll>
+                            </faultHandlers>
+                            <sequence name="SequenceToUpdateDBwithSuccess">
+                                <assign name="AssignSuccessDBUpdateInput">
+                                    <copy>
+                                        <from expression="'MQ Interface'"/>
+                                        <to variable="InvokeSuccessResponseUpdateDBAdapter_update_InputVariable" part="EaiServiceStatusCollection" query="/ns7:EaiServiceStatusCollection/ns7:EaiServiceStatus/ns7:system"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="'UP'"/>
+                                        <to variable="InvokeSuccessResponseUpdateDBAdapter_update_InputVariable" part="EaiServiceStatusCollection" query="/ns7:EaiServiceStatusCollection/ns7:EaiServiceStatus/ns7:status"/>
+                                    </copy>
+                                    <copy>
+                                        <from expression="xp20:current-dateTime()"/>
+                                        <to variable="InvokeSuccessResponseUpdateDBAdapter_update_InputVariable" part="EaiServiceStatusCollection" query="/ns7:EaiServiceStatusCollection/ns7:EaiServiceStatus/ns7:timeStamp"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="InvokeSuccessResponseUpdateDBAdapter" partnerLink="SuccessDatabseUpdateAdapter" portType="ns6:SuccessDatabseUpdateAdapter_ptt" operation="update" inputVariable="InvokeSuccessResponseUpdateDBAdapter_update_InputVariable"/>
+                                <assign name="AssignSuccessResult">
+                                    <copy>
+                                        <from expression="'MQ Interface is UP'"/>
+                                        <to variable="outputVariable" part="payload" query="/client:MQServiceStatusCheckProcessResponse/client:result"/>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </scope>
+                    </sequence>
+                </scope>
+                <wait name="WaitForStipulatedTime" for="'PT10M'"/>
+                <assign name="AssignCounterIncrement">
+                    <copy>
+                        <from expression="bpws:getVariableData('CountVar') + 1"/>
+                        <to variable="CountVar"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <invoke name="callbackClient" partnerLink="client" portType="client:MQServiceStatusCheckCallback" operation="onResult" inputVariable="outputVariable"/>
+    </sequence>
+</process>

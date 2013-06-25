@@ -1,0 +1,19 @@
+<adapter-config name="SiebelInboundQueueAdapter" adapter="MQ Series Adapter" wsdlLocation="SiebelInboundQueueAdapter.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemoteCRMtoEAI"/>
+  <endpoint-interaction portType="Enqueue_ptt" operation="Enqueue" UITransmissionPrimitive="Enqueue">
+    <interaction-spec className="oracle.tip.adapter.mq.outbound.InteractionSpecImpl">
+      <property name="PartialDeliveryForDL" value="false"/>
+      <property name="Persistence" value="AS_Q_DEF"/>
+      <property name="MessageFormat" value="NONE"/>
+      <property name="OnDeliveryFailure" value="DeadLetterQueue"/>
+      <property name="QueueName" value="${mq.token.prefix}EAI_CRM_CONT_ERR_RESP_Q"/>
+      <property name="UseMessageEncodingForTranslation" value="true"/>
+      <property name="Expiry" value="NEVER"/>
+      <property name="SegmentIfRequired" value="false"/>
+      <property name="MessageType" value="NORMAL"/>
+      <property name="Priority" value="AS_Q_DEF"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

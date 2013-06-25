@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="SI_ContractOrderStatusSend_IB_Async"
+                  targetNamespace="http://trm.com:I027:OrderProcessing:ContractOrderStatusReceive"
+                  xmlns:p1="http://trm.com:I027:OrderProcessing:ContractOrderStatusReceive"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+   <wsdl:documentation/>
+   <wsp:UsingPolicy wsdl:required="true"/>
+   <wsp:Policy wsu:Id="OP_SI_ContractOrderStatusSend_IB_Async"/>
+   <wsdl:types>
+      <xsd:schema targetNamespace="http://trm.com:I027:OrderProcessing:ContractOrderStatusReceive"
+                  xmlns="http://trm.com:I027:OrderProcessing:ContractOrderStatusReceive"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+         <xsd:element name="MT_ContractOrderStatusReceive"
+                      type="DT_ContractOrderStatusReceive"/>
+         <xsd:complexType name="DT_ContractOrderStatusReceive">
+            <xsd:annotation>
+               <xsd:documentation xml:lang="EN">Source data for Contract Order
+                                                Status Send: I027</xsd:documentation>
+               <xsd:appinfo source="http://sap.com/xi/VersionID">4102b290336a11dfa2f186eb1b9a9604</xsd:appinfo>
+            </xsd:annotation>
+            <xsd:sequence>
+               <xsd:element name="RecordSet" minOccurs="0">
+                  <xsd:annotation>
+                     <xsd:appinfo source="http://sap.com/xi/TextID">54e230d6213411df8ccf001a64642758</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:complexType>
+                     <xsd:sequence>
+                        <xsd:element name="Record" minOccurs="0"
+                                     maxOccurs="unbounded">
+                           <xsd:annotation>
+                              <xsd:appinfo source="http://sap.com/xi/TextID">54e230d5213411dfa8d4001a64642758</xsd:appinfo>
+                           </xsd:annotation>
+                           <xsd:complexType>
+                              <xsd:sequence>
+                                 <xsd:element name="ORDER_NO" type="xsd:string">
+                                    <xsd:annotation>
+                                       <xsd:appinfo source="http://sap.com/xi/TextID">3709662031c711df9e1900ff984ce685</xsd:appinfo>
+                                       <xsd:documentation>Siebel Order Number</xsd:documentation>
+                                    </xsd:annotation>
+                                 </xsd:element>
+                                 <xsd:element name="ORDER_ID" type="xsd:string">
+                                    <xsd:annotation>
+                                       <xsd:appinfo source="http://sap.com/xi/TextID">54e230d0213411dfbb6a001a64642758</xsd:appinfo>
+                                       <xsd:documentation>Siebel Order Line ID</xsd:documentation>
+                                    </xsd:annotation>
+                                 </xsd:element>
+                                 <xsd:element name="ASSET_ID" type="xsd:string">
+                                    <xsd:annotation>
+                                       <xsd:appinfo source="http://sap.com/xi/TextID">54e230d1213411dfc3e8001a64642758</xsd:appinfo>
+                                       <xsd:documentation>Asset ID</xsd:documentation>
+                                    </xsd:annotation>
+                                 </xsd:element>
+                                 <xsd:element name="CTORDNO" type="xsd:integer"
+                                              minOccurs="0">
+                                    <xsd:annotation>
+                                       <xsd:appinfo source="http://sap.com/xi/TextID">54e230d2213411dfb1a1001a64642758</xsd:appinfo>
+                                       <xsd:documentation>SAP Contract Order No</xsd:documentation>
+                                    </xsd:annotation>
+                                 </xsd:element>
+                                 <xsd:element name="CTORDITMNO"
+                                              type="xsd:integer" minOccurs="0">
+                                    <xsd:annotation>
+                                       <xsd:appinfo source="http://sap.com/xi/TextID">54e230d3213411df9f45001a64642758</xsd:appinfo>
+                                       <xsd:documentation>SAP Contract Line No</xsd:documentation>
+                                    </xsd:annotation>
+                                 </xsd:element>
+                                 <xsd:element name="STAT_CODE"
+                                              type="xsd:string">
+                                    <xsd:annotation>
+                                       <xsd:appinfo source="http://sap.com/xi/TextID">54e230d4213411dfce32001a64642758</xsd:appinfo>
+                                       <xsd:documentation>Status Code</xsd:documentation>
+                                    </xsd:annotation>
+                                 </xsd:element>
+                                 <xsd:element name="ERROR_CODE"
+                                              type="xsd:string" minOccurs="0">
+                                    <xsd:annotation>
+                                       <xsd:appinfo source="http://sap.com/xi/TextID">22e2a4a0278011df8e07001a64642758</xsd:appinfo>
+                                       <xsd:documentation>Error Code</xsd:documentation>
+                                    </xsd:annotation>
+                                 </xsd:element>
+                                 <xsd:element name="MESSAGE" type="xsd:string"
+                                              minOccurs="0">
+                                    <xsd:annotation>
+                                       <xsd:appinfo source="http://sap.com/xi/TextID">22e2a4a1278011df944b001a64642758</xsd:appinfo>
+                                       <xsd:documentation>Error Message</xsd:documentation>
+                                    </xsd:annotation>
+                                 </xsd:element>
+                              </xsd:sequence>
+                           </xsd:complexType>
+                        </xsd:element>
+                     </xsd:sequence>
+                  </xsd:complexType>
+               </xsd:element>
+            </xsd:sequence>
+         </xsd:complexType>
+      </xsd:schema>
+   </wsdl:types>
+   <wsdl:message name="MT_ContractOrderStatusReceive">
+      <wsdl:documentation/>
+      <wsdl:part name="MT_ContractOrderStatusReceive"
+                 element="p1:MT_ContractOrderStatusReceive"/>
+   </wsdl:message>
+   <wsdl:portType name="SI_ContractOrderStatusSend_IB_Async">
+      <wsdl:documentation/>
+      <wsdl:operation name="SI_ContractOrderStatusSend_IB_Async">
+         <wsdl:documentation/>
+         <wsp:Policy>
+            <wsp:PolicyReference URI="#OP_SI_ContractOrderStatusSend_IB_Async"/>
+         </wsp:Policy>
+         <wsdl:input message="p1:MT_ContractOrderStatusReceive"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="SI_ContractOrderStatusSend_IB_AsyncBinding"
+                 type="p1:SI_ContractOrderStatusSend_IB_Async">
+      <soap:binding style="document"
+                    transport="http://schemas.xmlsoap.org/soap/http"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      <wsdl:operation name="SI_ContractOrderStatusSend_IB_Async">
+         <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                         xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+         <wsdl:input>
+            <soap:body use="literal"
+                       xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+         </wsdl:input>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="SI_ContractOrderStatusSend_IB_AsyncService">
+      <wsdl:port name="SI_ContractOrderStatusSend_IB_AsyncPort"
+                 binding="p1:SI_ContractOrderStatusSend_IB_AsyncBinding">
+         <soap:address location="http://sapmid:50000/sap/xi/engine?type=entry&amp;version=3.0&amp;Sender.Service=x&amp;Interface=x%5Ex"
+                       xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>

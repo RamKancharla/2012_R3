@@ -1,0 +1,17 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+         location="http://inkaban3ua-eai01:7777/TransformMoveUserToCSFormat/TransformMoveUserToCSFormatRequest?WSDL"/>
+    <plnk:partnerLinkType name="TransformMoveUserToCSFormatRequest_PL">
+        <plnk:role name="TransformMoveUserToCSFormatRequest_Role">
+            <plnk:portType name="tns:TransformMoveUserToCSFormatRequest"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHOM_OrderFulfillmentStatusStub" revision="1.0" state="on">
+    <import location="ATHOM_OrderFulfillmentStatusStub.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub"/>
+    <service name="anchorToATHOM_OrderFulfillmentStatusStub" ui:wsdlLocation="ATHOM_OrderFulfillmentStatusStub.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub#wsdl.interface(ATHOM_OrderFulfillmentStatusStub)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatusStub#wsdl.endpoint(ATHOM_OrderFulfillmentStatusStub/ATHOM_OrderFulfillmentStatusStub)"/>
+    </service>
+    <component name="ATHOM_OrderFulfillmentStatusStub">
+        <implementation.bpel src="ATHOM_OrderFulfillmentStatusStub.bpel"/>
+    </component>
+    <wire>
+        <source.uri>anchorToATHOM_OrderFulfillmentStatusStub</source.uri>
+        <target.uri>ATHOM_OrderFulfillmentStatusStub/anchorToATHOM_OrderFulfillmentStatusStub</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

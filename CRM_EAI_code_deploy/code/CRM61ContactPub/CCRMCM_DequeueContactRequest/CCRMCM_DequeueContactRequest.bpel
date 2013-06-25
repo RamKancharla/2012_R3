@@ -1,0 +1,99 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+* Module:      CCRMAM_PublishAccountRequestvalidator.bpel 
+* Type:        BPEL FILE 
+* Description: BPEL Process that dequeue`s message from MQ and enques into AQ 
+* Change History
+* Version      Date         Author                  Description Of Change 
+*  1.0         13/10/08     Sunil V                 Initial Version 
+*  2.0         28/04/10     Vasanthi                Changed as apart of PBI-278
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMCM_DequeueContactRequest" targetNamespace="http://xmlns.oracle.com/CCRMCM_DequeueContactRequest" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/CM/CCRM_ContactSpliter" xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns5="http://xmlns.oracle.com/CCRMCM_ContactDispatcher" xmlns:client="http://xmlns.oracle.com/CCRMCM_DequeueContactRequest" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerdequeContactReq/" xmlns:ehdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions" xmlns:ns3="http://www.siebel.com/xml/RCRMContactPublish" xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/jms/enqueContact/" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink myRole="Dequeue_role" name="dequeContactReq" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink myRole="CCRMCM_ContactDispatcherRequester" name="CCRMCM_ContactDispatcher" partnerRole="CCRMCM_ContactDispatcherProvider" partnerLinkType="ns5:CCRMCM_ContactDispatcher"/>
+  </partnerLinks>
+  <variables>
+    <variable name="runtimeFault" messageType="bpelx:RuntimeFaultMessage"/>
+    <variable name="RcvConatctRequestIV" messageType="ns1:PublishContactRequestReponse_msg"/>
+    <variable name="InvEnqueContactReqIV" messageType="ns5:CCRMCM_ContactDispatcherRequestMessage"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <faultHandlers>
+    <catch faultName="bpelx:remoteFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnRemoteFault" language="java" version="1.5">
+        <![CDATA[String ContactId = ((oracle.xml.parser.v2.XMLElement)                                
+                        getVariableData("RcvConatctRequestIV", "PublishContactRequestReponse", "/ns3:PublishContactRequestReponse/ns3:PublishContactRequest/ns3:Contact/ns3:ContactUUID")).getFirstChild().getNodeValue();                                   
+    
+String Title=(ContactId!=null ? ("ContactId: "+ ContactId+ ";SiebelFault") : ".;");                                      
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:bindingFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnBindingFault" language="java" version="1.5">
+        <![CDATA[String ContactId = ((oracle.xml.parser.v2.XMLElement)                                 
+                        getVariableData("RcvConatctRequestIV", "PublishContactRequestReponse", "/ns3:PublishContactRequestReponse/ns3:PublishContactRequest/ns3:Contact/ns3:ContactUUID")).getFirstChild().getNodeValue();                                    
+String Title=(ContactId!=null ? ("ContactId: "+ ContactId+ ";SiebelFault") : ".;");                                       
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpws:selectionFailure" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnSelectionFailure" language="java" version="1.5">
+        <![CDATA[String ContactId = ((oracle.xml.parser.v2.XMLElement)  
+                    getVariableData("RcvConatctRequestIV","PublishContactRequestReponse","/ns3:PublishContactRequestReponse/ns3:PublishContactRequest/ns3:Contact/ns3:ContactUUID")).getFirstChild().getNodeValue();  
+String Title=(ContactId!=null ? ("ContactId: "+ ContactId+ ";SiebelFault") : ".;");                                       
+setCompositeInstanceTitle(Title);]]>
+      </bpelx:exec>
+    </catch>
+    <catchAll>
+      <sequence name="SeqGenericError">
+        <bpelx:exec name="AsgCustomTitleOnGenericFault" language="java" version="1.5">
+          <![CDATA[String ContactId = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("RcvConatctRequestIV", "PublishContactRequestReponse", "/ns3:PublishContactRequestReponse/ns3:PublishContactRequest/ns3:Contact/ns3:ContactUUID")).getFirstChild().getNodeValue();                                  
+String Title=(ContactId!=null ? ("ContactId: "+ ContactId+ ";SiebelFault") : ".;");                                      
+setCompositeInstanceTitle(Title);]]>
+        </bpelx:exec>
+      </sequence>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <receive name="RcvContactRequest" partnerLink="dequeContactReq" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="RcvConatctRequestIV" createInstance="yes"/>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[String ContactId = ((oracle.xml.parser.v2.XMLElement)  
+                    getVariableData("RcvConatctRequestIV","PublishContactRequestReponse","/ns3:PublishContactRequestReponse/ns3:PublishContactRequest/ns3:Contact/ns3:ContactUUID")).getFirstChild().getNodeValue(); 
+String title=(ContactId!=null ? ("ContactId: "+ContactId) : ".;");  
+setCompositeInstanceTitle(title);]]>
+    </bpelx:exec>
+    <assign name="TransDequeConReqIVToEnqConReqIV">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:processXSLT('TransDequeConReqIVToEnqConReqIV.xsl',bpws:getVariableData('RcvConatctRequestIV','PublishContactRequestReponse'))"/>
+        <to variable="InvEnqueContactReqIV" part="payload"/>
+      </copy>
+    </assign>
+    <invoke name="InvContactDispatcher" partnerLink="CCRMCM_ContactDispatcher" portType="ns5:CCRMCM_ContactDispatcher" operation="dispatchContact" inputVariable="InvEnqueContactReqIV"/>
+  </sequence>
+</process>

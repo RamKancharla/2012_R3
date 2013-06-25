@@ -1,0 +1,44 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TF_ManageOrderLineStatus" revision="1.0" state="on">
+    <import location="TF_ManageOrderLineStatus.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMTF_PropagateOrderStatus/CCRMTF_PropagateOrderStatus.wsdl" importType="wsdl"/>
+    <service name="anchorToTF_ManageOrderLineStatus" ui:wsdlLocation="TF_ManageOrderLineStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus#wsdl.interface(TF_ManageOrderLineStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM/TF_ManageOrderLineStatus#wsdl.endpoint(TF_ManageOrderLineStatus/TF_ManageOrderLineStatus)"/>
+    </service>
+    <component name="TF_ManageOrderLineStatus">
+        <implementation.bpel src="TF_ManageOrderLineStatus.bpel"/>
+        
+        
+    </component>
+    <reference name="CCRMTF_PropagateOrderStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMTF_PropagateOrderStatus/CCRMTF_PropagateOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus#wsdl.interface(CCRMTF_PropagateOrderStatus)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus#wsdl.interface(CCRMTF_PropagateOrderStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus#wsdl.endpoint(CCRMTF_PropagateOrderStatus/CCRMTF_PropagateOrderStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMTF_PropagateOrderStatus/anchorToCCRMTF_PropagateOrderStatus?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/CCRM/OM/CCRMTF_PropagateOrderStatus#wsdl.endpoint(CCRMTF_PropagateOrderStatus/CCRMTF_PropagateOrderStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="SequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceChecker/SequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/anchorToSequencer?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>anchorToTF_ManageOrderLineStatus</source.uri>
+        <target.uri>TF_ManageOrderLineStatus/anchorToTF_ManageOrderLineStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TF_ManageOrderLineStatus/CCRMTF_PropagateOrderStatus</source.uri>
+        <target.uri>CCRMTF_PropagateOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TF_ManageOrderLineStatus/SequenceChecker</source.uri>
+        <target.uri>SequenceChecker</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

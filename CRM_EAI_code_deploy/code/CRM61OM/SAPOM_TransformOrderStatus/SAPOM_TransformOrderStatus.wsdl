@@ -1,0 +1,69 @@
+<definitions
+     name="SAPOM_TransformOrderStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:pns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus/correlationset"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus/correlationset"
+         location="SAPOM_TransformOrderStatus_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus"
+                 schemaLocation="SAPOM_TransformOrderStatus.xsd"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.SAP.OM.284_OrderStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SAPOM_TransformOrderStatusRequestMessage">
+        <part name="payload" element="ns1:orderStatus"/>
+    </message>
+    <message name="ReleaseSequenceMessage">
+        <part name="releaseSequence" element="ns2:basicResponse"/>
+    </message>
+    <message name="SAPOM_TransformOrderStatusResponseMessage">
+        <part name="payload" element="client:SAPOM_TransformOrderStatusProcessResponse"/>
+    </message>
+    <portType name="SAPOM_TransformOrderStatus">
+        <operation name="processStatus">
+            <input message="client:SAPOM_TransformOrderStatusRequestMessage"/>
+        </operation>
+        <operation name="updateReleaseStatus">
+            <input name="input" message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <portType name="SAPOM_TransformOrderStatusCallback">
+        <operation name="onResult">
+            <input message="client:SAPOM_TransformOrderStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SAPOM_TransformOrderStatus">
+        <plnk:role name="SAPOM_TransformOrderStatusProvider">
+            <plnk:portType name="client:SAPOM_TransformOrderStatus"/>
+        </plnk:role>
+        <plnk:role name="SAPOM_TransformOrderStatusRequester">
+            <plnk:portType name="client:SAPOM_TransformOrderStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:PropSequencerCorrelationSet" messageType="client:ReleaseSequenceMessage"
+         part="releaseSequence" query="/ns2:basicResponse/ns2:eaiHeader/ns3:tracingId" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+    <bpws:propertyAlias propertyName="pns1:PropSequencerCorrelationSet" xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns5:SequenceCheckerRequestMessage" part="payload" query="/ns3:checkSequenceRequest/ns3:eaiHeader/ns4:tracingId"
+         xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"/>
+</definitions>

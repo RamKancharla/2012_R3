@@ -1,0 +1,11 @@
+LOAD DATA
+INFILE *
+Truncate
+INTO TABLE "DYNAMICREFERENCEDEF"
+FIELDS TERMINATED BY ','
+TRAILING NULLCOLS
+(REFTYPE,
+DESCRIPTION)
+begindata
+"1","OrderLineId-AssetIntegrationId"
+"10","AssetIntegrationId-ItemNumber"

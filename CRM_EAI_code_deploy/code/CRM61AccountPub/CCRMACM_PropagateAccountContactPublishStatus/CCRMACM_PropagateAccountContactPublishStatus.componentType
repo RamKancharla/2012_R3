@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMACM_PropagateAccountContactPublishStatus.wsdl" name="AnchorCCRMACM_PropagateAccCntPublish">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatus)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus#wsdl.interface(CCRMACM_PropagateAccountContactPublishStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="AccountUpdate.wsdl" name="AccountUpdate">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerAccountUpdate/#wsdl.interface(Enqueue_ptt)"/>
+    </reference>
+    <property name="preference.type" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</componentType>

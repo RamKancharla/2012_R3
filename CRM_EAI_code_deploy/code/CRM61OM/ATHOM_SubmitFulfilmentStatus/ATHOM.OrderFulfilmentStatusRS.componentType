@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ATHOM_OrderFulfilmentStatusRS.wsdl" name="ATHOM.OrderFulfilmentStatusRS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/OM/ATHOM#wsdl.interface(orderFulfilmentStatus_ppt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHOM_OrderFulfillmentStatus/ATHOM_OrderFulfillmentStatus.wsdl" name="ATHOM.OrderFulfilmentStatusNValidatorSOAPAdp">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHOM_OrderFulfillmentStatus#wsdl.interface(ATHOM_OrderFulfillmentStatus)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="ATHUOM_submitUserOrderRequestInRS.wsdl" name="ATHUOM.submitUserOrderRequestInRS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/SubmitUserOrderRequest#wsdl.interface(submitUserOrderRequest_ppt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHUOM_UserOrderRequestValidator/ATHUOM_UserOrderRequestValidator.wsdl" name="ATHUOM.UserOrderRequstValidatorSOAPAdp">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator#wsdl.interface(ATHUOM_UserOrderRequestValidator)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,52 @@
+<definitions
+     name="ATHUOM_PropagateUserOrderStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://xml.netbeans.org/schema/BillingNotifyMessage"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus"
+    >
+    <import namespace="http://xml.netbeans.org/schema/BillingNotifyMessage" location="EAI.SRV.EXT.ATH.062_PropagateUserOrderStatusService.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus"
+                 schemaLocation="ATHUOM_PropagateUserOrderStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/ATHUOM_PropagateUserOrderStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.CS.UOM.275_UserOrderResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ATHUOM_PropagateUserOrderStatusRequestMessage">
+        <part name="payload" element="ns1:UserOrderResponse"/>
+    </message>
+    <message name="ATHUOM_PropagateUserOrderStatusResponseMessage">
+        <part name="payload" element="client:ATHUOM_PropagateUserOrderStatusProcessResponse"/>
+    </message>
+    <message name="ExtendedBillNotifyMessageType">
+        <part name="BillNotify" element="ns3:billingInfoResponse"/>
+    </message>
+    <portType name="ATHUOM_PropagateUserOrderStatus">
+        <operation name="sendUserOrderStatus">
+            <input message="client:ATHUOM_PropagateUserOrderStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="ATHUOM_PropagateUserOrderStatusCallback">
+        <operation name="onResult">
+            <input message="client:ATHUOM_PropagateUserOrderStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="ATHUOM_PropagateUserOrderStatus">
+        <plnk:role name="ATHUOM_PropagateUserOrderStatusProvider">
+            <plnk:portType name="client:ATHUOM_PropagateUserOrderStatus"/>
+        </plnk:role>
+        <plnk:role name="ATHUOM_PropagateUserOrderStatusRequester">
+            <plnk:portType name="client:ATHUOM_PropagateUserOrderStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

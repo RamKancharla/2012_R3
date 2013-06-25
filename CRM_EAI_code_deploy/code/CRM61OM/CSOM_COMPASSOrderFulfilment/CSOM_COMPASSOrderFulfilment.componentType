@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSOM_COMPASSOrderFulfilment.wsdl" name="client">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilment)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_COMPASSOrderFulfilment#wsdl.interface(CSOM_COMPASSOrderFulfilmentCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="TransformToCSFormat.wsdl" name="TransformToCSFormat">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderRequestFormatter#wsdl.interface(TransformOrderRequest)"/>
+    </reference>
+    <reference ui:wsdlLocation="CSOM_SubmitOrderToCOMPASSRSWrapper.wsdl" name="CSOM_SubmitOrderToCOMPASS">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(submitOrder_ppt)"/>
+    </reference>
+</componentType>

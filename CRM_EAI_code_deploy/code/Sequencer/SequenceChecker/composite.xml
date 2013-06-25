@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SequenceChecker" revision="1.0" state="on">
+    <import location="SequenceChecker.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"/>
+    <import location="RegisterSequenceDBAdapter.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/RegisterSequenceDBAdapter/"/>
+    <service name="anchorToSequencer" ui:wsdlLocation="SequenceChecker.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceChecker/SequenceChecker)"/>
+    </service>
+    <component name="SequenceChecker">
+        <implementation.bpel src="SequenceChecker.bpel"/>
+    </component>
+    <reference name="RegisterSequenceDBAdapter" ui:wsdlLocation="RegisterSequenceDBAdapter.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/RegisterSequenceDBAdapter/#wsdl.interface(RegisterSequenceDBAdapter_ptt)"/>
+        <binding.jca config="RegisterSequenceDBAdapter_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <wire>
+        <source.uri>anchorToSequencer</source.uri>
+        <target.uri>SequenceChecker/anchorToSequencer</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SequenceChecker/RegisterSequenceDBAdapter</source.uri>
+        <target.uri>RegisterSequenceDBAdapter</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

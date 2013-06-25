@@ -1,0 +1,24 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="TOM.PropagateQuoteStatusRSIn" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/external/TOM/TechFul" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="propagateVettingStatus">
+      <switch>
+         <case name="Case_1_TOM.PropagateQuoteStatusRSIn.propagateVettingStatus" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/TOMVettingStatusEAIVettingStatus.xsl,$in.vettingStatus)" name="$out.validateQuoteStatusRequest"/>
+               </transform>
+               <assign/>
+               <invoke reference="TOM.ValidateQuoteStatusSOAPAdp" operation="validateVettingStatus">
+                  <onReply>
+                     <transform>
+                        <part function="xslt(xsl/EAIResponseToTOMResponse.xsl,$in.validateQuoteStatusResponse)" name="$out.statusSubmissionResponse"/>
+                     </transform>
+                     <assign/>
+                     <reply/>
+                  </onReply>
+               </invoke>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

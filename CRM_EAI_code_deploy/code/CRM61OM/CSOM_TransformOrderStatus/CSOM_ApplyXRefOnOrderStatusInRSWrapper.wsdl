@@ -1,0 +1,17 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="ApplyXRefOnOrderStatusInRS"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+    <plnk:partnerLinkType name="applyStaticXRefData_pptLT">
+        <plnk:role name="applyStaticXRefData_pptProvider">
+            <plnk:portType name="tns:applyStaticXRefData_ppt"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <wsdl:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" location="http://eaidev2:8004/soa-infra/services/MEDIATOR/CSOM_ApplyXRefOnOrderStatus/CSOM_ApplyXRefOnOrderStatusInRS.wsdl"/>
+</wsdl:definitions>

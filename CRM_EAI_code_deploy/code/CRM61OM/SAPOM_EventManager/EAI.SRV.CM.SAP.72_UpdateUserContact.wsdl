@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="SI_CreateContacts_OB_Async"
+                  targetNamespace="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation"
+                  xmlns:p1="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation/>
+  <wsp:UsingPolicy wsdl:required="true"/>
+  <wsp:Policy wsu:Id="OP_OP_CreateContacts_Async"/>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation">
+      <xsd:element name="MT_Create_Contacts" type="DT_Create_Contacts"/>
+      <xsd:complexType name="DT_Create_Contacts">
+        <xsd:annotation>
+          <xsd:documentation xml:lang="EN">Source: Contact User Information
+                                           details</xsd:documentation>
+          <xsd:appinfo source="http://sap.com/xi/VersionID">a8af4ff04b2c11dfa0c786eb1b9a9604</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element name="Record" minOccurs="0" maxOccurs="unbounded">
+            <xsd:annotation>
+              <xsd:appinfo source="http://sap.com/xi/TextID">064bb1c02dec11dfcb2100ff983cdf85</xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="SIEBEL_ID">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">9c495e702dec11dfa76e00ff983cdf85</xsd:appinfo>
+                    <xsd:documentation>Siebel Row ID</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="0"/>
+                      <xsd:maxLength value="15"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="NAME1" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">9c495e712dec11df8b9c00ff983cdf85</xsd:appinfo>
+                    <xsd:documentation>Name1</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="0"/>
+                      <xsd:maxLength value="50"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="NAME2" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">9c495e722dec11df8b7900ff983cdf85</xsd:appinfo>
+                    <xsd:documentation>Name2</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="0"/>
+                      <xsd:maxLength value="50"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="TELEPHONE" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">9c495e732dec11dfc88a00ff983cdf85</xsd:appinfo>
+                    <xsd:documentation>Work Phone</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="0"/>
+                      <xsd:maxLength value="40"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="EMAIL" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">9c495e742dec11df8b3000ff983cdf85</xsd:appinfo>
+                    <xsd:documentation>Email</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="0"/>
+                      <xsd:maxLength value="100"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="STATUS" minOccurs="0">
+                  <xsd:annotation>
+                    <xsd:appinfo source="http://sap.com/xi/TextID">9c495e752dec11df8c3700ff983cdf85</xsd:appinfo>
+                    <xsd:documentation>Customer Status in SAP</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:minLength value="0"/>
+                      <xsd:maxLength value="50"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="MT_Create_Contacts">
+    <wsdl:documentation/>
+    <wsdl:part name="MT_Create_Contacts" element="p1:MT_Create_Contacts"/>
+  </wsdl:message>
+  <wsdl:portType name="SI_CreateContacts_OB_Async">
+    <wsdl:documentation/>
+    <wsdl:operation name="OP_CreateContacts_Async">
+      <wsdl:documentation/>
+      <wsp:Policy>
+        <wsp:PolicyReference URI="#OP_OP_CreateContacts_Async"/>
+      </wsp:Policy>
+      <wsdl:input message="p1:MT_Create_Contacts"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SI_CreateContacts_OB_AsyncBinding"
+                type="p1:SI_CreateContacts_OB_Async">
+    <soap:binding style="document"
+                  transport="http://schemas.xmlsoap.org/soap/http"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+    <wsdl:operation name="OP_CreateContacts_Async">
+      <soap:operation soapAction="http://sap.com/xi/WebService/soap1.1"
+                      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      <wsdl:input>
+        <soap:body use="literal"
+                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SI_CreateContacts_OB_AsyncService">
+    <wsdl:port name="SI_CreateContacts_OB_AsyncPort"
+               binding="p1:SI_CreateContacts_OB_AsyncBinding">
+      <soap:address location="http://sapmid.int.thomsonreuters.com:50000/XISOAPAdapter/MessageServlet?channel=*:Markets_Sieble_Dev:CC_Out_Soap_UserContacts&amp;version=3.0&amp;Sender.Service=Markets_Sieble_Dev&amp;Interface=http%3A%2F%2Ftrm.com%3AI046%3AOrderProcessing%3ASend_ContactUserInformation%5ESI_CreateContacts_OB_Async"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

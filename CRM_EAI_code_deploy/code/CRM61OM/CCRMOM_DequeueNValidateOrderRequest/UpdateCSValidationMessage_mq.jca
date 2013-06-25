@@ -1,0 +1,17 @@
+<adapter-config name="UpdateCSValidationMessage" adapter="MQSeriesAdapter" wsdlLocation="UpdateCSValidationMessage.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/MQ/MQSeriesAdapterRemoteCRMtoEAI" adapterRef=""/>
+  <endpoint-interaction portType="Enqueue_ptt" operation="Enqueue" UITransmissionPrimitive="Enqueue">
+    <interaction-spec className="oracle.tip.adapter.mq.outbound.InteractionSpecImpl">
+      <property name="QueueName" value="${mq.token.prefix}EAI_CRM_014_ORD_VAL_RPLY_Q"/>
+      <property name="UseMessageEncodingForTranslation" value="true"/>
+      <property name="MessageType" value="NORMAL"/>
+      <property name="MessageFormat" value="NONE"/>
+      <property name="Priority" value="AS_Q_DEF"/>
+      <property name="Persistence" value="true"/>
+      <property name="Expiry" value="NEVER"/>
+    </interaction-spec>
+    <input/>
+  </endpoint-interaction>
+
+</adapter-config>

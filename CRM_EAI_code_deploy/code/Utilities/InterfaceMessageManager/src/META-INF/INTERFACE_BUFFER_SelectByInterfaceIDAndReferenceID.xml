@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="Cp1252"?>
+<toplink:object-persistence version="Oracle TopLink - 11g Release 1 (11.1.1.4.0) (Build 101210)" xmlns:opm="http://xmlns.oracle.com/ias/xsds/opm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:toplink="http://xmlns.oracle.com/ias/xsds/toplink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <opm:name>INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceID</opm:name>
+   <opm:class-mapping-descriptors>
+      <opm:class-mapping-descriptor xsi:type="toplink:relational-class-mapping-descriptor">
+         <opm:class>INTERFACEBUFFERSelectByInterfaceIDAndReferenceID.InterfaceBuffer</opm:class>
+         <opm:alias>InterfaceBuffer</opm:alias>
+         <opm:primary-key>
+            <opm:field table="INTERFACE_BUFFER" name="ID" xsi:type="opm:column"/>
+         </opm:primary-key>
+         <opm:events xsi:type="toplink:event-policy"/>
+         <opm:querying xsi:type="toplink:query-policy">
+            <opm:queries>
+               <opm:query name="findAllInterfaceBuffer" xsi:type="toplink:read-all-query">
+                  <toplink:bind-all-parameters>true</toplink:bind-all-parameters>
+                  <toplink:timeout>0</toplink:timeout>
+                  <toplink:reference-class>INTERFACEBUFFERSelectByInterfaceIDAndReferenceID.InterfaceBuffer</toplink:reference-class>
+                  <toplink:cache-usage>primary-key</toplink:cache-usage>
+                  <toplink:lock-mode>none</toplink:lock-mode>
+                  <toplink:outer-join-subclasses>false</toplink:outer-join-subclasses>
+                  <toplink:container xsi:type="toplink:list-container-policy">
+                     <toplink:collection-type>java.util.Vector</toplink:collection-type>
+                  </toplink:container>
+               </opm:query>
+               <opm:query name="INTERFACE_BUFFER_SelectByInterfaceIDAndReferenceIDSelect" xsi:type="toplink:read-all-query">
+                  <opm:arguments>
+                     <opm:argument name="InterfaceID">
+                        <opm:type>java.lang.String</opm:type>
+                     </opm:argument>
+                     <opm:argument name="ReferenceID">
+                        <opm:type>java.lang.String</opm:type>
+                     </opm:argument>
+                  </opm:arguments>
+                  <toplink:bind-all-parameters>true</toplink:bind-all-parameters>
+                  <toplink:timeout>0</toplink:timeout>
+                  <toplink:call xsi:type="toplink:sql-call">
+                     <toplink:sql>SELECT ID, CREATED, PAYLOAD, INTERFACE_ID, REFERENCE_ID, STATE, LAST_UPDATED, CREATED_BY, UPDATED_BY, SEND_ATTEMPTS FROM INTERFACE_BUFFER WHERE ((INTERFACE_ID = #InterfaceID) AND (REFERENCE_ID LIKE #ReferenceID))</toplink:sql>
+                  </toplink:call>
+                  <toplink:reference-class>INTERFACEBUFFERSelectByInterfaceIDAndReferenceID.InterfaceBuffer</toplink:reference-class>
+                  <toplink:cache-usage>primary-key</toplink:cache-usage>
+                  <toplink:lock-mode>none</toplink:lock-mode>
+                  <toplink:outer-join-subclasses>false</toplink:outer-join-subclasses>
+                  <toplink:container xsi:type="toplink:list-container-policy">
+                     <toplink:collection-type>java.util.Vector</toplink:collection-type>
+                  </toplink:container>
+               </opm:query>
+            </opm:queries>
+            <toplink:does-exist-query xsi:type="toplink:does-exist-query">
+               <toplink:existence-check>check-database</toplink:existence-check>
+            </toplink:does-exist-query>
+         </opm:querying>
+         <opm:attribute-mappings>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>created</opm:attribute-name>
+               <opm:field table="INTERFACE_BUFFER" name="CREATED" xsi:type="opm:column"/>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>createdBy</opm:attribute-name>
+               <opm:field table="INTERFACE_BUFFER" name="CREATED_BY" xsi:type="opm:column"/>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>id</opm:attribute-name>
+               <opm:field table="INTERFACE_BUFFER" name="ID" xsi:type="opm:column"/>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>interfaceId</opm:attribute-name>
+               <opm:field table="INTERFACE_BUFFER" name="INTERFACE_ID" xsi:type="opm:column"/>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>lastUpdated</opm:attribute-name>
+               <opm:field table="INTERFACE_BUFFER" name="LAST_UPDATED" xsi:type="opm:column"/>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>referenceId</opm:attribute-name>
+               <opm:field table="INTERFACE_BUFFER" name="REFERENCE_ID" xsi:type="opm:column"/>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>sendAttempts</opm:attribute-name>
+               <opm:field table="INTERFACE_BUFFER" name="SEND_ATTEMPTS" xsi:type="opm:column"/>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>state</opm:attribute-name>
+               <opm:field table="INTERFACE_BUFFER" name="STATE" xsi:type="opm:column"/>
+            </opm:attribute-mapping>
+            <opm:attribute-mapping xsi:type="toplink:direct-mapping">
+               <opm:attribute-name>updatedBy</opm:attribute-name>
+               <opm:field table="INTERFACE_BUFFER" name="UPDATED_BY" xsi:type="opm:column"/>
+            </opm:attribute-mapping>
+         </opm:attribute-mappings>
+         <toplink:descriptor-type>independent</toplink:descriptor-type>
+         <toplink:caching>
+            <toplink:cache-type>weak-reference</toplink:cache-type>
+            <toplink:always-refresh>true</toplink:always-refresh>
+         </toplink:caching>
+         <toplink:remote-caching>
+            <toplink:cache-type>weak-reference</toplink:cache-type>
+         </toplink:remote-caching>
+         <toplink:instantiation/>
+         <toplink:copying xsi:type="toplink:instantiation-copy-policy"/>
+         <toplink:tables>
+            <toplink:table name="EAIOWNER.INTERFACE_BUFFER"/>
+         </toplink:tables>
+      </opm:class-mapping-descriptor>
+   </opm:class-mapping-descriptors>
+   <toplink:login xsi:type="toplink:database-login">
+      <toplink:platform-class>oracle.toplink.platform.database.oracle.Oracle10Platform</toplink:platform-class>
+      <toplink:user-name>eaiowner</toplink:user-name>
+      <toplink:password>E8D26CEB17C942CF78415AE2B31C2AA9</toplink:password>
+      <toplink:driver-class>oracle.jdbc.OracleDriver</toplink:driver-class>
+      <toplink:connection-url>jdbc:oracle:thin:@//eaidev2:1521/EAIDEV2</toplink:connection-url>
+   </toplink:login>
+</toplink:object-persistence>

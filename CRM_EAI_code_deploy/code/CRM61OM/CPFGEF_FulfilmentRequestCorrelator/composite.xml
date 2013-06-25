@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGEF_FulfilmentRequestCorrelator" revision="1.0" state="on">
+    <import location="CrossRefService.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"/>
+    <import location="CPFGEF_FulfilmentRequestCorrelator.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator"/>
+    <import location="INTERFACE_BUFFER.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM"
+            location="http://10.136.164.216:8000/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus.wsdl"
+            importType="wsdl"/>
+    <service name="rcvFulfilmentRequestCorrelator" ui:wsdlLocation="CPFGEF_FulfilmentRequestCorrelator.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelatorCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.interface(CPFGEF_FulfilmentRequestCorrelator)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestCorrelator#wsdl.endpoint(CPFGEF_FulfilmentRequestCorrelator/CPFGEF_FulfilmentRequestCorrelator)"/>
+    </service>
+    <component name="CPFGEF_FulfilmentRequestCorrelator">
+        <implementation.bpel src="CPFGEF_FulfilmentRequestCorrelator.bpel"/>
+        <property name="preference.maxWaitForElectronicFulfilmentStatus">P0Y0M0DT1H0M0S</property>
+    </component>
+    <reference name="CrossRefService" ui:wsdlLocation="CrossRefService.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService#wsdl.interface(CrossRefServicePortType)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="CrossRefService.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService#wsdl.endpoint(CrossRefService/CrossRefServiceSplitOrderSOAPPort)"/>
+    </reference>
+    <reference name="INTERFACE_BUFFER" ui:wsdlLocation="INTERFACE_BUFFER.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/db/INTERFACE_BUFFER/#wsdl.interface(INTERFACE_BUFFER_ptt)"/>
+        <binding.jca config="INTERFACE_BUFFER_db.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="PartnerLink1"
+               ui:wsdlLocation="http://10.136.164.216:8000/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatus)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.interface(CCRMOM_PropagateOrderStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.endpoint(CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatus)"
+                    location="http://10.136.164.216:8000/soa-infra/services/CRMASYNC/CCRMOM_PropagateOrderStatus/anchorToPropagateOrderStatus?WSDL"
+                    soapVersion="1.1"/>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/OM#wsdl.endpoint(CCRMOM_PropagateOrderStatus/CCRMOM_PropagateOrderStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>rcvFulfilmentRequestCorrelator</source.uri>
+        <target.uri>CPFGEF_FulfilmentRequestCorrelator/rcvFulfilmentRequestCorrelator</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_FulfilmentRequestCorrelator/INTERFACE_BUFFER</source.uri>
+        <target.uri>INTERFACE_BUFFER</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGEF_FulfilmentRequestCorrelator/CrossRefService</source.uri>
+        <target.uri>CrossRefService</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+    <wire>
+        <source.uri>CPFGEF_FulfilmentRequestCorrelator/CCRMOM_PropagateOrderStatus</source.uri>
+        <target.uri>PartnerLink1</target.uri>
+    </wire>
+</composite>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.siebel.com/xml/UDA%20Dynamic%20Matrix"
+            xmlns:xsdLocal="http://www.siebel.com/xml/UDA%20Dynamic%20Matrix"
+            attributeFormDefault="unqualified" elementFormDefault="qualified">
+ <xsd:annotation>
+  <xsd:documentation>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights
+                     reserved. Siebel XSD Generation</xsd:documentation>
+ </xsd:annotation>
+ <xsd:element name="PSPDynamicMatrix" type="xsdLocal:PSPDynamicMatrix"/>
+ <xsd:complexType name="PSPDynamicMatrixTopElmt">
+  <xsd:sequence>
+   <xsd:element name="PSPDynamicMatrix" type="xsdLocal:PSPDynamicMatrix"
+                minOccurs="1" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PSPDynamicMatrix">
+  <xsd:sequence>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Created" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Updated" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ConflictId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ModId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ClassName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CurrencyCode" type="xsdLocal:string20" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DefaultAdjustmentType" type="xsdLocal:string30"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Description" type="xsdLocal:string250" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="EffectiveEndDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="EffectiveStartDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ExchangeDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="InvalidCombinationErrorFlag" type="xsd:string"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="MatrixName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MatrixType" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RefreshTimestamp" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ProdIntegrationId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PSPDynamicMatrixDimension"
+                type="xsdLocal:PSPDynamicMatrixDimension" minOccurs="0"
+                maxOccurs="unbounded"/>
+   <xsd:element name="PSPDynamicMatrixRule" type="xsdLocal:PSPDynamicMatrixRule"
+                minOccurs="0" maxOccurs="unbounded"/>
+   <xsd:element name="PSPDynamicMatrixVariableMap"
+                type="xsdLocal:PSPDynamicMatrixVariableMap" minOccurs="0"
+                maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PSPDynamicMatrixDimension">
+  <xsd:sequence>
+   <xsd:element name="DomTypeCd" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Created" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Updated" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ConflictId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ModId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="AcceptAnyFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ActualRetrievalExpression" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="AttributeName" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BCFieldName" type="xsdLocal:string75" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BCName" type="xsdLocal:string75" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BOName" type="xsdLocal:string75" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BoundedFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BuscompSearchSpecification" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Comparison" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DataTypeCd" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DimName" type="xsdLocal:string75" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DimTypeCd" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="GroupNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LOVName" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="MatrixColumnName" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SortMethod" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SortOrder" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="TranslateFlag" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="VariableMapTypeCd" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="VariableName" type="xsdLocal:string50" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="PSPDynamicMatrixDimensionDomain"
+                type="xsdLocal:PSPDynamicMatrixDimensionDomain" minOccurs="0"
+                maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PSPDynamicMatrixRule">
+  <xsd:sequence>
+   <xsd:element name="Part" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="AttributeId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Created" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Updated" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ConflictId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ModId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn1" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn10" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn2" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn3" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn4" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn5" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn6" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn7" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn8" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateMatrixColumn9" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Description" type="xsdLocal:string250" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="GroupNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn1" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn10" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn2" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn3" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn4" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn5" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn6" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn7" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn8" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="NumberMatrixColumn9" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="SeqNum" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn1" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn10" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn2" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn3" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn4" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn5" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn6" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn7" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn8" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="StringMatrixColumn9" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PSPDynamicMatrixVariableMap">
+  <xsd:sequence>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Created" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Updated" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ConflictId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ModId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="RetrievalExpressionTemplate" type="xsdLocal:string250"
+                minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="TypeCd" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="VariableMappingName" type="xsdLocal:string100"
+                minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="PSPDynamicMatrixDimensionDomain">
+  <xsd:sequence>
+   <xsd:element name="Id" type="xsdLocal:string30" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="Created" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Updated" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ConflictId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ModId" type="xsdLocal:string30" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="CharValue" type="xsdLocal:string100" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DateValue" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="NumValue" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="SequenceNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:simpleType name="string250">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="250"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string50">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="50"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string75">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="75"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string30">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="30"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string100">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="100"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="string20">
+  <xsd:restriction base="xsd:string">
+   <xsd:maxLength value="20"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+</xsd:schema>

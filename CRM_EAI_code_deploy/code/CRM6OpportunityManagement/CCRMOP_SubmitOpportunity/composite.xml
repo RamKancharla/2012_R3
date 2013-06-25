@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRMOP_SubmitOpportunity" revision="1.0" state="on"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <import location="CCRMOP_SubmitOpportunity.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity"/>
+    <import location="enqueueOpportunityStatus.wsdl" namespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerenqueueOpportunityStatus/"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+            location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl"
+            importType="wsdl"/>
+    <service name="anchorToCCRMOPSubmitOpportunity" ui:wsdlLocation="CCRMOP_SubmitOpportunity.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.interface(CCRMOP_SubmitOpportunityCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.interface(CCRMOP_SubmitOpportunity)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OpportunityManagement/CCRMOP_SubmitOpportunity#wsdl.endpoint(CCRMOP_SubmitOpportunity/CCRMOP_SubmitOpportunity)"/>
+    </service>
+    <component name="CCRMOP_SubmitOpportunity">
+        <implementation.bpel src="CCRMOP_SubmitOpportunity.bpel"/>
+        <property name="bpel.config.sensorLocation">CCRMOP_SubmitOpportunity_sensor.xml</property>
+        <property name="bpel.config.sensorActionLocation">CCRMOP_SubmitOpportunity_sensorAction.xml</property>
+    </component>
+    <reference name="enqueueOpportunityStatus" ui:wsdlLocation="enqueueOpportunityStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerenqueueOpportunityStatus/#wsdl.interface(Enqueue_ptt)"/>
+        <binding.jca config="enqueueOpportunityStatus_mq.jca">
+            <property name="jca.retry.interval">60</property>
+        </binding.jca>
+    </reference>
+    <reference name="SequenceReleaser"
+               ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)"
+                    location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL"
+                    soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption"
+                      type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>anchorToCCRMOPSubmitOpportunity</source.uri>
+        <target.uri>CCRMOP_SubmitOpportunity/anchorToCCRMOPSubmitOpportunity</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOP_SubmitOpportunity/enqueueOpportunityStatus</source.uri>
+        <target.uri>enqueueOpportunityStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CCRMOP_SubmitOpportunity/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+<!--<property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property>-->
+</composite>

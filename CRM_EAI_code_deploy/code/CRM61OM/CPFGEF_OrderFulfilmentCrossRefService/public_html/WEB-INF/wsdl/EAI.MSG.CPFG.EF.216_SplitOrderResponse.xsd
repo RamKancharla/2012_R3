@@ -1,0 +1,41 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/OrderFulfilmentCrossRefService"
+     elementFormDefault="qualified" version="0.4">
+    <xsd:include schemaLocation="EAI.XSD.015_CPFGEF_OrderFulfilmentCrossRefServiceCommonStructures.xsd"/>
+    <xsd:element name="splitOrderResponse" type="tns:SplitOrderResponse"/>
+    <xsd:complexType name="SplitOrderResponse">
+        <xsd:sequence>
+            <xsd:element name="eaiHeader" type="tns:EaiHeader"/>
+            <xsd:element name="electronicFulfilmentRequest" maxOccurs="unbounded" minOccurs="0" type="tns:ElectronicFulfilmentRequest"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ElectronicFulfilmentRequest">
+        <xsd:sequence>
+            <xsd:element name="electronicFulfilmentRequestId" type="xsd:string"/>
+            <xsd:element name="UUID" type="xsd:string"/>
+            <xsd:element name="subscriberAccount" type="xsd:string"/>
+            <xsd:element name="modifyUserEntitlements" type="tns:ModifyUserEntitlements"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ModifyUserEntitlements">
+        <xsd:sequence>
+            <xsd:element name="entitlement" type="tns:Entitlement" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Entitlement">
+        <xsd:sequence>
+            <xsd:element name="actionCode" type="xsd:string"/>
+            <xsd:element name="productID" type="xsd:string"/>
+            <xsd:element name="freeTrialIndicator" type="xsd:boolean"/>
+            <xsd:element name="freeTrialEndDate" type="xsd:date"/>
+            <xsd:element name="productAttribute" type="tns:AttributeValuePair" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="addOn" type="tns:Entitlement" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="AttributeValuePair">
+        <xsd:sequence>
+            <xsd:element name="attributeID" type="xsd:string"/>
+            <xsd:element name="valueID" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,117 @@
+<definitions
+     name="CSOM_TransformOrderStatus"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+     xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus/correlationset"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus"
+    >
+    <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus/correlationset"
+         location="CSOM_TransformOrderStatus_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus/correlationset"
+             xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus"
+                 schemaLocation="CSOM_TransformOrderStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus/correlationset"
+             xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.128_FixedLengthEBCDICMessage.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus/correlationset"
+             xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.126_OrderStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus/correlationset"
+             xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.170_OrderStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus/correlationset"
+             xmlns:ns5="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+             xmlns:pns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus/correlationset"
+             xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.CS.OM.192_OrderResponseWithOLActionCode.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CSOM_TransformOrderStatusRequestMessage">
+        <part name="orderStatus" element="ns1:EBCDICMessage"/>
+    </message>
+    <message name="ReleaseSequenceMessage">
+        <part name="releaseSequence" element="ns4:basicResponse"/>
+    </message>
+    <message name="CSOM_TransformOrderStatusResponseMessage">
+        <part name="payload" element="client:CSOM_TransformOrderStatusProcessResponse"/>
+    </message>
+    <message name="orderResponseMessage">
+        <part name="OrderResponseMessageType" element="ns9:localOrderResponseStatus"/>
+    </message>
+    <portType name="CSOM_TransformOrderStatus">
+        <operation name="processStatus">
+            <input message="client:CSOM_TransformOrderStatusRequestMessage"/>
+        </operation>
+        <operation name="updateReleaseStatus">
+            <input name="input" message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <portType name="CSOM_TransformOrderStatusCallback">
+        <operation name="onResult">
+            <input message="client:CSOM_TransformOrderStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CSOM_TransformOrderStatus">
+        <plnk:role name="CSOM_TransformOrderStatusProvider">
+            <plnk:portType name="client:CSOM_TransformOrderStatus"/>
+        </plnk:role>
+        <plnk:role name="CSOM_TransformOrderStatusRequester">
+            <plnk:portType name="client:CSOM_TransformOrderStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:PropSequencerCorrelationSet" xmlns:ns7="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns7:SequenceCheckerRequestMessage" part="payload" query="/ns5:checkSequenceRequest/ns5:eaiHeader/ns6:tracingId"
+         xmlns:ns6="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"/>
+    <bpws:propertyAlias propertyName="pns1:PropSequencerCorrelationSet" messageType="client:ReleaseSequenceMessage"
+         part="releaseSequence" query="/ns4:basicResponse/ns4:eaiHeader/ns5:tracingId" xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+</definitions>

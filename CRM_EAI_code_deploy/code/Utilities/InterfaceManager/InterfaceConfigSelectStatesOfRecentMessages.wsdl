@@ -1,0 +1,25 @@
+<?binding.jca InterfaceConfigSelectStatesOfRecentMessages_db.jca?>
+<definitions name="InterfaceConfigSelectStatesOfRecentMessages" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectStatesOfRecentMessages/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:db="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectStatesOfRecentMessages" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectStatesOfRecentMessages/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="InterfaceConfigSelectStatesOfRecentMessages_plt">
+        <plt:role name="InterfaceConfigSelectStatesOfRecentMessages_role">
+            <plt:portType name="tns:InterfaceConfigSelectStatesOfRecentMessages_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/InterfaceConfigSelectStatesOfRecentMessages" schemaLocation="InterfaceConfigSelectStatesOfRecentMessages.xsd"/>
+        </schema>
+    </types>
+    <message name="InterfaceConfigSelectStatesOfRecentMessagesInput_msg">
+        <part name="InterfaceConfigSelectStatesOfRecentMessagesInput_msg" element="db:InterfaceConfigSelectStatesOfRecentMessagesInput"/>
+    </message>
+    <message name="InterfaceConfigSelectStatesOfRecentMessagesOutputCollection_msg">
+        <part name="InterfaceConfigSelectStatesOfRecentMessagesOutputCollection" element="db:InterfaceConfigSelectStatesOfRecentMessagesOutputCollection"/>
+    </message>
+    <portType name="InterfaceConfigSelectStatesOfRecentMessages_ptt">
+        <operation name="InterfaceConfigSelectStatesOfRecentMessages">
+            <input message="tns:InterfaceConfigSelectStatesOfRecentMessagesInput_msg"/>
+            <output message="tns:InterfaceConfigSelectStatesOfRecentMessagesOutputCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

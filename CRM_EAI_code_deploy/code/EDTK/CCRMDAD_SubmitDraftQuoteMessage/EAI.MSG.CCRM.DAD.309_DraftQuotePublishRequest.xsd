@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.reuters.com/ns/2011/03/03/GCAP/EAI/DraftQuoteUpload"
+            xmlns:xsdLocal="http://www.reuters.com/ns/2011/03/03/GCAP/EAI/DraftQuoteUpload"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            version="0.1">
+ <xsd:element name="ListOfQuoteInterface"
+              type="xsdLocal:ListOfQuoteInterface"/>
+ <xsd:complexType name="ListOfQuoteInterfaceTopElmt">
+  <xsd:sequence>
+   <xsd:element name="ListOfQuoteInterface"
+                type="xsdLocal:ListOfQuoteInterface" minOccurs="1"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="ListOfQuoteInterface">
+  <xsd:sequence>
+   <xsd:element name="Quote" type="xsdLocal:Quote" minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="Quote">
+  <xsd:sequence>
+   <xsd:element name="BillingStartDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BillingStopDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="InterfaceName" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="TransactionId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Status" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="LineItems" type="xsdLocal:LineItems" minOccurs="0"
+                maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+ <xsd:complexType name="LineItems">
+  <xsd:sequence>
+   <xsd:element name="ActionCode" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BillingStartDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BillingStopDate" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="GlobalPLI" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="InstalledQuantity" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LineNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LineStatus" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="Operation" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="PDPCode" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="PONumber" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+   <xsd:element name="QuantityRequested" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="BillingAccountNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="LocationAccountNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+    <xsd:element name="SalesReason" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>             
+   <xsd:element name="InstallToAccountNumber" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="TransactionId" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="ClientRequestedQuantity" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+   <xsd:element name="DummyField1" type="xsd:string" minOccurs="0"
+                maxOccurs="1"/>
+  </xsd:sequence>
+ </xsd:complexType>
+</xsd:schema>

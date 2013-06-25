@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="OM_OrderRuleManager.wsdl" name="OM_OrderRuleManager">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderRuleManager)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderRuleManagerCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/OM_OrderDispatcher/OM_OrderDispatcher.wsdl" name="OM_OrderDispatcher">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderDispatcher)"
+                        callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OM#wsdl.interface(OM_OrderDispatcherCallback)"/>
+    </reference>
+    <reference name="OrderRequestRule"
+               ui:wsdlLocation="oramds:/apps/EAIMetaData/Abstract/WSDL/ASYNC/OrderRequestRule/OrderLineRequestDictionary141008_DecisionService_1.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/OrderLineRequestDictionary141008/OrderLineRequestDictionary141008_DecisionService_1#wsdl.interface(IDecisionService)"/>
+    </reference>
+</componentType>

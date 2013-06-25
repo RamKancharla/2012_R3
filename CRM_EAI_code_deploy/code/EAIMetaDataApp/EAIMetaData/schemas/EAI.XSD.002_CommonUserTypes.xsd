@@ -1,0 +1,1742 @@
+<!--********************************************************************************
+* Module:      EAI.XSD.002_CommonUserTypes.xsd
+* Type:       	XSD Schema
+* Description: The schema used for Common User Message attributes
+*
+* Change History
+* Version     Date      Author             Description Of Change
+*
+*  0.1        21/02/07  Siva (Detica)	   Initial Version
+*  0.02       06/03/07  Rob Billington	   Version scheme changed
+*  0.03       23/03/07  Geratayya P		   Changed the elements in the camel case
+*  0.04       23/03/07  Rob Billington	   Removed common message types and renamed surName to surname
+*  0.05       27/03/07  Rob Billington	   Changed surname to LastName to comply with CDM.  Added local first and last names as apparently we'll need them.  Changed length of title to 15 characters to comply with CDM.
+*  0.06	      27/03/07  Kevin Wood	       Some constraints updated to reflect CDMv2.0
+*  0.07	      03/04/07  Geratayya P	       Updated as based on Contact EAI IO Object Def 20070328 v07.xls
+*  0.08	      10/04/07  Kevin Wood	       Added Login type and updated FTLUserDetails and syncCPfGUserDetails to include
+*  0.09	      16/04/07  Kevin Wood         Removed login element from UpdateUserDetails type
+*  0.10       24/07/07  Mark Flynn         Updated to reflect new processes
+*  0.11       13/08/07  Rob Billington     Added restriction to allowable characters for UUID and domain
+*  0.12       13/08/07  Rob Billington     Renamed DACSServerID to LocalDACSID. Increased max length of LastName to 50 to match CDM v2
+*                                          Corrected example value in comment for _FTLCompleted 
+*                                          Increased length of userID and emailAddress to 320 characters to match Siebel implementation and user ID policy. 
+*                                          Changed CDM mapping for JobRole. 
+*  0.13       14/08/07  Rob Billington     Renamed accountID to locationAccountID
+*  0.14       22/01/08  Rob Billington     Added Employee Flag
+*  0.15       24/01/08  Rob Billington     Added EmployeePositionName and ContactJobFunction
+*  0.16       30/01/08  Rob Billington     Replaced EmployeeFlag with ContactSubType
+*  0.17	      22/05/08	S Gannavarapu	   Added ModId	
+*  0.18	      12/06/08	Sreeja Prasad	   Added ContactStatus	
+*  0.19	      18/08/08	 Sreeja Prasad	   Added ContactID
+*  0.20       05/09/08  Shanker Reddy      Added Name
+*  0.21       10/10/08  Rob Billington     Added Market Focus, EndUserActivity and other 
+*  0.22       16/03/09  Sreeja Prasad      Modified the maxLength of FirstName to 30 and LastName to 20 for defect#23270.
+*  0.23       08/07/2010 Sreeja		   Added the following types for CR - 5317 CPfGStatusReason,CPfGStatus,CPfGTempURL,CPfGId,FTLCompleteFlag,FTLFlagSetDate
+*  0.24         23/09/2010  Rijoy		   Added the following types for R5 - CR - 9851 primaryUUID,userType
+*  0.25       15/12/2011 Swetha Hosalli		  Added the following types for Contact Synch Siebel-EAI-SFDC flow 
+                                            RCRMTimeStamp,RCRMSourceSystem,RCRMLastUpdatedBy,RCRMDepartment,FaxPhone,RCRMContactFloor,RCRMVIP,
+                                            RCRMSegGrpSecondaryAssetClass,RCRMAssetFocus3,RCRMLastTrainedDate,RCRMPreferredLanguage,RCRMSegGrpPrimaryAssetClass,
+                                            RCRMSegGrpBSCSide,RCRMLocalSalutation,ContactNumber,ComplianceJobRole,PrimaryAccountNumber,PrimaryAccountClass,
+                                            PrimaryAccountId,FunctionPrimaryFlag,RCRMAccountClass,AccountPrimaryFlag
+**********************************************************************************-->
+<xsd:schema targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.22" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap="http://www.reuters.com/ns/2007/09/01/GCAP/CommonUserTypes" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" xmlns:gcap-cat="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" xmlns:gcap-cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes">
+   <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations" schemaLocation="EAI.XSD.001_SchemaAnnotations.xsd"/>
+   <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonAccountTypes" schemaLocation="EAI.XSD.003_CommonAccountTypes.xsd"/>
+   <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="EAI.XSD.005_CommonMessageTypes.xsd"/>
+   <xsd:complexType name="UserDetails">
+      <xsd:sequence>
+         <xsd:element name="UUID" type="gcap:UUID" nillable="true"/>
+         <xsd:element name="primaryUUID" type="gcap:PrimaryUUID" nillable="true"/>
+         <xsd:element name="userType" type="gcap:UserType" nillable="true"/>
+         <xsd:element name="domain" type="gcap:Domain" nillable="true"/>
+         <xsd:element name="userID" type="gcap:UserID" nillable="true"/>
+         <xsd:element name="title" type="gcap:Title" nillable="true"/>
+         <xsd:element name="firstName" type="gcap:FirstName" nillable="true"/>
+         <xsd:element name="lastName" type="gcap:LastName" nillable="true"/>
+         <xsd:element name="phoneNumber" type="gcap:PhoneNumber" nillable="true"/>
+         <xsd:element name="emailAddress" type="gcap:EmailAddress" nillable="true"/>
+         <xsd:element name="legalConsentGiven" type="gcap:LegalConsentGiven" nillable="true"/>
+         <xsd:element name="legalConsentGivenOn" type="gcap:LegalConsentGivenOn" nillable="true"/>
+         <xsd:element name="marketingConsentGiven" type="gcap:MarketingConsentGiven" nillable="true"/>
+         <xsd:element name="marketingConsentGivenOn" type="gcap:MarketingConsentGivenOn" nillable="true"/>
+         <xsd:element name="jobRole" type="gcap:JobRole" nillable="true"/>
+         <xsd:element name="FTLCompleted" type="gcap:_FTLCompleted" nillable="true"/>
+         <xsd:element name="FTLCompletedOn" type="gcap:_FTLCompletedOn" nillable="true"/>
+         <xsd:element name="localFirstName" type="gcap:LocalFirstName" nillable="true"/>
+         <xsd:element name="localLastName" type="gcap:LocalLastName" nillable="true"/>
+         <xsd:element name="preferredServiceLanguage" type="gcap:PreferredServiceLanguage" nillable="true"/>
+         <xsd:element name="reutersMessagingId" type="gcap:ReutersMessagingId" nillable="true"/>
+         <xsd:element name="localDACSID" type="gcap:LocalDACSID" nillable="true"/>
+         <xsd:element name="geographicalFocus" type="gcap:GeographicalFocus" nillable="true"/>
+         <xsd:element name="lastUpdatedByAAAOn" type="gcap:LastUpdatedByAAAOn" nillable="true"/>
+         <xsd:element name="lastUpdatedSiebelOn" type="gcap:LastUpdatedSiebelOn" nillable="true"/>
+         <xsd:element name="locationAccountID" type="gcap-cat:AccountID" nillable="true"/>
+         <xsd:element name="CPfGStatusReason" type="gcap:CPfGStatusReason" nillable="true"/>
+         <xsd:element name="CPfGStatus" type="gcap:CPfGStatus" nillable="true"/>
+         <xsd:element name="CPfGTempURL" type="gcap:CPfGTempURL" nillable="true"/>
+         <xsd:element name="CPFGUserId" type="gcap:UserID" nillable="true"/>
+         <xsd:element name="Id" type="gcap:CPfGId" nillable="true"/>
+         <xsd:element name="FTLCompleteFlag" type="gcap:FTLCompleteFlag" nillable="true"/>
+         <xsd:element name="FTLFlagSetDate" type="gcap:FTLFlagSetDate" nillable="true"/>
+         <xsd:element name="TimeStamp" type="gcap:TimeStamp" nillable="true"/>
+         <xsd:element name="SourceSystem" type="gcap:SourceSystem" nillable="true"/>
+         <xsd:element name="LastUpdatedBy" type="gcap:LastUpdatedBy" nillable="true"/>
+         <xsd:element name="Department" type="gcap:Department" nillable="true"/>
+         <xsd:element name="FaxPhone" type="gcap:FaxPhone" nillable="true"/>
+         <xsd:element name="ContactFloor" type="gcap:ContactFloor" nillable="true"/>
+         <xsd:element name="VIP" type="gcap:VIP" nillable="true"/>
+         <xsd:element name="SegGrpSecondaryAssetClass" type="gcap:SegGrpSecondaryAssetClass" nillable="true"/>
+         <xsd:element name="AssetFocus3" type="gcap:AssetFocus3" nillable="true"/>
+         <xsd:element name="LastTrainedDate" type="gcap:LastTrainedDate" nillable="true"/>
+         <xsd:element name="SegGrpPrimaryAssetClass" type="gcap:SegGrpPrimaryAssetClass" nillable="true"/>
+         <xsd:element name="SegGrpBSCSide" type="gcap:SegGrpBSCSide" nillable="true"/>
+         <xsd:element name="LocalSalutation" type="gcap:LocalSalutation" nillable="true"/>
+         <xsd:element name="ContactNumber" type="gcap:ContactNumber" nillable="true"/>
+         <xsd:element name="ComplianceJobRole" type="gcap:ComplianceJobRole" nillable="true"/>
+         <xsd:element name="PrimaryAccountNumber" type="gcap:PrimaryAccountNumber" nillable="true"/>
+         <xsd:element name="PrimaryAccountClass" type="gcap:PrimaryAccountClass" nillable="true"/>
+         <xsd:element name="PrimaryAccountId" type="gcap:PrimaryAccountId" nillable="true"/>
+         <xsd:element name="Field1" type="gcap:Field1" nillable="true"/>
+         <xsd:element name="Field2" type="gcap:Field2" nillable="true"/>
+         <xsd:element name="FunctionPrimaryFlag" type="gcap-cat:FunctionPrimaryFlag" nillable="true"/>
+         <xsd:element name="RCRMAccountClass" type="gcap-cat:RCRMAccountClass" nillable="true"/>
+         <xsd:element name="AccountPrimaryFlag" type="gcap-cat:AccountPrimaryFlag" nillable="true"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:simpleType name="UUID">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.UUID</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>1-6AORV1</content>
+               <comment>Siebel Rowid</comment>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[A-Z,0-9,\-,\+]*"/>
+         <xsd:maxLength value="15"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PrimaryUUID">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.primaryUUID</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>1-6AORV1</content>
+               <comment>Siebel Rowid</comment>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[A-Z,0-9,\-,\+]*"/>
+         <xsd:maxLength value="15"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="UserType">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment>Indicates the User Type</comment>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="Domain">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.DOMAIN</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>SL</content>
+               <comment>Domain from which a user was created</comment>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[A-Z]*"/>
+         <xsd:maxLength value="2"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="UserID">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.LOGON.USER_ID</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>JSmith</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="320"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LocalFirstName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.LOCAL FIRST NAME</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content/>
+               <comment>May contain characters from the local character set</comment>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LocalLastName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.LOCAL LAST NAME</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content/>
+               <comment>May contain characters from the local character set</comment>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Title">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.TITLE</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>Mr</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="15"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PhoneNumber">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.WORK PHONE NUMBER</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>+44 20 7542 8567 x5432</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="40"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="EmailAddress">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.EMAIL_ADDR</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>John.Smith@email.com</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="320"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="JobRole">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.LOGON.JOB FUNCTION</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>Equity Sales Person</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="75"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LegalConsentGiven">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.LEGAL_CONSENT_GIVEN_FLAG</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>true</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:boolean"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="LegalConsentGivenOn">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.LEGAL_CONSENT_GIVEN_TIMESTAMP</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>2007/04/25 01:01:01</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:dateTime"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="MarketingConsentGiven">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.MARKETING_CONSENT_GIVEN_FLAG</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>true</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:boolean"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="MarketingConsentGivenOn">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.MARKETING_CONSENT_GIVEN_TIMESTAMP</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>2007/04/25 01:01:01</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:dateTime"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="LastUpdatedByAAAOn">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.LAST_UPDATED_BY_AAA_TIMESTAMP</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>2007/04/25 01:01:01</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:dateTime"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="LastUpdatedSiebelOn">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.LAST_UPDATED_BY_SIEBEL_TIMESTAMP</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>2007/04/25 01:01:01</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:dateTime"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="_FTLCompleted">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.FIRST_TIME_LOGIN_COMPLETED_FLAG</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>true</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:boolean"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="_FTLCompletedOn">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.FIRST_TIME_LOGIN_COMPLETED_TIMESTAMP</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>2007/04/25 01:01:01</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:dateTime"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="TemporaryURL">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.FIRST_TIME_URL</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="1000"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PreferredServiceLanguage">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.PREFERRED SERVICE LANGUAGE</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ReutersMessagingId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.REUTERS MESSAGING ID</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LocalDACSID">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.LocalDACSID</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="32"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="GeographicalFocus">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>CDM.v2.CONTACT.GEOGRAPHICAL FOCUS</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactSubType">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content>EMPLOYEE</content>
+               <comment>Indicates if the contact is a Reuters/3rd Party employee or a client contact.</comment>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactJobFunction">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>[SIEBEL LDM].[CONTACT JOB FUNCTION].[NAME]</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content>LAN Contact</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="EmployeePositionName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content>UK TAM John Smith</content>
+               <comment>Positions are used to relate Reuters Employees to accounts</comment>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactPrimaryAddressId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactPrimaryPositionId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactPriorityFlag">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactRowStatus">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="CostAllocation">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="CoverageRole">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Description">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="255"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Division">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="EmployeeId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="EmploymentStatus">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="GroupTypeCode2">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="IntegrationId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LoginId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="MiddleName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Name2">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="OpportunitySalesTeamRole">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ParentPositionId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ParentPositionName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ParentPrimaryPositionId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="PartyTypeCode2">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PartyUId2">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="OnceOffRevenue">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="Responsiblity">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Relationship">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Role">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="RowId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="Id">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="AccountId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="CellularPhone">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="Name">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="EmailAddress2">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="EmployeeFlag">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="FirstName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="JobTitle">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="75"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LastName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="20"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="MM">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="MasterAccountId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="PartyTypeCD">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PartyUID3">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PersonUId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PrimaryPositionId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="CoreSuiteStatus">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="DirectMarketing">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ErrorMessage">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="FunctionId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PreferredLanguage">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Status">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="RelationshipType">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="WorkPhone">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="40"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="AccountLocation">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="AccountPositionId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="AccountRowStatus">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="AccountTeamRole">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ActivePagerNumber">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ActivePagerPIN">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="40"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ActiveLoginName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ActiveLoginId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ActiveEmail">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ActiveFax">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="ActiveLastName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ActiveFirstName">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ModId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem>Mod Id</gcap-sa:EquivalentDataItem>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactStatus">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="1"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactID">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="1"/>
+         <xsd:maxLength value="15"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="MarketFocus">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content>Europe</content>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="EndUserActivity">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="CPfGStatusReason">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="CPfGStatus">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="CPfGTempURL">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="2000"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="CPfGId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="15"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="FTLCompleteFlag">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="15"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="FTLFlagSetDate">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="TimeStamp">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="SourceSystem">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="LastUpdatedBy">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   <xsd:simpleType name="Department">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="FaxPhone">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="40"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactFloor">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="VIP">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="1"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="SegGrpSecondaryAssetClass">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="255"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="AssetFocus3">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LastTrainedDate">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string"></xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="SegGrpPrimaryAssetClass">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="255"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="SegGrpBSCSide">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="30"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LocalSalutation">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ContactNumber">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="10"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ComplianceJobRole">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PrimaryAccountNumber">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="20"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PrimaryAccountClass">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="20"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="PrimaryAccountId">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="15"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Field1">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="Field2">
+      <xsd:annotation>
+         <xsd:appinfo>
+            <gcap-sa:EquivalentDataItem/>
+            <gcap-sa:Example>
+               <content/>
+               <comment/>
+            </gcap-sa:Example>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:minLength value="0"/>
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

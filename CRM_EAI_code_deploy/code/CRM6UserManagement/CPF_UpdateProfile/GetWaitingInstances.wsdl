@@ -1,0 +1,25 @@
+<?binding.jca GetWaitingInstances_db.jca?>
+<definitions name="GetWaitingInstances" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:db="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+    <plt:partnerLinkType name="GetWaitingInstances_plt">
+        <plt:role name="GetWaitingInstances_role">
+            <plt:portType name="tns:GetWaitingInstances_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/GetWaitingInstances" schemaLocation="GetWaitingInstances.xsd"/>
+        </schema>
+    </types>
+    <message name="GetWaitingInstancesInput_msg">
+        <part name="GetWaitingInstancesInput_msg" element="db:GetWaitingInstancesInput"/>
+    </message>
+    <message name="GetWaitingInstancesOutputCollection_msg">
+        <part name="GetWaitingInstancesOutputCollection" element="db:GetWaitingInstancesOutputCollection"/>
+    </message>
+    <portType name="GetWaitingInstances_ptt">
+        <operation name="GetWaitingInstances">
+            <input message="tns:GetWaitingInstancesInput_msg"/>
+            <output message="tns:GetWaitingInstancesOutputCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

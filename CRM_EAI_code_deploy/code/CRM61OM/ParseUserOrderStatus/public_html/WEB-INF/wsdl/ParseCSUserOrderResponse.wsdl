@@ -1,0 +1,47 @@
+<definitions
+    
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:osns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+     xmlns:fixns="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/FixedLengthResponse" location="EAI.MSG.CS.209_FixedLengthEBCDICMessage.xsd"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+         location="EAI.MSG.CS.UOM.275_UserOrderResponse.xsd"/>
+    <message name="FLUserOrderResponse">
+        <part name="parameter" element="fixns:fixedLengthMessage"/>
+    </message>
+    <message name="CSUserOrderResponse">
+        <part name="parameter" element="tns:UserOrderResponse"/>
+    </message>
+    <portType name="ParseCSUserOrderResponse">
+        <operation name="ParseUserOrderResponse">
+            <input message="tns:FLUserOrderResponse"/>
+            <output message="tns:CSUserOrderResponse"/>
+        </operation>
+    </portType>
+    <binding name="ParseCSUserOrderResponseSOAP" type="tns:ParseCSUserOrderResponse">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="ParseUserOrderResponse">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ParseCSUserOrderResponse">
+        <port name="ParseUserOrderResponse" binding="tns:ParseCSUserOrderResponseSOAP">
+            <soap:address location="http://10.2.136.63:8888/CRM61OM-ParseUserOrderStatus-context-root/ParseUserOrderResponse"/>
+        </port>
+    </service>
+</definitions>

@@ -1,0 +1,35 @@
+<?binding.jca PME_Enqueue_mq.jca?>
+<definitions name="PME_Enqueue"
+             targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/mq/headerPME_Enqueue/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/mq/header"
+             xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/mq/headerPME_Enqueue/"
+             xmlns:imp1="http://www.siebel.com/xml/RCRM%20SAP%20Product%20Pricing"
+             xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd"
+             nxsd:encoding="UTF-8">
+    <plt:partnerLinkType name="Enqueue_plt">
+        <plt:role name="Enqueue_role">
+            <plt:portType name="tns:Enqueue_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.siebel.com/xml/RCRM%20SAP%20Product%20Pricing"
+                    schemaLocation="EAI.MSG.CCRM.PPL.291_ProductPricingPublishRequest.xsd"/>
+        </schema>
+    </types>
+    <message name="ListOfRcrmSapProductPricing_msg">
+        <part name="ListOfRcrmSapProductPricing"
+              element="imp1:ListOfRcrmSapProductPricing"/>
+    </message>
+    <portType name="Enqueue_ptt">
+        <operation name="Enqueue">
+            <input message="tns:ListOfRcrmSapProductPricing_msg"/>
+        </operation>
+    </portType>
+</definitions>
+
+
+
+

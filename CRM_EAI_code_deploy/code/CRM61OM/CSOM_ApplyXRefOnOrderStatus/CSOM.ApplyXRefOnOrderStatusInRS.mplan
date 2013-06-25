@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Mediator name="CSOM.ApplyXRefOnOrderStatusInRS" wsdlTargetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+   <operation name="applyStaticXRefData">
+      <switch>
+         <case name="Case_1_CSOM.ApplyXRefOnOrderStatusInRS.applyStaticXRefData" executionType="direct">
+            <action>
+               <transform>
+                  <part function="xslt(xsl/XFormOrderResponseStatusToOrderStatus.xsl,$in.orderResponseStatus)" name="$out.payload"/>
+               </transform>
+               <assign/>
+               <invoke reference="OM.ManageOrderLineStatusSOAPAdp" operation="manageOrderLineStatus"/>
+            </action>
+         </case>
+      </switch>
+   </operation>
+</Mediator>

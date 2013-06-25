@@ -1,0 +1,163 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gcap-sa="http://www.reuters.com/ns/2007/09/01/GCAP/SchemaAnnotations"
+     xmlns:xsdLocal="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement"
+     elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+      <xsd:include schemaLocation="EAI.MSG.CS.UOM_CommonTypes.xsd"/>
+    <xsd:element name="CSMoveUser" type="xsdLocal:CSMoveUserRequest"/>
+    <xsd:complexType name="CSMoveUserRequest">
+        <xsd:sequence>
+            <xsd:element name="eaiHeader" type="xsdLocal:_CSEaiHeader"/>
+            <xsd:element name="messageHeader" type="xsdLocal:CSMessageHeader"/>
+            <xsd:element name="userOrderHeader" type="xsdLocal:CSUserOrderHeader"/>
+            <xsd:element name="userOrderLineItem" type="xsdLocal:CSUOLI" maxOccurs="100"/>
+        </xsd:sequence>
+    </xsd:complexType>
+   
+    <xsd:complexType name="CSMessageHeader">
+        <xsd:sequence>
+            <xsd:element name="logicalCountry" type="xsdLocal:CSCountryCode"/>
+            <xsd:element name="messageId" type="xsdLocal:string30"/>
+            <xsd:element name="transactionId" type="xsdLocal:string30"/>
+            <xsd:element name="messageHistory" type="xsdLocal:string100"/>
+            <xsd:element name="tracingId" type="xsdLocal:string50"/>
+            <xsd:element name="actionCode" type="xsdLocal:string4"/>
+            <xsd:element name="version" type="xsdLocal:string1"/>
+            <xsd:element name="timeStamp" type="xsd:dateTime"/>
+            <xsd:element name="userId" type="xsdLocal:string50"/>
+            <xsd:element name="objectSystem" type="xsdLocal:string8"/>
+            <xsd:element name="sourceSystem" type="xsdLocal:CSSourceSystem"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CSUserOrderHeader">
+        <xsd:sequence>
+            <xsd:element name="transactionId" type="xsdLocal:CSTransactionId"/>
+            <xsd:element name="subscriber" type="xsdLocal:CSSubscriber"/>
+            <xsd:element name="subAccount" type="xsdLocal:CSSubAccount"/>
+            <xsd:element name="newSubscriber" type="xsdLocal:CSSubscriber"/>
+            <xsd:element name="newSubAccount" type="xsdLocal:CSSubAccount"/>
+            <xsd:element name="actionCode" type="xsdLocal:CSActionCode"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CSUOLI">
+        <xsd:sequence>
+            <xsd:element name="uniqueUserLineId" type="xsdLocal:CSUniqueUserLineId"/>
+            <xsd:element name="athenSubId" type="xsdLocal:CSAthenSubId"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="CSCountryCode">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>FR</content>
+                    <comment>Country code for France</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CSTransactionId">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>TransactionId</content>
+                    <comment>Transaction Id</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CSSourceSystem">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>A</content>
+                    <comment>Athena</comment>
+                </gcap-sa:Example>
+                <gcap-sa:Example>
+                    <content>S</content>
+                    <comment>Siebel</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:token">
+            <xsd:enumeration value="S"/>
+            <xsd:enumeration value="A"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CSSubscriber">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>UK41237</content>
+                    <comment>Subscriber number</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="7"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CSSubAccount">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content>001</content>
+                    <comment>Sub Account number</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:union memberTypes="xsd:int">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:token">
+                    <xsd:enumeration value=""/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:union>
+    </xsd:simpleType>
+    <xsd:simpleType name="CSActionCode">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example/>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="4"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CSUniqueUserLineId">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example/>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="15"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="CSAthenSubId">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <gcap-sa:EquivalentDataItem/>
+                <gcap-sa:Example>
+                    <content/>
+                    <comment>Athena Sub Id</comment>
+                </gcap-sa:Example>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+   
+</xsd:schema>

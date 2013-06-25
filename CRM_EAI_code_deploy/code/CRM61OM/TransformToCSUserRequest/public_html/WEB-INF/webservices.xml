@@ -1,0 +1,17 @@
+<webservices xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd"
+     version="1.1">
+    <webservice-description>
+        <webservice-description-name>TransformToCSUserRequestService</webservice-description-name>
+        <wsdl-file>WEB-INF/wsdl/TransformToCSUserRequestService.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/TransformToCSUserRequestService-java-wsdl-mapping.xml</jaxrpc-mapping-file>
+        <port-component>
+            <port-component-name>TransformToCSUserRequest</port-component-name>
+            <wsdl-port xmlns:wsa0="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/UOM/UserOrderManagement">wsa0:TransformToCSUserRequest</wsdl-port>
+            <service-endpoint-interface>com.reuters.eai.cc.uom.TransformToCSUserRequest</service-endpoint-interface>
+            <service-impl-bean>
+                <servlet-link>TransformToCSUserRequest</servlet-link>
+            </service-impl-bean>
+        </port-component>
+    </webservice-description>
+</webservices>

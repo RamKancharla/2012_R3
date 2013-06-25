@@ -1,0 +1,86 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CPFGOM_UserOrderManager" revision="2.0" state="on">
+    <import location="CPFGOM_UserOrderManager.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestManager/CPFGEF_FulfilmentRequestManager.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" importType="wsdl"/>
+    <import namespace="http://xmlns.oracle.com/CCRMCM_ContactDispatcher" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher.wsdl" importType="wsdl"/>
+    <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" importType="wsdl"/>
+    <service name="CPFGOM_UserOrderManager" ui:wsdlLocation="CPFGOM_UserOrderManager.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager#wsdl.interface(CPFGOM_UserOrderManager)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFGOM_UserOrderManager#wsdl.endpoint(CPFGOM_UserOrderManager/CPFGOM_UserOrderManager)"/>
+    </service>
+    <component name="CPFGOM_UserOrderManagerProcess">
+        <implementation.bpel src="CPFGOM_UserOrderManagerProcess.bpel"/>
+        
+        
+    </component>
+    <reference name="SequenceReleaser" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaser)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/anchorToSeqReleaser?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceReleaser/SequenceReleaserCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="CCRMCM_ContactDispatcher" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcher)" callbackInterface="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.interface(CCRMCM_ContactDispatcherCallback)"/>
+        <binding.ws port="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.endpoint(CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcher?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://xmlns.oracle.com/CCRMCM_ContactDispatcher#wsdl.endpoint(CCRMCM_ContactDispatcher/CCRMCM_ContactDispatcherCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="OM_ManageOrderLineStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <reference name="SequenceChecker" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.endpoint(SequenceChecker/SequenceChecker)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/anchorToSequencer?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <reference name="CPFGEF_FulfilmentRequestManager" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestManager/CPFGEF_FulfilmentRequestManager.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.interface(CPFGEF_FulfilmentRequestManager)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.interface(CPFGEF_FulfilmentRequestManagerCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.endpoint(CPFGEF_FulfilmentRequestManager/CPFGEF_FulfilmentRequestManager)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CPFGEF_FulfilmentRequestManager/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CPFG/ElectronicFulfilmentServices/CPFGEF_FulfilmentRequestManager#wsdl.endpoint(CPFGEF_FulfilmentRequestManager/CPFGEF_FulfilmentRequestManagerCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>CPFGOM_UserOrderManager</source.uri>
+        <target.uri>CPFGOM_UserOrderManagerProcess/CPFGOM_UserOrderManager</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGOM_UserOrderManagerProcess/SequenceChecker</source.uri>
+        <target.uri>SequenceChecker</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGOM_UserOrderManagerProcess/OM_ManageOrderLineStatus</source.uri>
+        <target.uri>OM_ManageOrderLineStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGOM_UserOrderManagerProcess/SequenceReleaser</source.uri>
+        <target.uri>SequenceReleaser</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGOM_UserOrderManagerProcess/CCRMCM_ContactDispatcher</source.uri>
+        <target.uri>CCRMCM_ContactDispatcher</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CPFGOM_UserOrderManagerProcess/CPFGEF_FulfilmentRequestManager</source.uri>
+        <target.uri>CPFGEF_FulfilmentRequestManager</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

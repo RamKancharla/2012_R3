@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://order.service.eai.trls.thomsonreuters.com/" xmlns:tns="http://order.service.eai.trls.thomsonreuters.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="onData" type="tns:onData"/>
+
+  <xs:element name="onDataResponse" type="tns:onDataResponse"/>
+
+  <xs:complexType name="onData">
+    <xs:sequence>
+      <xs:element name="arg0" type="tns:orderEntry" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="orderEntry">
+    <xs:sequence>
+      <xs:element name="sourcesystem" type="xs:string" minOccurs="0"/>
+      <xs:element name="targetsystem" type="xs:string" minOccurs="0"/>
+      <xs:element name="messageid" type="xs:string" minOccurs="0"/>
+      <xs:element name="timestamp" type="xs:string" minOccurs="0"/>
+      <xs:element name="orderNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="orderStatus" type="xs:string" minOccurs="0"/>
+      <xs:element name="orderType" type="xs:string" minOccurs="0"/>
+      <xs:element name="createdOn" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="quoteNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="LocationAccountRowID" type="xs:string" minOccurs="0"/>
+      <xs:element name="headerfield1" type="xs:string" minOccurs="0"/>
+      <xs:element name="headerfield2" type="xs:string" minOccurs="0"/>
+      <xs:element name="headerfield3" type="xs:string" minOccurs="0"/>
+      <xs:element name="headerfield4" type="xs:string" minOccurs="0"/>
+      <xs:element name="headerfield5" type="xs:string" minOccurs="0"/>
+      <xs:element name="lineItems" type="tns:orderEntryLineItems" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="orderEntryLineItems">
+    <xs:sequence>
+      <xs:element name="billtosubscribernumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="billtosubaccountnumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="billtoaccountrowid" type="xs:string" minOccurs="0"/>
+      <xs:element name="assetintegrationid" type="xs:string" minOccurs="0"/>
+      <xs:element name="olirowid" type="xs:string" minOccurs="0"/>
+      <xs:element name="globalPLI" type="xs:string" minOccurs="0"/>
+      <xs:element name="productName" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantity" type="xs:int"/>
+      <xs:element name="billingNote" type="xs:string" minOccurs="0"/>
+      <xs:element name="action" type="xs:string" minOccurs="0"/>
+      <xs:element name="businesscase" type="xs:string" minOccurs="0"/>
+      <xs:element name="status" type="xs:string" minOccurs="0"/>
+      <xs:element name="permissioningstatus" type="xs:string" minOccurs="0"/>
+      <xs:element name="linefield1" type="xs:string" minOccurs="0"/>
+      <xs:element name="linefield2" type="xs:string" minOccurs="0"/>
+      <xs:element name="linefield3" type="xs:string" minOccurs="0"/>
+      <xs:element name="linefield4" type="xs:string" minOccurs="0"/>
+      <xs:element name="linefield5" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="onDataResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:dataStatus" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="dataStatus">
+    <xs:sequence>
+      <xs:element name="status" type="xs:string" minOccurs="0"/>
+      <xs:element name="errorcode" type="xs:string" minOccurs="0"/>
+      <xs:element name="errormessage" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

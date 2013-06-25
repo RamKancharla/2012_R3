@@ -1,0 +1,178 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Wed Sep 23 15:11:00 GMT+05:30 2009
+  Author:  sg59930
+  Purpose: Asynchronous BPEL Process
+
+  * 1.0       28/04/10    Vasanthi               Modified Schema and transformations as a part of PBI-278
+  * 1.0		  28/06/10	  Albin I				 Defect 37842  Removing the usage of JMS Topic		
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="TOMCM_ContactManager"
+         targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager"
+         xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CM/ContactPublish"
+         xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.esb.server.headers.ESBHeaderFunctions"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:ns5="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/CM/TOMCM_ContactManager"
+         xmlns:ns6="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:ora="http://schemas.oracle.com/xpath/extension"
+         xmlns:ns9="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"
+         xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/jms/DequeueContact/"
+         xmlns:ns3="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+         xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish"
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:ns10="http://xmlns.oracle.com/pcbpel/adapter/db/WriteContact/"
+         xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions">
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <partnerLinks>
+        <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+        <partnerLink myRole="AsyncSequenceCheckerRequester"
+                     name="AsyncSequenceChecker"
+                     partnerRole="AsyncSequenceCheckerProvider"
+                     partnerLinkType="ns9:AsyncSequenceChecker"/>
+        <partnerLink name="WriteContact" partnerRole="WriteContact_role"
+                     partnerLinkType="ns10:WriteContact_plt"/>
+        <partnerLink name="TOMCM_ContactManager"
+                     partnerLinkType="client:TOMCM_ContactManager"
+                     myRole="TOMCM_ContactManagerProvider"
+                     partnerRole="TOMCM_ContactManagerRequester"/>
+    </partnerLinks>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        VARIABLES                                                        
+        List of messages and XML documents used within this BPEL process 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <variables>
+        <!-- Reference to the message passed as input during initiation -->
+        <variable name="inputVariable"
+                  messageType="client:TOMCM_ContactManagerRequestMessage"/>
+        <!-- Reference to the message that will be sent back to the requester during callback -->
+        <variable name="InvSequenceCheckerIV"
+                  messageType="ns9:AsyncSequenceCheckerRequestMessage"/>
+        <variable name="ReceiveSequenceReleaseIV"
+                  messageType="ns9:AsyncSequenceCheckerResponseMessage"/>
+        <variable name="InvWriteContactIV"
+                  messageType="ns10:InterfaceBufferCollection_msg"/>
+        <variable name="InvTOMCM_Invoker_InputVariable"
+                  element="ns2:pubContactRequest"/>
+    </variables>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+       ORCHESTRATION LOGIC                                               
+       Set of activities coordinating the flow of messages across the    
+       services integrated within this business process                  
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    -->
+    <sequence name="main">
+        <!-- Receive input from requestor. (Note: This maps to operation defined in TOMCM_ContactManager.wsdl) -->
+        <receive name="rcvContactInput" variable="inputVariable"
+                 createInstance="yes" partnerLink="TOMCM_ContactManager"
+                 portType="client:TOMCM_ContactManager" operation="initiate"/>
+        <!-- 
+          Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
+        -->
+        <assign name="AsgInitVariables">
+            <copy>
+                <from expression="ora:generateGUID()"/>
+                <to variable="inputVariable" part="contactEvent"
+                    query="/ns4:contactEvent/ns4:eaiHeader/ns3:tracingId"/>
+            </copy>
+            <copy>
+                <from expression="ora:getCompositeInstanceId()"/>
+                <to variable="inputVariable" part="contactEvent" query="/ns4:contactEvent/ns4:eaiHeader/ns3:instanceId"/>
+            </copy>
+        </assign>
+        <bpelx:exec name="AsgCustomTitle" language="java" version="1.3">
+            <![CDATA[String uuid = ((oracle.xml.parser.v2.XMLElement)                               
+                        getVariableData("inputVariable", "contactEvent", "/ns4:contactEvent/ns4:contact/ns4:UUID")).getFirstChild().getNodeValue();                                  
+setCompositeInstanceTitle("ContactId: " + uuid);]]>
+        </bpelx:exec>
+        <switch name="AsynchChecker">
+            <case condition="bpws:getVariableData('inputVariable','contactEvent','/ns4:contactEvent/ns4:contact/ns4:UUID')=&quot;&quot;">
+                <bpelx:annotation>
+                    <bpelx:pattern>Case when ContactId does not exist</bpelx:pattern>
+                </bpelx:annotation>
+                <empty name="DoNothing"/>
+            </case>
+            <otherwise>
+                <sequence name="Sequence_1">
+                    <assign name="TransInputToTOMCMInvoker">
+                        <bpelx:annotation>
+                            <bpelx:pattern>transformation</bpelx:pattern>
+                        </bpelx:annotation>
+                        <copy>
+                            <from expression="ora:processXSLT('TransInputToTOMCMInvoker.xsl',bpws:getVariableData('inputVariable','contactEvent'))"/>
+                            <to variable="InvTOMCM_Invoker_InputVariable"/>
+                        </copy>
+                    </assign>
+                    <switch name="SendToTOM">
+                        <case condition="bpws:getVariableData('inputVariable','contactEvent','/ns4:contactEvent/ns4:actionCode')!=&quot;&quot; and (bpws:getVariableData('InvTOMCM_Invoker_InputVariable','/ns2:pubContactRequest/ns2:contact/ns2:clientContactJobFunctionList')!='' or bpws:getVariableData('InvTOMCM_Invoker_InputVariable','/ns2:pubContactRequest/ns2:contact/ns2:contactSubType')=&quot;INTERNAL&quot; )">
+                            <sequence name="Sequence_2">
+                                <assign name="TransInputToWriteContactIV">
+                                    <bpelx:annotation>
+                                        <bpelx:pattern>transformation</bpelx:pattern>
+                                    </bpelx:annotation>
+                                    <copy>
+                                        <from expression="ora:processXSLT('TransInputToWriteContactIV.xsl',bpws:getVariableData('InvTOMCM_Invoker_InputVariable'))"/>
+                                        <to variable="InvWriteContactIV"
+                                            part="InterfaceBufferCollection"/>
+                                    </copy>
+                                </assign>
+                                <sequence name="CheckSequencer">
+                                    <assign name="TransInputToSequenceCheck">
+                                        <bpelx:annotation>
+                                            <bpelx:pattern>transformation</bpelx:pattern>
+                                        </bpelx:annotation>
+                                        <copy>
+                                            <from expression="ora:processXSLT('TransInputToSequenceCheck.xsl',bpws:getVariableData('inputVariable','contactEvent'))"/>
+                                            <to variable="InvSequenceCheckerIV"
+                                                part="payload"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="InvSequenceChecker"
+                                            partnerLink="AsyncSequenceChecker"
+                                            portType="ns9:AsyncSequenceChecker"
+                                            operation="initiate"
+                                            inputVariable="InvSequenceCheckerIV"/>
+                                    <receive name="ReceiveSequenceRelease"
+                                             partnerLink="AsyncSequenceChecker"
+                                             portType="ns9:AsyncSequenceCheckerCallback"
+                                             operation="onResult"
+                                             variable="ReceiveSequenceReleaseIV"
+                                             createInstance="no"/>
+                                </sequence>
+                                <invoke name="InvWriteContact"
+                                        partnerLink="WriteContact"
+                                        portType="ns10:WriteContact_ptt"
+                                        operation="insert"
+                                        inputVariable="InvWriteContactIV"/>
+                            </sequence>
+                        </case>
+                        <otherwise>
+                            <empty name="DoNothing"/>
+                        </otherwise>
+                    </switch>
+                </sequence>
+            </otherwise>
+        </switch>
+    </sequence>
+</process>

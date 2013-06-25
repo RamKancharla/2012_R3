@@ -1,0 +1,50 @@
+<definitions
+     name="CCRMACM_PropagateAccountContactPublishStatus"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <!--import namespace="http://schemas.oracle.com/bpel/extension" location="RuntimeFault.wsdl"/-->
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus"
+                 schemaLocation="CCRMACM_PropagateAccountContactPublishStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/AM/AccountPublish/CCRMACM_PropagateAccountContactPublishStatus">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CS/ACM/AccountContactPublish"
+                 schemaLocation="EAI.MSG.CS.ACM.234_AccountContactStatus.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMACM_PropagateAccountContactPublishStatusRequestMessage">
+        <part name="payload" element="ns1:CSAccountContactStatus"/>
+    </message>
+   <message name="CCRMACM_PropagateAccountContactPublishStatusResponseMessage">
+        <part name="payload" element="client:CCRMACM_PropagateAccountContactPublishStatusProcessResponse"/>
+    </message>
+    <portType name="CCRMACM_PropagateAccountContactPublishStatus">
+        <operation name="sendAccountContactStatus">
+            <input message="client:CCRMACM_PropagateAccountContactPublishStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMACM_PropagateAccountContactPublishStatusCallback">
+        <operation name="onResult">
+            <input message="client:CCRMACM_PropagateAccountContactPublishStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMACM_PropagateAccountContactPublishStatus">
+        <plnk:role name="CCRMACM_PropagateAccountContactPublishStatusProvider">
+            <plnk:portType name="client:CCRMACM_PropagateAccountContactPublishStatus"/>
+        </plnk:role>
+        <plnk:role name="CCRMACM_PropagateAccountContactPublishStatusRequester">
+            <plnk:portType name="client:CCRMACM_PropagateAccountContactPublishStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

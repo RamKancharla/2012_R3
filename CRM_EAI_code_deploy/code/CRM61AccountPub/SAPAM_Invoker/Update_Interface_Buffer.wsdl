@@ -1,0 +1,24 @@
+<?binding.jca Update_Interface_Buffer_db.jca?>
+<definitions name="Update_Interface_Buffer" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Interface_Buffer/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish" xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/db/" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Interface_Buffer/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateInterfaceBuffer">
+    <plt:partnerLinkType name="Update_Interface_Buffer_plt">
+        <plt:role name="Update_Interface_Buffer_role">
+            <plt:portType name="tns:Update_Interface_Buffer_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/UpdateInterfaceBuffer" schemaLocation="UpdateInterfaceBuffer_table.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2010/07/07/SAMI/EAI/AM/AccountPublish" schemaLocation="EAI.MSG.SAP.AM.292_PublishAccount.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="InterfaceBufferCollection_msg">
+        <part name="InterfaceBufferCollection" element="top:InterfaceBufferCollection"/>
+    </message>
+    <portType name="Update_Interface_Buffer_ptt">
+        <operation name="update">
+            <input message="tns:InterfaceBufferCollection_msg"/>
+        </operation>
+    </portType>
+</definitions>

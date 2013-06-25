@@ -1,0 +1,261 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Tue Dec 13 11:36:04 GMT+05:30 2011
+  Author:  Tanmay.Saxena
+  Type: BPEL 1.1 Process
+  Purpose: One Way BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMCM_PropagateSFDCContact"
+               targetNamespace="http://xmlns.oracle.com/CRM61ContactPub/CCRMCM_PropagateSFDCContact/CCRMCM_PropagateSFDCContact"
+               xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+               xmlns:client="http://xmlns.oracle.com/CRM61ContactPub/CCRMCM_PropagateSFDCContact/CCRMCM_PropagateSFDCContact"
+               xmlns:ora="http://schemas.oracle.com/xpath/extension"
+               xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns1="http://soap.sforce.com/schemas/class/ContactManagement"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:ns3="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/AsyncSequenceChecker"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/mq/CRM61ContactPub/CCRMCM_PropagateSFDCContact/SiebelInboundQueueAdapter">
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="ccrmcm_propagatesfdccontact_client" partnerLinkType="client:CCRMCM_PropagateSFDCContact" myRole="CCRMCM_PropagateSFDCContactProvider"/>
+    <partnerLink name="AsyncSequenceChecker"
+                 partnerLinkType="ns3:AsyncSequenceChecker"
+                 partnerRole="AsyncSequenceCheckerProvider"
+                 myRole="AsyncSequenceCheckerRequester"/>
+    <partnerLink name="SiebelInboundQueueAdapter"
+                 partnerLinkType="ns4:Enqueue_plt" partnerRole="Enqueue_role"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="client:CCRMCM_PropagateSFDCContactRequestMessage"/>
+    <variable messageType="bpelx:RuntimeFaultMessage" name="runtimeFault"/>
+    <variable name="InvokeAsyncSeqChecker_initiate_InputVariable"
+              messageType="ns3:AsyncSequenceCheckerRequestMessage"/>
+    <variable name="ReceiveSequenceRelease_onResult_InputVariable"
+              messageType="ns3:AsyncSequenceCheckerResponseMessage"/>
+    <variable name="RCRMContactNumberFromXref" type="xsd:string"/>
+    <variable name="InvokeSiebelEnqueue_Enqueue_InputVariable"
+              messageType="ns4:Enqueue_msg"/>
+  </variables>
+  <faultHandlers>
+    <catch faultName="bpelx:invalidVariables" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOninvalidVariablesFault" version="1.5"
+                  language="java">
+        <![CDATA[String SFDCContactID = ((oracle.xml.parser.v2.XMLElement)            
+                        getVariableData("inputVariable","payload","/ns1:TRUSTOutboundContact/ns1:ConRequest/ns1:SFDCId")).getFirstChild().getNodeValue();;           
+setCompositeInstanceTitle("SFDC Contact ID : " + SFDCContactID + ";Flt");]]>
+      </bpelx:exec>
+    </catch>
+    <catch faultName="bpelx:runtimeFault" faultVariable="runtimeFault">
+      <bpelx:exec name="AsgCustomTitleOnRuntimeFault" version="1.5" language="java">
+        <![CDATA[String SFDCContactID = ((oracle.xml.parser.v2.XMLElement)            
+                        getVariableData("inputVariable","payload","/ns1:TRUSTOutboundContact/ns1:ConRequest/ns1:SFDCId")).getFirstChild().getNodeValue();;           
+setCompositeInstanceTitle("SFDC Contact ID : " + SFDCContactID + ";Flt");]]>
+      </bpelx:exec>
+    </catch>
+    <catchAll>
+      <bpelx:exec name="AsgCustomTitleOnGenericFault" version="1.5"
+                  language="java">
+        <![CDATA[String SFDCContactID = ((oracle.xml.parser.v2.XMLElement)            
+                        getVariableData("inputVariable","payload","/ns1:TRUSTOutboundContact/ns1:ConRequest/ns1:SFDCId")).getFirstChild().getNodeValue();;           
+setCompositeInstanceTitle("SFDC Contact ID : " + SFDCContactID + ";Flt");]]>
+      </bpelx:exec>
+    </catchAll>
+  </faultHandlers>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in CCRMCM_PropagateSFDCContact.wsdl) -->
+    <receive name="receiveInput" partnerLink="ccrmcm_propagatesfdccontact_client" portType="client:CCRMCM_PropagateSFDCContact" operation="process" variable="inputVariable" createInstance="yes"/>
+    <assign name="AssignInitVariables">
+      <copy>
+        <from expression="ora:getCompositeInstanceId()"/>
+        <to variable="inputVariable" part="payload"
+            query="/ns1:TRUSTOutboundContact/ns1:eaiHeader/ns2:instanceId"/>
+      </copy>
+      <copy>
+        <from expression="ora:generateGUID()"/>
+        <to variable="inputVariable" part="payload"
+            query="/ns1:TRUSTOutboundContact/ns1:eaiHeader/ns2:tracingId"/>
+      </copy>
+      <copy>
+        <from expression="ora:getCurrentDateTime()"/>
+        <to variable="inputVariable" part="payload"
+            query="/ns1:TRUSTOutboundContact/ns1:eaiHeader/ns2:timeStamp"/>
+      </copy>
+      <copy>
+        <from expression='"EAI;"'/>
+        <to variable="inputVariable" part="payload"
+            query="/ns1:TRUSTOutboundContact/ns1:eaiHeader/ns2:messageHistory"/>
+      </copy>
+      <copy>
+        <from expression="ora:getCompositeInstanceId()"/>
+        <to variable="inputVariable" part="payload"
+            query="/ns1:TRUSTOutboundContact/ns1:eaiHeader/ns2:messageId"/>
+      </copy>
+      <copy>
+        <from expression="ora:getCompositeInstanceId()"/>
+        <to variable="inputVariable" part="payload"
+            query="/ns1:TRUSTOutboundContact/ns1:eaiHeader/ns2:transactionId"/>
+      </copy>
+      <copy>
+        <from expression='"EAI"'/>
+        <to variable="inputVariable" part="payload"
+            query="/ns1:TRUSTOutboundContact/ns1:eaiHeader/ns2:applicationId"/>
+      </copy>
+      <copy>
+        <from expression="0"/>
+        <to variable="inputVariable" part="payload"
+            query="/ns1:TRUSTOutboundContact/ns1:eaiHeader/ns2:timeToLive"/>
+      </copy>
+      <copy>
+        <from expression='"A"'/>
+        <to variable="inputVariable" part="payload"
+            query="/ns1:TRUSTOutboundContact/ns1:eaiHeader/ns2:payloadVersion"/>
+      </copy>
+    </assign>
+    <scope name="ScopeForJavaProcessName" variableAccessSerializable="no">
+      <faultHandlers>
+        <catch faultName="bpelx:runtimeFault" faultVariable="runtimeFault">
+          <throw name="ThrCustomTitleFault" faultName="bpelx:runtimeFault"
+                 faultVariable="runtimeFault"/>
+        </catch>
+      </faultHandlers>
+      <bpelx:exec name="AssignHeaderJava" version="1.5" language="java">
+        <![CDATA[String SFDCContactID = ((oracle.xml.parser.v2.XMLElement)           
+                        getVariableData("inputVariable","payload","/ns1:TRUSTOutboundContact/ns1:ConRequest/ns1:SFDCId")).getFirstChild().getNodeValue();;          
+setCompositeInstanceTitle("SFDC Contact ID : " + SFDCContactID);]]>
+      </bpelx:exec>
+    </scope>
+    <scope name="ScopeForSequenceCheck" variableAccessSerializable="no">
+      <sequence name="SequenceForAsyncSeqChecker">
+        <assign name="TransInputToSequenceCheck">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:doXSLTransformForDoc('xsl/TransInputToSequenceCheck.xsl', $inputVariable.payload)"/>
+            <to variable="InvokeAsyncSeqChecker_initiate_InputVariable"
+                part="payload"/>
+          </copy>
+        </assign>
+        <invoke name="InvokeAsyncSeqChecker"
+                inputVariable="InvokeAsyncSeqChecker_initiate_InputVariable"
+                partnerLink="AsyncSequenceChecker"
+                portType="ns3:AsyncSequenceChecker" operation="initiate"
+                bpelx:invokeAsDetail="no"/>
+        <receive name="ReceiveSequenceRelease" createInstance="no"
+                 variable="ReceiveSequenceRelease_onResult_InputVariable"
+                 partnerLink="AsyncSequenceChecker"
+                 portType="ns3:AsyncSequenceCheckerCallback"
+                 operation="onResult"/>
+      </sequence>
+    </scope>
+    <scope name="ScopeToLookUpXref" variableAccessSerializable="no">
+      <variables>
+        <variable name="SFDCIdVar" type="xsd:string"/>
+      </variables>
+      <sequence name="SequenceToGetTheContactUniqueNumber">
+        <switch name="Switch1">
+          <case condition="string-length(bpws:getVariableData('inputVariable','payload','/ns1:TRUSTOutboundContact/ns1:ConRequest/ns1:ContactUniqueNumber')) > 0  and string-length(bpws:getVariableData('inputVariable','payload','/ns1:TRUSTOutboundContact/ns1:ConRequest/ns1:SFDCId')) > 0">
+            <bpelx:annotation>
+              <bpelx:pattern>Check if the request from Trust is for a update</bpelx:pattern>
+              <bpelx:general>
+                <bpelx:property name="userLabel">TestUpdate</bpelx:property>
+              </bpelx:general>
+            </bpelx:annotation>
+            <empty name="DoNothing"/>
+          </case>
+          <otherwise>
+            <sequence name="SequenceForXref">
+              <assign name="XrefLookupForValues">
+                <copy>
+                  <from variable="inputVariable" part="payload"
+                        query="/ns1:TRUSTOutboundContact/ns1:ConRequest/ns1:SFDCId"/>
+                  <to variable="SFDCIdVar"/>
+                </copy>
+                <copy>
+                  <from expression="xref:lookupXRef(&quot;oramds:/apps/EAIMetaData/Xref/SFDC_CRM_CONTACTSXREF.xref&quot;,&quot;SFDCCONTACTID&quot;,bpws:getVariableData('SFDCIdVar'),&quot;CONTACTUNIQUENUMBER&quot;,false())"/>
+                  <to variable="RCRMContactNumberFromXref"/>
+                </copy>
+              </assign>
+              <assign name="AssignContactUniqueNumberToInput">
+                <copy>
+                  <from variable="RCRMContactNumberFromXref"/>
+                  <to variable="inputVariable" part="payload"
+                      query="/ns1:TRUSTOutboundContact/ns1:ConRequest/ns1:ContactUniqueNumber"/>
+                </copy>
+              </assign>
+            </sequence>
+          </otherwise>
+        </switch>
+      </sequence>
+    </scope>
+    <scope name="ScopeToInvokeSiebel" variableAccessSerializable="no">
+      <faultHandlers>
+        <catchAll>
+          <throw name="ThrowInvalidVariablesFault" faultName="bpelx:invalidVariables"
+                 faultVariable="runtimeFault"/>
+        </catchAll>
+      </faultHandlers>
+      <sequence name="SequenceForSiebelEnqueue">
+        <assign name="TransformToEnqueueToSiebel">
+          <bpelx:annotation>
+            <bpelx:pattern>transformation</bpelx:pattern>
+          </bpelx:annotation>
+          <copy>
+            <from expression="ora:doXSLTransformForDoc('xsl/TransformationTrustToSiebelEnqueue.xsl', $inputVariable.payload)"/>
+            <to variable="InvokeSiebelEnqueue_Enqueue_InputVariable"
+                part="body"/>
+          </copy>
+        </assign>
+        <invoke name="InvokeSiebelEnqueue"
+                inputVariable="InvokeSiebelEnqueue_Enqueue_InputVariable"
+                partnerLink="SiebelInboundQueueAdapter"
+                portType="ns4:Enqueue_ptt" operation="Enqueue"
+                bpelx:invokeAsDetail="no"/>
+      </sequence>
+    </scope>
+  </sequence>
+</process>

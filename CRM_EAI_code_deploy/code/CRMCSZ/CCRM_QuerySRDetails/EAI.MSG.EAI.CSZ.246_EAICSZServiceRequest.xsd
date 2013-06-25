@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********************************************************************************
+* Module:      EAI.MSG.EAI.CSZ.246_EAICSZServiceRequest.xsd
+* Type:       	XSD Schema
+* Description: The schema used for Common Message attributes
+*
+* Change History
+* Version     Date      Author             Description Of Change
+*
+*  0.1        11/07/08  Sunil Vuppala	   Initial Version
+**********************************************************************************-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/ServiceRequest" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:csz="http://www.reuters.com/ns/2007/09/01/GCAP/CommonServiceRequestTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CSZ/ServiceRequest" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonServiceRequestTypes" schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.018_CommonServiceRequestTypes.xsd"/>
+<xsd:element name="EAICSZServiceRequest" type="xsdLocal:EAICSZServiceRequest"/>
+<xsd:complexType name="EAICSZServiceRequest">
+	<xsd:sequence>
+		<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+		<xsd:element name="SRNumber" type="csz:SRNumber"/>
+	</xsd:sequence>
+</xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,72 @@
+<definitions
+     name="TRUSTAM_AccountManager"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager/correlationset"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager/correlationset"
+         location="TRUSTAM_AccountManager_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager/correlationset"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager"
+                 schemaLocation="TRUSTAM_AccountManager.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager/correlationset"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+             xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager/correlationset"
+             xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish/TRUSTAM_AccountManager">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/SFDC/AccountPublish" schemaLocation="EAI.MSG.TRUST.269_PublishAccount.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ReleaseSequenceMessage">
+        <part name="releaseSequence" element="ns1:basicResponse"/>
+    </message>
+    <message name="TRUSTAM_AccountManagerResponseMessage">
+        <part name="payload" element="client:TRUSTAM_AccountManagerProcessResponse"/>
+    </message>
+    <message name="TRUSTAM_AccountManagerRequestMessage">
+        <part name="payload" element="ns2:publishTrustAccounts"/>
+    </message>
+    <portType name="TRUSTAM_AccountManager">
+        <operation name="initiate">
+            <input message="client:TRUSTAM_AccountManagerRequestMessage"/>
+        </operation>
+        <operation name="updateReleaseStatus">
+            <input name="input" message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <portType name="TRUSTAM_AccountManagerCallback">
+        <operation name="onResult">
+            <input message="client:TRUSTAM_AccountManagerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TRUSTAM_AccountManager">
+        <plnk:role name="TRUSTAM_AccountManagerProvider">
+            <plnk:portType name="client:TRUSTAM_AccountManager"/>
+        </plnk:role>
+        <plnk:role name="TRUSTAM_AccountManagerRequester">
+            <plnk:portType name="client:TRUSTAM_AccountManagerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:TrustCorrProp" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns6:SequenceCheckerRequestMessage" part="payload" query="/ns4:checkSequenceRequest/ns4:eaiHeader/ns5:tracingId"
+         xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"/>
+    <bpws:propertyAlias propertyName="pns1:TrustCorrProp" messageType="client:ReleaseSequenceMessage" part="releaseSequence"
+         query="/ns1:basicResponse/ns1:eaiHeader/ns4:tracingId" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+</definitions>

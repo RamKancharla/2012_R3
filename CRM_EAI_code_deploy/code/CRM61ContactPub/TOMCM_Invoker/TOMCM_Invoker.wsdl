@@ -1,0 +1,48 @@
+<definitions
+     name="TOMCM_Invoker"
+     targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/CM/TOMCM_Invoker"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/CM/TOMCM_Invoker"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/CM/TOMCM_Invoker">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish" schemaLocation="TOMContactTemp.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/TOM/CM/TOMCM_Invoker">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish" schemaLocation="EAI.MSG.TOM.CM.198_PublishContactEventRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TOM/ContactPublish" schemaLocation="EAI.MSG.TOM.CM.199_PublishContactEventResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TOMCM_InvokerRequestMessage">
+        <part name="payload" element="ns1:pubContactRequest"/>
+    </message>
+    <message name="TOMCM_InvokerResponseMessage">
+        <part name="payload" element="ns1:contactPubResponse"/>
+    </message>
+    <portType name="TOMCM_Invoker">
+        <operation name="initiate">
+            <input message="client:TOMCM_InvokerRequestMessage"/>
+        </operation>
+    </portType>
+    <portType name="TOMCM_InvokerCallback">
+        <operation name="onResult">
+            <input message="client:TOMCM_InvokerResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TOMCM_Invoker">
+        <plnk:role name="TOMCM_InvokerProvider">
+            <plnk:portType name="client:TOMCM_Invoker"/>
+        </plnk:role>
+        <plnk:role name="TOMCM_InvokerRequester">
+            <plnk:portType name="client:TOMCM_InvokerCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

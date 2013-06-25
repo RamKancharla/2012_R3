@@ -1,0 +1,41 @@
+<definitions
+     name="TOMOM_UpdateOrderRequestValidator"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+                 schemaLocation="EAI.MSG.TOM.OM.239_UpdateOrderResponse.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+             xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/TOM/OM/TOMOM_UpdateOrderRequestValidator">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TOMOM_UpdateOrderRequestValidatorResponseMessage">
+        <part name="payload" element="ns2:basicResponse"/>
+    </message>
+    <message name="TOMOM_UpdateOrderRequestValidatorRequestMessage">
+        <part name="payload" element="ns1:orderResponseStatus"/>
+    </message>
+    <portType name="TOMOM_UpdateOrderRequestValidator">
+        <operation name="validateOrderStatus">
+            <input message="client:TOMOM_UpdateOrderRequestValidatorRequestMessage"/>
+            <output message="client:TOMOM_UpdateOrderRequestValidatorResponseMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="TOMOM_UpdateOrderRequestValidator">
+        <plnk:role name="TOMOM_UpdateOrderRequestValidatorProvider">
+            <plnk:portType name="client:TOMOM_UpdateOrderRequestValidator"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?><?Siebel-Property-Set EscapeNames="false"?><definitions
+ xmlns="http://schemas.xmlsoap.org/wsdl/"
+ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:xsdLocal1="http://www.siebel.com/xml/RCRM%20Service%20Request"
+ targetNamespace="http://www.reuters.com/2008/07/12/GCAP/RCRM"
+ xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:tns="http://www.reuters.com/2008/07/12/GCAP/RCRM"
+><types
+><xsd:schema
+ elementFormDefault="qualified"
+ attributeFormDefault="unqualified"
+ xmlns:xsdLocal1="http://www.siebel.com/xml/RCRM%20Service%20Request"
+ targetNamespace="http://www.siebel.com/xml/RCRM%20Service%20Request"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+><xsd:annotation
+><xsd:documentation
+>Copyright (C) 2001-2004 Siebel Systems, Inc. All rights reserved. Siebel XSD Generation</xsd:documentation
+></xsd:annotation
+><xsd:element
+ name="RcrmServiceRequestNoBrs"
+ type="xsdLocal1:RcrmServiceRequestNoBrs"
+></xsd:element
+><xsd:complexType
+ name="RcrmServiceRequestNoBrsTopElmt"
+><xsd:sequence
+><xsd:element
+ name="RcrmServiceRequestNoBrs"
+ maxOccurs="1"
+ minOccurs="1"
+ type="xsdLocal1:RcrmServiceRequestNoBrs"
+></xsd:element
+></xsd:sequence
+></xsd:complexType
+><xsd:complexType
+ name="RcrmServiceRequestNoBrs"
+><xsd:sequence
+><xsd:element
+ name="ContactLastName"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string50"
+></xsd:element
+><xsd:element
+ name="ContactFirstName"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string50"
+></xsd:element
+><xsd:element
+ name="ContactEmailAddress"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string100"
+></xsd:element
+><xsd:element
+ name="Status"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string30"
+></xsd:element
+><xsd:element
+ name="Account"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string100"
+></xsd:element
+><xsd:element
+ name="UserId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string50"
+></xsd:element
+><xsd:element
+ name="Timestamp"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string50"
+></xsd:element
+><xsd:element
+ name="TargetSystem"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string70"
+></xsd:element
+><xsd:element
+ name="SourceSystem"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string60"
+></xsd:element
+><xsd:element
+ name="MessageType"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="MessageId"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string100"
+></xsd:element
+><xsd:element
+ name="MessageHistory"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string100"
+></xsd:element
+><xsd:element
+ name="ActionCode"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string50"
+></xsd:element
+><xsd:element
+ name="Abstract"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string100"
+></xsd:element
+><xsd:element
+ name="Area"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string30"
+></xsd:element
+><xsd:element
+ name="Description"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string2000"
+></xsd:element
+><xsd:element
+ name="Product"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string100"
+></xsd:element
+><xsd:element
+ name="RCRMComponentProduct"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string100"
+></xsd:element
+><xsd:element
+ name="RCRMDeliveryInfrastructure"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string30"
+></xsd:element
+><xsd:element
+ name="RCRMMarketSector"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string30"
+></xsd:element
+><xsd:element
+ name="RCRMProductVersion"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string30"
+></xsd:element
+><xsd:element
+ name="RCRMResolutionText"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string1500"
+></xsd:element
+><xsd:element
+ name="SRNumber"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string64"
+></xsd:element
+><xsd:element
+ name="Sub-Area"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string30"
+></xsd:element
+><xsd:element
+ name="RCRMField1"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField2"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string100"
+></xsd:element
+><xsd:element
+ name="RCRMField3"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string100"
+></xsd:element
+><xsd:element
+ name="RCRMField4"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string50"
+></xsd:element
+><xsd:element
+ name="RCRMField5"
+ maxOccurs="1"
+ minOccurs="0"
+ type="xsdLocal1:string150"
+></xsd:element
+></xsd:sequence
+></xsd:complexType
+><xsd:simpleType
+ name="string2000"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="2000"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string50"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="50"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string60"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="60"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string64"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="64"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string30"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="30"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string150"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="150"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string100"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="100"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string70"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="70"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+><xsd:simpleType
+ name="string1500"
+><xsd:restriction
+ base="xsd:string"
+><xsd:maxLength
+ value="1500"
+></xsd:maxLength
+></xsd:restriction
+></xsd:simpleType
+></xsd:schema
+><xsd:schema
+ elementFormDefault="qualified"
+ attributeFormDefault="unqualified"
+ targetNamespace="http://www.reuters.com/2008/07/12/GCAP/RCRM"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+><xsd:import
+ namespace="http://www.siebel.com/xml/RCRM%20Service%20Request"
+></xsd:import
+><xsd:element
+ name="RCRM_spcKNOVA_spcService_spcRequest_Input"
+><xsd:complexType
+><xsd:sequence
+><xsd:element
+ ref="xsdLocal1:RcrmServiceRequestNoBrs"
+></xsd:element
+><xsd:element
+ name="Error_spcCode"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="Error_spcMessage"
+ type="xsd:string"
+></xsd:element
+></xsd:sequence
+></xsd:complexType
+></xsd:element
+><xsd:element
+ name="RCRM_spcKNOVA_spcService_spcRequest_Output"
+><xsd:complexType
+><xsd:sequence
+><xsd:element
+ name="Error_spcCode"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ name="Error_spcMessage"
+ type="xsd:string"
+></xsd:element
+><xsd:element
+ ref="xsdLocal1:RcrmServiceRequestNoBrs"
+></xsd:element
+></xsd:sequence
+></xsd:complexType
+></xsd:element
+></xsd:schema
+></types
+><message
+ name="RCRM_spcKNOVA_spcService_spcRequest_Input"
+><part
+ name="RCRM_spcKNOVA_spcService_spcRequest_Input"
+ element="tns:RCRM_spcKNOVA_spcService_spcRequest_Input"
+></part
+></message
+><message
+ name="RCRM_spcKNOVA_spcService_spcRequest_Output"
+><part
+ name="RCRM_spcKNOVA_spcService_spcRequest_Output"
+ element="tns:RCRM_spcKNOVA_spcService_spcRequest_Output"
+></part
+></message
+><portType
+ name="RCRM_spcKNOVA_spcService_spcRequest"
+><operation
+ name="RCRM_spcKNOVA_spcService_spcRequest"
+><input
+ message="tns:RCRM_spcKNOVA_spcService_spcRequest_Input"
+></input
+><output
+ message="tns:RCRM_spcKNOVA_spcService_spcRequest_Output"
+></output
+></operation
+></portType
+><binding
+ name="RCRM_spcKNOVA_spcService_spcRequest"
+ type="tns:RCRM_spcKNOVA_spcService_spcRequest"
+><soap:binding
+ transport="http://schemas.xmlsoap.org/soap/http"
+ style="document"
+></soap:binding
+><operation
+ name="RCRM_spcKNOVA_spcService_spcRequest"
+><soap:operation
+ soapAction="document/http://www.reuters.com/2008/07/12/GCAP/RCRM:RCRM_spcKNOVA_spcService_spcRequest"
+></soap:operation
+><input
+><soap:body
+ use="literal"
+></soap:body
+></input
+><output
+><soap:body
+ use="literal"
+></soap:body
+></output
+></operation
+></binding
+><service
+ name="RCRM_spcKNOVA_spcService_spcRequest"
+><port
+ binding="tns:RCRM_spcKNOVA_spcService_spcRequest"
+ name="RCRM_spcKNOVA_spcService_spcRequest">
+<soap:address location="${siebel.protocol}://${siebel.host}/eai_enu/start.swe?SWEExtSource=WebService&amp;SWEExtCmd=Execute&amp;UserName=${siebel.UserName}&amp;Password=${siebel.Password}"></soap:address>
+</port
+></service
+></definitions
+>

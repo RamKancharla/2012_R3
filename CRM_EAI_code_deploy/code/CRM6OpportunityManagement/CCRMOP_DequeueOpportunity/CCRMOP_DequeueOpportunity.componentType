@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="DequeueOpportunity.wsdl" name="DequeueOpportunity">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeueOpportunity/#wsdl.interface(Dequeue_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMOP_PublishOpportunity/CCRMOP_PublishOpportunity.wsdl" name="CCRMOP_PublishOpportunity">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.interface(CCRMOP_PublishOpportunity)"
+                        callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRM/OP/CCRMOP_PublishOpportunity#wsdl.interface(CCRMOP_PublishOpportunityCallback)"/>
+    </reference>
+</componentType>

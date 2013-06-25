@@ -1,0 +1,33 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="SAPOM_TransformOrderStatus" revision="1.0" state="on">
+    <import location="SAPOM_TransformOrderStatus.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl" importType="wsdl"/>
+    <service name="SAPOM_TransformOrderStatus" ui:wsdlLocation="SAPOM_TransformOrderStatus.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus#wsdl.interface(SAPOM_TransformOrderStatusCallback)" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus#wsdl.interface(SAPOM_TransformOrderStatus)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/SAPOM_TransformOrderStatus#wsdl.endpoint(SAPOM_TransformOrderStatus/SAPOM_TransformOrderStatus)"/>
+    </service>
+    <component name="SAPOM_TransformOrderStatusProcess">
+        <implementation.bpel src="SAPOM_TransformOrderStatusProcess.bpel"/>
+        
+        
+    </component>
+    <reference name="OM_ManageOrderLineStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/OM_ManageOrderLineStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.interface(OM_ManageOrderLineStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/OM_ManageOrderLineStatus/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM#wsdl.endpoint(OM_ManageOrderLineStatus/OM_ManageOrderLineStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>SAPOM_TransformOrderStatus</source.uri>
+        <target.uri>SAPOM_TransformOrderStatusProcess/SAPOM_TransformOrderStatus</target.uri>
+    </wire>
+    <wire>
+        <source.uri>SAPOM_TransformOrderStatusProcess/OM_ManageOrderLineStatus</source.uri>
+        <target.uri>OM_ManageOrderLineStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

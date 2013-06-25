@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CSOM_TransformOrderStatus.wsdl" name="CSOM_TransformOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus#wsdl.interface(CSOM_TransformOrderStatus)" callbackInterface="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement/CSOM_TransformOrderStatus#wsdl.interface(CSOM_TransformOrderStatusCallback)"/>
+    </service>
+    <reference ui:wsdlLocation="CSOM_ApplyXRefOnOrderStatusInRSWrapper.wsdl" name="applyXRefOnOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CS/OM#wsdl.interface(applyStaticXRefData_ppt)"/>
+    </reference>
+    <reference ui:wsdlLocation="AdpOrderCacheService.wsdl" name="AdpOrderCacheService">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/AdpOrderCacheService/#wsdl.interface(AdpOrderCacheService_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceChecker/SequenceChecker.wsdl" name="SequenceChecker">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceChecker)"/>
+    </reference>
+    <reference ui:wsdlLocation="ParseOrderStatus.wsdl" name="ParseOrderStatus">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CS/OM/OrderStatusParser#wsdl.interface(ParseCSOrderStatus)"/>
+    </reference>
+</componentType>

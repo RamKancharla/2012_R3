@@ -1,0 +1,69 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ * Module:     CCRMPM_DequeuePriceUpdateStatus.bpel 
+* Type:        BPEL Process 
+* Description: Empty BPEL Process which dequeues the price status acknowledgment message from Siebel .
+* Change History
+* Version      Date         Author            Description Of Change 
+*  1.0         01/07/10     Sreeja            Initial Version 
+*  1.0         03/07/10     Sreeja            Added the mapping for Description field.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="CCRMPM_DequeuePriceUpdateStatus" targetNamespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_DequeuePriceUpdateStatus" xmlns="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://xmlns.oracle.com/pcbpel/adapter/mq/headerDequeuePriceStatus/" xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap" xmlns:ns3="http://www.siebel.com/xml/Price%20List" xmlns:ns2="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_PropagatePriceUpdateStatus" xmlns:bpelx="http://schemas.oracle.com/bpel/extension" xmlns:client="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/CCRM/PM/CCRMPM_DequeuePriceUpdateStatus" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:orcl="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      PARTNERLINKS                                                      
+      List of services participating in this BPEL process               
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink myRole="Dequeue_role" name="DequeuePriceStatus" partnerLinkType="ns1:Dequeue_plt"/>
+    <partnerLink myRole="CCRMPM_PropagatePriceUpdateStatusRequester" name="CCRMPM_PropagatePriceUpdateStatus" partnerRole="CCRMPM_PropagatePriceUpdateStatusProvider" partnerLinkType="ns2:CCRMPM_PropagatePriceUpdateStatus"/>
+  </partnerLinks>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <variable name="rcvDequeuePriceStatusIV" messageType="ns1:PricePublish_msg"/>
+    <variable name="InvPropagatePriceUpdateStatusIV" messageType="ns2:PriceUpdateStatusMessg"/>
+  </variables>
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+    <receive name="rcvDequeuePriceStatus" partnerLink="DequeuePriceStatus" portType="ns1:Dequeue_ptt" operation="Dequeue" variable="rcvDequeuePriceStatusIV" createInstance="yes"/>
+    <bpelx:exec name="AsgCustomTitle" language="java" version="1.5">
+      <![CDATA[/*Write your java code below e.g.   
+	System.out.println("Hello, World");  
+*/  
+ try{       
+       
+String priceId = ((oracle.xml.parser.v2.XMLElement)                                   
+                        getVariableData("rcvDequeuePriceStatusIV", "PricePublish", "/ns3:PricePublish/ns3:PriceList/ns3:Id")).getFirstChild().getNodeValue();                                      
+String Title=(priceId!=null ? ("CRMPLHId: "+ priceId) : ".;");                                             
+setCompositeInstanceTitle(Title);       
+}       
+catch(Exception e){       
+setCompositeInstanceTitle("CRMPLHId: ");       
+}]]>
+    </bpelx:exec>
+    <assign name="TransDequeuePriceStatusToReleaseSeq">
+      <bpelx:annotation>
+        <bpelx:pattern>transformation</bpelx:pattern>
+      </bpelx:annotation>
+      <copy>
+        <from expression="ora:processXSLT('TransDequeuePriceStatusToReleaseSeq.xsl',bpws:getVariableData('rcvDequeuePriceStatusIV','PricePublish'))"/>
+        <to variable="InvPropagatePriceUpdateStatusIV" part="priceUpdateStatus"/>
+      </copy>
+    </assign>
+    <invoke name="InvPropagatePriceUpdateStatus" partnerLink="CCRMPM_PropagatePriceUpdateStatus" portType="ns2:CCRMPM_PropagatePriceUpdateStatus" operation="updatePriceStatus" inputVariable="InvPropagatePriceUpdateStatusIV"/>
+  </sequence>
+</process>

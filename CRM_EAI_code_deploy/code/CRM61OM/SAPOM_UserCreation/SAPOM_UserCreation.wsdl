@@ -1,0 +1,47 @@
+<definitions
+     name="SAPOM_UserCreation"
+     targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns2="http://schemas.oracle.com/bpel/extension"
+     xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation">
+            <import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation"
+                 schemaLocation="SAPOM_UserCreation.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/SAPOM_UserCreation">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/SAP/OrderRequest"
+                 schemaLocation="EAI.MSG.SAP.OM.286_OrderRequest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SAPOM_UserCreationResponseMessage">
+        <part name="payload" element="ns1:SAPOrderRequest"/>
+    </message>
+    <message name="SAPOM_UserCreationRequestMessage">
+        <part name="payload" element="ns1:SAPOrderRequest"/>
+    </message>
+    <portType name="SAPOM_UserCreationCallback">
+        <operation name="onResult">
+            <input message="client:SAPOM_UserCreationResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="SAPOM_UserCreation">
+        <operation name="initiate">
+            <input message="client:SAPOM_UserCreationRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="SAPOM_UserCreation">
+        <plnk:role name="SAPOM_UserCreationProvider">
+            <plnk:portType name="client:SAPOM_UserCreation"/>
+        </plnk:role>
+        <plnk:role name="SAPOM_UserCreationRequester">
+            <plnk:portType name="client:SAPOM_UserCreationCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

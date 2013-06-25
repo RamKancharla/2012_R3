@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="CCRM_QuerySRDetails" revision="1.0" state="on">
+    <import importType="wsdl" location="EAI.SRV.CCRM.044_QuerySRDetailsService.wsdl" namespace="http://www.reuters.com/2008/07/12/GCAP/RCRM"/>
+    <import importType="wsdl" location="CSZ_QuerySRDetails.wsdl" namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ"/>
+    <service name="CSZ.QuerySRDetails_ep" ui:wsdlLocation="CSZ_QuerySRDetails.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.interface(getSRDetails_ppt)"/>
+        <binding.ws location="CSZ_QuerySRDetails.wsdl" port="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CCRM/CSZ#wsdl.endpoint(getSRDetails_ppt/getSRDetails_ppt_pt)"/>
+    </service>
+    <component name="CSZ.QuerySRDetails">
+        <implementation.mediator src="CSZ.QuerySRDetails.mplan"/>
+    </component>
+    <reference name="CSZ.QuerySRDetailsSOAPAdp" ui:wsdlLocation="EAI.SRV.CCRM.044_QuerySRDetailsService.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/2008/07/12/GCAP/RCRM#wsdl.interface(RCRM_spcKNOVA_spcService_spcRequest)"/>
+        <binding.ws location="EAI.SRV.CCRM.044_QuerySRDetailsService.wsdl" port="http://www.reuters.com/2008/07/12/GCAP/RCRM#wsdl.endpoint(RCRM_spcKNOVA_spcService_spcRequest/RCRM_spcKNOVA_spcService_spcRequest)"/>
+    </reference>
+    <wire>
+        <source.uri>CSZ.QuerySRDetails_ep</source.uri>
+        <target.uri>CSZ.QuerySRDetails/CSZ.QuerySRDetails</target.uri>
+    </wire>
+    <wire>
+        <source.uri>CSZ.QuerySRDetails/CSZ.QuerySRDetailsSOAPAdp</source.uri>
+        <target.uri>CSZ.QuerySRDetailsSOAPAdp</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

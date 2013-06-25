@@ -1,0 +1,10 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<dvm name="TF_OrderDispatcherOrderHeaderStatusMap" xmlns="http://xmlns.oracle.com/dvm">
+<description>Maps CRM order header states to those for sending to TOM.
+
+Used by:
+TF_OrderDispatcher</description><columns><column name="CRM_STATUS"/><column name="TOM_STATUS"/></columns>
+<rows><row><cell>Error</cell><cell>Submitted</cell></row>
+<row><cell>Accepted</cell><cell>Submitted</cell></row>
+<row><cell>Information Provided</cell><cell>Submitted</cell></row>
+</rows></dvm>

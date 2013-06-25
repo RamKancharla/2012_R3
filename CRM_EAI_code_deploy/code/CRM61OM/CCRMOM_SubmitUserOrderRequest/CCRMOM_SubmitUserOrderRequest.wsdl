@@ -1,0 +1,66 @@
+<definitions
+     name="CCRMOM_SubmitUserOrderRequest"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+     xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:pns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest/correlationset"
+     xmlns:ns2="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest"
+    >
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest/correlationset"
+         location="CCRMOM_SubmitUserOrderRequest_Properties.wsdl"/>
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest"
+                 schemaLocation="CCRMOM_SubmitUserOrderRequest.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/CCRMOM_SubmitUserOrderRequest">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/UOM/UserOrderManagement"
+                 schemaLocation="EAI.MSG.CCRM.UOM.282_UserOrderRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/Common" schemaLocation="EAI.MSG.EAI.169_BasicResponse.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CCRMOM_SubmitUserOrderRequestResponseMessage">
+        <part name="payload" element="client:CCRMOM_SubmitUserOrderRequestProcessResponse"/>
+    </message>
+    <message name="CCRMOM_SubmitUserOrderRequestRequestMessage">
+        <part name="SEARequest" element="ns1:userOrderRequest"/>
+    </message>
+    <message name="ReleaseSequenceMessage">
+        <part name="releaseSequence" element="ns2:basicResponse"/>
+    </message>
+    <portType name="CCRMOM_SubmitUserOrderRequestCallback">
+        <operation name="onResult">
+            <input message="client:CCRMOM_SubmitUserOrderRequestResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="CCRMOM_SubmitUserOrderRequest">
+        <operation name="splitSEAOrder">
+            <input message="client:CCRMOM_SubmitUserOrderRequestRequestMessage"/>
+        </operation>
+        <operation name="updateReleaseStatus">
+            <input name="input" message="client:ReleaseSequenceMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="CCRMOM_SubmitUserOrderRequest">
+        <plnk:role name="CCRMOM_SubmitUserOrderRequestProvider">
+            <plnk:portType name="client:CCRMOM_SubmitUserOrderRequest"/>
+        </plnk:role>
+        <plnk:role name="CCRMOM_SubmitUserOrderRequestRequester">
+            <plnk:portType name="client:CCRMOM_SubmitUserOrderRequestCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:propertyAlias propertyName="pns1:InvSequenceCheckerIV_prop" messageType="client:ReleaseSequenceMessage"
+         part="releaseSequence" query="/ns2:basicResponse/ns2:eaiHeader/ns4:tracingId" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"/>
+    <bpws:propertyAlias propertyName="pns1:InvSequenceCheckerIV_prop" xmlns:ns6="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer"
+         messageType="ns6:SequenceCheckerRequestMessage" part="payload" query="/ns4:checkSequenceRequest/ns4:eaiHeader/ns5:tracingId"
+         xmlns:ns5="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" xmlns:ns4="http://www.reuters.com/ns/2007/09/01/GCAP/UTL/Sequencer"/>
+</definitions>

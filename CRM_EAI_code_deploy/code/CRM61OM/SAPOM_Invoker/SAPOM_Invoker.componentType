@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="SAPOM_POLLING_V.wsdl" name="SAPOM_POLLING_V">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/SAPOM_POLLING_V/#wsdl.interface(SAPOM_POLLING_V_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="SI_Create_ContractOrder_OB_AsyncRef.wsdl" name="SI_Create_ContractOrder_OB_Async">
+        <interface.wsdl interface="http://trm.com:I004:OrderProcessing:CreateContractOrder_Send#wsdl.interface(SI_Create_ContractOrder_OB_Async)"/>
+    </reference>
+    <reference ui:wsdlLocation="Update_Inter_Buffer.wsdl" name="Update_Inter_Buffer">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/Update_Inter_Buffer/#wsdl.interface(Update_Inter_Buffer_ptt)"/>
+    </reference>
+</componentType>

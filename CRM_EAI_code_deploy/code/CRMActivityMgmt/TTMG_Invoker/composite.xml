@@ -1,0 +1,42 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="TTMG_Invoker" revision="1.0" state="on">
+    <import location="TTMG_Invoker.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker"/>
+    <import location="EAI.SRV.EXT.MST.056_ManageMigrationRequestServiceRef.wsdl" namespace="ttwebservices"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatus.wsdl" importType="wsdl"/>
+    <service name="client" ui:wsdlLocation="TTMG_Invoker.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker#wsdl.interface(TTMG_InvokerCallback)" interface="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker#wsdl.interface(TTMG_Invoker)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" port="http://www.reuters.com/ns/2007/09/01/GCAP/TTMG/TTMG_Invoker#wsdl.endpoint(TTMG_Invoker/TTMG_Invoker)"/>
+    </service>
+    <component name="TTMG_Invoker">
+        <implementation.bpel src="TTMG_Invoker.bpel"/>
+        
+        
+    </component>
+    <reference name="MSTTeamTrack" ui:wsdlLocation="EAI.SRV.EXT.MST.056_ManageMigrationRequestServiceRef.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="ttwebservices#wsdl.interface(MSTServiceSoap)"/>
+        <binding.ws xmlns:ns="http://xmlns.oracle.com/sca/1.0" location="EAI.SRV.EXT.MST.056_ManageMigrationRequestServiceRef.wsdl" port="ttwebservices#wsdl.endpoint(MSTService/MSTServiceSoap12)"/>
+    </reference>
+    <reference name="CCRMG_PropagateTicketStatus" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatus.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatus)" callbackInterface="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.interface(CCRMG_PropagateTicketStatusCallback)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.endpoint(CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatus)" location="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMG_PropagateTicketStatus/client?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+        <callback>
+            <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/CCRMMG/CCRMG_PropagateTicketStatus#wsdl.endpoint(CCRMG_PropagateTicketStatus/CCRMG_PropagateTicketStatusCallback_pt)"/>
+        </callback>
+    </reference>
+    <wire>
+        <source.uri>client</source.uri>
+        <target.uri>TTMG_Invoker/client</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TTMG_Invoker/MSTTeamTrack</source.uri>
+        <target.uri>MSTTeamTrack</target.uri>
+    </wire>
+    <wire>
+        <source.uri>TTMG_Invoker/CCRMG_PropagateTicketStatus</source.uri>
+        <target.uri>CCRMG_PropagateTicketStatus</target.uri>
+    </wire>
+<!--property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property-->
+</composite>

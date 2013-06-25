@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CCRMPM_PriceRequestValidator.wsdl" name="anchorToPricerequestValidator">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidator#wsdl.interface(CCRMPM_PriceRequestValidator)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/PM_PropagatePriceUpdate/PM_PropagatePriceUpdate.wsdl" name="PM_PropagatePriceUpdate">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/CCRM/PM/PriceUpdate/PM_PropagatePriceUpdate#wsdl.interface(PM_PropagatePriceUpdate)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/CCRMPM_PriceRequestValidatorStub/CCRMPM_PriceRequestValidatorStub.wsdl" name="CCRMPM_PriceRequestValidatorStub">
+        <interface.wsdl interface="http://www.reuters.com/NS/2007/01/25/GCAP/CCRM/PM/CCRMPM_PriceRequestValidatorStub#wsdl.interface(CCRMPM_PriceRequestValidatorStub)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+* Module:			EAI.MSG.TF.240_UpdateOrderRequest.xsd
+*						Order Management
+* Type:				XML Schema Document
+* Description:	Canonical Order Schema document
+*
+*
+* Change History
+* Version	Date		Author				Description Of Change
+* =======	========	==================		===============================
+*  0.01		24/06/08	Sreeja Prasad			Initial Version
+*  0.02		04/07/08	Rob Billington			Removed some fields that are not needed for TOM
+*  0.03         04/07/08	Sreeja Prasad			Added Last update date,mandatorytechFulfilmentFlag,technicalVettingFlag and actualInstallationDate
+*  0.04         04/07/08	Chandrasekhar	                Added AssignedOMS in OrderHeader Level and removed duplicted poNumber in OrderHeader Level
+*  0.05         04/07/08	Chandrasekhar	                Renamed  _CCRMOMConfiguredAttribute to _TFCCRMOMConfiguredAttribute in CanonicalOrdLineItem Level
+*  0.06         09/07/08	Rob Billington	                Renamed  accountLocId to accountId
+*  0.07         10/07/08	Rob Billington	                Added updateType
+*  0.08         21/10/08        Chandrasekhar                   minOccurs="0" maxOccurs="unbounded" to QuoteNote in CanonicalOrdHeader
+*  0.09		03/11/08	Sreeja Prasad			Added firstName and lastName fields to CanonicalOrdLineItem for defect# 21360.
+*************************************************************************/
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.09">
+	<xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes"
+             schemaLocation="oramds:/apps/EAIMetaData/schemas/EAI.XSD.005_CommonMessageTypes.xsd"/>
+	<xsd:element name="tfOrderRequest" type="xsdLocal:TFOrderRequest"/>
+	<xsd:complexType name="TFOrderRequest">
+		<xsd:sequence>
+			<xsd:element name="eaiHeader" type="cmt:EaiHeader"/>
+			<xsd:element name="messageHeader" type="xsdLocal:CanonicalMessgHeader"/>
+			<xsd:element name="orderHeader" type="xsdLocal:CanonicalOrdHeader"/>
+			<xsd:element name="orderLineItem" type="xsdLocal:CanonicalOrdLineItem" maxOccurs="unbounded"/>
+                        <xsd:element name="updateType" type="xsdLocal:UpdateType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalOrdLineItem">
+		<xsd:sequence>
+			<xsd:element name="CRMOLIId" type="xsd:string"/>
+                        <xsd:element name="parentOrderItemId" type="xsd:string"/>
+			<xsd:element name="rootItemId" type="xsd:string"/>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="businessCase" type="xsd:string"/>
+			<xsd:element name="PLI" type="xsd:string"/>
+			<xsd:element name="AKR" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+                        <xsd:element name="userIDtype" type="xsd:string"/>
+			<xsd:element name="installDate" type="xsd:string"/>
+			<xsd:element name="removalDate" type="xsd:string"/>
+			<xsd:element name="QUID" type="xsd:string"/>
+			<xsd:element name="assetIntegrationId" type="xsd:string"/>
+			<xsd:element name="orderLineStatus" type="xsd:string"/>
+			<xsd:element name="permissioningStatus" type="xsd:string"/>
+                        <xsd:element name="productIntegrationId" type="xsd:string"/>
+                        <xsd:element name="configuredAttribute" type="xsdLocal:_TFCCRMOMConfiguredAttribute" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="technicalFulfilmentReq" type="xsd:string"/>
+			<xsd:element name="technicalApprovalReq" type="xsd:string"/>
+			<xsd:element name="billingAccountId" type="xsd:string"/>
+			<xsd:element name="quantity" type="xsd:string"/>
+			<xsd:element name="productName" type="xsd:string"/>
+			<xsd:element name="altInstalBillingId" type="xsd:string"/>
+			<xsd:element name="ILA" type="xsd:string"/>
+			<xsd:element name="orderPermissionStatus" type="xsd:string"/>
+			<xsd:element name="CSOrderNumber" type="xsd:string"/>
+			<xsd:element name="lastUpdateDate" type="xsd:string"/>
+			<xsd:element name="mandatorytechFulfilmentFlag" type="xsd:string"/>
+                        <xsd:element name="freeTrialDuration" type="xsd:string"/>
+			<xsd:element name="technicalVettingFlag" type="xsd:string"/>
+			<xsd:element name="actualInstallationDate" type="xsd:string"/>
+			<xsd:element name="firstName" type="xsd:string"/>
+			<xsd:element name="lastname" type="xsd:string"/>
+
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalMessgHeader">
+		<xsd:sequence>
+			<xsd:element name="actionCode" type="xsd:string"/>
+			<xsd:element name="version" type="xsd:string"/>
+			<xsd:element name="userId" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CanonicalOrdHeader">
+		<xsd:sequence>
+			<xsd:element name="OrderNumber" type="xsd:string"/>
+			<xsd:element name="installDate" type="xsd:string"/>
+			<xsd:element name="removalDate" type="xsd:string"/>
+			<xsd:element name="orderStatus" type="xsd:string"/>
+			<xsd:element name="quoteNote" type="xsdLocal:QuoteNote"  minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="quoteNumber" type="xsd:string"/>
+			<xsd:element name="quoteRevisionNumber" type="xsd:string"/>
+			<xsd:element name="businessCase" type="xsd:string"/>
+			<xsd:element name="accountId" type="xsd:string"/>
+			<xsd:element name="poNumber" type="xsd:string"/>
+			<xsd:element name="custRequiredDate" type="xsd:string"/>
+			<xsd:element name="orderType" type="xsd:string"/>
+			<xsd:element name="AssignedOMS" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+         <xsd:complexType name="_TFCCRMOMConfiguredAttribute">
+                <xsd:sequence>
+                     <xsd:element name="attributeIntegrationId" type="xsd:string"/>
+                    <xsd:element name="value" type="xsd:string"/>
+                    <xsd:element name="attributeName" type="xsd:string"/>
+                    <xsd:element name="valueIntegrationId" type="xsd:string"/>
+                </xsd:sequence>
+        </xsd:complexType>
+	<xsd:complexType name="QuoteNote">
+		<xsd:sequence>
+			<xsd:element name="type" type="xsd:string"/>
+			<xsd:element name="installationNotes" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+        
+        <xsd:simpleType name="UpdateType">
+            <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="FULL"/>
+                <xsd:enumeration value="REDUCED"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+</xsd:schema>

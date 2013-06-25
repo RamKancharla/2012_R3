@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="CPFGEF_POLLING_V.wsdl" name="CPFGEF_POLLING_V">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/CPFGEF_POLLING_V/#wsdl.interface(CPFGEF_POLLING_V_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="MM_GCAPInbound_Exp_ElectronicFulfilmentInterface_PARef.wsdl" name="Exp_ElectronicFulfilmentInterface_PA_ElectronicFulfilmentInterfaceHttp_Service">
+        <interface.wsdl interface="http://www.reuters.com/ns/2008/05/16/AAA/ESB/SBO/GCAP/ElectronicFulfilmentServices#wsdl.interface(ElectronicFulfilmentInterface)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="UpdateINTERFACE_BUFFER.wsdl" name="UpdateINTERFACE_BUFFER">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateINTERFACE_BUFFER/#wsdl.interface(UpdateINTERFACE_BUFFER_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/CPFG_StatusUpdateValidator/CPFG_StatusUpdateValidator.wsdl" name="CPFG_StatusUpdateValidator">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/eai/cpfg#wsdl.interface(CPFG_StatusUpdateValidator)"/>
+    </reference>
+</componentType>

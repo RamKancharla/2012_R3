@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ui="http://xmlns.oracle.com/soa/designer/" mode="active" name="ATHUOM_SubmitUserOrderRequest" revision="1.0" state="on">
+    <import importType="wsdl" location="ATHUOM_submitUserOrderRequestInRS.wsdl" namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/SubmitUserOrderRequest"/>
+    <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHUOM_UserOrderRequestValidator/ATHUOM_UserOrderRequestValidator.wsdl" importType="wsdl"/>
+    <service name="ATHUOM.submitUserOrderRequestInRS_ep" ui:wsdlLocation="ATHUOM_submitUserOrderRequestInRS.wsdl">
+        <interface.wsdl xmlns:ns="http://xmlns.oracle.com/sca/1.0" interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/SubmitUserOrderRequest#wsdl.interface(submitUserOrderRequest_ppt)"/>
+        <binding.ws location="ATHUOM_submitUserOrderRequestInRS.wsdl" port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/SubmitUserOrderRequest#wsdl.endpoint(submitUserOrderRequest_ppt/submitUserOrderRequest_ppt_pt)"/>
+    </service>
+    <component name="ATHUOM.submitUserOrderRequestInRS">
+        <implementation.mediator src="ATHUOM.submitUserOrderRequestInRS.mplan"/>
+    </component>
+    <reference name="ATHUOM.UserOrderRequstValidatorSOAPAdp" ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHUOM_UserOrderRequestValidator/ATHUOM_UserOrderRequestValidator.wsdl">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator#wsdl.interface(ATHUOM_UserOrderRequestValidator)"/>
+        <binding.ws port="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/ATH/UOM/ATHUOM_UserOrderRequestValidator#wsdl.endpoint(ATHUOM_UserOrderRequestValidator/ATHUOM_UserOrderRequestValidator)" location="http://eaidev2:8004/soa-infra/services/CRMSYNC/ATHUOM_UserOrderRequestValidator/anchorToATHUOM_UserOrderRequestValidator?WSDL" soapVersion="1.1">
+            <property name="weblogic.wsee.wsat.transaction.flowOption" type="xs:string" many="false">WSDLDriven</property>
+        </binding.ws>
+    </reference>
+    <wire>
+        <source.uri>ATHUOM.submitUserOrderRequestInRS_ep</source.uri>
+        <target.uri>ATHUOM.submitUserOrderRequestInRS/ATHUOM.submitUserOrderRequestInRS</target.uri>
+    </wire>
+    <wire>
+        <source.uri>ATHUOM.submitUserOrderRequestInRS/ATHUOM.UserOrderRequstValidatorSOAPAdp</source.uri>
+        <target.uri>ATHUOM.UserOrderRequstValidatorSOAPAdp</target.uri>
+    </wire>
+<!-- <property name="oracle.composite.faultPolicyFile">oramds://apps/faultpolicyfiles/fault-policies.xml</property>
+<property name="oracle.composite.faultBindingFile">oramds://apps/faultpolicyfiles/fault-bindings.xml</property> -->
+</composite>

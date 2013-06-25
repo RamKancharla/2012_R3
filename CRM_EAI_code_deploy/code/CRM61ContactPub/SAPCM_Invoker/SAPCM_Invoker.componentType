@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0" xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <service ui:wsdlLocation="Polling_SAPContacts.wsdl" name="Polling_SAPContacts">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/Polling_SAPContacts/#wsdl.interface(Polling_SAPContacts_ptt)"/>
+    </service>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/SequenceReleaser/SequenceReleaser.wsdl" name="SequenceReleaser">
+        <interface.wsdl interface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaser)"
+                        callbackInterface="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/UTL/Sequencer#wsdl.interface(SequenceReleaserCallback)"/>
+    </reference>
+    <reference ui:wsdlLocation="UpdateInterfaceBuffer.wsdl" name="UpdateInterfaceBuffer">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/UpdateInterfaceBuffer/#wsdl.interface(UpdateInterfaceBuffer_ptt)"/>
+    </reference>
+    <reference ui:wsdlLocation="EAI.SRV.CM.SAP.72_UpdateUserContactRef.wsdl" name="UpdateUserContact">
+        <interface.wsdl interface="http://trm.com:I046:OrderProcessing:Send_ContactUserInformation#wsdl.interface(SI_CreateContacts_OB_Async)"/>
+    </reference>
+    <reference ui:wsdlLocation="http://eaidev2:8004/soa-infra/services/CRMASYNC/InterfaceManager/InterfaceManager.wsdl" name="InterfaceManager">
+        <interface.wsdl interface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"
+                        callbackInterface="http://xmlns.oracle.com/InterfaceManager#wsdl.interface(InterfaceManager)"/>
+    </reference>
+    <reference ui:wsdlLocation="EAI.SRV.CM.SAP.73_UpdateEmployeeContactRef.wsdl" name="UpdateSAPEmployee">
+        <interface.wsdl interface="http://trm.com:I001:CustomerMaster:AccountMessage#wsdl.interface(SI_Update_Contacts_OB_Async)"/>
+    </reference>
+</componentType>

@@ -1,0 +1,70 @@
+<definitions
+     name="OM_ManageOrderLineStatus"
+     targetNamespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules"
+     xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+     xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+     xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM"
+    >
+    <import namespace="http://schemas.oracle.com/bpel/extension" location="oramds:/soa/shared/bpel/RuntimeFault.wsdl"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules">
+            <import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" schemaLocation="OM_ManageOrderLineStatus.xsd"/>
+        </schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules">
+            <xsd:import namespace="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.OM.141_OrderStatus.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM" xmlns:ns3="http://schemas.oracle.com/bpel/extension"
+             xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement" schemaLocation="EAI.MSG.OM.180_ExtendedOrderStatus.xsd"/>
+        </xsd:schema>       
+ <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns4="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules"
+             xmlns:ns1="http://www.reuters.com/NS/2007/01/25/GCAP/EAI/OrderManagement" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:ns3="http://schemas.oracle.com/bpel/extension" xmlns:ns2="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement"
+             xmlns:client="http://www.reuters.com/ns/2007/09/01/GCAP/EAI/OM">
+            <xsd:import namespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/OrderManagement/rules"
+                 schemaLocation="rules/xsd/EAI.MSG.OM.191_OrderLineStatusFacts.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="OM_ManageOrderLineStatusResponseMessage">
+        <part name="payload" element="client:OM_ManageOrderLineStatusProcessResponse"/>
+    </message>
+    <message name="OM_ManageOrderLineStatusRequestMessage">
+        <part name="payload" element="ns1:orderStatus"/>
+    </message>
+    <message name="ExtendedOrderStatusMessage">
+        <part name="extendedOrderStatus" element="ns2:orderStatus"/>
+    </message>
+    <message name="RuleFactsMessage">
+        <part name="facts" element="ns4:orderLineRepository"/>
+    </message>
+    <portType name="OM_ManageOrderLineStatusCallback">
+        <operation name="onResult">
+            <input message="client:OM_ManageOrderLineStatusResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="OM_ManageOrderLineStatus">
+        <operation name="manageOrderLineStatus">
+            <input message="client:OM_ManageOrderLineStatusRequestMessage"/>
+        </operation>
+    </portType>
+    <plnk:partnerLinkType name="OM_ManageOrderLineStatus">
+        <plnk:role name="OM_ManageOrderLineStatusProvider">
+            <plnk:portType name="client:OM_ManageOrderLineStatus"/>
+        </plnk:role>
+        <plnk:role name="OM_ManageOrderLineStatusRequester">
+            <plnk:portType name="client:OM_ManageOrderLineStatusCallback"/>
+        </plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

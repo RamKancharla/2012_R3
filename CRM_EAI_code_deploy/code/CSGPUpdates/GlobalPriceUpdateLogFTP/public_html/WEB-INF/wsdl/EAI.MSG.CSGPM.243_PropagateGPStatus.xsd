@@ -1,0 +1,68 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsdLocal="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/GPM/PriceManagement"
+     xmlns:cmt="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" targetNamespace="http://www.reuters.com/ns/2007/01/25/GCAP/EAI/CS/GPM/PriceManagement"
+     elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.01">
+    <xsd:import namespace="http://www.reuters.com/ns/2007/09/01/GCAP/CommonMessageTypes" schemaLocation="EAI.XSD.005_CommonMessageTypes.xsd"/>
+    <xsd:element name="PropagateGPStatusRequest" type="xsdLocal:PropagateGPStatusReq"/>
+    <xsd:element name="PropagateGPStatusResponse" type="xsdLocal:PropagateGPStatusRes"/>
+    <xsd:complexType name="PropagateGPStatusReq">
+        <xsd:sequence>
+            <xsd:element name="eaiHeader" type="xsdLocal:EaiHeader"/>
+            <xsd:element name="sourceIPAddress" type="xsd:string"/>
+            <xsd:element name="sourceUserName" type="xsd:string"/>
+            <xsd:element name="sourcePassword" type="xsd:string"/>
+            <xsd:element name="sourceLocalDirectory" type="xsd:string"/>
+            <xsd:element name="EAIlocalDirectory" type="xsd:string"/>
+            <xsd:element name="logFileName" type="xsd:string"/>
+            <xsd:element name="CSInstance" type="xsd:string"/>
+            <xsd:element name="CSEnvironment" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PropagateGPStatusRes">
+        <xsd:sequence>
+            <xsd:element name="result" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="EaiHeader">
+        <xsd:sequence>
+            <xsd:element name="applicationId" type="xsdLocal:string10"/>
+            <xsd:element name="transactionId" type="xsdLocal:string30"/>
+            <xsd:element name="messageId" type="xsdLocal:string30"/>
+            <xsd:element name="messageHistory" type="xsdLocal:string100"/>
+            <xsd:element name="tracingId" type="xsdLocal:string50" nillable="true"/>
+            <xsd:element name="timeStamp" type="xsd:dateTime"/>
+            <xsd:element name="instanceId" type="xsdLocal:string40" nillable="true"/>
+            <xsd:element name="timeToLive" type="xsd:int" nillable="true"/>
+            <xsd:element name="payloadVersion" type="xsdLocal:string3"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="string10">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string30">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string100">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string50">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="50"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string40">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="string3">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>
